@@ -3,7 +3,7 @@
 
 namespace rev {
 	// ------------ HSVColor ------------
-	RGBColor HSVColor::toRGB() const {
+	RGBColor HSVColor::toRGB() const noexcept {
 		RGBColor rgb(z,z,z);
 		if(y > 0) {
 			float x6 = x * 6.f;
@@ -40,11 +40,11 @@ namespace rev {
 		}
 		return rgb;
 	}
-	RGBAColor HSVColor::toRGBA(const float a) const {
+	RGBAColor HSVColor::toRGBA(const float a) const noexcept {
 		return toRGB().asRGBA(a);
 	}
 	// ------------ RGBColor ------------
-	HSVColor RGBColor::toHSV() const {
+	HSVColor RGBColor::toHSV() const noexcept {
 		auto mm = std::minmax({x,y,z});
 		HSVColor hsv;
 
@@ -63,25 +63,25 @@ namespace rev {
 		hsv.z = mm.second;
 		return hsv;
 	}
-	HSVAColor RGBColor::toHSVA(const float a) const {
+	HSVAColor RGBColor::toHSVA(const float a) const noexcept {
 		return HSVAColor(toHSV(), a);
 	}
-	RGBAColor RGBColor::asRGBA(const float a) const {
+	RGBAColor RGBColor::asRGBA(const float a) const noexcept {
 		return RGBAColor(x,y,z,a);
 	}
 
 	// ------------ RGBAColor ------------
-	RGBAColor::RGBAColor(const RGBColor& c, const float a):
+	RGBAColor::RGBAColor(const RGBColor& c, const float a) noexcept:
 		frea::Vec4(c.x, c.y, c.z, a)
 	{}
-	const RGBColor& RGBAColor::asRGB() const {
+	const RGBColor& RGBAColor::asRGB() const noexcept {
 		return reinterpret_cast<const RGBColor&>(*this);
 	}
 	// ------------ HSVAColor ------------
-	HSVAColor::HSVAColor(const HSVColor& h, const float a):
+	HSVAColor::HSVAColor(const HSVColor& h, const float a) noexcept:
 		frea::Vec4(h.x, h.y, h.z, a)
 	{}
-	const HSVColor& HSVAColor::asHSV() const {
+	const HSVColor& HSVAColor::asHSV() const noexcept {
 		return reinterpret_cast<const HSVColor&>(*this);
 	}
 }
