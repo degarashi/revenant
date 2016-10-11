@@ -1,0 +1,6 @@
+[submodule "frea"]
+	path = frea
+	url = ../frea
+[submodule "lubee"]
+	path = lubee
+	url = ../lubee
