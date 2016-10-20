@@ -4,3 +4,6 @@
 [submodule "lubee"]
 	path = lubee
 	url = ../lubee
+[submodule "spine"]
+	path = spine
+	url = ../spine
