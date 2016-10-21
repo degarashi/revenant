@@ -9,9 +9,9 @@
 <実用性は無いと思います>
 
 依存ライブラリ:
-	---
+	SDL2
+	Cereal (シリアライズ用)
 依存ライブラリ(予定):
 	GoogleTest (単体テストをする場合のみ)
-	Cereal (シリアライズ用)
 	boost::preprocessor
 	boost::format

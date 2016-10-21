@@ -29,12 +29,20 @@ else()
 	message(FATAL_ERROR "couldn't detect OS type")
 endif()
 
+find_package(SDL2 REQUIRED)
+find_package(SDL2_image REQUIRED)
 include_directories(
 	./
 	./frea
 	./lubee
+	${SDL2_IMAGE_INCLUDE_DIRS}
+	${SDL2_INCLUDE_DIRS}
 )
 add_library(revenant SHARED ${LIBSRC_FILE})
+target_link_libraries(revenant
+	${SDL2_IMAGE_LIBRARIES}
+	${SDL2_LIBRARIES}
+)
 set_target_properties(revenant PROPERTIES VERSION 1.0.0 SOVERSION 1)
 install(TARGETS revenant LIBRARY DESTINATION lib)
 
