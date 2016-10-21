@@ -12,7 +12,7 @@
 	SDL2
 	Cereal (シリアライズ用)
 	FreeType 2.0
+	boost::format
 依存ライブラリ(予定):
 	GoogleTest (単体テストをする場合のみ)
 	boost::preprocessor
-	boost::format
