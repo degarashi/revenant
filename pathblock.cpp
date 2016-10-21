@@ -264,7 +264,7 @@ namespace rev {
 		if(bAbs && _bAbsolute) {
 			// windowsの場合のみドライブ文字を出力
 			#ifdef WIN32
-				Assert(static_cast<bool>(_driveLetter));
+				Assert0(static_cast<bool>(_driveLetter));
 				dst += *_driveLetter;
 				dst += u32::CLN;
 			#endif

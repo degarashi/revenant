@@ -157,7 +157,7 @@ namespace rev {
 		bool bAbs = false;
 		if(r[0] == '/') {
 			#ifdef WIN32
-				Assert(Throw, false, "invalid absolute path")
+				Assert(false, "invalid absolute path");
 			#endif
 			path += '/';
 			ofs = 1;
