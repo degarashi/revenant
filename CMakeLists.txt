@@ -33,6 +33,7 @@ find_package(Boost 1.55 REQUIRED)
 find_package(Freetype 2.0 REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
+find_package(OggVorbis REQUIRED)
 include_directories(
 	./
 	./frea
@@ -41,6 +42,8 @@ include_directories(
 	${SDL2_INCLUDE_DIRS}
 	${FREETYPE_INCLUDE_DIRS}
 	${Boost_INCLUDE_DIRS}
+	${VORBIS_INCLUDE_DIR}
+	${OGG_INCLUDE_DIR}
 )
 add_library(revenant SHARED ${LIBSRC_FILE})
 target_link_libraries(revenant
@@ -48,6 +51,9 @@ target_link_libraries(revenant
 	${SDL2_LIBRARIES}
 	${FREETYPE_LIBRARIES}
 	${Boost_LIBRARIES}
+	${VORBISFILE_LIBRARY}
+	${VORBIS_LIBRARY}
+	${OGG_LIBRARY}
 )
 set_target_properties(revenant PROPERTIES VERSION 1.0.0 SOVERSION 1)
 install(TARGETS revenant LIBRARY DESTINATION lib)

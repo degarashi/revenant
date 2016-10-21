@@ -8,8 +8,16 @@
 
 <実用性は無いと思います>
 
+各種ライブラリをインポートするCMakeのモジュールは以下から導入しました
+SDL2:
+	https://github.com/tcbrindle/sdl2-cmake-scripts
+OggVorbis:
+	https://github.com/KDE/extra-cmake-modules/blob/master/attic/modules/FindOggVorbis.cmake
+
 依存ライブラリ:
 	SDL2
+	Ogg
+	Vorbis
 	Cereal (シリアライズ用)
 	FreeType 2.0
 	boost::format
