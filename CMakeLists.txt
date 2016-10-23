@@ -19,9 +19,9 @@ set(DEPENDANT_SRC_UNIX dir_depLinux.cpp)
 set(OS_DEPENDANT_SRC ${DEPENDANT_SRC_WIN} ${DEPENDANT_SRC_UNIX})
 
 # OpenSL依存ファイル
-set(DEPENDANT_OPENSL )
+set(DEPENDANT_OPENSL sound_depSL.cpp sound_depSL_error.cpp)
 # OpenAL依存ファイル
-set(DEPENDANT_OPENAL )
+set(DEPENDANT_OPENAL sound_depAL.cpp sound_depAL_error.cpp)
 set(SOUND_DEPENDANT_SRC ${DEPENDANT_OPENSL} ${DEPENDANT_OPENAL})
 
 # 依存ファイル以外のソースファイルを収集

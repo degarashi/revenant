@@ -12,6 +12,9 @@ namespace rev {
 		DEF_NAME(TPos2D);
 		DEF_NAME(Action);
 		DEF_NAME(Input);
+		DEF_NAME(ABuffer);
+		DEF_NAME(ASource);
+		DEF_NAME(AGroup);
 		#undef DEF_NAME
 	}
 	struct ResourceNotFound : std::runtime_error {
@@ -39,4 +42,16 @@ namespace rev {
 	struct TPos2D;
 	using HPtr = std::shared_ptr<TPos2D>;
 	using WPtr = std::weak_ptr<TPos2D>;
+
+	class ABuffer;
+	using HAb = std::shared_ptr<ABuffer>;
+	using WAb = std::weak_ptr<ABuffer>;
+
+	class ASource;
+	using HSs = std::shared_ptr<ASource>;
+	using WSs = std::weak_ptr<ASource>;
+
+	class AGroup;
+	using HSg = std::shared_ptr<AGroup>;
+	using WSg = std::weak_ptr<AGroup>;
 }
