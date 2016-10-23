@@ -16,6 +16,7 @@ OggVorbis:
 
 依存ライブラリ:
 	SDL2
+	OpenAL(or SL)
 	Ogg
 	Vorbis
 	Cereal (シリアライズ用)
