@@ -5,6 +5,10 @@
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
 
+namespace cereal {
+	template <class T>
+	class construct;
+}
 namespace rev {
 	std::string GetIIDString(const SLInterfaceID& iid);
 	SLmillibel VolToMillibel(float vol);
@@ -100,18 +104,10 @@ namespace rev {
 			SLObj			_outmix;
 			SDLAFormatCF	_outFormat;
 
-			friend class cereal::access;
 			template <class Ar>
-			void serialize(Ar& ar) {
-				int rate = getRate();
-				ar(rate);
-			}
+			friend void serialize(Ar&, SoundMgr_depSL&);
 			template <class Ar>
-			static void load_and_construct(Ar& ar, cereal::construct<SoundMgr_depSL>& construct) {
-				int rate;
-				ar(rate);
-				construct(rate);
-			}
+			static void load_and_construct(Ar&, cereal::construct<SoundMgr_depSL>&);
 
 		public:
 			SoundMgr_depSL(int rate);

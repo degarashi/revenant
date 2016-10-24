@@ -3,7 +3,11 @@
 #include "handle.hpp"
 #include "spine/singleton.hpp"
 #include "uri.hpp"
+#include <unordered_map>
 
+namespace cereal {
+	class access;
+}
 namespace rev {
 	#define mgr_path (::rev::AppPath::ref())
 	//! アプリケーションのパスや引数、その他システムパスを登録
@@ -49,36 +53,23 @@ namespace rev {
 			using CacheV = std::vector<std::pair<std::string, Cache>>;
 			mutable CacheV	_cache;
 
-			using SV = std::vector<std::string>;
+			void _init(const std::string rtname[], std::size_t n);
 			friend class cereal::access;
+			AppPathCache() = default;
 			template <class Ar>
-			void save(Ar& ar) const {
-				// リソース名だけシリアライズ
-				SV sv;
-				for(auto& s : _cache)
-					sv.emplace_back(s.first);
-				ar(sv);
-			}
+			friend void save(Ar&, const AppPathCache&);
 			template <class Ar>
-			void load(Ar& ar) {
-				SV sv;
-				ar(sv);
-
-				const int n = sv.size();
-				_cache.clear();
-				_cache.resize(n);
-				for(int i=0 ; i<n ; i++)
-					_cache[i].first = sv[i];
-			}
+			friend void load(Ar&, AppPathCache&);
 
 		public:
-			AppPathCache() = default;
-			void init(const std::string rtname[], std::size_t n);
+			bool operator == (const AppPathCache& a) const noexcept;
+			bool operator != (const AppPathCache& a) const noexcept;
+
 			template <std::size_t N>
 			AppPathCache(const std::string (&rtname)[N]):
 				_cache(N)
 			{
-				init(rtname, N);
+				_init(rtname, N);
 			}
 			const URI& uriFromResourceName(int n, const std::string& name) const;
 	};

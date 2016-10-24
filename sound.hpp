@@ -5,9 +5,13 @@
 #include "apppath.hpp"
 #include "resmgr_app.hpp"
 #include "spine/resmgr.hpp"
-#include <cereal/types/chrono.hpp>
 #include "sdl_rw.hpp"
 
+namespace cereal {
+	class access;
+	template <class T>
+	struct LoadAndConstruct;
+}
 namespace rev {
 	Duration CalcTimeLength(int word_size, int ch, int hz, std::size_t buffLen) noexcept;
 	uint64_t CalcSampleLength(int word_size, int ch, int hz, Duration dur) noexcept;
@@ -20,11 +24,8 @@ namespace rev {
 			Duration	_duration;
 			ABuffer();
 		private:
-			friend class cereal::access;
 			template <class Ar>
-			void serialize(Ar& ar) {
-				ar(_format, _duration);
-			}
+			friend void serialize(Ar&, ABuffer&);
 		public:
 			virtual ~ABuffer() {}
 			virtual bool isStreaming() const = 0;
@@ -53,6 +54,8 @@ namespace rev {
 				_Num
 			};
 			const static std::string cs_rtname[ResourceType::_Num];
+			template <class Ar>
+			friend void serialize(Ar&, ABufMgr&);
 		public:
 			ABufMgr();
 	};
@@ -98,9 +101,7 @@ namespace rev {
 
 			friend class cereal::access;
 			template <class Ar>
-			void serialize(Ar& ar) {
-				ar(cereal::base_class<ABuffer>(this), _buff);
-			}
+			friend void serialize(Ar&, AWaveBatch&);
 			AWaveBatch() = default;
 		public:
 			AWaveBatch(const HRW& hRW);
@@ -116,9 +117,7 @@ namespace rev {
 
 			friend class cereal::access;
 			template <class Ar>
-			void serialize(Ar& ar) {
-				ar(cereal::base_class<ABuffer>(this), _buff);
-			}
+			friend void serialize(Ar&, AOggBatch&);
 			AOggBatch() = default;
 		public:
 			AOggBatch(const HRW& hRW);
@@ -134,9 +133,7 @@ namespace rev {
 
 			friend class cereal::access;
 			template <class Ar>
-			void serialize(Ar& ar) {
-				ar(cereal::base_class<ABuffer>(this), _vfile, _prevOffset);
-			}
+			friend void serialize(Ar&, AOggStream&);
 			AOggStream() = default;
 		public:
 			AOggStream(const HRW& hRW);
@@ -249,6 +246,7 @@ namespace rev {
 			uint32_t	_playedCur;		//!< 再生済みブロック数
 
 			using UPFadeCB = std::unique_ptr<FadeCB>;
+		public:
 			struct Fade {
 				Duration	durBegin, durEnd;
 				float		fromGain, toGain;
@@ -257,9 +255,7 @@ namespace rev {
 				UPFadeCB	callback;
 
 				template <class Ar>
-				void serialize(Ar& ar) {
-					ar(durBegin, durEnd, fromGain, toGain, callback);
-				}
+				friend void serialize(Ar&, Fade&);
 
 				Fade();
 				Fade(Fade&& f) = default;
@@ -268,6 +264,7 @@ namespace rev {
 				//! 現在のボリュームを計算
 				float calcGain(ASource& self);
 			};
+		private:
 			enum FadeType {
 				FADE_BEGIN,		//!< 曲初めのフェードイン
 				FADE_END,		//!< 曲終わりのフェードアウト
@@ -275,7 +272,7 @@ namespace rev {
 				NUM_FADE
 			};
 			Fade		_fade[NUM_FADE];
-
+		public:
 			struct Save {
 				HAb			hAb;
 				int			stateID;
@@ -287,38 +284,15 @@ namespace rev {
 							timePos;
 
 				template <class Ar>
-				void serialize(Ar& ar) {
-					ar(hAb, stateID, nLoop, currentGain, targetGain,
-						fadeInTime, fadeOutTime, timePos);
-				}
+				friend void serialize(Ar&, Save&);
 				void pack(const ASource& self);
 				void unpack(ASource& self);
 			};
-			friend class cereal::access;
+		private:
 			template <class Ar>
-			void save(Ar& ar) const {
-				ar(_hAb);
-				for(auto& p : _fade)
-					p.serialize(ar);
-				Save save;
-				// 保存前に再生位置を更新
-				auto tm = _timePos;
-				const_cast<Duration&>(_timePos) = _timePos + (Clock::now() - _tmUpdate);
-				save.pack(*this);
-				ar(save);
-				std::cout << "save: " << _playedCur << std::endl;
-				const_cast<Duration&>(_timePos) = tm;
-			}
+			friend void save(Ar&, const ASource&);
 			template <class Ar>
-			void load(Ar& ar) {
-				ar(_hAb);
-				for(auto& p : _fade)
-					p.serialize(ar);
-				Save save;
-				ar(save);
-				save.unpack(*this);
-				std::cout << "load: " << _playedCur << std::endl;
-			}
+			friend void load(Ar&, ASource&);
 
 			float _applyFades(float gain);
 			void _advanceGain();
@@ -394,13 +368,10 @@ namespace rev {
 			int			_nActive;
 			bool		_bPaused;
 
-			friend class cereal::access;
 			template <class Ar>
-			void serialize(Ar& ar) {
-				ar(_source, _nActive, _bPaused);
-			}
+			friend void serialize(Ar&, AGroup&);
+			friend class cereal::access;
 
-			friend class spi::ResMgr<AGroup>;
 			AGroup() = default;
 		public:
 			AGroup(int n);
@@ -428,29 +399,16 @@ namespace rev {
 			SSrcMgr 	_srcMgr;
 			SGroupMgr	_sgMgr;
 
-			friend class cereal::access;
 			template <class Ar>
-			void serialize(Ar& ar) {
-				makeCurrent();
-				try {
-					ar(getRate(), _buffMgr, _srcMgr, _sgMgr);
-				} catch(const std::exception& e) {
-					std::cout << e.what() << std::endl;
-				}
-			}
-			template <class Ar>
-			static void load_and_construct(Ar& ar, cereal::construct<SoundMgr>& construct) {
-				int rate;
-				ar(rate);
-				construct(rate);
-				try {
-					ar(construct->_buffMgr, construct->_srcMgr, construct->_sgMgr);
-				} catch(const std::exception& e) {
-					std::cout << e.what() << std::endl;
-				}
-			}
+			friend void serialize(Ar&, SoundMgr&);
+			template <class T>
+			friend struct cereal::LoadAndConstruct;
 
 		public:
+			// デバッグ用
+			bool operator == (const SoundMgr& m) const noexcept;
+			bool operator != (const SoundMgr& m) const noexcept;
+
 			using SoundMgrDep::SoundMgrDep;
 			SoundMgr(const SoundMgr&) = delete;
 			HAb loadWaveBatch(const std::string& name);
@@ -465,13 +423,3 @@ namespace rev {
 			void invalidate();
 	};
 }
-#include <cereal/types/polymorphic.hpp>
-#include <cereal/archives/binary.hpp>
-#include <cereal/archives/json.hpp>
-CEREAL_REGISTER_TYPE(::rev::ABuffer);
-CEREAL_REGISTER_TYPE(::rev::AWaveBatch);
-CEREAL_REGISTER_TYPE(::rev::AOggBatch);
-CEREAL_REGISTER_TYPE(::rev::AOggStream);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(::rev::ABuffer, ::rev::AWaveBatch);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(::rev::ABuffer, ::rev::AOggBatch);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(::rev::ABuffer, ::rev::AOggStream);

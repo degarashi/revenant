@@ -10,11 +10,8 @@ namespace rev {
 			AppPathCache	_cache;
 			int				_idResType = 0;
 
-			friend class cereal::access;
-			template <class Ar>
-			void serialize(Ar& ar) {
-				ar(cereal::base_class<base_t>(this), _cache, _idResType);
-			}
+			template <class Ar, class Dat2>
+			friend void serialize(Ar&, ResMgrApp<Dat2>&);
 		protected:
 			template <class T>
 			ResMgrApp(T&& t):

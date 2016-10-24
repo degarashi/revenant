@@ -27,6 +27,8 @@ namespace rev {
 			using Priority = uint32_t;
 			using HandlerPair = std::pair<Priority, UriHandler_SP>;
 			using HandlerVec = std::vector<HandlerPair>;
+			template <class Ar>
+			friend void serialize(Ar&, UriHandlerV&);
 
 			HandlerVec	_handler;
 			auto _findHandler(const UriHandler_SP& h) const;

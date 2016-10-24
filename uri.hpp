@@ -1,6 +1,5 @@
 #pragma once
 #include "path.hpp"
-#include <cereal/types/base_class.hpp>
 
 namespace rev {
 	class URI : public PathBlock {
@@ -9,11 +8,8 @@ namespace rev {
 			const static std::u32string SEP32;
 			std::string		_type;
 
-			friend class cereal::access;
 			template <class Ar>
-			void serialize(Ar& ar) {
-				ar(cereal::base_class<PathBlock>(this), _type);
-			}
+			friend void serialize(Ar&, URI&);
 
 		public:
 			URI() = default;
@@ -44,8 +40,4 @@ namespace std {
 			return std::hash<std::u32string>()(uri.plain_utf32());
 		}
 	};
-}
-namespace cereal {
-	template <class Ar>
-	struct specialize<Ar, ::rev::URI, cereal::specialization::member_serialize> {};
 }

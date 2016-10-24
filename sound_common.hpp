@@ -3,8 +3,6 @@
 #include "handle.hpp"
 #include <SDL_audio.h>
 #include <vorbis/vorbisfile.h>
-#include <cereal/access.hpp>
-#include <cereal/types/base_class.hpp>
 
 namespace rev {
 	enum class AState {
@@ -41,9 +39,7 @@ namespace rev {
 			freq;
 
 		template <class Ar>
-		void serialize(Ar& ar) {
-			ar(cereal::base_class<SDLAFormat>(this), channels, freq);
-		}
+		friend void serialize(Ar&, SDLAFormatCF&);
 
 		SDLAFormatCF() = default;
 		SDLAFormatCF(SDLAFormat fmt, int fr) noexcept;
@@ -80,9 +76,7 @@ namespace rev {
 		int		freq;
 
 		template <class Ar>
-		void serialize(Ar& ar) {
-			ar(cereal::base_class<AFormat>(this), freq);
-		}
+		friend void serialize(Ar&, AFormatF&);
 
 		AFormatF() = default;
 		AFormatF(AFormat fmt, int fr) noexcept;
@@ -108,21 +102,10 @@ namespace rev {
 			int64_t			_iTotal;
 
 			friend class AOggStream;
-			friend class cereal::access;
 			template <class Ar>
-			void load(Ar& ar) {
-				ar(_hRW, _initialFPos);
-				_init();
-				int64_t fpos;
-				ar(fpos);
-				pcmSeek(fpos);
-			}
+			friend void load(Ar&, VorbisFile&);
 			template <class Ar>
-			void save(Ar& ar) const {
-				ar(_hRW, _initialFPos);
-				int64_t fpos = pcmTell();
-				ar(fpos);
-			}
+			friend void save(Ar&, const VorbisFile&);
 			void _init();
 			VorbisFile() = default;
 
@@ -160,10 +143,4 @@ namespace rev {
 			//! 内包リソースハンドルをリリースせず無効化 (=以後使用不可)
 			void invalidate() noexcept;
 	};
-}
-namespace cereal {
-	template <class Ar>
-	struct specialize<Ar, ::rev::SDLAFormatCF, cereal::specialization::member_serialize> {};
-	template <class Ar>
-	struct specialize<Ar, ::rev::AFormatF, cereal::specialization::member_serialize> {};
 }

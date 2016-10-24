@@ -2,7 +2,7 @@
 #include "spine/optional.hpp"
 #include "abstbuffer.hpp"
 #include <deque>
-#include <cereal/types/string.hpp>
+#include <functional>
 
 namespace rev {
 	template <class T>
@@ -68,19 +68,10 @@ namespace rev {
 			static auto _GetDriveLetter(Itr from, Itr to) -> spi::Optional<typename std::decay_t<decltype(*from)>>;
 			void _outputHeader(std::u32string& dst, bool bAbs) const;
         private:
-            friend class cereal::access;
-			// UTF-8文字列として読み書き
-            template <class Ar>
-			void save(Ar& ar) const {
-				ar(plain_utf8());
-			}
 			template <class Ar>
-			void load(Ar& ar) {
-				std::string path;
-				ar(path);
-				setPath(path);
-            }
-
+			friend void save(Ar&, const PathBlock&);
+			template <class Ar>
+			friend void load(Ar&, PathBlock&);
 		public:
 			template <class C>
 			struct StripResult {

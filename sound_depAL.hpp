@@ -8,6 +8,10 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 
+namespace cereal {
+	template <class T>
+	class construct;
+}
 namespace rev {
 	using Vec3 = frea::Vec3;
 	ALenum AsALFormat(const AFormat& f) noexcept;
@@ -87,22 +91,18 @@ namespace rev {
 			ALCdevice*	_device;
 			int			_rate;
 
-			friend class cereal::access;
 			template <class Ar>
-			void serialize(Ar& ar) {
-				ar(_rate);
-			}
+			friend void serialize(Ar&, SoundMgr_depAL&);
 			template <class Ar>
-			static void load_and_construct(Ar& ar, cereal::construct<SoundMgr_depAL>& construct) {
-				int rate;
-				ar(rate);
-				construct(rate);
-			}
+			static void load_and_construct(Ar&, cereal::construct<SoundMgr_depAL>&);
 
 		public:
 			SoundMgr_depAL(int rate);
 			SoundMgr_depAL(const SoundMgr_depAL&) = delete;
 			~SoundMgr_depAL();
+			// デバッグ用 (シリアライズされる変数のみ比較)
+			bool operator == (const SoundMgr_depAL& m) const noexcept;
+			bool operator != (const SoundMgr_depAL& m) const noexcept;
 
 			void printVersions(std::ostream& os);
 			ALCdevice* getDevice() const;

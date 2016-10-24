@@ -152,6 +152,12 @@ namespace rev {
 		}
 		alcCloseDevice(_device);
 	}
+	bool SoundMgr_depAL::operator == (const SoundMgr_depAL& m) const noexcept {
+		return _rate == m._rate;
+	}
+	bool SoundMgr_depAL::operator != (const SoundMgr_depAL& m) const noexcept {
+		return !(this->operator == (m));
+	}
 	ALCdevice* SoundMgr_depAL::getDevice() const {
 		return _device;
 	}

@@ -745,6 +745,16 @@ namespace rev {
 		).first;
 	}
 
+	bool SoundMgr::operator == (const SoundMgr& m) const noexcept {
+		if(_buffMgr != m._buffMgr ||
+			_srcMgr != m._srcMgr ||
+			_sgMgr != m._sgMgr)
+			return false;
+		return static_cast<const SoundMgrDep&>(*this) == static_cast<const SoundMgrDep&>(m);
+	}
+	bool SoundMgr::operator != (const SoundMgr& m) const noexcept {
+		return !(this->operator == (m));
+	}
 	HSg SoundMgr::createSourceGroup(const int n) {
 		return _sgMgr.emplace(n);
 	}

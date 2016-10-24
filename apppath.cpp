@@ -110,7 +110,7 @@ namespace rev {
 	}
 
 	// ------------------- AppPathCache -------------------
-	void AppPathCache::init(const std::string rtname[], const std::size_t n) {
+	void AppPathCache::_init(const std::string rtname[], const std::size_t n) {
 		_cache.resize(n);
 		for(std::size_t i=0 ; i<n ; i++)
 			_cache[i].first = rtname[i];
@@ -132,5 +132,11 @@ namespace rev {
 		auto& ent = cache.second[name];
 		ent = std::move(uri);
 		return ent;
+	}
+	bool AppPathCache::operator == (const AppPathCache& a) const noexcept {
+		return _cache == a._cache;
+	}
+	bool AppPathCache::operator != (const AppPathCache& a) const noexcept {
+		return !(this->operator ==(a));
 	}
 }

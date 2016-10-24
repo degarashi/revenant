@@ -8,6 +8,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fstream>
+#include <memory>
 
 namespace {
 	class PError : public std::runtime_error {

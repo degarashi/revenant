@@ -1,6 +1,7 @@
 #pragma once
 #include "sdl_tls.hpp"
 #include "spine/optional.hpp"
+#include <array>
 
 namespace rev {
 	//! SDLのMutexラッパ

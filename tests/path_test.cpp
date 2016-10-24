@@ -12,6 +12,7 @@
 #include "../path.hpp"
 #include "../random/path.hpp"
 #include "lubee/random/string.hpp"
+#include "../serialization/path.hpp"
 
 namespace rev {
 	namespace test {

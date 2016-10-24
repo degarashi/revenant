@@ -6,12 +6,14 @@
 #include "urihandler.hpp"
 #include "uri.hpp"
 #include <SDL_rwops.h>
-#include <cereal/access.hpp>
-#include <cereal/types/memory.hpp>
-#include <cereal/types/vector.hpp>
 #include <stdexcept>
 #include <vector>
 
+namespace cereal {
+	class access;
+	template <class T>
+	struct LoadAndConstruct;
+}
 namespace rev {
 	using ByteBuff = std::vector<uint8_t>;
 	class URI;
@@ -81,11 +83,8 @@ namespace rev {
 					void*		_ptr;
 					std::size_t	_size;
 
-					friend class cereal::access;
 					template <class Ar>
-					void serialize(Ar& /*ar*/) {
-						D_Expect(false, "this object cannot serialize");
-					}
+					friend void serialize(Ar&, TempData&);
 				public:
 					TempData() = default;
 					TempData(void* ptr, std::size_t s);
@@ -97,19 +96,12 @@ namespace rev {
 					URI			_uri;
 					ByteBuff	_buff;
 
+					template <class Ar>
+					friend void load(Ar&, VectorData&);
+					template <class Ar>
+					friend void save(Ar&, const VectorData&);
+
 					void _deserializeFromData(int64_t pos);
-					friend class cereal::access;
-					template <class Ar>
-					void load(Ar& ar) {
-						int64_t pos;
-						ar(_uri, _buff, pos);
-						_deserializeFromData(pos);
-					}
-					template <class Ar>
-					void save(Ar& ar) const {
-						const int64_t pos = tell();
-						ar(_uri, _buff, pos);
-					}
 				public:
 					VectorData() = default;
 					VectorData(const URI& uri, ByteBuff&& b);
@@ -122,20 +114,13 @@ namespace rev {
 					PathBlock	_path;
 					int			_access;
 
+					template <class Ar>
+					friend void load(Ar&, FileData&);
+					template <class Ar>
+					friend void save(Ar&, const FileData&);
+
 					void _loadFromFile();
 					void _deserializeFromData(int64_t pos);
-					friend class cereal::access;
-					template <class Ar>
-					void load(Ar& ar) {
-						int64_t pos;
-						ar(_path, _access, pos);
-						_deserializeFromData(pos);
-					}
-					template <class Ar>
-					void save(Ar& ar) const {
-						const int64_t pos = tell();
-						ar(_path, _access, pos);
-					}
 				public:
 					FileData() = default;
 					FileData(const PathBlock& path, const int access);
@@ -200,9 +185,7 @@ namespace rev {
 
 			friend class cereal::access;
 			template <class Ar>
-			void serialize(Ar& ar) {
-				ar(_access, _data, _endCB);
-			}
+			friend void serialize(Ar&, RWops&);
 
 			RWops() = default;
 			RWops(const int access, Data_UP data, const Callback_SP& cb) {
@@ -272,6 +255,11 @@ namespace rev {
 			//! 一時ファイルディレクトリのファイルを全て削除
 			void _cleanupTemporaryFile();
 
+			template <class Ar>
+			friend void serialize(Ar&, RWMgr&);
+			template <class T>
+			friend struct cereal::LoadAndConstruct;
+
 		public:
 			RWMgr(const std::string& org_name, const std::string& app_name);
 
@@ -295,12 +283,3 @@ namespace rev {
 			PathBlock makeFilePath(const std::string& dirName) const;
 	};
 }
-#include <cereal/types/polymorphic.hpp>
-#include <cereal/archives/binary.hpp>
-#include <cereal/archives/json.hpp>
-CEREAL_REGISTER_TYPE(::rev::RWops::TempData);
-CEREAL_REGISTER_TYPE(::rev::RWops::VectorData);
-CEREAL_REGISTER_TYPE(::rev::RWops::FileData);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(::rev::RWops::Data, ::rev::RWops::TempData);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(::rev::RWops::Data, ::rev::RWops::VectorData);
-CEREAL_REGISTER_POLYMORPHIC_RELATION(::rev::RWops::Data, ::rev::RWops::FileData);
