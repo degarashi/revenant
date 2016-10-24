@@ -1,4 +1,5 @@
 #include "input_dep_sdl.hpp"
+#include <cstring>
 
 namespace rev {
 	HInput SDLKeyboard::s_hInput;
