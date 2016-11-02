@@ -318,14 +318,24 @@ namespace rev {
 	bool RWops::writeLE(uint64_t value) {
 		return SDL_WriteLE64(_data->getOps(), value) == 1;
 	}
+	namespace {
+		template <class T>
+		T ReadAll(RWops& ops) {
+			const auto pos = ops.tell();
+			const std::size_t sz = ops.size();
+			T buff;
+			buff.resize(sz+1);
+			ops.seek(0, RWops::Pos::Begin);
+			ops.read(&buff[0], sz, 1);
+			ops.seek(pos, RWops::Pos::Begin);
+			return buff;
+		}
+	}
 	ByteBuff RWops::readAll() {
-		const auto pos = tell();
-		const std::size_t sz = size();
-		ByteBuff buff(sz);
-		seek(0, Pos::Begin);
-		read(&buff[0], sz, 1);
-		seek(pos, Pos::Begin);
-		return buff;
+		return ReadAll<ByteBuff>(*this);
+	}
+	std::string RWops::readAllAsString() {
+		return ReadAll<std::string>(*this);
 	}
 	RWops::Type::e RWops::getType() const noexcept { return _data->getType(); }
 	bool RWops::isReadable() const noexcept {

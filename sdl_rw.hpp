@@ -234,6 +234,7 @@ namespace rev {
 			bool writeLE(uint64_t value);
 			SDL_RWops* getOps() const noexcept;
 			ByteBuff readAll();
+			std::string readAllAsString();
 			Type::e getType() const noexcept;
 			bool isReadable() const noexcept;
 			bool isWritable() const noexcept;
