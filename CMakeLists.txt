@@ -58,9 +58,7 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(OggVorbis REQUIRED)
 include_directories(
-	./
-	./frea
-	./lubee
+	.
 	${SDL2_IMAGE_INCLUDE_DIRS}
 	${SDL2_INCLUDE_DIRS}
 	${FREETYPE_INCLUDE_DIRS}

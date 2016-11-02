@@ -1,6 +1,5 @@
 #include "sdl_init.hpp"
 #include "sdl_tls.hpp"
-// #include <SDL.h>
 #include <SDL_image.h>
 
 namespace rev {

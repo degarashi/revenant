@@ -1,6 +1,6 @@
 #include "test.hpp"
 #include "../color.hpp"
-#include "../lubee/ieee754.hpp"
+#include "lubee/ieee754.hpp"
 
 namespace rev {
 	namespace test {
