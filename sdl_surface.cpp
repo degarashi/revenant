@@ -103,22 +103,22 @@ namespace rev {
 	Surface::~Surface() {
 		SDLWarn(SDL_FreeSurface, _sfc);
 	}
-	SPSurface Surface::Create(const int w, const int h, const uint32_t format) {
+	Surface_SP Surface::Create(const int w, const int h, const uint32_t format) {
 		auto fmt = MakeUPFormat(format);
 		auto* sfc = SDLAssert(SDL_CreateRGBSurface, 0, w, h, fmt->BitsPerPixel, fmt->Rmask, fmt->Gmask, fmt->Bmask, fmt->Amask);
-		return SPSurface(new Surface(sfc));
+		return Surface_SP(new Surface(sfc));
 	}
-	SPSurface Surface::Create(const ByteBuff& src, const int pitch, const int w, const int h, const uint32_t format) {
+	Surface_SP Surface::Create(const ByteBuff& src, const int pitch, const int w, const int h, const uint32_t format) {
 		return Create(ByteBuff(src), pitch, w, h, format);
 	}
-	SPSurface Surface::Create(ByteBuff&& src, int pitch, const int w, const int h, const uint32_t format) {
+	Surface_SP Surface::Create(ByteBuff&& src, int pitch, const int w, const int h, const uint32_t format) {
 		const auto fmt = MakeUPFormat(format);
 		if(pitch==0)
 			pitch = fmt->BytesPerPixel*w;
 		auto* sfc = SDLAssert(SDL_CreateRGBSurfaceFrom, &src[0], w, h, fmt->BitsPerPixel, pitch, fmt->Rmask, fmt->Gmask, fmt->Bmask, fmt->Amask);
-		return SPSurface(new Surface(sfc, std::move(src)));
+		return Surface_SP(new Surface(sfc, std::move(src)));
 	}
-	SPSurface Surface::Load(HRW hRW) {
+	Surface_SP Surface::Load(HRW hRW) {
 		SDL_RWops* rw = hRW->getOps();
 		IMGThrow(LoadFailed, IMG_Load_RW, rw, 0);
 		IMGError err;
@@ -126,7 +126,7 @@ namespace rev {
 		SDL_Surface* sfc = IMG_Load_RW(rw, 0);
 		if(const char* e = err.errorDesc())
 			throw LoadFailed(e);
-		return SPSurface(new Surface(sfc));
+		return Surface_SP(new Surface(sfc));
 	}
 	void Surface::saveAsBMP(HRW hDst) const {
 		SDLThrow(std::runtime_error, SDL_SaveBMP_RW, _sfc, hDst->getOps(), 0);
@@ -173,15 +173,15 @@ namespace rev {
 	int Surface::height() const noexcept {
 		return _sfc->h;
 	}
-	SPSurface Surface::convert(const uint32_t fmt) const {
+	Surface_SP Surface::convert(const uint32_t fmt) const {
 		SDL_Surface* nsfc = SDL_ConvertSurfaceFormat(_sfc, fmt, 0);
 		Assert0(nsfc);
-		return SPSurface(new Surface(nsfc));
+		return Surface_SP(new Surface(nsfc));
 	}
-	SPSurface Surface::convert(const SDL_PixelFormat& fmt) const {
+	Surface_SP Surface::convert(const SDL_PixelFormat& fmt) const {
 		SDL_Surface* nsfc = SDL_ConvertSurface(_sfc, const_cast<SDL_PixelFormat*>(&fmt), 0);
 		Assert0(nsfc);
-		return SPSurface(new Surface(nsfc));
+		return Surface_SP(new Surface(nsfc));
 	}
 	bool Surface::isContinuous() const noexcept {
 		return _sfc->pitch == _sfc->w * _sfc->format->BytesPerPixel;
@@ -221,7 +221,7 @@ namespace rev {
 			return ret;
 		}
 	}
-	void Surface::blit(const SPSurface& sfc, const lubee::RectI& srcRect, const int dstX, const int dstY) const {
+	void Surface::blit(const Surface_SP& sfc, const lubee::RectI& srcRect, const int dstX, const int dstY) const {
 		SDL_Rect sr = ToSDLRect(srcRect),
 				dr;
 		dr.x = dstX;
@@ -230,12 +230,12 @@ namespace rev {
 		dr.h = dr.h;
 		SDLAssert(SDL_BlitSurface, _sfc, &sr, sfc->getSurface(), &dr);
 	}
-	void Surface::blitScaled(const SPSurface& sfc, const lubee::RectI& srcRect, const lubee::RectI& dstRect) const {
+	void Surface::blitScaled(const Surface_SP& sfc, const lubee::RectI& srcRect, const lubee::RectI& dstRect) const {
 		SDL_Rect sr = ToSDLRect(srcRect),
 				dr = ToSDLRect(dstRect);
 		SDLAssert(SDL_BlitScaled, _sfc, &sr, sfc->getSurface(), &dr);
 	}
-	SPSurface Surface::resize(const lubee::SizeI& s) const {
+	Surface_SP Surface::resize(const lubee::SizeI& s) const {
 		const auto bm = getBlendMode();
 		auto* self = const_cast<Surface*>(this);
 		self->setBlendMode(SDL_BLENDMODE_NONE);
@@ -243,21 +243,21 @@ namespace rev {
 		const auto sz = getSize();
 		lubee::RectI srcRect(0,sz.width, 0,sz.height),
 					dstRect(0,s.width, 0,s.height);
-		SPSurface nsfc = Create(s.width, s.height, getFormat().format);
+		Surface_SP nsfc = Create(s.width, s.height, getFormat().format);
 		blitScaled(nsfc, srcRect, dstRect);
 
 		self->setBlendMode(bm);
 		return nsfc;
 	}
-	SPSurface Surface::makeBlank() const {
+	Surface_SP Surface::makeBlank() const {
 		return Create(width(), height(), getFormatEnum());
 	}
-	SPSurface Surface::duplicate() const {
+	Surface_SP Surface::duplicate() const {
 		auto sp = makeBlank();
 		blit(sp, {0,width(),0,height()}, 0, 0);
 		return sp;
 	}
-	SPSurface Surface::flipHorizontal() const {
+	Surface_SP Surface::flipHorizontal() const {
 		auto sp = makeBlank();
 		const int w = width(),
 					h = height();
@@ -265,7 +265,7 @@ namespace rev {
 			blit(sp, {i,i+1,0,h}, w-i-1, 0);
 		return sp;
 	}
-	SPSurface Surface::flipVertical() const {
+	Surface_SP Surface::flipVertical() const {
 		auto sp = makeBlank();
 		const int w = width(),
 					h = height();

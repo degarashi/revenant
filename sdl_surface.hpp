@@ -10,7 +10,7 @@ namespace rev {
 	struct RGB;
 	struct RGBA;
 	class Surface;
-	using SPSurface = std::shared_ptr<Surface>;
+	using Surface_SP = std::shared_ptr<Surface>;
 	class Surface {
 		private:
 			SDL_Surface*	_sfc;
@@ -46,12 +46,12 @@ namespace rev {
 			static const std::string& GetFormatString(uint32_t format);
 
 			//! 任意のフォーマットの画像を読み込む
-			static SPSurface Load(HRW hRW);
+			static Surface_SP Load(HRW hRW);
 			//! 空のサーフェス作成
-			static SPSurface Create(int w, int h, uint32_t format);
+			static Surface_SP Create(int w, int h, uint32_t format);
 			//! ピクセルデータを元にサーフェス作成
-			static SPSurface Create(const ByteBuff& src, int pitch, int w, int h, uint32_t format);
-			static SPSurface Create(ByteBuff&& src, int pitch, int w, int h, uint32_t format);
+			static Surface_SP Create(const ByteBuff& src, int pitch, int w, int h, uint32_t format);
+			static Surface_SP Create(ByteBuff&& src, int pitch, int w, int h, uint32_t format);
 
 			~Surface();
 			void saveAsBMP(HRW hDst) const;
@@ -64,25 +64,25 @@ namespace rev {
 			int width() const noexcept;
 			int height() const noexcept;
 			//! 同サイズのサーフェスを作成
-			SPSurface makeBlank() const;
-			SPSurface duplicate() const;
-			SPSurface flipHorizontal() const;
-			SPSurface flipVertical() const;
+			Surface_SP makeBlank() const;
+			Surface_SP duplicate() const;
+			Surface_SP flipHorizontal() const;
+			Surface_SP flipVertical() const;
 			//! ピクセルフォーマット変換
-			SPSurface convert(uint32_t fmt) const;
-			SPSurface convert(const SDL_PixelFormat& fmt) const;
+			Surface_SP convert(uint32_t fmt) const;
+			Surface_SP convert(const SDL_PixelFormat& fmt) const;
 			//! ピクセルデータがデータ配列先頭から隙間なく詰められているか
 			bool isContinuous() const noexcept;
 			//! Continuousな状態でピクセルデータを抽出
 			ByteBuff extractAsContinuous(uint32_t dstFmt=0) const;
 			//! ビットブロック転送
-			void blit(const SPSurface& sfc, const lubee::RectI& srcRect, int dstX, int dstY) const;
+			void blit(const Surface_SP& sfc, const lubee::RectI& srcRect, int dstX, int dstY) const;
 			//! スケーリング有りのビットブロック転送
-			void blitScaled(const SPSurface& sfc, const lubee::RectI& srcRect, const lubee::RectI& dstRect) const;
+			void blitScaled(const Surface_SP& sfc, const lubee::RectI& srcRect, const lubee::RectI& dstRect) const;
 			//! 単色での矩形塗りつぶし
 			void fillRect(const lubee::RectI& rect, uint32_t color);
 			SDL_Surface* getSurface() const noexcept;
-			SPSurface resize(const lubee::SizeI& s) const;
+			Surface_SP resize(const lubee::SizeI& s) const;
 			void setEnableColorKey(uint32_t key);
 			void setDisableColorKey();
 			spi::Optional<uint32_t> getColorKey() const;
