@@ -108,6 +108,8 @@ namespace rev {
 			void pushBack(To32Str elem);
 			void pushBack(const PathBlock& p);
 			void popBack();
+			//! pushBack(elem) と同じ
+			PathBlock& operator += (To32Str elem);
 			//! パスを前に追加。thisが絶対パスの時は置き換える
 			void pushFront(To32Str elem);
 			void pushFront(const PathBlock& p);

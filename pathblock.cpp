@@ -142,6 +142,10 @@ namespace rev {
 	bool PathBlock::isAbsolute() const noexcept {
 		return _bAbsolute;
 	}
+	PathBlock& PathBlock::operator += (To32Str elem) {
+		pushBack(elem);
+		return *this;
+	}
 	PathBlock& PathBlock::operator <<= (To32Str elem) {
 		pushBack(elem);
 		return *this;
