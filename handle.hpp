@@ -23,35 +23,26 @@ namespace rev {
 		{}
 	};
 
-	class RWops;
-	using HRW = std::shared_ptr<RWops>;
-	using WRW = std::weak_ptr<RWops>;
+	#define DEF_HANDLE(typ, name) \
+		using H##name = std::shared_ptr<typ>; \
+		using W##name = std::weak_ptr<typ>;
+	DEF_HANDLE(Resource, Res)
 
-	class Action;
-	using HAct = std::shared_ptr<Action>;
-	using WAct = std::weak_ptr<Action>;
+	class RWops;
+	DEF_HANDLE(RWops, RW)
 
 	struct Input;
-	using HInput = std::shared_ptr<Input>;
-	using WInput = std::weak_ptr<Input>;
-
+	DEF_HANDLE(Input, Input)
 	class Action;
-	using HAct = std::shared_ptr<Action>;
-	using WAct = std::weak_ptr<Action>;
-
+	DEF_HANDLE(Action, Act)
 	struct TPos2D;
-	using HPtr = std::shared_ptr<TPos2D>;
-	using WPtr = std::weak_ptr<TPos2D>;
-
+	DEF_HANDLE(TPos2D, Ptr)
 	class ABuffer;
-	using HAb = std::shared_ptr<ABuffer>;
-	using WAb = std::weak_ptr<ABuffer>;
-
+	DEF_HANDLE(ABuffer, Ab)
 	class ASource;
-	using HSs = std::shared_ptr<ASource>;
-	using WSs = std::weak_ptr<ASource>;
-
+	DEF_HANDLE(ASource, Ss)
 	class AGroup;
-	using HSg = std::shared_ptr<AGroup>;
-	using WSg = std::weak_ptr<AGroup>;
+	DEF_HANDLE(AGroup, Sg)
+
+	#undef DEF_HANDLE
 }
