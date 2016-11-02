@@ -32,7 +32,7 @@ namespace rev {
 			auto loadResourceApp(KEY&& name, CB&& cb, INIT&& cbInit) {
 				const auto ret = base_t::acquireWithMake(std::forward<KEY>(name), cb);
 				if(ret.second)
-					cbInit(ret.first.get());
+					cbInit(ret.first);
 				return ret;
 			}
 	};
