@@ -17,14 +17,14 @@ namespace rev {
 					LANG_USER_DEFAULT,
 					reinterpret_cast<LPWSTR>(&lpMsg),
 					128, nullptr);
-		spn::PathStr pstr(reinterpret_cast<const char16_t*>(lpMsg));
+		PathStr pstr(reinterpret_cast<const char16_t*>(lpMsg));
 		std::cout << Text::UTFConvertTo8(pstr) << std::endl;
 		LocalFree(lpMsg);
 
 		std::stringstream ss;
 		ss << "winapi-error at " << name << std::endl;
 		ss << "ErrorID: " << errID << std::endl;
-		std::string msg = spn::Text::UTFConvertTo8(pstr);
+		std::string msg = Text::UTFConvertTo8(pstr);
 		ss.write(msg.c_str(), msg.length());
 		static_cast<std::runtime_error&>(*this) = std::runtime_error(ss.str());
 	}
