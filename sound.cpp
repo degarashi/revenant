@@ -144,7 +144,7 @@ namespace rev {
 	std::pair<const void*, std::size_t> AWaveBatch::getAllData(const uint64_t offset) const {
 		return std::make_pair(&_buff[offset], _buff.size()-offset);
 	}
-	
+
 	// --------------------- AOggBatch ---------------------
 	AOggBatch::AOggBatch(const HRW& hRW) {
 		RawData rd = VorbisFile::ReadAll(hRW);
@@ -221,7 +221,7 @@ namespace rev {
 		hAb = self._hAb;
 		stateID = static_cast<int>(self._state->getState());
 		nLoop = self._nLoop;
-	
+
 		currentGain = self._currentGain;
 		targetGain = self._targetGain;
 		fadeInTime = self._fadeInTime;
@@ -507,14 +507,14 @@ namespace rev {
 	{}
 	void ASource::S_Playing::onEnter(ASource& self, AState /*prev*/) {
 		std::cout << "S_Playing" << std::endl;
-	
+
 		self._tmUpdate = Clock::now();
 		auto& fd = self._fade[FADE_CHANGE];
 		fd.durBegin = self._timePos;
 		fd.durEnd = self._timePos + _fadeIn;
 		fd.fromGain = 0.f;
 		fd.toGain = 1.f;
-	
+
 		update(self);
 		self._dep.play();
 	}

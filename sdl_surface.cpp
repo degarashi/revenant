@@ -190,7 +190,7 @@ namespace rev {
 		auto& myformat = getFormat();
 		if(dstFmt == 0)
 			dstFmt = myformat.format;
-	
+
 		auto lk = lock();
 		int w = width(),
 			h = height();
@@ -239,13 +239,13 @@ namespace rev {
 		const auto bm = getBlendMode();
 		auto* self = const_cast<Surface*>(this);
 		self->setBlendMode(SDL_BLENDMODE_NONE);
-	
+
 		const auto sz = getSize();
 		lubee::RectI srcRect(0,sz.width, 0,sz.height),
 					dstRect(0,s.width, 0,s.height);
 		SPSurface nsfc = Create(s.width, s.height, getFormat().format);
 		blitScaled(nsfc, srcRect, dstRect);
-	
+
 		self->setBlendMode(bm);
 		return nsfc;
 	}

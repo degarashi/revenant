@@ -42,7 +42,7 @@ namespace rev {
 		// * -> ([_ \.\-\w]+?)
 		// ? -> ([_ \.\-\w])
 		// . -> (\.)
-	
+
 		// バックスラッシュをスラッシュに置き換え
 		// \ -> /
 		std::regex re[4] = {std::regex(R"(\\)"), std::regex(R"(\*)"), std::regex(R"(\?)"), std::regex(R"(\.)")};
@@ -117,7 +117,7 @@ namespace rev {
 	void Dir::_EnumEntryRegEx(RegexItr itr, RegexItr itrE, std::string& lpath, const std::size_t baseLen, EnumCB cb) {
 		if(itr == itrE)
 			return;
-	
+
 		size_t pl = lpath.size();
 		DirDep::EnumEntry(lpath, [=, &lpath, &cb](const PathCh* name, bool) {
 			if(name[0]==PathCh(DOT)) {
@@ -175,7 +175,7 @@ namespace rev {
 		}
 		if(!bAbs)
 			path += "./";
-	
+
 		try {
 			RegexL rl = _ParseRegEx(r.substr(ofs));
 			_EnumEntryRegEx(rl.begin(), rl.end(), path, path.size()+1, cb);
@@ -204,7 +204,7 @@ namespace rev {
 		if(isAbsolute())
 			DirDep::Chdir(SC_P);
 		mode |= FStatus::UserRWX;
-	
+
 		int nsg = segments();
 		std::string ns;
 		int i;
@@ -216,7 +216,7 @@ namespace rev {
 		}
 		if(i == nsg)
 			return;
-	
+
 		// パスがファイルだったら失敗とする
 		Assert(!DirDep::IsFile(ns), "there is file at the path");
 		for(;;) {

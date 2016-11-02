@@ -108,7 +108,7 @@ namespace rev {
 		d.ratio = r;
 		d.deadzone = dz;
 	}
-	
+
 	// ----------------- Joypad -----------------
 	InputType Joypad::getType() const {
 		return InputType::Joypad;
@@ -330,12 +330,12 @@ namespace rev {
 					T::func(); \
 				} \
 		};
-	
+
 		DEF_CALLER(Initialize)
 		DEF_CALLER(Terminate)
 		DEF_CALLER(Update)
 		#undef DEF_CALLER
-	
+
 		template <class Caller>
 		void _CallFunction(Caller) {}
 		template <class Caller, class T, class... Ts>

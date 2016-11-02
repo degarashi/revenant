@@ -19,13 +19,13 @@ namespace rev {
 			nullptr
 		};
 	}
-	
+
 	Spec::Spec() noexcept:
 		_platform(SDL_GetPlatform())
 	{
 		_nCacheLine = SDL_GetCPUCacheLineSize();
 		_nCpu = SDL_GetCPUCount();
-	
+
 		uint32_t feat = 0;
 		auto* f = cs_ff;
 		uint32_t bit = 0x01;
@@ -65,7 +65,7 @@ namespace rev {
 		}
 		return ps;
 	}
-	
+
 	void Spec::PStat::output(std::ostream& os) const {
 		if(state == PStatN::Unknown)
 			os << "Unknown state";
@@ -76,7 +76,7 @@ namespace rev {
 			if(seconds == -1) os << "unknown time left";
 			else os << seconds << " seconds left";
 			os << std::endl;
-	
+
 			if(percentage == -1) os << "unknown percentage left";
 			else os << percentage << " percent left";
 		}

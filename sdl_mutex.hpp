@@ -214,7 +214,7 @@ namespace rev {
 			using CInner = detail::SpinInner<SpinLockPut<T>, const T, detail::CallUnlock>;
 			friend struct detail::CallUnlock;
 			using ThreadID_OP = spi::Optional<SDL_threadID>;
-		
+
 			TLS<int>		_tlsCount;
 			ThreadID_OP		_lockID;
 			int				_lockCount;
@@ -301,7 +301,7 @@ namespace rev {
 	class SpinLockRW {
 		private:
 			Mutex			_mutex;
-	
+
 			using InnerW = detail::SpinInner<SpinLockRW<T,NRead>, T, detail::CallUnlock>;
 			using InnerR = detail::SpinInner<SpinLockRW<T,NRead>, const T, detail::CallUnlockR>;
 			friend struct detail::CallUnlock;
