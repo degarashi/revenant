@@ -28,12 +28,9 @@ namespace rev {
 		public:
 			// CB = function<Dat (const URI&)>
 			// INIT = function<void (Resource)>
-			template <class KEY, class CB, class INIT>
-			auto loadResourceApp(KEY&& name, CB&& cb, INIT&& cbInit) {
-				const auto ret = base_t::acquireWithMake(std::forward<KEY>(name), cb);
-				if(ret.second)
-					cbInit(ret.first);
-				return ret;
+			template <class T2, class KEY, class CB>
+			auto loadResourceApp(KEY&& name, CB&& cb) {
+				return base_t::template acquireWithMake<T2>(std::forward<KEY>(name), cb);
 			}
 	};
 }

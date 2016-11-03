@@ -289,7 +289,7 @@ namespace rev {
 	struct InputMaker {
 		template <class... Ts>
 		auto operator ()(Ts&&... ts) const {
-			return mgr_input.emplaceWithType<T>(std::forward<Ts>(ts)...);
+			return mgr_input.emplace<T>(std::forward<Ts>(ts)...);
 		}
 	};
 }

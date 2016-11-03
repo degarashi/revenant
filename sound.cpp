@@ -716,32 +716,29 @@ namespace rev {
 	}
 
 	namespace {
-		template <class T>
-		auto* MakeAb(const URI& uri) {
+		template <class T, class Make>
+		void MakeAb(const URI& uri, Make&& mk) {
 			auto lh = mgr_rw.fromURI(uri, Access::Read);
-			return new T(lh);
+			mk(lh);
 		}
 	}
 	// ------------------ SoundMgr ------------------
 	HAb SoundMgr::loadWaveBatch(const std::string& name) {
-		return _buffMgr.loadResourceApp(
+		return _buffMgr.loadResourceApp<AWaveBatch>(
 			URI(name),
-			&MakeAb<AWaveBatch>,
-			[](auto){}
+			[](auto& uri, auto&& mk){ MakeAb<AWaveBatch>(uri, mk); }
 		).first;
 	}
 	HAb SoundMgr::loadOggBatch(const std::string& name) {
-		return _buffMgr.loadResourceApp(
+		return _buffMgr.loadResourceApp<AOggBatch>(
 			URI(name),
-			&MakeAb<AOggBatch>,
-			[](auto){}
+			[](auto& uri, auto&& mk){ MakeAb<AOggBatch>(uri, mk); }
 		).first;
 	}
 	HAb SoundMgr::loadOggStream(const std::string& name) {
-		return _buffMgr.loadResourceApp(
+		return _buffMgr.loadResourceApp<AOggStream>(
 			URI(name),
-			&MakeAb<AOggStream>,
-			[](auto){}
+			[](auto& uri, auto&& mk){ MakeAb<AOggStream>(uri, mk); }
 		).first;
 	}
 
