@@ -25,7 +25,7 @@ set(DEPENDANT_OPENAL sound_depAL.cpp sound_depAL_error.cpp)
 set(SOUND_DEPENDANT_SRC ${DEPENDANT_OPENSL} ${DEPENDANT_OPENAL})
 
 # 依存ファイル以外のソースファイルを収集
-file(GLOB LIBSRC_FILE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp)
+file(GLOB LIBSRC_FILE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp drawtoken/*.cpp)
 list(REMOVE_ITEM LIBSRC_FILE ${OS_DEPENDANT_SRC} ${SOUND_DEPENDANT_SRC})
 
 # サウンド依存ファイルの設定
@@ -67,6 +67,13 @@ include_directories(
 	${OGG_INCLUDE_DIR}
 	${OPENAL_INCLUDE_DIRS}
 )
+# Linux環境
+add_definitions(-DINCLUDE_OPENGL_1_X
+				-DINCLUDE_OPENGL_2_X
+				-DINCLUDE_OPENGL_3_X
+				-DINCLUDE_OPENGL_FRAMEBUFFER
+				-DINCLUDE_OPENGL_SYNC
+				-DINCLUDE_OPENGL_TIMER_QUERY)
 add_library(revenant SHARED ${LIBSRC_FILE})
 target_link_libraries(revenant
 	${SDL2_IMAGE_LIBRARIES}

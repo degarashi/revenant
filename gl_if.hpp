@@ -1,0 +1,164 @@
+#pragma once
+#include "sdl_tls.hpp"
+#include "sdl_mutex.hpp"
+#include "spine/singleton.hpp"
+#include "gl_header.hpp"
+#include <unordered_map>
+#include <memory>
+#include <boost/preprocessor.hpp>
+
+namespace rev {
+	struct IGL {
+		#define GLDEFINE(...)
+		#define DEF_GLCONST(...)
+		#ifdef DEBUG
+			#define DEF_GLMETHOD2(ret_type, name, args) virtual ret_type name##_NC(BOOST_PP_SEQ_ENUM(args)) = 0;
+		#else
+			#define DEF_GLMETHOD2(...)
+		#endif
+		#define DEF_GLMETHOD(ret_type, num, name, args, argnames) \
+			virtual ret_type name(BOOST_PP_SEQ_ENUM(args)) = 0; \
+			DEF_GLMETHOD2(ret_type, name, args)
+
+		#ifdef ANDROID
+			#include "opengl_define/android_gl.inc"
+		#elif defined(WIN32)
+			#include "opengl_define/mingw_gl.inc"
+		#else
+			#include "opengl_define/linux_gl.inc"
+		#endif
+
+		#undef DEF_GLMETHOD
+		#undef DEF_GLMETHOD2
+		#undef DEF_GLCONST
+		#undef GLDEFINE
+		virtual void setSwapInterval(int n) = 0;
+		virtual void stencilFuncFront(int func, int ref, int mask) = 0;
+		virtual void stencilFuncBack(int func, int ref, int mask) = 0;
+		virtual void stencilOpFront(int sfail, int dpfail, int dppass) = 0;
+		virtual void stencilOpBack(int sfail, int dpfail, int dppass) = 0;
+		virtual void stencilMaskFront(int mask) = 0;
+		virtual void stencilMaskBack(int mask) = 0;
+		virtual void polygonMode(int mode) = 0;
+		virtual ~IGL() {}
+	};
+	//! 直でOpenGL関数を呼ぶ
+	struct IGL_Draw : IGL {
+		#define GLDEFINE(...)
+		#define DEF_GLCONST(...)
+		#ifdef DEBUG
+			#define DEF_GLMETHOD2(ret_type, name, args) virtual ret_type name##_NC(BOOST_PP_SEQ_ENUM(args)) override;
+		#else
+			#define DEF_GLMETHOD2(...)
+		#endif
+		#define DEF_GLMETHOD(ret_type, num, name, args, argnames) \
+			virtual ret_type name(BOOST_PP_SEQ_ENUM(args)) override; \
+			DEF_GLMETHOD2(ret_type, name, args)
+
+		#ifdef ANDROID
+			#include "opengl_define/android_gl.inc"
+		#elif defined(WIN32)
+			#include "opengl_define/mingw_gl.inc"
+		#else
+			#include "opengl_define/linux_gl.inc"
+		#endif
+
+		void setSwapInterval(int n) override;
+		void stencilFuncFront(int func, int ref, int mask)  override;
+		void stencilFuncBack(int func, int ref, int mask)  override;
+		void stencilOpFront(int sfail, int dpfail, int dppass)  override;
+		void stencilOpBack(int sfail, int dpfail, int dppass)  override;
+		void stencilMaskFront(int mask)  override;
+		void stencilMaskBack(int mask)  override;
+		void polygonMode(int mode) override;
+	};
+	//! DrawThreadにOpenGL関数呼び出しを委託
+	struct IGL_OtherSingle : IGL {
+		#ifdef ANDROID
+			#include "opengl_define/android_gl.inc"
+		#elif defined(WIN32)
+			#include "opengl_define/mingw_gl.inc"
+		#else
+			#include "opengl_define/linux_gl.inc"
+		#endif
+
+		#undef DEF_GLMETHOD
+		#undef DEF_GLMETHOD2
+		#undef DEF_GLCONST
+		#undef GLDEFINE
+
+		void setSwapInterval(int n) override;
+		void stencilFuncFront(int func, int ref, int mask)  override;
+		void stencilFuncBack(int func, int ref, int mask)  override;
+		void stencilOpFront(int sfail, int dpfail, int dppass)  override;
+		void stencilOpBack(int sfail, int dpfail, int dppass)  override;
+		void stencilMaskFront(int mask)  override;
+		void stencilMaskBack(int mask)  override;
+		void polygonMode(int mode) override;
+	};
+	extern TLS<IGL*>	tls_GL;
+	#define GL	(*(*::rev::tls_GL))
+
+	#define GLW	(::rev::GLWrap::ref())
+	#ifdef WIN32
+		#define APICALL __attribute__((stdcall))
+	#elif defined(ANDROID)
+		#define APICALL	GL_APICALL
+	#else
+		#define APICALL GLAPI
+	#endif
+	class Handler;
+	//! OpenGL APIラッパー
+	class GLWrap : public spi::Singleton<GLWrap> {
+		private:
+			IGL_Draw			_ctxDraw;
+			IGL_OtherSingle		_ctxSingle;
+			bool				_bShare;
+			Handler*			_drawHandler;
+
+			// ---- Context共有データ ----
+			using SharedP = SpinLockRW<void*, 4>;
+			using Shared = std::unordered_map<int, SharedP>;
+			Shared		_pShared;
+
+			using SharedPutV = int;
+			TLS<SharedPutV>		tls_shared;
+			struct Put {
+				void operator()(GLWrap* g) const {
+					g->_putReset();
+				}
+			};
+			using PutCall = std::unique_ptr<GLWrap, Put>;
+			void _putReset();
+		public:
+			#define GLDEFINE(...)
+			#define DEF_GLCONST(...)
+			#define DEF_GLMETHOD(ret_type, num, name, args, argnames) \
+				using t_##name = ret_type APICALL(*)(BOOST_PP_SEQ_ENUM(args)); \
+				static t_##name name;
+
+			#ifdef ANDROID
+				#include "opengl_define/android_gl.inc"
+			#elif defined(WIN32)
+				#include "opengl_define/mingw_gl.inc"
+			#else
+				#include "opengl_define/linux_gl.inc"
+			#endif
+
+			#undef DEF_GLMETHOD
+			#undef DEF_GLCONST
+			#undef GLDEFINE
+		public:
+			GLWrap(bool bShareEnabled);
+			void loadGLFunc();
+			bool isGLFuncLoaded();
+			void initializeMainThread();
+			void initializeDrawThread(Handler& handler);
+			void terminateDrawThread();
+
+			Handler& getDrawHandler();
+			Shared& refShared();
+			PutCall putShared();
+	};
+	#undef APICALL
+}

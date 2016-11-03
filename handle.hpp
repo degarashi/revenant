@@ -44,5 +44,39 @@ namespace rev {
 	class AGroup;
 	DEF_HANDLE(AGroup, Sg)
 
+	struct IGLResource;
+	DEF_HANDLE(IGLResource, GLRes)
+	class IGLTexture;
+	DEF_HANDLE(IGLTexture, Tex)
+	class GLVBuffer;
+	DEF_HANDLE(GLVBuffer, Vb)
+	class GLIBuffer;
+	DEF_HANDLE(GLIBuffer, Ib)
+	class GLBuffer;
+	DEF_HANDLE(GLBuffer, Buff)
+	class GLProgram;
+	DEF_HANDLE(GLProgram, Prog)
+	class GLShader;
+	DEF_HANDLE(GLShader, Sh)
+	struct IEffect;
+	DEF_HANDLE(IEffect, Fx)
+	class GLFBuffer;
+	DEF_HANDLE(GLFBuffer, Fb)
+	class GLRBuffer;
+	DEF_HANDLE(GLRBuffer, Rb)
+
+	struct GLXStruct;
+	DEF_HANDLE(GLXStruct, Block)
+
 	#undef DEF_HANDLE
+
+	using Priority = uint32_t;
+	class URI;
+	class UriHandlerV;
+	class ResMgrBase {
+		private:
+			static UriHandlerV	s_handler;
+		public:
+			virtual HRes loadResource(const URI& uri) = 0;
+	};
 }
