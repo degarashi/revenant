@@ -2,7 +2,7 @@
 #include <SDL_thread.h>
 #include "sdl_mutex.hpp"
 #include "spine/optional.hpp"
-#include "spine/valueholder.hpp"
+#include "spine/argholder.hpp"
 
 namespace rev {
 	template <class DER, class RET, class... Args>
@@ -12,7 +12,7 @@ namespace rev {
 			SDL_atomic_t		_atmInt;
 			SDL_Thread*			_thread;
 
-			using Holder = spi::ValueHolder<Args...>;
+			using Holder = spi::ArgHolder<Args...>;
 			using Holder_OP = spi::Optional<Holder>;
 			Holder_OP			_holder;
 
@@ -46,7 +46,7 @@ namespace rev {
 			tls_threadName = ths->_name;
 			Stat stat;
 			try {
-				ths->_holder->inorder([ths](Args&&... args){ ths->runIt(std::forward<Args>(args)...); });
+				ths->_holder->inorder([ths](Args... args){ ths->runIt(std::forward<Args>(args)...); });
 				stat = (ths->isInterrupted()) ? Interrupted_End : Finished;
 			} catch(...) {
 				Expect(false, "thread is finished unexpectedly");
