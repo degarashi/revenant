@@ -21,6 +21,7 @@ namespace rev {
 		public:
 			Handler(Handler&& h) = default;
 			Handler(const Looper_WP& loop, Callback cb=Callback());
+			Handler& operator = (Handler&&) = default;
 			virtual ~Handler() {}
 			const Looper_WP& getLooper() const noexcept;
 			//! コールバック関数を渡し、それの実行が終わるまで待機
