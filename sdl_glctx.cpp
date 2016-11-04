@@ -6,11 +6,11 @@ namespace rev {
 	GLContext::GLContext(const SPWindow& w) {
 		_ctx = SDLAssert(SDL_GL_CreateContext, w->getWindow());
 	}
-	SPGLContext GLContext::CreateContext(const SPWindow& w, bool bShare) {
+	GLContext_SP GLContext::CreateContext(const SPWindow& w, bool bShare) {
 		// SharedContext設定なのにCurrentContextがセットされていない場合はエラー
 		Assert(!bShare || SDL_GL_GetCurrentContext(), "SharedContext flag has set, however there is no active context");
 		Window::SetGLAttributes(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, bShare ? 1 : 0);
-		return SPGLContext(new GLContext(w));
+		return GLContext_SP(new GLContext(w));
 	}
 	GLContext::~GLContext() {
 		makeCurrent();

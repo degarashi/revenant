@@ -6,7 +6,7 @@ namespace rev {
 	class Window;
 	using SPWindow = std::shared_ptr<Window>;
 	class GLContext;
-	using SPGLContext = std::shared_ptr<GLContext>;
+	using GLContext_SP = std::shared_ptr<GLContext>;
 	class GLContext {
 		//! makeCurrentした時に指定したウィンドウ
 		SPWindow		_spWindow;
@@ -14,7 +14,7 @@ namespace rev {
 
 		GLContext(const SPWindow& w);
 		public:
-			static SPGLContext CreateContext(const SPWindow& w, bool bShare=false);
+			static GLContext_SP CreateContext(const SPWindow& w, bool bShare=false);
 			~GLContext();
 			void makeCurrent(const SPWindow& w);
 			void makeCurrent();
