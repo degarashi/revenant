@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL_video.h>
 #include <memory>
-#include "lubee/size.hpp"
+#include "lubee/rect.hpp"
 
 namespace rev {
 	class Window;
@@ -27,10 +27,9 @@ namespace rev {
 			};
 			//! Window初期化パラメータ
 			struct Param {
-				std::string	title;						//!< ウィンドウタイトル
-				int			posx, posy,					//!< ウィンドウ位置
-							width, height;				//!< ウィンドウサイズ
-				uint32_t	flag;						//!< その他のフラグ
+				std::string		title;					//!< ウィンドウタイトル
+				lubee::RectI	rect;					//!< ウィンドウ位置
+				uint32_t		flag;					//!< その他のフラグ
 
 				Param() noexcept;
 			};
