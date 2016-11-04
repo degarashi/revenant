@@ -71,21 +71,18 @@ namespace rev {
 
 		template <
 			class T,
-			ENABLE_IF((std::is_base_of<MsgBase<T>,T>{})),
-			ENABLE_IF((std::enable_if_t<std::is_pointer<T>::value>{}))
+			class TR = std::remove_pointer_t<T>,
+			ENABLE_IF((std::is_base_of<MsgBase<TR>,TR>{})),
+			ENABLE_IF((std::is_pointer<T>::value))
 		>
 		operator T () {
-			using TR = std::remove_pointer_t<T>;
 			if(id == TR::Id)
 				return payload<TR>();
 			return nullptr;
 		}
-		template <
-			class T,
-			ENABLE_IF((std::is_base_of<MsgBase<T>,T>{})),
-			ENABLE_IF((std::enable_if_t<std::is_pointer<T>::value>{}))
-		>
+		template <class T>
 		operator const T () const {
+			// 非const板を呼ぶ
 			T t = const_cast<Message*>(this)->operator T();
 			return (const T)t;
 		}
