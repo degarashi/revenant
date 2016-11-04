@@ -20,7 +20,7 @@ namespace rev {
 			}
 			virtual RET runL(Args... args) = 0;
 		public:
-			bool interrupt() override {
+			bool interrupt() noexcept override {
 				if(base::interrupt()) {
 					_spLooper->setState(false);
 					return true;
