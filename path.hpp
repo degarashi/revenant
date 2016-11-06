@@ -147,6 +147,7 @@ namespace rev {
 			void setPathNum(const CBStringNum& cb);
 			void clear() noexcept;
 			bool empty() const noexcept;
+			explicit operator bool () const noexcept;
 	};
 }
 namespace std {

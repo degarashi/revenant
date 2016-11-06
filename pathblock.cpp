@@ -342,6 +342,9 @@ namespace rev {
 	bool PathBlock::empty() const noexcept {
 		return _path.empty();
 	}
+	PathBlock::operator bool () const noexcept {
+		return !empty();
+	}
 	std::string PathBlock::getExtension(const bool bRaw) const {
 		std::string rt;
 		if(segments() > 0) {
