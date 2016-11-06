@@ -188,8 +188,12 @@ namespace rev {
 	PathStr Dir_depLinux::GetProgramDir() {
 		char buff[c_buffSize];
 		buff[0] = '\0';
-		if(::readlink("/proc/self/exe", buff, sizeof(buff)-1) == -1)
+		const int n = ::readlink("/proc/self/exe", buff, sizeof(buff)-4);
+		if(n == -1)
 			throw PError("GetProgramDir");
+		buff[n] = '\0';
+		buff[n+1] = '\0';
+		buff[n+2] = '\0';
 		PathBlock pb(buff);
 		pb.popBack();
 		return PathStr(pb.plain_utf8());
