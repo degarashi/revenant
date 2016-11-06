@@ -5,9 +5,9 @@
 namespace rev {
 	// --------------------- Param ---------------------
 	Window::Param::Param() noexcept {
-		rect.x0 = rect.y0 = SDL_WINDOWPOS_UNDEFINED;
-		rect.x1 = 640;
-		rect.y1 = 480;
+		posx = posy = SDL_WINDOWPOS_UNDEFINED;
+		size.width = 640;
+		size.height = 480;
 		flag = SDL_WINDOW_SHOWN;
 	}
 	Window::GLParam::GLParam() noexcept {
@@ -56,7 +56,7 @@ namespace rev {
 	}
 	// --------------------- Window ---------------------
 	SPWindow Window::Create(const Param& p) {
-		return Create(p.title, p.rect.x0, p.rect.y0, p.rect.width(), p.rect.height(), p.flag);
+		return Create(p.title, p.posx, p.posy, p.size.width, p.size.height, p.flag);
 	}
 	SPWindow Window::Create(const std::string& title, const int w, const int h, const uint32_t flag) {
 		return Create(title, 128, 128, w, h, flag);
