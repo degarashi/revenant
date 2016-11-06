@@ -85,7 +85,9 @@ namespace rev {
 		D_Assert0(ops);
 	}
 	RWops::Data::~Data() {
-		SDL_RWclose(_ops);
+		// (ファイルが開けるか試す場合があるため)
+		if(_ops)
+			SDL_RWclose(_ops);
 	}
 	int64_t RWops::Data::tell() const noexcept {
 		return SDL_RWtell(_ops);
@@ -324,7 +326,7 @@ namespace rev {
 			const auto pos = ops.tell();
 			const std::size_t sz = ops.size();
 			T buff;
-			buff.resize(sz+1);
+			buff.resize(sz);
 			ops.seek(0, RWops::Pos::Begin);
 			ops.read(&buff[0], sz, 1);
 			ops.seek(pos, RWops::Pos::Begin);
@@ -343,6 +345,9 @@ namespace rev {
 	}
 	bool RWops::isWritable() const noexcept {
 		return _access & Access::Write;
+	}
+	bool RWops::isBinary() const noexcept {
+		return _access & Access::Binary;
 	}
 	bool RWops::isMemory() const noexcept { return _data->isMemory(); }
 	int64_t RWops::size() const noexcept { return _data->size(); }

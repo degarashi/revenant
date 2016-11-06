@@ -238,6 +238,7 @@ namespace rev {
 			Type::e getType() const noexcept;
 			bool isReadable() const noexcept;
 			bool isWritable() const noexcept;
+			bool isBinary() const noexcept;
 			bool isMemory() const noexcept;
 			//! isMemory()==true, isWritable()==trueの時だけ有効
 			DataPtr getMemory();
