@@ -20,6 +20,8 @@ namespace rev {
 				int			verMajor, verMinor;			//!< OpenGLバージョン(メジャー & マイナー)
 				int			red, green, blue, depth;	//!< 色深度(RGB + Depth)
 				int			doublebuffer;				//!< ダブルバッファフラグ
+				int			stencil;
+				int			share_context;
 
 				GLParam() noexcept;
 				void setStdAttributes() const noexcept;

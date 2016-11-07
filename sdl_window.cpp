@@ -16,6 +16,8 @@ namespace rev {
 		red = green = blue = 5;
 		depth = 16;
 		doublebuffer = 1;
+		stencil = 0;
+		share_context = 1;
 	}
 	namespace {
 		const SDL_GLattr c_AttrId[] = {
@@ -25,7 +27,9 @@ namespace rev {
 			SDL_GL_RED_SIZE,
 			SDL_GL_GREEN_SIZE,
 			SDL_GL_BLUE_SIZE,
-			SDL_GL_DEPTH_SIZE
+			SDL_GL_DEPTH_SIZE,
+			SDL_GL_STENCIL_SIZE,
+			SDL_GL_SHARE_WITH_CURRENT_CONTEXT
 		};
 		using IPtr = int (Window::GLParam::*);
 		const IPtr c_AttrPtr[] = {
@@ -35,7 +39,9 @@ namespace rev {
 			&Window::GLParam::red,
 			&Window::GLParam::green,
 			&Window::GLParam::blue,
-			&Window::GLParam::depth
+			&Window::GLParam::depth,
+			&Window::GLParam::stencil,
+			&Window::GLParam::share_context
 		};
 	}
 	void Window::GLParam::getStdAttributes() noexcept {
