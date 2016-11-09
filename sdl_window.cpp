@@ -10,6 +10,15 @@ namespace rev {
 		size.height = 480;
 		flag = SDL_WINDOW_SHOWN;
 	}
+	std::ostream& operator << (std::ostream& os, const Window::Param& p) {
+		os << "WindowParam: ["
+			<< "posx=" << p.posx
+			<< ", posy=" << p.posy
+			<< ", size=" << p.size
+			<< ", flag=" << p.flag
+			<< "]";
+		return os;
+	}
 	Window::GLParam::GLParam() noexcept {
 		verMajor = 2;
 		verMinor = 0;
@@ -18,6 +27,20 @@ namespace rev {
 		doublebuffer = 1;
 		stencil = 0;
 		share_context = 1;
+	}
+	std::ostream& operator << (std::ostream& os, const Window::GLParam& p) {
+		os << "WindowGLParam: ["
+			<< "verMajor=" << p.verMajor
+			<< ", verMinor=" << p.verMinor
+			<< ", red=" << p.red
+			<< ", green=" << p.green
+			<< ", blue=" << p.blue
+			<< ", depth=" << p.depth
+			<< ", doublebuffer=" << p.doublebuffer
+			<< ", stencil=" << p.stencil
+			<< ", share_context=" << p.share_context
+			<< "]";
+		return os;
 	}
 	namespace {
 		const SDL_GLattr c_AttrId[] = {

@@ -92,4 +92,6 @@ namespace rev {
 
 			static void EnableScreenSaver(bool bEnable) noexcept;
 	};
+	std::ostream& operator << (std::ostream& os, const Window::GLParam& p);
+	std::ostream& operator << (std::ostream& os, const Window::Param& p);
 }
