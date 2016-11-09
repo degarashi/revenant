@@ -131,7 +131,10 @@ namespace rev {
 		FBInfo res;
 		auto att_id = _AttIdtoGL(att);
 		GLint ret;
-		GL.glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, att, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &ret);
+		GL.glGetIntegerv(GL_FRAMEBUFFER_BINDING, &ret);
+		if(ret == 0)
+			att_id = GL_BACK_LEFT;
+		GL.glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, att_id, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &ret);
 		if(ret == GL_FRAMEBUFFER_DEFAULT) {
 			if(att < Att::DEPTH) {
 				att_id = GL_BACK_LEFT;
