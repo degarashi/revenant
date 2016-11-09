@@ -184,7 +184,7 @@ namespace rev {
 			_bInit = false;
 			for(auto r : *this)
 				r->onDeviceLost();
-			// 一旦DeviceLostしたらフレームバッファはデフォルトに戻る(in Gameloop)
+			// 一旦DeviceLostしたらフレームバッファはデフォルトに戻る(in GUIThread)
 			_tmpFb->use_begin();
 			_tmpFb.reset(nullptr);
 

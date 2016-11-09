@@ -78,7 +78,7 @@ namespace rev {
 		};
 		struct GameloopTest : Random {};
 		TEST_F(GameloopTest, General) {
-			Gameloop loop(std::make_unique<Param>());
+			GUIThread loop(std::make_unique<Param>());
 			loop.run();
 		}
 	}

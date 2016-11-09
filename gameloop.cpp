@@ -22,13 +22,13 @@ namespace rev {
 	{}
 	SpinLock<ShareData>		g_system_shared;
 
-	// ---------------- Gameloop ----------------
-	Gameloop::Gameloop(GameloopParam_UP param):
+	// ---------------- GUIThread ----------------
+	GUIThread::GUIThread(GameloopParam_UP param):
 		_level(Level::Active)
 	{
 		g_system_shared.lock()->param = std::move(param);
 	}
-	int Gameloop::run() {
+	int GUIThread::run() {
 		SDLInitializer	sdlI(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK | SDL_INIT_TIMER);
 		IMGInitializer	imgI(IMG_INIT_JPG | IMG_INIT_PNG);
 		Window_SP window;
@@ -134,7 +134,7 @@ namespace rev {
 		LogR(Verbose, "Ended");
 		return 0;
 	}
-	void Gameloop::_procWindowEvent(SDL_Event& e) {
+	void GUIThread::_procWindowEvent(SDL_Event& e) {
 		switch(e.window.event) {
 			case SDL_WINDOWEVENT_CLOSE:
 				// ウィンドウ閉じたら終了
@@ -158,19 +158,19 @@ namespace rev {
 		}
 	}
 	// それぞれユーザースレッドに通知
-	void Gameloop::_onPause() {
+	void GUIThread::_onPause() {
 		_handler->postArgs(msg::PauseReq());
 	}
-	void Gameloop::_onResume() {
+	void GUIThread::_onResume() {
 		_handler->postArgs(msg::ResumeReq());
 	}
-	void Gameloop::_onStop() {
+	void GUIThread::_onStop() {
 		_handler->postArgs(msg::StopReq());
 	}
-	void Gameloop::_onReStart() {
+	void GUIThread::_onReStart() {
 		_handler->postArgs(msg::ReStartReq());
 	}
-	void Gameloop::_setLevel(const Level level) {
+	void GUIThread::_setLevel(const Level level) {
 		int ilevel = level,
 			curLevel = _level;
 		const int idx = ilevel > curLevel ? 0 : 1,
@@ -182,15 +182,15 @@ namespace rev {
 		}
 		_level = level;
 	}
-	const Gameloop::LFunc Gameloop::cs_lfunc[Level::_Num][2] = {
-		{&Gameloop::_onReStart, nullptr},
-		{&Gameloop::_onResume, &Gameloop::_onStop},
-		{nullptr, &Gameloop::_onPause}
+	const GUIThread::LFunc GUIThread::cs_lfunc[Level::_Num][2] = {
+		{&GUIThread::_onReStart, nullptr},
+		{&GUIThread::_onResume, &GUIThread::_onStop},
+		{nullptr, &GUIThread::_onPause}
 	};
 }
 #include "input_sdlvalue.hpp"
 namespace rev {
-	void Gameloop::_procMouseEvent(SDL_Event& e) {
+	void GUIThread::_procMouseEvent(SDL_Event& e) {
 		if(e.wheel.which != SDL_TOUCH_MOUSEID) {
 			auto lc = g_sdlInputShared.lock();
 			lc->wheel_dx = e.wheel.x;

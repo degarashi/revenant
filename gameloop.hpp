@@ -9,7 +9,7 @@ namespace rev {
 	struct GameloopParam;
 	using GameloopParam_UP = std::unique_ptr<GameloopParam>;
 	//! ゲームループメイン(GUIスレッド)
-	class Gameloop : public spi::Singleton<Gameloop> {
+	class GUIThread : public spi::Singleton<GUIThread> {
 		private:
 			DefineEnum(
 				Level,
@@ -28,7 +28,7 @@ namespace rev {
 			void _onStop();
 			void _onReStart();
 
-			using LFunc = void (Gameloop::*)();
+			using LFunc = void (GUIThread::*)();
 			const static LFunc cs_lfunc[Level::_Num][2];
 			void _setLevel(Level level);
 			void _procWindowEvent(SDL_Event& e);
@@ -39,7 +39,7 @@ namespace rev {
 			Level				_level;
 
 		public:
-			Gameloop(GameloopParam_UP param);
+			GUIThread(GameloopParam_UP param);
 			/*! \retval 0		正常に終了
 				\retval 0以外	異常終了 */
 			int run();
