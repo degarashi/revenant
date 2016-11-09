@@ -5,8 +5,8 @@
 namespace rev {
 	namespace log {
 		void RevOutput::print(const lubee::log::Type::e type, const std::string& s) {
-			// スレッド番号を出力
-			boost::format msg("thread=%1%, %2%");
+			// スレッド名を出力
+			boost::format msg("[%1%]: %2%");
 			if(tls_threadName.initialized())
 				base::print(type, (msg % *tls_threadName % s).str());
 			else {
