@@ -1,4 +1,4 @@
-#include "gameloop.hpp"
+#include "guithread.hpp"
 #include "gameloopparam.hpp"
 #include "sys_message.hpp"
 #include "mainthread.hpp"

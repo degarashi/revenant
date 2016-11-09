@@ -2,7 +2,7 @@
 #include "../gameloopparam.hpp"
 #include "../drawproc.hpp"
 #include "../mainproc.hpp"
-#include "../gameloop.hpp"
+#include "../guithread.hpp"
 #include "../glx.hpp"
 #include "../gl_resource.hpp"
 #include "../output.hpp"
