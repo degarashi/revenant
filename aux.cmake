@@ -22,7 +22,7 @@ function(GetFilename PTH DST)
 endfunction()
 
 # リストSRCのソースファイルを用いてrev_SUBNAME という名前でテストexecutableを作成
-function(AddTest SUBNAME SRC)
+function(AddTest SUBNAME SRC LIB)
 	list(LENGTH SRC LEN)
 	if(${LEN} GREATER 0)
 		string(CONCAT EXENAME rev_ ${SUBNAME})
@@ -32,6 +32,7 @@ function(AddTest SUBNAME SRC)
 			${GTEST_LIBRARIES}
 			${CMAKE_THREAD_LIBS_INIT}
 			revenant
+			${LIB}
 		)
 		add_test(
 			NAME ${SUBNAME}

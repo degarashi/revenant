@@ -60,7 +60,7 @@ find_package(OggVorbis REQUIRED)
 include_directories(
 	.
 	${SDL2_IMAGE_INCLUDE_DIRS}
-	${SDL2_INCLUDE_DIRS}
+	${SDL2_INCLUDE_DIR}
 	${FREETYPE_INCLUDE_DIRS}
 	${Boost_INCLUDE_DIRS}
 	${VORBIS_INCLUDE_DIR}
@@ -76,14 +76,15 @@ add_definitions(-DINCLUDE_OPENGL_1_X
 				-DINCLUDE_OPENGL_TIMER_QUERY)
 add_library(revenant SHARED ${LIBSRC_FILE})
 target_link_libraries(revenant
-	${SDL2_IMAGE_LIBRARIES}
-	${SDL2_LIBRARIES}
+	${SDL2_IMAGE_LIBRARY}
+	${SDL2_LIBRARY}
 	${FREETYPE_LIBRARIES}
 	${Boost_LIBRARIES}
 	${VORBISFILE_LIBRARY}
 	${VORBIS_LIBRARY}
 	${OGG_LIBRARY}
 	${OPENAL_LIBRARY}
+	GL
 )
 set_target_properties(revenant PROPERTIES VERSION 1.0.0 SOVERSION 1)
 install(TARGETS revenant LIBRARY DESTINATION lib)
@@ -99,6 +100,6 @@ if(NOT without-test)
 	aux_source_directory(tests TEST_SRC)
 	foreach(SRC IN LISTS TEST_SRC)
 		GetFileName(${SRC}, SRCNAME)
-		AddTest(${SRCNAME} ${SRC})
+		AddTest(${SRCNAME} ${SRC} "${SDL2_IMAGE_LIBRARY};${SDL2_LIBRARY}")
 	endforeach()
 endif()
