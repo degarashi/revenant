@@ -11,7 +11,7 @@ namespace rev {
 	{}
 	void RWops::RWE_Error::setMessage(const std::string& msg) {
 		std::stringstream ss;
-		ss << "RWops - " << _title << std::endl << msg;
+		ss << "RWops - " << _title << "(" << msg << ")";
 		reinterpret_cast<std::runtime_error&>(*this) = std::runtime_error(ss.str());
 	}
 	// --------------------- RWE_File ---------------------
