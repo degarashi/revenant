@@ -15,13 +15,6 @@ namespace rev {
 	using Window_SP = std::shared_ptr<Window>;
 
 	const uint32_t EVID_SIGNAL = SDL_RegisterEvents(1);
-	// ---------------- ShareData ----------------
-	// システムで使う共通変数
-	ShareData::ShareData():
-		mt(lubee::RandomMT::Make<4>())
-	{}
-	SpinLock<ShareData>		g_system_shared;
-
 	// ---------------- GUIThread ----------------
 	GUIThread::GUIThread(GameloopParam_UP param):
 		_level(Level::Active)

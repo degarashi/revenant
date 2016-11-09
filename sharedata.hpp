@@ -1,11 +1,10 @@
 #pragma once
 #include "lubee/random.hpp"
+#include "gameloopparam.hpp"
 
 namespace rev {
 	class Window;
 	using Window_WP = std::weak_ptr<Window>;
-	struct GameloopParam;
-	using GameloopParam_UP = std::unique_ptr<GameloopParam>;
 
 	struct ShareData {
 		lubee::RandomMT		mt;
