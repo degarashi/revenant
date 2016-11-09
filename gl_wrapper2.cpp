@@ -28,7 +28,7 @@ namespace rev {
 		GLWrap::name = (typename GLWrap::t_##name) GLGETPROC(name); \
 		if(GLWrap::name == nullptr) GLWrap::name = (typename GLWrap::t_##name)GLGETPROC(BOOST_PP_CAT(name,ARB)); \
 		if(GLWrap::name == nullptr) GLWrap::name = (typename GLWrap::t_##name)GLGETPROC(BOOST_PP_CAT(name,EXT)); \
-		Expect(GLWrap::name != nullptr, "could not load OpenGL function: %1%", #name)
+		Expect(GLWrap::name != nullptr, "could not load OpenGL function: %s", #name)
 		void GLWrap::loadGLFunc() {
 			// 各種API関数
 			#ifdef ANDROID
