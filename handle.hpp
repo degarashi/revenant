@@ -69,6 +69,22 @@ namespace rev {
 	class GLRBuffer;
 	DEF_HANDLE(GLRBuffer, Rb)
 
+	class FTFace;
+	DEF_HANDLE(FTFace, FT)
+	class TextObj;
+	DEF_HANDLE(TextObj, Text)
+
+	class Object;
+	DEF_HANDLE(Object, Obj)
+	class UpdGroup;
+	DEF_HANDLE(UpdGroup, Group)
+	class DrawableObj;
+	DEF_HANDLE(DrawableObj, DObj)
+	class DrawGroup;
+	DEF_HANDLE(DrawGroup, DGroup)
+	class IScene;
+	DEF_HANDLE(IScene, Scene)
+
 	struct GLXStruct;
 	DEF_HANDLE(GLXStruct, Block)
 
