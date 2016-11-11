@@ -37,9 +37,11 @@ namespace rev {
 			using TexRes = std::pair<HTex, CubeFace>;
 			struct RawTex : lubee::Wrapper<GLuint> {
 				using Wrapper::Wrapper;
+				using Wrapper::operator =;
 			};
 			struct RawRb : lubee::Wrapper<GLuint> {
 				using Wrapper::Wrapper;
+				using Wrapper::operator =;
 			};
 			// attachは受け付けるがハンドルを格納するだけであり、実際OpenGLにセットされるのはDrawThread
 		protected:
