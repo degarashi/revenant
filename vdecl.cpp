@@ -95,4 +95,3 @@ namespace rev {
 		return !(this->operator == (vd));
 	}
 }
-
