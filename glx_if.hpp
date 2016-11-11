@@ -71,38 +71,57 @@ namespace rev {
 		//! 定数値を使ったUniform変数設定
 		/*! clang補完の為の引数明示 -> _setUniform(...) */
 		template <bool Check=true, class T>
-		void setUniform(IdValue id, T&& t, bool bT=false) {
+		void setUniform(const IdValue id, T&& t, bool bT=false) {
 			_setUniformById<Check>(id, std::forward<T>(t), bT); }
 		//! 単体Uniform変数セット
-		template <class T, class = typename std::enable_if< !std::is_pointer<T>::value >::type>
+		template <
+			class T,
+			ENABLE_IF((
+				!std::is_pointer<T>{}
+			))
+		>
 		void setUniform(GLint id, const T& t, bool bT=false) {
-			setUniform(id, &t, 1, bT); }
+			setUniform(id, &t, 1, bT);
+		}
 		//! 配列Uniform変数セット
 		template <class T>
 		void setUniform(GLint id, const T* t, int n, bool bT=false) {
-			_makeUniformToken(_makeUniformTokenBuffer(id), id, t, n, bT); }
+			_makeUniformToken(_makeUniformTokenBuffer(id), id, t, n, bT);
+		}
 		// clang補完の為の引数明示 -> _setUniform(...)
 		template <bool Check=true, class T>
 		void setUniform(IdValue id, const T* t, int n, bool bT=false) {
-			_setUniformById<Check>(id, t, n, bT); }
+			_setUniformById<Check>(id, t, n, bT);
+		}
 		//! ベクトルUniform変数
-		template <class V, ENABLE_IF(frea::is_vector<V>{})>
+		template <
+			class V,
+			ENABLE_IF((
+				frea::is_vector<V>{}
+			))
+		>
 		void _makeUniformToken(draw::TokenDst& dst, GLint id, const V* v, int n, bool) const {
 			MakeUniformToken<draw::Unif_Vec<float, V::size>>(dst, id, id, v, n);
 		}
 		//! 行列Uniform変数(非正方形)
-		template <class M, ENABLE_IF(frea::is_matrix<M>{})>
+		template <
+			class M,
+			ENABLE_IF((
+				frea::is_matrix<M>{}
+			))
+		>
 		void _makeUniformToken(draw::TokenDst& dst, GLint id, const M* m, int n, bool bT) const {
-			constexpr int DIM = lubee::ArithmeticT<M::dim_m, M::dim_n>::great;
+			constexpr int DIM = lubee::Arithmetic<M::dim_m, M::dim_n>::great;
 			std::vector<frea::Mat_t<float,DIM,DIM,false>> tm(n);
 			for(int i=0 ; i<n ; i++)
-				m[i].convert(tm[i]);
+				tm[i] = m[i].template convert<DIM,DIM>();
 			_makeUniformToken(dst, id, tm.data(), n, bT);
 		}
 		//! 行列Uniform変数(正方形)
 		template <int DN, bool A>
 		void _makeUniformToken(draw::TokenDst& dst, GLint id, const frea::Mat_t<float,DN,DN,A>* m, int n, bool bT) const {
-			MakeUniformToken<draw::Unif_Mat<float, DN>>(dst, id, id, m, n, bT); }
+			MakeUniformToken<draw::Unif_Mat<float, DN>>(dst, id, id, m, n, bT);
+		}
 
 		virtual void _makeUniformToken(draw::TokenDst& dst, GLint id, const bool* b, int n, bool) const = 0;
 		virtual void _makeUniformToken(draw::TokenDst& dst, GLint id, const float* fv, int n, bool) const = 0;
