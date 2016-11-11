@@ -270,12 +270,12 @@ namespace rev {
 			HRW fromFile(const PathBlock& pb, int access);
 			template <class T, ENABLE_IF((is_bytebuff<T>{} && !std::is_const<T>{}))>
 			HRW fromVector(T&& t) {
-				return base_t::emplace(RWops::FromByteBuffMove(std::forward<T>(t), nullptr));
+				return base_t::emplace(RWops::FromByteBuffMove(URI(), std::forward<T>(t), nullptr));
 			}
 			template <class T, ENABLE_IF((!is_bytebuff<T>{} || std::is_const<T>{}))>
 			HRW fromVector(T&& t) {
 				constexpr std::size_t s = sizeof(typename std::decay_t<T>::value_t);
-				return base_t::emplace(RWops::FromVector(t.data(), reinterpret_cast<uintptr_t>(t.data())+t.size()*s, nullptr));
+				return base_t::emplace(RWops::FromVector(URI(), t.data(), reinterpret_cast<uintptr_t>(t.data())+t.size()*s, nullptr));
 			}
 			HRW fromConstTemporal(const void* p, std::size_t size, const typename RWops::Callback_SP& cb=nullptr);
 			HRW fromTemporal(void* p, std::size_t size, const typename RWops::Callback_SP& cb=nullptr);
