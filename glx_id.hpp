@@ -68,7 +68,7 @@ namespace rev {
 		public:
 			IdValue genId(const Key& key) {
 				auto itr = std::find(_entry.begin(), _entry.end(), key);
-				D_Expect(itr==_entry.end(), "Idの重複生成 %1%", ConvertToStr(key));
+				D_Expect(itr==_entry.end(), "Idの重複生成 %s", ConvertToStr(key).c_str());
 				if(itr == _entry.end()) {
 					_entry.emplace_back(key);
 					return IdValue(_entry.size()-1);
