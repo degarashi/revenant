@@ -1,7 +1,6 @@
 #pragma once
 #include <boost/preprocessor.hpp>
 
-#define SEQ_VSEM BOOST_PP_REPEAT(NUM_TEXCOORD, PPFUNC_ADDNUM, TEXCOORD)(POSITION)(COLOR)(NORMAL)(BINORMAL)(TANGENT)
 #define SEQ_GLTYPE (void)(bool)(int)(float)(vec2)(vec3)(vec4)(ivec2)(ivec3)(ivec4)(bvec2)(bvec3)(bvec4)(mat2)(mat3)(mat4)(sampler2D)(samplerCube)
 #define SEQ_PRECISION (highp)(mediump)(lowp)
 #define SEQ_INOUT (in)(out)(inout)
@@ -21,8 +20,6 @@
 		((stencilmask,glStencilMask,unsigned))((stencilmaskfront,stencilMaskFront,unsigned))((stencilmaskback,stencilMaskBack,unsigned))\
 		((polygonmode,polygonMode,unsigned))
 
-#define NUM_TEXCOORD 8
-#define PPFUNC_ADDNUM(z,n,data) (BOOST_PP_CAT(data,n))
 #define PPFUNC_STR(ign, data, elem) BOOST_PP_STRINGIZE(elem),
 #define PPFUNC_ADD(ign, data, elem) (BOOST_PP_STRINGIZE(elem), BOOST_PP_CAT(elem, data))
 #define PPFUNC_ENUM(ign, data, elem) BOOST_PP_CAT(elem, data),

@@ -1,7 +1,7 @@
 #pragma once
 #include "glx_macro.hpp"
 #include "gl_types.hpp"
-#include "spine/enum.hpp"
+#include "vertex.hpp"
 #include <boost/spirit/home/x3.hpp>
 #include <boost/fusion/container.hpp>
 #include <boost/fusion/algorithm.hpp>
@@ -10,8 +10,6 @@
 #include <unordered_map>
 
 namespace rev {
-	DefineEnum(VSem, SEQ_VSEM);
-
 	using namespace boost::spirit;
 	#define DEF_TYPE(typ, name, seq) struct typ##_ : x3::symbols<unsigned> { \
 			enum TYPE { BOOST_PP_SEQ_FOR_EACH(PPFUNC_ENUM, T, seq) }; \

@@ -6,7 +6,8 @@
 #include "gl_buffer.hpp"
 #include "drawtag.hpp"
 #include <boost/lexical_cast.hpp>
-#include "glx.hpp"
+#include "glx_if.hpp"
+#include "vdecl.hpp"
 #include "sys_uniform_value.hpp"
 
 namespace rev {

@@ -1,9 +1,17 @@
 #pragma once
+#include "spine/resmgr.hpp"
+#include "spine/enum.hpp"
 #include <memory>
 #include <string>
-#include "spine/resmgr.hpp"
+#include <boost/preprocessor.hpp>
+
+#define NUM_TEXCOORD 8
+#define PPFUNC_ADDNUM(z,n,data) (BOOST_PP_CAT(data,n))
+#define SEQ_VSEM BOOST_PP_REPEAT(NUM_TEXCOORD, PPFUNC_ADDNUM, TEXCOORD)(POSITION)(COLOR)(NORMAL)(BINORMAL)(TANGENT)
 
 namespace rev {
+	DefineEnum(VSem, SEQ_VSEM);
+
 	class VDecl;
 	using VDecl_SP = std::shared_ptr<VDecl>;
 
