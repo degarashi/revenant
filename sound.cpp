@@ -149,8 +149,8 @@ namespace rev {
 	AOggBatch::AOggBatch(const HRW& hRW) {
 		RawData rd = VorbisFile::ReadAll(hRW);
 		_format = rd.format;
-		_buff = std::move(rd.buff);
 		_duration = CalcTimeLength(_format.getBitNum()/8, _format.getChannels(), _format.freq, rd.buff.size());
+		_buff = std::move(rd.buff);
 	}
 	bool AOggBatch::isStreaming() const {
 		return false;
