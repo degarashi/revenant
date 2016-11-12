@@ -21,8 +21,9 @@ namespace rev {
 	{}
 
 	URI& URI::operator = (URI&& u) noexcept {
+		auto type = std::move(u._type);
 		static_cast<PathBlock&>(*this) = std::move(u);
-		_type = std::move(u._type);
+		_type = type;
 		return *this;
 	}
 	void URI::setPath(To8Str p) {
