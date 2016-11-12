@@ -37,19 +37,32 @@ namespace rev {
 			ps = ToPathStr(path).moveTo();
 		DirDep::SetCurrentDir(ps);
 	}
-	std::string Dir::ToRegEx(const std::string& s) {
+	namespace {
 		// ワイルドカード記述の置き換え
-		// * -> ([_ \.\-\w]+?)
-		// ? -> ([_ \.\-\w])
-		// . -> (\.)
-
+		// * -> [_ \.\-\w]+?
+		// ? -> [_ \.\-\w]
+		// . -> \.
 		// バックスラッシュをスラッシュに置き換え
 		// \ -> /
+		const char* RE[4] = {
+			R"(/)",
+			R"([\-_ \.\w]+?)",
+			R"([\-_ \.\w])",
+			R"(\.)"
+		};
+		const std::regex Chk[4] = {
+			std::regex(RE[0]),
+			std::regex(RE[1]),
+			std::regex(RE[2]),
+			std::regex(RE[3])
+		};
+	}
+	std::string Dir::ToRegEx(const std::string& s) {
 		std::regex re[4] = {std::regex(R"(\\)"), std::regex(R"(\*)"), std::regex(R"(\?)"), std::regex(R"(\.)")};
-		std::string s2 = std::regex_replace(s, re[0], R"(/)");
-		s2 = std::regex_replace(s2, re[3], R"(\\.)");
-		s2 = std::regex_replace(s2, re[2], R"([_ \\.\\-\\w])");
-		s2 = std::regex_replace(s2, re[1], R"([_ \\.\\-\\w]+?)");
+		std::string s2 = std::regex_replace(s, re[0], RE[0]);
+		s2 = std::regex_replace(s2, re[3], RE[3]);
+		s2 = std::regex_replace(s2, re[2], RE[2]);
+		s2 = std::regex_replace(s2, re[1], RE[1]);
 		return s2;
 	}
 	std::string Dir::setCurrentDir() const {
