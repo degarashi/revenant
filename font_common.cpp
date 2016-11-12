@@ -53,7 +53,7 @@ namespace rev {
 		// OpenGLテクスチャ確保
 		// MEMO: 環境によってはGL_RGBAが32bitでないかもしれないので対策が必要
 		HTex hTex = mgr_gl.createTexture(_sfcSize, GL_RGBA, true, true);	// DeviceLost時: 内容のリストア有りで初期化
-		_plane.push_back(std::move(hTex));
+		_plane.push_back(hTex);
 		// Lane登録
 		lubee::RectI rect(0,_sfcSize.width, 0,_fontH);
 		for(int i=0 ; i<_nH ; i++) {
