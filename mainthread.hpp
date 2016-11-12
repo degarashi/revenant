@@ -19,6 +19,8 @@ namespace rev {
 	class AppPath;
 	class GLRes;
 	class SoundMgr;
+	class FontFamily;
+	class FontGen;
 	//! メインスレッド
 	class MainThread : public spi::Singleton<MainThread>,
 						public ThreadL<void (const Looper_SP&)>
@@ -44,9 +46,9 @@ namespace rev {
 				SPtr<AppPath>				appPath;
 				SPtr<GLRes>					glr;
 				SPtr<SoundMgr>				snd;
+				SPtr<FontFamily>			font;
+				SPtr<FontGen>				fgen;
 				// SPtr<util::SharedGeomM>		geom;
-				// SPtr<FontFamily>			font;
-				// SPtr<FontGen>			fgen;
 				// SPtr<SceneMgr>			scene;
 				// SPtr<UpdRep>				urep;
 				// SPtr<ObjRep>				orep;
@@ -55,7 +57,7 @@ namespace rev {
 			};
 			static void _InitManagers(Manager& m, const GameloopParam& param);
 			//! AppPathの場所に置かれたフォントファイルを列挙し、読み込む
-			// static void _LoadFonts();
+			static void _LoadFonts();
 			//! AppPathをテキストファイルから設定
 			static void _LoadPathfile(const URI& uri, bool bAppend=false);
 			static void _Backup(Manager& m, std::ostream& os);

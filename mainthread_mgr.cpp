@@ -11,6 +11,7 @@
 #include "input_sdlvalue.hpp"
 #include "drawtoken/task.hpp"
 #include "gl_resource.hpp"
+#include "font.hpp"
 
 namespace rev {
 	void MainThread::_InitManagers(Manager& m, const GameloopParam& param) {
@@ -32,24 +33,24 @@ namespace rev {
 		if(const auto& p = param.getPathfile())
 			_LoadPathfile(p);
 		m.glr = std::make_unique<GLRes>();
-		// m.font = std::make_unique<FontFamily>();
-		// _LoadFonts();
-		// m.fgen = std::make_unique<FontGen>(spn::PowSize(512,512));
-		// m.scene = std::make_unique<SceneMgr>();
+		m.font = std::make_unique<FontFamily>();
+		_LoadFonts();
+		m.fgen = std::make_unique<FontGen>(lubee::PowSize(512,512));
 		m.snd = std::make_unique<SoundMgr>(44100);
+		m.snd->makeCurrent();
+		// m.scene = std::make_unique<SceneMgr>();
 		// m.urep = std::make_unique<UpdRep>();
 		// m.orep = std::make_unique<ObjRep>();
 		// m.lsys = std::make_unique<LSysFunc>();
 		// m.objm = std::make_unique<ObjMgr>();
-		m.snd->makeCurrent();
 	}
 	void MainThread::_LoadPathfile(const URI& uri, const bool bAppend) {
 		mgr_path.setFromText(mgr_rw.fromURI(uri, Access::Read), bAppend);
 	}
-	// void MainThread::_LoadFonts() {
-	// 	mgr_path.enumPath("font", "*.tt(c|f)", [](const spn::Dir& d){
-	// 		mgr_font.loadFamily(mgr_rw.fromFile(d.plain_utf8(), RWops::Read));
-	// 		return true;
-	// 	});
-	// }
+	void MainThread::_LoadFonts() {
+		mgr_path.enumPath("font", PathBlock("*.tt(c|f)"), [](const Dir& d){
+			mgr_font.loadFamily(mgr_rw.fromFile(d, Access::Read|Access::Binary));
+			return true;
+		});
+	}
 }
