@@ -105,8 +105,8 @@ namespace rev {
 	bool PathBlock::_IsSC(char32_t c) noexcept {
 		return c==U'\\' || c==CharConst<char32_t>::SC;
 	}
-	template <class CB>
-	void PathBlock::_ReWriteSC(Path::iterator from, const Path::iterator to, const char32_t sc, CB cb) {
+	template <class Itr, class CB>
+	bool PathBlock::_ReWriteSC(Itr from, const Itr to, const char32_t sc, CB cb) {
 		int count = 0;
 		while(from != to) {
 			if(_IsSC(*from)) {
@@ -117,8 +117,11 @@ namespace rev {
 				++count;
 			++from;
 		}
-		if(count > 0)
+		if(count > 0) {
 			cb(count);
+			return true;
+		}
+		return false;
 	}
 	void PathBlock::setPath(To32Str elem) {
 		const int len = elem.getLength();
@@ -134,8 +137,16 @@ namespace rev {
 
 			_path.assign(ptr, ptrE);
 			_segment.clear();
-			_ReWriteSC(_path.begin(), _path.end(), CharConst<char32_t>::SC,
-						[this](int n){ _segment.push_back(n); });
+			const bool b = _ReWriteSC(
+								_path.begin(),
+								_path.end(),
+								CharConst<char32_t>::SC,
+								[&s=_segment](const int n){
+									s.push_back(n);
+								}
+							);
+			if(!_path.empty() && !b)
+				_path.resize(_path.size()-1);
 		} else
 			clear();
 	}
@@ -167,7 +178,16 @@ namespace rev {
 				if(!_path.empty())
 					_path.push_back(SC);
 				_path.insert(_path.end(), src, srcE);
-				_ReWriteSC(_path.end()-(srcE-src), _path.end(), SC, [this](int n){ _segment.push_back(n); });
+				const bool b = _ReWriteSC(
+									_path.end()-(srcE-src),
+									_path.end(),
+									SC,
+									[&s=_segment](const int n){
+										s.push_back(n);
+									}
+								);
+				if(!_path.empty() && !b)
+					_path.resize(_path.size()-1);
 			}
 		}
 	}
@@ -215,11 +235,19 @@ namespace rev {
 
 				constexpr auto SC = CharConst<char32_t>::SC;
 				if(src != srcE) {
-					_path.push_front(SC);
+					const auto len = elem.getLength();
+					if(*(elem.getPtr()+len-1) != SC)
+						_path.push_front(SC);
 					_path.insert(_path.begin(), src, srcE);
 					int ofs = 0;
-					_ReWriteSC(_path.begin(), _path.begin()+(srcE-src), SC, [&ofs, this](int n){
-						_segment.insert(_segment.begin()+(ofs++), n); });
+					_ReWriteSC(
+						_path.begin(),
+						_path.begin()+len,
+						SC,
+						[&ofs, &s=_segment](const int n){
+							s.insert(s.begin()+(ofs++), n);
+						}
+					);
 				}
 			}
 		}

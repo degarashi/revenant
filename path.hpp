@@ -60,8 +60,8 @@ namespace rev {
 			static bool _IsSC(char32_t c) noexcept;
 			//! パスを分解しながらセグメント長をカウントし、コールバック関数を呼ぶ
 			/*! fromからtoまで1文字ずつ見ながら区切り文字を直す */
-			template <class CB>
-			static void _ReWriteSC(Path::iterator from, Path::iterator to, char32_t sc, CB cb);
+			template <class Itr, class CB>
+			static bool _ReWriteSC(Itr from, Itr to, char32_t sc, CB cb);
 			template <class CB>
 			void _iterateSegment(const char32_t* c, int len, char32_t sc, CB cb);
 			template <class Itr>
