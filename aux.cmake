@@ -28,10 +28,6 @@ function(AddTest SUBNAME SRC LIB)
 		string(CONCAT EXENAME rev_ ${SUBNAME})
 		add_executable(${EXENAME} ${SRC})
 		target_link_libraries(${EXENAME}
-			${GTEST_MAIN_LIBRARIES}
-			${GTEST_LIBRARIES}
-			${CMAKE_THREAD_LIBS_INIT}
-			revenant
 			${LIB}
 		)
 		add_test(

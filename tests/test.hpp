@@ -1,6 +1,6 @@
 #pragma once
 #include "lubee/random.hpp"
-#include "lubee/check_serialization.hpp"
+#include <gtest/gtest.h>
 
 namespace rev {
 	namespace test {

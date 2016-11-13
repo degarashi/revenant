@@ -96,10 +96,22 @@ if(NOT without-test)
 	include_directories(
 		${GTEST_INCLUDE_DIRS}
 	)
-	# testsディレクトリ以下のソースが対象
+	set(TESTEXE_LIB
+		revenant
+		${SDL2_IMAGE_LIBRARY}
+		${SDL2_LIBRARY}
+		${GTEST_MAIN_LIBRARIES}
+		${GTEST_LIBRARIES}
+		${CMAKE_THREAD_LIBS_INIT}
+	)
+
+	# ちょっとしたテストコードはシングルファイル、そうでないものはサブディレクトリ
+	# シングルファイルのテストコード: testsディレクトリ以下のソースが対象
 	aux_source_directory(tests TEST_SRC)
 	foreach(SRC IN LISTS TEST_SRC)
 		GetFileName(${SRC}, SRCNAME)
-		AddTest(${SRCNAME} ${SRC} "${SDL2_IMAGE_LIBRARY};${SDL2_LIBRARY}")
+		AddTest(${SRCNAME} ${SRC} "${TESTEXE_LIB}")
 	endforeach()
+	# サブディレクトリのテストコード
+	add_subdirectory(tests/gameloop)
 endif()

@@ -13,6 +13,7 @@
 #include "../random/path.hpp"
 #include "lubee/random/string.hpp"
 #include "../serialization/path.hpp"
+#include "lubee/check_serialization.hpp"
 
 namespace rev {
 	namespace test {
