@@ -11,38 +11,34 @@
 #include "input_sdlvalue.hpp"
 #include "drawtoken/task.hpp"
 #include "gl_resource.hpp"
+#include "glx.hpp"
 #include "font.hpp"
 
 namespace rev {
 	void MainThread::_InitManagers(Manager& m, const GameloopParam& param) {
-		m.cam2 = std::make_unique<Camera2DMgr>();
-		m.cam3 = std::make_unique<Camera3DMgr>();
-		m.ptrm = std::make_unique<PointerMgr>();
-		m.inpm = std::make_unique<InputMgr>();
-		m.info = std::make_unique<SystemInfo>();
+		m.cam2 = std::make_shared<Camera2DMgr>();
+		m.cam3 = std::make_shared<Camera3DMgr>();
+		m.ptrm = std::make_shared<PointerMgr>();
+		m.inpm = std::make_shared<InputMgr>();
+		m.info = std::make_shared<SystemInfo>();
 		// 初回はここで情報をセットする (以降はIMainProc::runUにて)
 		m.info->setInfo(param.getScreenSize(), 0);
-		// geom = std::make_unique<util::SharedGeomM>();
-		// auto				fxP(InitFxBlock());
-		m.dtask = std::make_unique<draw::Task>();
-		m.rwm = std::make_unique<RWMgr>(param.getOrgName(), param.getAppName());
+		m.dtask = std::make_shared<draw::Task>();
+		m.rwm = std::make_shared<RWMgr>(param.getOrgName(), param.getAppName());
 		// デフォルトでルートディレクトリからの探索パスを追加
 		m.rwm->addHandler(0x00, std::make_shared<URI_File>(u8"/"));
-		m.appPath = std::make_unique<AppPath>(PathBlock(Dir::GetProgramDir()));
+		m.appPath = std::make_shared<AppPath>(PathBlock(Dir::GetProgramDir()));
 		// pathfile文字列が有効ならここでロードする
 		if(const auto& p = param.getPathfile())
 			_LoadPathfile(p);
-		m.glr = std::make_unique<GLRes>();
-		m.font = std::make_unique<FontFamily>();
+		m.glr = std::make_shared<GLRes>();
+		m.glr->onDeviceReset();
+		m.font = std::make_shared<FontFamily>();
 		_LoadFonts();
-		m.fgen = std::make_unique<FontGen>(lubee::PowSize(512,512));
-		m.snd = std::make_unique<SoundMgr>(44100);
+		m.fgen = std::make_shared<FontGen>(lubee::PowSize(512,512));
+		m.snd = std::make_shared<SoundMgr>(44100);
 		m.snd->makeCurrent();
-		// m.scene = std::make_unique<SceneMgr>();
-		// m.urep = std::make_unique<UpdRep>();
-		// m.orep = std::make_unique<ObjRep>();
-		// m.lsys = std::make_unique<LSysFunc>();
-		// m.objm = std::make_unique<ObjMgr>();
+		m.block = std::make_shared<FxBlock>();
 	}
 	void MainThread::_LoadPathfile(const URI& uri, const bool bAppend) {
 		mgr_path.setFromText(mgr_rw.fromURI(uri, Access::Read), bAppend);

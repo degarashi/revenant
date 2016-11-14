@@ -21,6 +21,7 @@ namespace rev {
 	class SoundMgr;
 	class FontFamily;
 	class FontGen;
+	class FxBlock;
 	//! メインスレッド
 	class MainThread : public spi::Singleton<MainThread>,
 						public ThreadL<void (const Looper_SP&)>
@@ -38,22 +39,17 @@ namespace rev {
 			struct Manager : spi::Singleton<Manager> {
 				SPtr<Camera2DMgr>			cam2;
 				SPtr<Camera3DMgr>			cam3;
-				SPtr<PointerMgr>			ptrm;
 				SPtr<InputMgr>				inpm;
+				SPtr<PointerMgr>			ptrm;
 				SPtr<SystemInfo>			info;
-				SPtr<draw::Task>			dtask;
-				SPtr<RWMgr>					rwm;
 				SPtr<AppPath>				appPath;
 				SPtr<GLRes>					glr;
+				SPtr<draw::Task>			dtask;
 				SPtr<SoundMgr>				snd;
+				SPtr<RWMgr>					rwm;
 				SPtr<FontFamily>			font;
 				SPtr<FontGen>				fgen;
-				// SPtr<util::SharedGeomM>		geom;
-				// SPtr<SceneMgr>			scene;
-				// SPtr<UpdRep>				urep;
-				// SPtr<ObjRep>				orep;
-				// SPtr<LSysFunc>			lsys;
-				// SPtr<ObjMgr>				objm;
+				SPtr<FxBlock>				block;
 			};
 			static void _InitManagers(Manager& m, const GameloopParam& param);
 			//! AppPathの場所に置かれたフォントファイルを列挙し、読み込む
