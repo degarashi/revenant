@@ -20,7 +20,7 @@ namespace rev {
 		}
 		//! パス記述ファイル名
 		const URI& Param::getPathfile() const {
-			static URI uri("file", "./pathlist");
+			static URI uri("file", "./resource/pathlist");
 			return uri;
 		}
 		HFx Param::loadEffect(const std::string& name) const {

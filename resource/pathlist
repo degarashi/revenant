@@ -1,0 +1,14 @@
+[sound]
+resource/sound
+[texture]
+resource/texture
+[font]
+resource/font
+[effect]
+resource/effect
+[system_script]
+resource/sys_script
+[script]
+resource/script
+[value]
+resource/script/value
