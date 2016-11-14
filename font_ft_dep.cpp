@@ -127,11 +127,11 @@ namespace rev {
 			buff.resize(sz);
 			if(gi.pitch == gi.width) {
 				if(sz > 0)
-					std::memcpy(&buff[0], gi.data, sz);
+					std::memcpy(buff.data(), gi.data, sz);
 			} else {
 				// pitchを詰める
 				const uint8_t* src = gi.data;
-				uint8_t* dst = &buff[0];
+				uint8_t* dst = buff.data();
 				for(int i=0 ; i<gi.height ; i++) {
 					for(int j=0 ; j<gi.width ; j++)
 						std::memcpy(dst, src, gi.width);
@@ -145,7 +145,7 @@ namespace rev {
 	ByteBuff Convert1Bit_8Bit(const void* src, const int width, const int pitch, const int nrow) {
 		auto* pSrc = reinterpret_cast<const uint8_t*>(src);
 		ByteBuff buff(width * nrow);
-		auto* dst = &buff[0];
+		auto* dst = buff.data();
 		for(int i=0 ; i<nrow ; i++) {
 			for(int j=0 ; j<width ; j++)
 				*dst++ = ((int32_t(0) - (pSrc[j/8] & (1<<(7-(j%8)))))>>8) & 0xff;
@@ -158,7 +158,7 @@ namespace rev {
 		ByteBuff ExpandBits(const void* src, const int width, const int pitch, const int nrow) {
 			auto* pSrc = reinterpret_cast<const uint8_t*>(src);
 			ByteBuff buff(width*nrow*NB);
-			auto* dst = reinterpret_cast<uint8_t*>(&buff[0]);
+			auto* dst = reinterpret_cast<uint8_t*>(buff.data());
 			for(int i=0 ; i<nrow ; i++) {
 				for(int j=0 ; j<width ; j++) {
 					auto tmp = pSrc[j];
