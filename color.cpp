@@ -69,7 +69,9 @@ namespace rev {
 	RGBAColor RGBColor::asRGBA(const float a) const noexcept {
 		return RGBAColor(x,y,z,a);
 	}
-
+	const frea::Vec3& RGBColor::asVec3() const noexcept {
+		return static_cast<const frea::Vec3&>(*this);
+	}
 	// ------------ RGBAColor ------------
 	RGBAColor::RGBAColor(const RGBColor& c, const float a) noexcept:
 		frea::Vec4(c.x, c.y, c.z, a)
@@ -77,12 +79,18 @@ namespace rev {
 	const RGBColor& RGBAColor::asRGB() const noexcept {
 		return reinterpret_cast<const RGBColor&>(*this);
 	}
+	const frea::Vec4& RGBAColor::asVec4() const noexcept {
+		return static_cast<const frea::Vec4&>(*this);
+	}
 	// ------------ HSVAColor ------------
 	HSVAColor::HSVAColor(const HSVColor& h, const float a) noexcept:
 		frea::Vec4(h.x, h.y, h.z, a)
 	{}
 	const HSVColor& HSVAColor::asHSV() const noexcept {
 		return reinterpret_cast<const HSVColor&>(*this);
+	}
+	const frea::Vec4& HSVAColor::asVec4() const noexcept {
+		return static_cast<const frea::Vec4&>(*this);
 	}
 }
 

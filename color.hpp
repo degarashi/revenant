@@ -19,6 +19,7 @@ namespace rev {
 		HSVColor toHSV() const noexcept;
 		HSVAColor toHSVA(float a) const noexcept;
 		RGBAColor asRGBA(float a) const noexcept;
+		const frea::Vec3& asVec3() const noexcept;
 	};
 	//! HSVA色表現(円柱モデル)
 	/*! H,S,V,A各要素0.0 - 1.0で表す */
@@ -26,6 +27,7 @@ namespace rev {
 		using frea::Vec4::Vec4;
 		HSVAColor(const HSVColor& h, float a=1.f) noexcept;
 		const HSVColor& asHSV() const noexcept;
+		const frea::Vec4& asVec4() const noexcept;
 	};
 	//! RGBA色表現
 	/*! R,G,B,A各要素0.0 - 1.0で表す */
@@ -33,6 +35,7 @@ namespace rev {
 		using frea::Vec4::Vec4;
 		RGBAColor(const RGBColor& c, float a=1.f) noexcept;
 		const RGBColor& asRGB() const noexcept;
+		const frea::Vec4& asVec4() const noexcept;
 	};
 }
 
