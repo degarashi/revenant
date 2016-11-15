@@ -13,19 +13,21 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 # windows依存ファイル
-set(DEPENDANT_SRC_WIN dir_depWin.cpp)
+set(DEPENDANT_SRC_WIN ./dir_depWin.cpp)
 # unix依存ファイル
-set(DEPENDANT_SRC_UNIX dir_depLinux.cpp)
+set(DEPENDANT_SRC_UNIX ./dir_depLinux.cpp)
 set(OS_DEPENDANT_SRC ${DEPENDANT_SRC_WIN} ${DEPENDANT_SRC_UNIX})
 
 # OpenSL依存ファイル
-set(DEPENDANT_OPENSL sound_depSL.cpp sound_depSL_error.cpp)
+set(DEPENDANT_OPENSL ./sound_depSL.cpp ./sound_depSL_error.cpp)
 # OpenAL依存ファイル
-set(DEPENDANT_OPENAL sound_depAL.cpp sound_depAL_error.cpp)
+set(DEPENDANT_OPENAL ./sound_depAL.cpp ./sound_depAL_error.cpp)
 set(SOUND_DEPENDANT_SRC ${DEPENDANT_OPENSL} ${DEPENDANT_OPENAL})
 
 # 依存ファイル以外のソースファイルを収集
-file(GLOB LIBSRC_FILE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.cpp drawtoken/*.cpp)
+aux_source_directory(. LIBSRC_FILE)
+aux_source_directory(drawtoken LIBSRC_FILE)
+aux_source_directory(util LIBSRC_FILE)
 list(REMOVE_ITEM LIBSRC_FILE ${OS_DEPENDANT_SRC} ${SOUND_DEPENDANT_SRC})
 
 # サウンド依存ファイルの設定
