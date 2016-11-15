@@ -107,7 +107,8 @@ namespace rev {
 		template <
 			class M,
 			ENABLE_IF((
-				frea::is_matrix<M>{}
+				frea::is_matrix<M>{} &&
+				(M::dim_m != M::dim_n)
 			))
 		>
 		void _makeUniformToken(draw::TokenDst& dst, GLint id, const M* m, int n, bool bT) const {
@@ -118,9 +119,15 @@ namespace rev {
 			_makeUniformToken(dst, id, tm.data(), n, bT);
 		}
 		//! 行列Uniform変数(正方形)
-		template <int DN, bool A>
-		void _makeUniformToken(draw::TokenDst& dst, GLint id, const frea::Mat_t<float,DN,DN,A>* m, int n, bool bT) const {
-			MakeUniformToken<draw::Unif_Mat<float, DN>>(dst, id, id, m, n, bT);
+		template <
+			class M,
+			ENABLE_IF((
+				frea::is_matrix<M>{} &&
+				(M::dim_m == M::dim_n)
+			))
+		>
+		void _makeUniformToken(draw::TokenDst& dst, const GLint id, const M* m, const int n, const bool bT) const {
+			MakeUniformToken<draw::Unif_Mat<float, M::dim_m>>(dst, id, id, m, n, bT);
 		}
 
 		virtual void _makeUniformToken(draw::TokenDst& dst, GLint id, const bool* b, int n, bool) const = 0;
