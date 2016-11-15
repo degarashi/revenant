@@ -21,7 +21,7 @@ namespace rev {
 	void GLEffect::Current::Vertex::setVDecl(const VDecl_SP& v) {
 		_spVDecl = v;
 	}
-	void GLEffect::Current::Vertex::setVBuffer(HVb hVb, int n) {
+	void GLEffect::Current::Vertex::setVBuffer(const HVb& hVb, const int n) {
 		_vbuff[n] = hVb;
 	}
 	void GLEffect::Current::Vertex::extractData(draw::VStream& dst,
@@ -50,10 +50,10 @@ namespace rev {
 	void GLEffect::Current::Index::reset() {
 		_ibuff.reset();
 	}
-	void GLEffect::Current::Index::setIBuffer(HIb hIb) {
+	void GLEffect::Current::Index::setIBuffer(const HIb& hIb) {
 		_ibuff = hIb;
 	}
-	HIb GLEffect::Current::Index::getIBuffer() const {
+	const HIb& GLEffect::Current::Index::getIBuffer() const {
 		return _ibuff;
 	}
 	void GLEffect::Current::Index::extractData(draw::VStream& dst) const {
@@ -99,7 +99,7 @@ namespace rev {
 			s_unifPool.destroy(u.second);
 		uniMap.clear();
 	}
-	void GLEffect::Current::setTech(GLint idTech, bool bDefault) {
+	void GLEffect::Current::setTech(const GLint idTech, const bool bDefault) {
 		if(!tech || *tech != idTech) {
 			// TechIdをセットしたらPassIdは無効になる
 			tech = idTech;
@@ -107,7 +107,7 @@ namespace rev {
 			_clean_drawvalue();
 		}
 	}
-	void GLEffect::Current::setPass(GLint idPass, TechMap& tmap, TexMap& texMap) {
+	void GLEffect::Current::setPass(const GLint idPass, TechMap& tmap, TexMap& texMap) {
 		// TechIdをセットせずにPassIdをセットするのは禁止
 		if(!tech)
 			throw GLE_Error( "tech is not selected");
@@ -172,13 +172,13 @@ namespace rev {
 		// set IBuffer
 		index.extractData(vs);
 	}
-	void GLEffect::Current::outputDrawCallIndexed(GLenum mode, GLsizei count, GLenum sizeF, GLuint offset) {
+	void GLEffect::Current::outputDrawCallIndexed(const GLenum mode, const GLsizei count, const GLenum sizeF, const GLuint offset) {
 		draw::VStream vs;
 		_outputDrawCall(vs);
 
 		tokenML.allocate<draw::DrawIndexed>(std::move(vs), mode, count, sizeF, offset);
 	}
-	void GLEffect::Current::outputDrawCall(GLenum mode, GLint first, GLsizei count) {
+	void GLEffect::Current::outputDrawCall(const GLenum mode, const GLint first, const GLsizei count) {
 		draw::VStream vs;
 		_outputDrawCall(vs);
 
@@ -203,17 +203,17 @@ namespace rev {
 	void GLEffect::setVDecl(const VDecl_SP& decl) {
 		_current.vertex.setVDecl(decl);
 	}
-	void GLEffect::setVStream(HVb vb, int n) {
+	void GLEffect::setVStream(const HVb& vb, const int n) {
 		_current.vertex.setVBuffer(vb, n);
 	}
-	void GLEffect::setIStream(HIb ib) {
+	void GLEffect::setIStream(const HIb& ib) {
 		_current.index.setIBuffer(ib);
 	}
-	void GLEffect::setTechnique(int techId, bool bDefault) {
+	void GLEffect::setTechnique(const int techId, const bool bDefault) {
 		_current.setTech(techId, bDefault);
 		_unifId.resultCur = nullptr;
 	}
-	void GLEffect::setPass(int passId) {
+	void GLEffect::setPass(const int passId) {
 		_current.setPass(passId, _techMap, _texMap);
 		if(_unifId.src)
 			_unifId.resultCur = &_unifId.result.at(GL16Id{uint8_t(*_current.tech), uint8_t(passId)});
@@ -299,7 +299,7 @@ namespace rev {
 			_func();
 		}
 		// -------------- Tag_Draw --------------
-		Draw::Draw(VStream&& vs, GLenum mode, GLint first, GLsizei count):
+		Draw::Draw(VStream&& vs, const GLenum mode, const GLint first, const GLsizei count):
 			DrawBase(std::move(vs)),
 			_mode(mode),
 			_first(first),
@@ -311,7 +311,7 @@ namespace rev {
 			D_GLAssert0();
 		}
 		// -------------- Tag_DrawI --------------
-		DrawIndexed::DrawIndexed(VStream&& vs, GLenum mode, GLsizei count, GLenum sizeF, GLuint offset):
+		DrawIndexed::DrawIndexed(VStream&& vs, const GLenum mode, const GLsizei count, const GLenum sizeF, const GLuint offset):
 			DrawBase(std::move(vs)),
 			_mode(mode),
 			_count(count),
@@ -328,37 +328,37 @@ namespace rev {
 		namespace {
 			using IGLF_V = void (*)(GLint, const void*, int);
 			const IGLF_V c_iglfV[] = {
-				[](GLint id, const void* ptr, int n) {
+				[](GLint id, const void* ptr, const int n) {
 					GL.glUniform1fv(id, n, reinterpret_cast<const GLfloat*>(ptr)); },
-				[](GLint id, const void* ptr, int n) {
+				[](GLint id, const void* ptr, const int n) {
 					GL.glUniform2fv(id, n, reinterpret_cast<const GLfloat*>(ptr)); },
-				[](GLint id, const void* ptr, int n) {
+				[](GLint id, const void* ptr, const int n) {
 					GL.glUniform3fv(id, n, reinterpret_cast<const GLfloat*>(ptr)); },
-				[](GLint id, const void* ptr, int n) {
+				[](GLint id, const void* ptr, const int n) {
 					GL.glUniform4fv(id, n, reinterpret_cast<const GLfloat*>(ptr)); },
-				[](GLint id, const void* ptr, int n) {
+				[](GLint id, const void* ptr, const int n) {
 					GL.glUniform1iv(id, n, reinterpret_cast<const GLint*>(ptr)); },
-				[](GLint id, const void* ptr, int n) {
+				[](GLint id, const void* ptr, const int n) {
 					GL.glUniform2iv(id, n, reinterpret_cast<const GLint*>(ptr)); },
-				[](GLint id, const void* ptr, int n) {
+				[](GLint id, const void* ptr, const int n) {
 					GL.glUniform3iv(id, n, reinterpret_cast<const GLint*>(ptr)); },
-				[](GLint id, const void* ptr, int n) {
+				[](GLint id, const void* ptr, const int n) {
 					GL.glUniform4iv(id, n, reinterpret_cast<const GLint*>(ptr)); }
 			};
 			using IGLF_M = void(*)(GLint, const void*, int, GLboolean);
 			const IGLF_M c_iglfM[] = {
-				[](GLint id, const void* ptr, int n, GLboolean bT) {
+				[](GLint id, const void* ptr, const int n, const GLboolean bT) {
 					GL.glUniformMatrix2fv(id, n, bT, reinterpret_cast<const GLfloat*>(ptr)); },
-				[](GLint id, const void* ptr, int n, GLboolean bT) {
+				[](GLint id, const void* ptr, const int n, const GLboolean bT) {
 					GL.glUniformMatrix3fv(id, n, bT, reinterpret_cast<const GLfloat*>(ptr)); },
-				[](GLint id, const void* ptr, int n, GLboolean bT) {
+				[](GLint id, const void* ptr, const int n, const GLboolean bT) {
 					GL.glUniformMatrix4fv(id, n, bT, reinterpret_cast<const GLfloat*>(ptr)); }
 			};
 		}
-		void Unif_Vec_Exec(int idx, GLint id, const void* ptr, int n) {
+		void Unif_Vec_Exec(const int idx, const GLint id, const void* ptr, const int n) {
 			c_iglfV[idx](id, ptr, n);
 		}
-		void Unif_Mat_Exec(int idx, GLint id, const void* ptr, int n, bool bT) {
+		void Unif_Mat_Exec(const int idx, const GLint id, const void* ptr, const int n, const bool bT) {
 			c_iglfM[idx](id, ptr, n, bT ? GL_TRUE : GL_FALSE);
 		}
 	}
@@ -367,7 +367,7 @@ namespace rev {
 		_current.tokenML.allocate<draw::Clear>(param);
 		mgr_drawtask.refWriteEnt().append(std::move(_current.tokenML));
 	}
-	void GLEffect::draw(GLenum mode, GLint first, GLsizei count) {
+	void GLEffect::draw(const GLenum mode, const GLint first, const GLsizei count) {
 		_prepareUniforms();
 		_current.outputDrawCall(mode, first, count);
 		mgr_drawtask.refWriteEnt().append(std::move(_current.tokenML));
@@ -375,7 +375,7 @@ namespace rev {
 		_diffCount.buffer += _current.getDifference();
 		++_diffCount.drawNoIndexed;
 	}
-	void GLEffect::drawIndexed(GLenum mode, GLsizei count, GLuint offsetElem) {
+	void GLEffect::drawIndexed(const GLenum mode, const GLsizei count, const GLuint offsetElem) {
 		_prepareUniforms();
 		HIb hIb = _current.index.getIBuffer();
 		auto str = hIb->getStride();
@@ -387,25 +387,25 @@ namespace rev {
 		++_diffCount.drawIndexed;
 	}
 	// Uniform設定は一旦_unifMapに蓄積した後、出力
-	void GLEffect::_makeUniformToken(draw::TokenDst& dst, GLint id, const bool* b, int n, bool bT) const {
+	void GLEffect::_makeUniformToken(draw::TokenDst& dst, const GLint id, const bool* b, const int n, const bool bT) const {
 		int tmp[n];
 		for(int i=0 ; i<n ; i++)
 			tmp[i] = static_cast<int>(b[i]);
 		_makeUniformToken(dst, id, static_cast<const int*>(tmp), 1, bT);
 	}
-	void GLEffect::_makeUniformToken(draw::TokenDst& dst, GLint id, const int* iv, int n, bool /*bT*/) const {
+	void GLEffect::_makeUniformToken(draw::TokenDst& dst, const GLint id, const int* iv, const int n, bool /*bT*/) const {
 		MakeUniformToken<draw::Unif_Vec<int, 1>>(dst, id, id, iv, 1, n);
 	}
-	void GLEffect::_makeUniformToken(draw::TokenDst& dst, GLint id, const float* fv, int n, bool /*bT*/) const {
+	void GLEffect::_makeUniformToken(draw::TokenDst& dst, const GLint id, const float* fv, const int n, bool /*bT*/) const {
 		MakeUniformToken<draw::Unif_Vec<float, 1>>(dst, id, id, fv, 1, n);
 	}
-	void GLEffect::_makeUniformToken(draw::TokenDst& dst, GLint id, const double* dv, int n, bool bT) const {
+	void GLEffect::_makeUniformToken(draw::TokenDst& dst, const GLint id, const double* dv, const int n, const bool bT) const {
 		float tmp[n];
 		for(int i=0 ; i<n ; i++)
 			tmp[i] = static_cast<float>(dv[i]);
 		_makeUniformToken(dst, id, static_cast<const float*>(tmp), n, bT);
 	}
-	void GLEffect::_makeUniformToken(draw::TokenDst& dst, GLint id, const HTex* hTex, int n, bool /*bT*/) const {
+	void GLEffect::_makeUniformToken(draw::TokenDst& dst, const GLint id, const HTex* hTex, const int n, bool /*bT*/) const {
 		// テクスチャユニット番号を検索
 		auto itr = _current.pTexIndex->find(id);
 		Expect(itr != _current.pTexIndex->end(), "texture index not found");
@@ -489,7 +489,7 @@ namespace rev {
 			ip.second = *_getPassId(ip.first, (*src)[i].second);
 		}
 	}
-	GLint_OP GLEffect::getUnifId(IdValue id) const {
+	GLint_OP GLEffect::getUnifId(const IdValue id) const {
 		// 定数値に対応するUniform変数が見つからない時は警告を出す
 		if(static_cast<int>(_unifId.resultCur->size()) <= id._value)
 			return spi::none;
@@ -498,16 +498,16 @@ namespace rev {
 			return spi::none;
 		return ret;
 	}
-	GLEffect::IdPair GLEffect::_getTechPassId(IdValue id) const {
+	GLEffect::IdPair GLEffect::_getTechPassId(const IdValue id) const {
 		Assert((static_cast<int>(_techId.result.size()) > id._value), "TechPass-ConstantId: Invalid Id (%1%)", id._value);
 		return _techId.result[id._value];
 	}
-	void GLEffect::setTechPassId(IdValue id) {
-		auto ip = _getTechPassId(id);
+	void GLEffect::setTechPassId(const IdValue id) {
+		const auto ip = _getTechPassId(id);
 		setTechnique(ip.first, true);
 		setPass(ip.second);
 	}
-	void GLEffect::setFramebuffer(HFb fb) {
+	void GLEffect::setFramebuffer(const HFb& fb) {
 		_current.hFb = fb;
 		_current.viewport = spi::none;
 	}
@@ -519,7 +519,7 @@ namespace rev {
 	void GLEffect::resetFramebuffer() {
 		setFramebuffer(HFb());
 	}
-	void GLEffect::setViewport(bool bPixel, const lubee::RectF& r) {
+	void GLEffect::setViewport(const bool bPixel, const lubee::RectF& r) {
 		_current.viewport = draw::Viewport(bPixel, r);
 	}
 	diff::Effect GLEffect::getDifference() const {

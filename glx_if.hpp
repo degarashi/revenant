@@ -34,13 +34,13 @@ namespace rev {
 		virtual HProg getProgram(int techId=-1, int passId=-1) const = 0;
 		virtual void setTechnique(int id, bool bReset) = 0;
 		virtual void setPass(int id) = 0;
-		virtual void setFramebuffer(HFb fb) = 0;
+		virtual void setFramebuffer(const HFb& fb) = 0;
 		virtual HFb getFramebuffer() const = 0;
 		virtual void setViewport(bool bPixel, const lubee::RectF& r) = 0;
 		virtual void resetFramebuffer() = 0;
 		virtual void setVDecl(const VDecl_SP& decl) = 0;
-		virtual void setVStream(HVb vb, int n) = 0;
-		virtual void setIStream(HIb ib) = 0;
+		virtual void setVStream(const HVb& vb, int n) = 0;
+		virtual void setIStream(const HIb& ib) = 0;
 		virtual GLint_OP getUniformId(const std::string& name) const = 0;
 		virtual GLint_OP getUnifId(IdValue id) const = 0;
 		virtual void clearFramebuffer(const draw::ClearParam& param) = 0;
@@ -59,7 +59,7 @@ namespace rev {
 		}
 		//! 定数値を使ったUniform変数設定。Uniform値が存在しなくてもエラーにならない
 		template <bool Check, class... Ts>
-		void _setUniformById(IdValue id, Ts&&... ts) {
+		void _setUniformById(const IdValue id, Ts&&... ts) {
 			if(auto idv = getUnifId(id))
 				setUniform(*idv, std::forward<Ts>(ts)...);
 			else {
@@ -71,7 +71,7 @@ namespace rev {
 		//! 定数値を使ったUniform変数設定
 		/*! clang補完の為の引数明示 -> _setUniform(...) */
 		template <bool Check=true, class T>
-		void setUniform(const IdValue id, T&& t, bool bT=false) {
+		void setUniform(const IdValue id, T&& t, const bool bT=false) {
 			_setUniformById<Check>(id, std::forward<T>(t), bT); }
 		//! 単体Uniform変数セット
 		template <
@@ -80,17 +80,17 @@ namespace rev {
 				!std::is_pointer<T>{}
 			))
 		>
-		void setUniform(GLint id, const T& t, bool bT=false) {
+		void setUniform(const GLint id, const T& t, const bool bT=false) {
 			setUniform(id, &t, 1, bT);
 		}
 		//! 配列Uniform変数セット
 		template <class T>
-		void setUniform(GLint id, const T* t, int n, bool bT=false) {
+		void setUniform(const GLint id, const T* t, const int n, const bool bT=false) {
 			_makeUniformToken(_makeUniformTokenBuffer(id), id, t, n, bT);
 		}
 		// clang補完の為の引数明示 -> _setUniform(...)
 		template <bool Check=true, class T>
-		void setUniform(IdValue id, const T* t, int n, bool bT=false) {
+		void setUniform(const IdValue id, const T* t, const int n, const bool bT=false) {
 			_setUniformById<Check>(id, t, n, bT);
 		}
 		//! ベクトルUniform変数
@@ -100,7 +100,7 @@ namespace rev {
 				frea::is_vector<V>{}
 			))
 		>
-		void _makeUniformToken(draw::TokenDst& dst, GLint id, const V* v, int n, bool) const {
+		void _makeUniformToken(draw::TokenDst& dst, const GLint id, const V* v, const int n, const bool) const {
 			MakeUniformToken<draw::Unif_Vec<float, V::size>>(dst, id, id, v, n);
 		}
 		//! 行列Uniform変数(非正方形)
@@ -111,7 +111,7 @@ namespace rev {
 				(M::dim_m != M::dim_n)
 			))
 		>
-		void _makeUniformToken(draw::TokenDst& dst, GLint id, const M* m, int n, bool bT) const {
+		void _makeUniformToken(draw::TokenDst& dst, const GLint id, const M* m, const int n, const bool bT) const {
 			constexpr int DIM = lubee::Arithmetic<M::dim_m, M::dim_n>::great;
 			std::vector<frea::Mat_t<float,DIM,DIM,false>> tm(n);
 			for(int i=0 ; i<n ; i++)

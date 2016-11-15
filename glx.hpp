@@ -117,11 +117,11 @@ namespace rev {
 			bool findSetting(const Setting& s) const;
 			void swap(TPStructR& tp) noexcept;
 
-			const UniMap& getUniformDefault() const;
-			const UniIdSet& getUniformEntries() const;
-			VAttrId getVAttrId() const;
+			const UniMap& getUniformDefault() const noexcept;
+			const UniIdSet& getUniformEntries() const noexcept;
+			VAttrId getVAttrId() const noexcept;
 
-			const HProg& getProgram() const;
+			const HProg& getProgram() const noexcept;
 			//! OpenGLに設定を適用
 			void applySetting() const;
 			//! 設定差分を求める
@@ -186,12 +186,12 @@ namespace rev {
 			struct Current {
 				class Vertex {
 					private:
-						VDecl_SP			_spVDecl;
+						VDecl_SP		_spVDecl;
 						HVb				_vbuff[VData::MAX_STREAM];
 					public:
 						Vertex();
 						void setVDecl(const VDecl_SP& v);
-						void setVBuffer(HVb hVb, int n);
+						void setVBuffer(const HVb& hVb, int n);
 						void reset();
 						void extractData(draw::VStream& dst, TPStructR::VAttrId vAttrId) const;
 						bool operator != (const Vertex& v) const;
@@ -201,8 +201,8 @@ namespace rev {
 						HIb				_ibuff;
 					public:
 						Index();
-						void setIBuffer(HIb hIb);
-						HIb getIBuffer() const;
+						void setIBuffer(const HIb& hIb);
+						const HIb& getIBuffer() const;
 						void reset();
 						void extractData(draw::VStream& dst) const;
 						bool operator != (const Index& idx) const;
@@ -308,13 +308,16 @@ namespace rev {
 				\param[in] passId (-1 = currentPassId)
 				\return 該当があればそのハンドル、なければ無効なハンドル */
 			HProg getProgram(int techId=-1, int passId=-1) const override;
-			//! Tech切替時に初期値をセットするか
-			void setTechnique(int id, bool bReset) override;
+			/*!
+				\param[in]		id		TechniqueId
+				\param[in]		bReset	Tech切替時に初期値をセットするか
+			*/
+			void setTechnique(GLint id, bool bReset) override;
 			//! Pass指定
 			void setPass(int id) override;
 
 			// ----------------- Framebuffer -----------------
-			void setFramebuffer(HFb fb) override;
+			void setFramebuffer(const HFb& fb) override;
 			HFb getFramebuffer() const override;
 			//! アプリケーション初期化時のデフォルトフレームバッファに戻す
 			void resetFramebuffer() override;
@@ -324,8 +327,8 @@ namespace rev {
 			//! 頂点宣言
 			/*! \param[in] decl 頂点定義クラスのポインタ(定数を前提) */
 			void setVDecl(const VDecl_SP& decl) override;
-			void setVStream(HVb vb, int n) override;
-			void setIStream(HIb ib) override;
+			void setVStream(const HVb& vb, int n) override;
+			void setIStream(const HIb& ib) override;
 
 			// ----------------- Uniform Value -----------------
 			//! Uniform変数設定 (Tech/Passで指定された名前とセマンティクスのすり合わせを行う)

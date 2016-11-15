@@ -352,9 +352,16 @@ namespace rev {
 		for(auto& st : _setting)
 			boost::apply_visitor(Visitor(), st);
 	}
-	const UniMap& TPStructR::getUniformDefault() const { return _defaultValue; }
-	const UniIdSet& TPStructR::getUniformEntries() const { return _noDefValue; }
-	const HProg& TPStructR::getProgram() const { return _prog; }
-	TPStructR::VAttrId TPStructR::getVAttrId() const { return _vAttrId; }
+	const UniMap& TPStructR::getUniformDefault() const noexcept {
+		return _defaultValue;
+	}
+	const UniIdSet& TPStructR::getUniformEntries() const noexcept {
+		return _noDefValue;
+	}
+	const HProg& TPStructR::getProgram() const noexcept {
+		return _prog;
+	}
+	TPStructR::VAttrId TPStructR::getVAttrId() const noexcept {
+		return _vAttrId;
+	}
 }
-
