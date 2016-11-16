@@ -108,8 +108,14 @@ namespace rev {
 		DEF_SETVAL(fnSetVer, version_str)
 		DEF_PUSHVAL(fnPushArg, args)
 		DEF_PUSHVAL(fnPushCode, code)
-		const auto ShBlock_def = no_case[GLShadertype][fnSetType] >
-						'(' > NameToken[fnSetVer] > -(',' > NameToken[fnPushCode] % ',') > ')' >
+		const auto fnSetES_False = [](auto& ctx){
+			_val(ctx).bES = false;
+		};
+		const auto fnSetES_True = [](auto& ctx){
+			_val(ctx).bES = true;
+		};
+		const auto ShBlock_def = x3::eps[fnSetES_False] >> no_case[GLShadertype][fnSetType] >
+						'(' > NameToken[fnSetVer] > -(no_case[lit("es")][fnSetES_True]) > -(',' > NameToken[fnPushCode] % ',') > ')' >
 						NameToken[fnSetName] > '(' >
 						-(Arg[fnPushArg] > *(',' > Arg[fnPushArg])) > ')' > Bracket[fnSetInfo];
 		// MacroBlock: macro \{ MacroEnt \}

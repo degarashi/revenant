@@ -81,7 +81,10 @@ namespace rev {
 		using std::endl;
 
 		os << '"' << s.name << '"' << endl;
-		os << "version: " << s.version_str << endl;
+		os << "version: " << s.version_str;
+		if(s.bES)
+			os << " es";
+		os << endl;
 		os << "type: " << c_shType[s.type] << endl;
 		os << "codeblock: ";
 		for(auto& c : s.code)

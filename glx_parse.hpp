@@ -276,6 +276,8 @@ namespace rev {
 		uint32_t				type;
 		//! バージョン文字列
 		std::string				version_str;
+		//! OpenGL ESの際はtrue
+		bool					bES;
 		//! 組み込みコードブロック名
 		StrV					code;
 		//! シェーダー名
@@ -345,7 +347,7 @@ FUSION_ADAPT_STRUCT_AUTO(rev::AttrStruct, (name)(derive)(entry))
 FUSION_ADAPT_STRUCT_AUTO(rev::VaryStruct, (name)(derive)(entry))
 FUSION_ADAPT_STRUCT_AUTO(rev::UnifStruct, (name)(derive)(entry))
 FUSION_ADAPT_STRUCT_AUTO(rev::ConstStruct, (name)(derive)(entry))
-FUSION_ADAPT_STRUCT_AUTO(rev::ShStruct, (type)(version_str)(name)(args)(info))
+FUSION_ADAPT_STRUCT_AUTO(rev::ShStruct, (type)(version_str)(bES)(name)(args)(info))
 FUSION_ADAPT_STRUCT_AUTO(rev::TPStruct, (name)(blkL)(bsL)(mcL)(shL)(tpL)(vsL)(derive))
 FUSION_ADAPT_STRUCT_AUTO(rev::GLXStruct, (atM)(csM)(shM)(tpL)(uniM)(varM)(incl))
 FUSION_ADAPT_STRUCT_AUTO(rev::ArgItem, (type)(name))
