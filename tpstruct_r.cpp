@@ -191,10 +191,7 @@ namespace rev {
 			if(!s)
 				throw GLE_LogicalError((boost::format("requested shader \"%1%\" not found") % shp->shName).str());
 			// シェーダーバージョンを出力
-			ss << "#version " << s->version_str;
-			if(s->bES)
-				ss << " es";
-			ss << std::endl;
+			ss << "#version " << s->versionString() << std::endl;
 			{
 				// マクロを定義をGLSLソースに出力
 				auto mc = dupl.exportMacro();

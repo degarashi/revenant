@@ -77,14 +77,17 @@ namespace rev {
 		os << s.info << std::endl;
 		return os;
 	}
+	std::string ShStruct::versionString() const {
+		std::string str(version_str);
+		if(bES)
+			str.append(" es");
+		return str;
+	}
 	std::ostream& operator << (std::ostream& os, const ShStruct& s) {
 		using std::endl;
 
 		os << '"' << s.name << '"' << endl;
-		os << "version: " << s.version_str;
-		if(s.bES)
-			os << " es";
-		os << endl;
+		os << "version: " << s.versionString() << endl;
 		os << "type: " << c_shType[s.type] << endl;
 		os << "codeblock: ";
 		for(auto& c : s.code)

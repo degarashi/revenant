@@ -288,6 +288,7 @@ namespace rev {
 		std::string				info;
 		mutable std::string		info_str;	//!< シェーダー文字列を1つに纏めた物
 
+		std::string versionString() const;
 		const std::string& getShaderString() const;
 	};
 	struct CodeStruct {
