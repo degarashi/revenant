@@ -499,7 +499,7 @@ namespace rev {
 		return ret;
 	}
 	GLEffect::IdPair GLEffect::_getTechPassId(const IdValue id) const {
-		Assert((static_cast<int>(_techId.result.size()) > id._value), "TechPass-ConstantId: Invalid Id (%1%)", id._value);
+		Assert((static_cast<int>(_techId.result.size()) > id._value), "TechPass-ConstantId: Invalid Id (%d)", id._value);
 		return _techId.result[id._value];
 	}
 	void GLEffect::setTechPassId(const IdValue id) {
