@@ -59,6 +59,7 @@ find_package(Freetype 2.0 REQUIRED)
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(OggVorbis REQUIRED)
+find_package(Lua 5.3 REQUIRED)
 include_directories(
 	.
 	${SDL2_IMAGE_INCLUDE_DIRS}
@@ -68,6 +69,7 @@ include_directories(
 	${VORBIS_INCLUDE_DIR}
 	${OGG_INCLUDE_DIR}
 	${OPENAL_INCLUDE_DIRS}
+	${LUA_INCLUDE_DIR}
 )
 # Linux環境
 add_definitions(-DINCLUDE_OPENGL_1_X
@@ -86,6 +88,7 @@ target_link_libraries(revenant
 	${VORBIS_LIBRARY}
 	${OGG_LIBRARY}
 	${OPENAL_LIBRARY}
+	liblua.a
 	GL
 )
 set_target_properties(revenant PROPERTIES VERSION 1.0.0 SOVERSION 1)
