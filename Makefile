@@ -9,3 +9,6 @@ all:
 	$(call Make, $(WORK_DIR), 5)
 clean:
 	$(call Clean, $(WORK_DIR))
+tags:
+	@ctags -R -f ./.git/tags .
+	@cscope -b -f ./.git/cscope.out
