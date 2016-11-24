@@ -1,5 +1,5 @@
 #include "pose2d.hpp"
-#include "tostring.hpp"
+#include "lubee/tostring.hpp"
 #include "frea/angle_func.hpp"
 
 namespace rev {
@@ -76,7 +76,7 @@ namespace rev {
 		return *this == p;
 	}
 	std::string Pose2D::toString() const {
-		return ToString(*this);
+		return lubee::ToString(*this);
 	}
 	std::ostream& operator << (std::ostream& os, const Pose2D& ps) {
 		return os << "Pose2D [ offset: " << ps.getOffset() << std::endl

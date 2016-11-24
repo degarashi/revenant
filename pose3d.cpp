@@ -1,6 +1,6 @@
 #include "pose3d.hpp"
 #include "frea/affine_parts.hpp"
-#include "tostring.hpp"
+#include "lubee/tostring.hpp"
 
 namespace rev {
 	// ------------------------------ Pose3D ------------------------------
@@ -143,7 +143,7 @@ namespace rev {
 		return *this == p;
 	}
 	std::string Pose3D::toString() const {
-		return ToString(*this);
+		return lubee::ToString(*this);
 	}
 	std::ostream& operator << (std::ostream& os, const Pose3D& ps) {
 		return os << "Pose3D [ offset:" << ps.getOffset() << std::endl
