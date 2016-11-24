@@ -89,14 +89,4 @@ namespace rev {
 	DEF_HANDLE(GLXStruct, Block)
 
 	#undef DEF_HANDLE
-
-	using Priority = uint32_t;
-	class URI;
-	class UriHandlerV;
-	class ResMgrBase {
-		private:
-			static UriHandlerV	s_handler;
-		public:
-			virtual HRes loadResource(const URI& uri) = 0;
-	};
 }

@@ -4,6 +4,7 @@
 #include "gl_format.hpp"
 #include "resmgr_app.hpp"
 #include "lubee/size.hpp"
+#include "resmgr_base.hpp"
 
 namespace rev {
 	class GLFBufferTmp;
