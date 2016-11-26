@@ -3,6 +3,14 @@
 #include "glx_if.hpp"
 
 namespace rev {
+	const DSort_SP cs_dsort_z_asc = std::make_shared<DSort_Z_Asc>(),
+					cs_dsort_z_desc = std::make_shared<DSort_Z_Desc>(),
+					cs_dsort_priority_asc = std::make_shared<DSort_Priority_Asc>(),
+					cs_dsort_priority_desc = std::make_shared<DSort_Priority_Desc>(),
+					cs_dsort_techpass = std::make_shared<DSort_TechPass>(),
+					cs_dsort_texture = std::make_shared<DSort_Texture>(),
+					cs_dsort_buffer = std::make_shared<DSort_Buffer>();
+
 	void DSort::apply(const DrawTag& /*d*/, IEffect& /*e*/) {}
 	void DSort::DoSort(const DSort_V& alg, int cursor, typename DLObj_V::iterator itr0, typename DLObj_V::iterator itr1) {
 		if(cursor == int(alg.size()))
