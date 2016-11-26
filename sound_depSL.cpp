@@ -110,7 +110,7 @@ namespace rev {
 	void ABuffer_depSL::writeBuffer(const AFormatF& af, const void* src, const std::size_t len) {
 		SDL_AudioCVT cvt;
 		SDLAFormatCF sfmt(af);
-		const SDLAFormatCF& outfmt = SoundMgr_depSL::_ref().getOutMixFormat();
+		const SDLAFormatCF& outfmt = SoundMgr_depSL::ref().getOutMixFormat();
 		// なぜか37800Hz付近で砂嵐になるので小細工
 		int srcfreq = sfmt.freq;
 		if(outfmt.freq > srcfreq && srcfreq >= 37700 && srcfreq <= 37900)
@@ -137,12 +137,12 @@ namespace rev {
 
 	// --------------------- ASource_depSL ---------------------
 	ASource_depSL::ASource_depSL() {
-		auto& s = SoundMgr_depSL::_ref();
+		auto& s = SoundMgr_depSL::ref();
 
 		SLDataLocator_BufferQueue loc_bufq = {
 			SL_DATALOCATOR_BUFFERQUEUE, MAX_AUDIO_BLOCKNUM
 		};
-		const SDLAFormatCF& outFmt = SoundMgr_depSL::_ref().getOutMixFormat();
+		const SDLAFormatCF& outFmt = SoundMgr_depSL::ref().getOutMixFormat();
 		// OutputMixと同じフォーマットで初期化
 		SLDataFormat_PCM format_pcm = {
 			SL_DATAFORMAT_PCM,
