@@ -2,6 +2,7 @@
 #include <SDL_video.h>
 #include <memory>
 #include "lubee/size.hpp"
+#include "spine/enum.hpp"
 
 namespace rev {
 	class Window;
@@ -15,13 +16,28 @@ namespace rev {
 				Fullscreen,
 				Shown
 			};
+			DefineEnumPair(
+				Profile,
+				((None)(0))
+				((Compatibility)(SDL_GL_CONTEXT_PROFILE_COMPATIBILITY))
+				((Core)(SDL_GL_CONTEXT_PROFILE_CORE))
+				((ES)(SDL_GL_CONTEXT_PROFILE_ES))
+			);
+
 			//! OpenGL初期化パラメータ
 			struct GLParam {
-				int			verMajor, verMinor;			//!< OpenGLバージョン(メジャー & マイナー)
-				int			red, green, blue, depth;	//!< 色深度(RGB + Depth)
-				int			doublebuffer;				//!< ダブルバッファフラグ
-				int			stencil;
-				int			share_context;
+				//! OpenGLバージョン(メジャー & マイナー)
+				int			profile,
+							verMajor,
+							verMinor;
+				//! 色深度(RGB + Depth)
+				int			red,
+							green,
+							blue,
+							depth,
+							stencil;
+				//! ダブルバッファフラグ(0 or 1)
+				int			doublebuffer;
 
 				GLParam() noexcept;
 				void setStdAttributes() const noexcept;

@@ -40,7 +40,7 @@ namespace rev {
 			gp.red = gp.green = gp.blue = 8;
 			gp.depth = 16;
 			gp.setStdAttributes();
-			LogR(Verbose, "%1%", gp);
+			LogR(Verbose, "OpenGL Param(Request):\n%1%", gp);
 		}
 		{
 			auto lk = g_system_shared.lock();
