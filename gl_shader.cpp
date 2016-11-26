@@ -7,6 +7,7 @@ namespace rev {
 	// ---------------------- GLShader ----------------------
 	void GLShader::_initShader() {
 		_idSh = GL.glCreateShader(c_glShFlag[_flag]);
+		D_Assert0(_idSh != 0);
 
 		const auto* pStr = _source.c_str();
 		GL.glShaderSource(_idSh, 1, &pStr, nullptr);
@@ -19,7 +20,11 @@ namespace rev {
 			throw GLE_ShaderError(_source, _idSh);
 	}
 	GLShader::GLShader() {}
-	GLShader::GLShader(ShType flag, const std::string& src): _idSh(0), _flag(flag), _source(src) {
+	GLShader::GLShader(const ShType flag, const std::string& src):
+		_idSh(0),
+		_flag(flag),
+		_source(src)
+	{
 		_initShader();
 	}
 	GLShader::~GLShader() {
