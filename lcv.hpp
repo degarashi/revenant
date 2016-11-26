@@ -11,6 +11,11 @@
 #include "luaimport_types.hpp"
 
 namespace rev {
+	template <class T>
+	struct IsSPtr : std::false_type {};
+	template <class T>
+	struct IsSPtr<std::shared_ptr<T>> : std::true_type {};
+
 	class Pose2D;
 	class Pose3D;
 	using LPointerSP = std::unordered_map<const void*, LCValue>;
@@ -464,7 +469,15 @@ namespace rev {
 			LCValue(lua_IntegerU num);
 			LCValue(lua_OtherIntegerU num);
 			LCValue(lua_OtherInteger num);
-			template <class T>
+			LCValue(const LCTable_SP& tbl);
+			LCValue(const Lua_SP& sp);
+			template <
+				class T,
+				ENABLE_IF((
+					!frea::is_vector<T>{} &&
+					!IsSPtr<T>{}
+				))
+			>
 			LCValue(T&& t): LCVar(std::forward<T>(t)) {}
 
 			// Tupleは配列に変換
@@ -478,13 +491,15 @@ namespace rev {
 			template <class... Args>
 			LCValue(const std::tuple<Args...>& t);
 			template <class V, ENABLE_IF((frea::is_vector<V>{}))>
-			LCValue(const V& v): LCVar(frea::Vec_t<float,V::size, false>(v)) {}
+			LCValue(const V& v):
+				LCVar(frea::Vec_t<float,V::size, false>(v))
+			{}
 			LCValue& operator = (const LCValue& lcv);
 			LCValue& operator = (LCValue&& lcv);
 			// リソースの固有ハンドルは汎用へ読み替え
-			template <class T>
-			LCValue(const std::shared_ptr<T>& p):
-				LCVar(std::static_pointer_cast<void>(p))
+			template <class T, ENABLE_IF((std::is_base_of<Resource, T>{}))>
+			LCValue(const std::shared_ptr<T>& sp):
+				LCVar(std::static_pointer_cast<Resource>(sp))
 			{}
 			//! 中身を配列とみなしてアクセス
 			/*! \param[in] n 0オリジンのインデックス */

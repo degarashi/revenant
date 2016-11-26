@@ -31,6 +31,12 @@ namespace rev {
 	LCValue::LCValue(const lua_OtherIntegerU num):
 		LCValue(static_cast<lua_Integer>(num))
 	{}
+	LCValue::LCValue(const LCTable_SP& tbl):
+		LCVar(tbl)
+	{}
+	LCValue::LCValue(const Lua_SP& sp):
+		LCVar(sp)
+	{}
 
 	bool LCValue::operator == (const LCValue& lcv) const noexcept {
 		return static_cast<const LCVar&>(*this) == static_cast<const LCVar&>(lcv);
