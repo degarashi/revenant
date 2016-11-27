@@ -120,7 +120,7 @@ namespace rev {
 							break;
 						}
 						// 何かメッセージが来てたら処理する
-						while(auto m = getLooper()->peek(Seconds(0))) {
+						while(auto m = getLooper()->peek()) {
 							if(static_cast<msg::PauseReq*>(*m)) {
 								// ユーザーに通知(Pause)
 								if(!mp->onPause()) {

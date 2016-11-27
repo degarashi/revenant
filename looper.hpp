@@ -99,9 +99,9 @@ namespace rev {
 
 	class Looper;
 	using Looper_SP = std::shared_ptr<Looper>;
-	using MsgQueue = spi::pqueue<Message, std::deque>;
 	class Looper : public std::enable_shared_from_this<Looper> {
 		private:
+			using MsgQueue = spi::pqueue<Message, std::deque>;
 			using Message_OP = spi::Optional<Message>;
 			static TLS<Looper_SP>	tls_looper;
 			bool			_bRun = true;
@@ -119,7 +119,7 @@ namespace rev {
 			static void Prepare();
 			// キューに溜まったメッセージをハンドラに渡す -> キューをクリア
 			Message_OP wait();
-			Message_OP peek(Milliseconds msec);
+			Message_OP peek();
 			static const Looper_SP& GetLooper();
 			void pushEvent(Message&& m);
 			void setState(bool bRun);

@@ -77,7 +77,7 @@ namespace rev {
 		while(bLoop && mth.isRunning() && SDL_WaitEvent(&e)) {
 			if(e.type == EVID_SIGNAL) {
 				// 自作スレッドのキューにメッセージがある
-				while(auto m = loop->peek(Seconds(0))) {
+				while(auto m = loop->peek()) {
 					if(static_cast<msg::QuitReq*>(*m)) {
 						e.type = SDL_QUIT;
 						e.quit.timestamp = 0;

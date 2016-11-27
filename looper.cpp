@@ -46,6 +46,7 @@ namespace rev {
 		UniLock lk(_mutex);
 		auto tpoint = Clock::now();
 		while(_bRun) {
+			// メッセージキューが空になるか、まだ処理すべき時間でないなら終了
 			if(_msg.empty() ||
 				tpoint < _msg.front().tpoint)
 			{
@@ -71,16 +72,17 @@ namespace rev {
 			if(_msg.empty())
 				_cond.wait(lk);
 			else {
-				auto dur = _msg.front().tpoint - Clock::now();
-				std::chrono::milliseconds msec(std::chrono::duration_cast<std::chrono::milliseconds>(dur));
-				_cond.wait_for(lk, std::max<std::chrono::milliseconds::rep>(0, msec.count()));
+				// 次のメッセージが配信される時間までsleep (or 途中でメッセージが来ればwakeup)
+				const auto dur = _msg.front().tpoint - Clock::now();
+				const Milliseconds msec(std::chrono::duration_cast<Milliseconds>(dur));
+				_cond.wait_for(lk, std::max<Milliseconds::rep>(0, msec.count()));
 			}
 			return true;
 		});
 	}
-	Looper::Message_OP Looper::peek(const Milliseconds msec) {
-		return _procMessage([this, msec](UniLock& lk) {
-			return _cond.wait_for(lk, msec.count());
+	Looper::Message_OP Looper::peek() {
+		return _procMessage([](UniLock&) {
+			return false;
 		});
 	}
 	void Looper::pushEvent(Message&& m) {
