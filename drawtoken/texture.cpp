@@ -1,5 +1,6 @@
 #include "texture.hpp"
 #include "../gl_if.hpp"
+#include "../videoparam.hpp"
 
 namespace rev {
 	// ------------------------- draw::Texture -------------------------
@@ -29,10 +30,12 @@ namespace rev {
 			// 最後にBindは解除しない
 			use_begin();
 			{
-				// setAnisotropic
-				GLfloat aMax;
-				GL.glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aMax);
-				GL.glTexParameteri(_texFlag, GL_TEXTURE_MAX_ANISOTROPY_EXT, std::max(aMax*_coeff, 1.f));
+				if(tls_videoParam.get().bAnisotropic) {
+					// setAnisotropic
+					GLfloat aMax;
+					GL.glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aMax);
+					GL.glTexParameteri(_texFlag, GL_TEXTURE_MAX_ANISOTROPY_EXT, std::max(aMax*_coeff, 1.f));
+				}
 				// setUVWrap
 				GL.glTexParameteri(_texFlag, GL_TEXTURE_WRAP_S, cs_wrap[_wrapS]);
 				GL.glTexParameteri(_texFlag, GL_TEXTURE_WRAP_T, cs_wrap[_wrapT]);

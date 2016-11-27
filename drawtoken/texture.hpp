@@ -9,7 +9,7 @@ namespace rev {
 			private:
 				HTex	_hTex;
 			public:
-				Texture(const HTex& hTex, GLint id, int index, int baseActId, const IGLTexture& t);
+				Texture(const HTex& hTex, GLint id, int index, int baseActId,  const IGLTexture& t);
 				virtual ~Texture();
 				void exec() override;
 		};

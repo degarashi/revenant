@@ -15,8 +15,11 @@
 #include "sound.hpp"
 #include <SDL_timer.h>
 #include <SDL_events.h>
+#include "videoparam.hpp"
 
 namespace rev {
+	TLS<VideoParam> tls_videoParam;
+
 	// ---------------- MainThread ----------------
 	MainThread::MainThread():
 		ThreadL("MainThread")
@@ -56,6 +59,15 @@ namespace rev {
 			Assert0(dth.getInfo()->ctxDrawThread);
 			GLW.initializeMainThread();
 			drawHandler = Handler(dth.getLooper());
+			{
+				// 描画パラメータの初期化
+				tls_videoParam = VideoParam{};
+				auto& vp = *tls_videoParam;
+				vp.bAnisotropic = false;
+			}
+			drawHandler.postArgs([vp = *tls_videoParam](){
+				tls_videoParam = vp;
+			});
 
 			// 描画スレッドがOpenGLコンテキストを初期化するまで待機し、MakeCurrentを呼ぶ(MultiContext時)
 			const auto fnMakeCurrent = [&dth, MultiContext](){
