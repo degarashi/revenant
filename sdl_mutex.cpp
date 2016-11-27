@@ -112,12 +112,15 @@ namespace rev {
 		D_SDLWarn(SDL_DestroyCond, _cond);
 	}
 	void CondV::wait(UniLock& u) {
+		D_Assert0(u.isLocked());
 		const auto res = D_SDLAssert(SDL_CondWait, _cond, u.getMutex());
 		if(res < 0)
 			throw WaitFailed("CondV::wait()");
 	}
 	bool CondV::wait_for(UniLock& u, const uint32_t msec) {
-		const auto res = D_SDLAssert(SDL_CondWaitTimeout, _cond, u.getMutex(), msec);
+		D_Assert0(u.isLocked());
+		D_Expect0(msec > 0);
+		const auto res = D_SDLAssert(SDL_CondWaitTimeout, _cond, u.getMutex(), std::max<decltype(msec)>(1, msec));
 		if(res == 0)
 			return true;
 		if(res == SDL_MUTEX_TIMEDOUT)
