@@ -2,6 +2,18 @@
 #include <unordered_set>
 #include "gl_types.hpp"
 
+namespace std {
+	template <class>
+	class sub_match;
+	template <class, class>
+	class match_results;
+	using cmatch = match_results<
+						const char*,
+						std::allocator<std::sub_match<const char*>>>;
+	using smatch = match_results<
+						std::string::const_iterator,
+						std::allocator<std::sub_match<std::string::const_iterator>>>;
+}
 namespace rev {
 	// OpenGLES2では同期オブジェクトが無いのでGPUTimeは無効
 	#ifndef USE_OPENGLES2
@@ -37,11 +49,14 @@ namespace rev {
 					int ar[3];
 				};
 				void clear();
+				void loadFromRegex(const std::cmatch& m);
+				void loadFromRegex(const std::smatch& m);
 			};
 			friend std::ostream& operator << (std::ostream& os, const GPUInfo::Version& ver);
 			enum class Profile {
 				Core,
-				Compatibility
+				Compatibility,
+				Unknown
 			};
 			using CapSet = std::unordered_set<std::string>;
 			CapSet		_capSet;

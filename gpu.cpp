@@ -7,54 +7,70 @@
 namespace rev {
 	namespace {
 		//! Regex: OpenGL version
-		/*!	[1,2,3] = OpenGL version
-			[4] = Profile
-			[5,6,7] = Driver version */
-		std::regex re_version("(\\d+)\\.(\\d+)(?:\\.(\\d+))?\\s+([\\w ]+)\\s+([^\\.]+)?\\.?([^\\.]+)?\\.?([^\\.]+)?");
+		/*!	major, minor, revision */
+		const std::regex re_version(R"((\d+)(?:\.(\d+))*)");
 		//! Regex: GLSL Version
 		/*!	[1,2] = GLSL version (major, minor) */
-		std::regex re_glsl("(\\d+)\\.(\\d+)");
+		const std::regex re_glsl(R"((\d+)\.(\d+))");
 		//! Regex: Extensions...
 		/*!	[1] = GL-Extension */
-		std::regex re_ext("[\\w\\d_]+");
+		const std::regex re_ext(R"([\w\d_]+)");
+
+		template <class Itr, std::size_t N>
+		void LoadFromRegex(Itr itr0, Itr itr1, int (&ar)[N]) {
+			std::size_t cur = 0;
+			for(; itr0<itr1 && cur<countof(ar) ; ++itr0,++cur)
+				ar[cur] = boost::lexical_cast<int>(itr0->str());
+		}
 	}
-	// ---------------------- GPUInfo ----------------------
+	// ---------------------- GPUInfo::Version ----------------------
 	void GPUInfo::Version::clear() {
 		for(auto& a : ar)
 			a = 0;
 	}
+	void GPUInfo::Version::loadFromRegex(const std::cmatch& m) {
+		LoadFromRegex(m.cbegin()+1, m.cend(), ar);
+	}
+	void GPUInfo::Version::loadFromRegex(const std::smatch& m) {
+		LoadFromRegex(m.cbegin()+1, m.cend(), ar);
+	}
+	std::ostream& operator << (std::ostream& os, const GPUInfo::Version& ver) {
+		return os << ver.major << '.' << ver.minor << '-' << ver.revision;
+	}
+	// ---------------------- GPUInfo ----------------------
 	void GPUInfo::onDeviceReset() {
 		_strVendor = reinterpret_cast<const char*>(GL.glGetString(GL_VENDOR));
 		_strRenderer = reinterpret_cast<const char*>(GL.glGetString(GL_RENDERER));
 
+		_verGL.clear();
+		_verDriver.clear();
+		// バージョンの特定
+		std::smatch m;
+		std::string ver(reinterpret_cast<const char*>(GL.glGetString(GL_VERSION)));
+		std::transform(ver.cbegin(), ver.cend(), ver.begin(), ::tolower);
+		if(std::regex_search(ver, m, re_version)) {
+			_verGL.loadFromRegex(m);
+
+			// ドライバーバージョンの特定
+			if(std::regex_search(m[0].second, ver.cend(), m, re_version))
+				_verDriver.loadFromRegex(m);
+		}
 		// プロファイルの特定
+		if(ver.find("compatibility") != std::string::npos)
+			_profile = Profile::Compatibility;
+		else if(ver.find("core") != std::string::npos)
+			_profile = Profile::Core;
+		else
+			_profile = Profile::Unknown;
+
 		std::cmatch cm;
-		if(std::regex_search(reinterpret_cast<const char*>(GL.glGetString(GL_VERSION)), cm, re_version)) {
-			auto prof = cm.str(4);
-			std::transform(prof.cbegin(), prof.cend(), prof.begin(), ::tolower);
-			if(prof == std::string("compatibility profile context"))
-				_profile = Profile::Compatibility;
-			else
-				_profile = Profile::Core;
+		const auto* cp = reinterpret_cast<const char*>(GL.glGetString(GL_SHADING_LANGUAGE_VERSION));
+		_verSL.clear();
+		if(std::regex_search(cp, cm, re_glsl))
+			_verSL.loadFromRegex(cm);
 
-			for(int i=0 ; i<3 ; i++)
-				_verGL.ar[i] = boost::lexical_cast<int>(cm.str(i+1));
-
-			for(int i=0 ; i<std::min(static_cast<int>(cm.size()-5),3) ; i++) {
-				auto s = cm.str(i+5);
-				if(!s.empty())
-					_verDriver.ar[i] = boost::lexical_cast<int>(s);
-			}
-		} else
-			_verGL.clear();
-		if(std::regex_search(reinterpret_cast<const char*>(GL.glGetString(GL_SHADING_LANGUAGE_VERSION)), cm, re_glsl)) {
-			for(int i=0 ; i<2 ; i++)
-				_verSL.ar[i] = boost::lexical_cast<int>(cm.str(i+1));
-			_verSL.ar[2] = 0;
-		} else
-			_verSL.clear();
-
-		auto* cp = reinterpret_cast<const char*>(GL.glGetString(GL_EXTENSIONS));
+		_capSet.clear();
+		cp = reinterpret_cast<const char*>(GL.glGetString(GL_EXTENSIONS));
 		while(std::regex_search(cp, cm, re_ext)) {
 			_capSet.insert(cm.str(0));
 			cp = cm.suffix().first;
@@ -79,9 +95,6 @@ namespace rev {
 	}
 	const GPUInfo::CapSet& GPUInfo::refCapabilitySet() const {
 		return _capSet;
-	}
-	std::ostream& operator << (std::ostream& os, const GPUInfo::Version& ver) {
-		return os << ver.major << '.' << ver.minor << '-' << ver.revision;
 	}
 	std::ostream& operator << (std::ostream& os, const GPUInfo& info) {
 		using std::endl;
