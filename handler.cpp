@@ -3,7 +3,7 @@
 
 namespace rev {
 	// ----------------- Handler -----------------
-	Handler::Handler(const Looper_WP& loop, Callback cb):
+	Handler::Handler(const Looper_WP& loop, const Callback& cb):
 		_looper(loop),
 		_cb(cb)
 	{}
@@ -28,14 +28,14 @@ namespace rev {
 		CondV cond;
 		Mutex mutex;
 		UniLock lk(mutex);
-		postArgs(msg::Exec(), [&](){
+		postMessageNow(msg::Exec(), [&](){
 			f();
 			UniLock lk2(mutex);
 			cond.signal();
 		});
 		cond.wait(lk);
 	}
-	void Handler::postExecNoWait(Exec cb) {
-		postArgs(msg::Exec(), std::move(cb));
+	void Handler::postExecNoWait(const Exec& cb) {
+		postMessageNow(msg::Exec(), cb);
 	}
 }

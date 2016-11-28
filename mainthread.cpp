@@ -65,7 +65,7 @@ namespace rev {
 				auto& vp = *tls_videoParam;
 				vp.bAnisotropic = false;
 			}
-			drawHandler.postArgs([vp = *tls_videoParam](){
+			drawHandler.postExecNoWait([vp = *tls_videoParam](){
 				tls_videoParam = vp;
 			});
 
@@ -109,7 +109,7 @@ namespace rev {
 						mp.reset(param->makeMainProc(lk->window.lock()));
 					}
 					LogR(Verbose, "Mainproc initialized");
-					guiHandler.postArgs(msg::MainInit());
+					guiHandler.postMessageNow(msg::MainInit());
 
 		// 			const spn::FracI fracInterval(50000, 3);
 		// 			spn::FracI frac(0,1);
@@ -163,14 +163,14 @@ namespace rev {
 											if(MultiContext)
 												dth.getInfo()->ctxMainThread->makeCurrent();
 											// OpenGLリソースの解放をDrawThreadで行う
-											drawHandler.postArgs(msg::DestroyContext());
+											drawHandler.postMessageNow(msg::DestroyContext());
 											_Backup(mgr, buffer);
 										} else if(static_cast<msg::ReStartReq*>(*m)) {
 											_Restore(mgr, buffer);
 											buffer.clear();
 											buffer.str("");
 											// DrawThreadでOpenGLの復帰処理を行う
-											drawHandler.postArgs(msg::MakeContext());
+											drawHandler.postMessageNow(msg::MakeContext());
 											fnMakeCurrent();
 											// ユーザーに通知(Restart)
 											mp->onReStart();
@@ -222,7 +222,7 @@ namespace rev {
 								++skip;
 
 							GL.glFlush();
-							drawHandler.postArgs(msg::DrawReq(++getInfo()->accumDraw, bSkip));
+							drawHandler.postMessageNow(msg::DrawReq(++getInfo()->accumDraw, bSkip));
 						} catch(const std::exception& e) {
 							LogR(Error, "RunU() exception\n%s", e.what());
 							throw;
@@ -251,7 +251,7 @@ namespace rev {
 			}
 			// 描画スレッドを後片付けフェーズへ移行
 			LogR(Verbose, "Requesting Drawthread to quit");
-			drawHandler.postArgs(msg::QuitReq());
+			drawHandler.postMessageNow(msg::QuitReq());
 			// 後処理その1が終わるまで待つ
 			while(dth.getInfo()->state != DrawThread::State::Ended)
 				SDL_Delay(0);
@@ -264,12 +264,12 @@ namespace rev {
 		// MultiContext環境ではContextの関連付けを解除
 		if(MultiContext)
 			dth.getInfo()->ctxMainThread->makeCurrent();
-		drawHandler.postArgs(msg::QuitReq());
+		drawHandler.postMessageNow(msg::QuitReq());
 		// 描画スレッドの終了を待つ
 		dth.interrupt();
 		dth.join();
 		// GUIスレッドへ終了を伝える
-		guiHandler.postArgs(msg::QuitReq());
+		guiHandler.postMessageNow(msg::QuitReq());
 		LogR(Verbose, "Ended");
 	}
 }

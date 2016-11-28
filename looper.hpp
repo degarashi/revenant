@@ -27,14 +27,15 @@ namespace rev {
 	namespace msg {
 		struct Exec : MsgBase<Exec> {};
 	}
-
-	using Exec = std::function<void ()>;
 	class Handler;
+	//! ハンドラを介したスレッド間通信用
 	struct Message {
 		const static Duration NoDelay;
+		//! 処理されるべき時間
 		Timepoint	tpoint;
+		//! MsgBase<>で生成されるId
 		MsgId		id;
-		// IExecを呼び出すまでもないパラメータを渡す時に使用
+		// Execを呼び出すまでもないパラメータを渡す時に使用
 		struct Data {
 			constexpr static int PayloadSize = 32;
 			uint8_t		data[PayloadSize];
@@ -45,17 +46,21 @@ namespace rev {
 		};
 		Data		data;
 		Handler*	handler;
+		using Exec = std::function<void ()>;
 		Exec		exec;
 
 		Message() = default;
 		Message(const Message& m) = delete;
 		Message(Message&& m) = default;
-		Message(Duration delay, Exec&& e) noexcept;
+		Message(Duration delay, const Exec& e) noexcept;
 		template <
 			class T,
-			ENABLE_IF((std::is_base_of<MsgBase<T>,T>{}))
+			ENABLE_IF((
+				std::is_base_of<MsgBase<T>,T>{} &&
+				std::is_trivially_destructible<T>{}
+			))
 		>
-		Message(const Duration delay, const T& info, Exec&& e = Exec()):
+		Message(const Duration delay, const T& info, const Exec& e = Exec()):
 			tpoint(Clock::now() + delay),
 			id{info.Id},
 			handler(nullptr),

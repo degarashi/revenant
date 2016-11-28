@@ -57,7 +57,7 @@ namespace rev {
 			GLW.initializeDrawThread(drawHandler);
 			GLW.loadGLFunc();
 			// ここで一旦MainThreadにOpenGLコンテキストの初期化が終わったことを通知
-			mainHandler.postArgs(msg::DrawInit());
+			mainHandler.postMessageNow(msg::DrawInit());
 			DrawProc_UP up(g_system_shared.lock()->param->makeDrawProc());
 
 			LogR(Verbose, "Entering loop.");

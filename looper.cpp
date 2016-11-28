@@ -20,10 +20,10 @@ namespace rev {
 
 	// ------------- Message -------------
 	const Duration Message::NoDelay = Seconds(0);
-	Message::Message(const Duration delay, Exec&& e) noexcept:
+	Message::Message(const Duration delay, const Exec& e) noexcept:
 		tpoint(Clock::now() + delay), id{-1},
 		handler(nullptr),
-		exec(std::move(e))
+		exec(e)
 	{}
 	bool Message::operator < (const Message& m) const noexcept {
 		return tpoint < m.tpoint;

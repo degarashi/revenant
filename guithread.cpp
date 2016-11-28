@@ -152,16 +152,16 @@ namespace rev {
 	}
 	// それぞれユーザースレッドに通知
 	void GUIThread::_onPause() {
-		_handler->postArgs(msg::PauseReq());
+		_handler->postMessageNow(msg::PauseReq());
 	}
 	void GUIThread::_onResume() {
-		_handler->postArgs(msg::ResumeReq());
+		_handler->postMessageNow(msg::ResumeReq());
 	}
 	void GUIThread::_onStop() {
-		_handler->postArgs(msg::StopReq());
+		_handler->postMessageNow(msg::StopReq());
 	}
 	void GUIThread::_onReStart() {
-		_handler->postArgs(msg::ReStartReq());
+		_handler->postMessageNow(msg::ReStartReq());
 	}
 	void GUIThread::_setLevel(const Level level) {
 		int ilevel = level,
