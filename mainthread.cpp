@@ -171,6 +171,8 @@ namespace rev {
 											buffer.str("");
 											// DrawThreadでOpenGLの復帰処理を行う
 											drawHandler.postMessageNow(msg::MakeContext());
+											// 描画スレッドが確実にOpenGLの初期化を行うまで待つ
+											drawHandler.postExec([](){});
 											fnMakeCurrent();
 											// ユーザーに通知(Restart)
 											mp->onReStart();
