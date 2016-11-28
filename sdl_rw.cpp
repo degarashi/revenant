@@ -76,9 +76,6 @@ namespace rev {
 	{}
 
 	// --------------------- RWops::Data ---------------------
-	RWops::Data::Data() noexcept:
-		_ops(nullptr)
-	{}
 	RWops::Data::Data(SDL_RWops* ops) NOEXCEPT_IF_RELEASE:
 		_ops(ops)
 	{
@@ -95,50 +92,80 @@ namespace rev {
 	SDL_RWops* RWops::Data::getOps() const noexcept {
 		return _ops;
 	}
+	void RWops::Data::_seek(const int64_t pos) {
+		Assert0(_ops);
+		SDL_RWseek(_ops, pos, Pos::Begin);
+		D_SDLAssert0();
+	}
 
 	// --------------------- RWops::TempData ---------------------
 	RWops::TempData::TempData(void* ptr, const std::size_t s):
+		Data(SDL_RWFromMem(ptr, s)),
 		_ptr(ptr),
 		_size(s)
 	{}
-	bool RWops::TempData::isMemory() const noexcept { return true; }
-	typename RWops::Type::e RWops::TempData::getType() const noexcept { return Type::Temporal; }
-	spi::Optional<const PathBlock&> RWops::TempData::getPath() const noexcept { return spi::none; }
-	std::size_t RWops::TempData::size() const noexcept { return _size; }
-	typename RWops::DataPtr RWops::TempData::getMemory() { return {_ptr, _size}; }
-	typename RWops::DataPtrC RWops::TempData::getMemoryC() const { return {_ptr, _size}; }
+	bool RWops::TempData::isMemory() const noexcept {
+		return true;
+	}
+	typename RWops::Type::e RWops::TempData::getType() const noexcept {
+		return Type::Temporal;
+	}
+	spi::Optional<const PathBlock&> RWops::TempData::getPath() const noexcept {
+		return spi::none;
+	}
+	std::size_t RWops::TempData::size() const noexcept {
+		return _size;
+	}
+	typename RWops::DataPtr RWops::TempData::getMemory() {
+		return {_ptr, _size};
+	}
+	typename RWops::DataPtrC RWops::TempData::getMemoryC() const {
+		return {_ptr, _size};
+	}
 
 	// --------------------- RWops::VectorData ---------------------
 	RWops::VectorData::VectorData(const URI& uri, ByteBuff&& b):
+		Data(SDLAssert(SDL_RWFromMem, b.data(), static_cast<int>(b.size()))),
 		_uri(uri),
 		_buff(std::move(b))
 	{}
 	RWops::VectorData::VectorData(const URI& uri, const void* ptr, const std::size_t size):
+		Data(SDL_RWFromConstMem(ptr, size)),
 		_uri(uri),
 		_buff(reinterpret_cast<const uint8_t*>(ptr),
 			reinterpret_cast<const uint8_t*>(ptr)+size)
 	{}
-	void RWops::VectorData::_deserializeFromData(const int64_t pos) {
-		Assert0(!_ops);
-		_ops = SDLAssert(SDL_RWFromMem, _buff.data(), static_cast<int>(_buff.size()));
-		SDL_RWseek(_ops, pos, Pos::Begin);
-		SDLAssert0();
+	bool RWops::VectorData::isMemory() const noexcept {
+		return true;
 	}
-	bool RWops::VectorData::isMemory() const noexcept { return true; }
-	typename RWops::Type::e RWops::VectorData::getType() const noexcept { return Type::Vector; }
+	typename RWops::Type::e RWops::VectorData::getType() const noexcept {
+		return Type::Vector;
+	}
 	spi::Optional<const PathBlock&> RWops::VectorData::getPath() const noexcept {
 		if(_uri.empty())
 			return spi::none;
 		return _uri;
 	}
-	std::size_t RWops::VectorData::size() const noexcept { return _buff.size(); }
-	typename RWops::DataPtr RWops::VectorData::getMemory() { return {_buff.data(), size()}; }
-	typename RWops::DataPtrC RWops::VectorData::getMemoryC() const { return {_buff.data(), size()}; }
+	std::size_t RWops::VectorData::size() const noexcept {
+		return _buff.size();
+	}
+	typename RWops::DataPtr RWops::VectorData::getMemory() {
+		return {_buff.data(), size()};
+	}
+	typename RWops::DataPtrC RWops::VectorData::getMemoryC() const {
+		return {_buff.data(), size()};
+	}
 
 	// --------------------- RWops::FileData ---------------------
-	bool RWops::FileData::isMemory() const noexcept { return false; }
-	typename RWops::Type::e RWops::FileData::getType() const noexcept { return Type::File; }
-	spi::Optional<const PathBlock&> RWops::FileData::getPath() const noexcept { return _path; }
+	bool RWops::FileData::isMemory() const noexcept {
+		return false;
+	}
+	typename RWops::Type::e RWops::FileData::getType() const noexcept {
+		return Type::File;
+	}
+	spi::Optional<const PathBlock&> RWops::FileData::getPath() const noexcept {
+		return _path;
+	}
 	std::size_t RWops::FileData::size() const noexcept {
 		const auto pos = SDL_RWtell(_ops);
 		SDL_RWseek(_ops, 0, Pos::End);
@@ -146,31 +173,29 @@ namespace rev {
 		SDL_RWseek(_ops, pos, Pos::Begin);
 		return ret;
 	}
-	typename RWops::DataPtr RWops::FileData::getMemory() { return {nullptr, 0}; }
-	typename RWops::DataPtrC RWops::FileData::getMemoryC() const { return {nullptr, 0}; }
-	void RWops::FileData::_loadFromFile() {
-		const auto pathstr = _path.plain_utf8();
+	typename RWops::DataPtr RWops::FileData::getMemory() {
+		return {nullptr, 0};
+	}
+	typename RWops::DataPtrC RWops::FileData::getMemoryC() const {
+		return {nullptr, 0};
+	}
+	SDL_RWops* RWops::FileData::_LoadFromFile(const PathBlock& path, const int access) {
+		const auto pathstr = path.plain_utf8();
 		auto* str = pathstr.data();
 		str = PathBlock::RemoveDriveLetter(str, str + pathstr.length());
 		SDLError err;
 		err.reset();
-		_ops = SDL_RWFromFile(str, ReadModeStr(_access).c_str());
+		SDL_RWops* ops = SDL_RWFromFile(str, ReadModeStr(access).c_str());
 		if(err.errorDesc())
 			throw RWE_File(str);
-		D_Assert0(_ops);
+		D_Assert0(ops);
+		return ops;
 	}
 	RWops::FileData::FileData(const PathBlock& path, const int access):
+		Data(_LoadFromFile(path, access)),
 		_path(path),
 		_access(access)
-	{
-		_loadFromFile();
-	}
-	void RWops::FileData::_deserializeFromData(const int64_t pos) {
-		Assert0(!_ops);
-		_loadFromFile();
-		SDL_RWseek(_ops, pos, Pos::Begin);
-		SDLAssert0();
-	}
+	{}
 	// --------------------- RWops ---------------------
 	RWops RWops::_FromTemporal(const int mode, void* mem, const std::size_t size, const Callback_SP& cb) {
 		if(!mem)

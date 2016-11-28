@@ -53,10 +53,12 @@ namespace rev {
 			class Data {
 				protected:
 					SDL_RWops*	_ops;
+					template <class T>
+					friend struct cereal::LoadAndConstruct;
+					void _seek(int64_t pos);
 				protected:
-					Data() noexcept;
-				public:
 					Data(SDL_RWops* ops) NOEXCEPT_IF_RELEASE;
+				public:
 					SDL_RWops* getOps() const noexcept;
 					int64_t tell() const noexcept;
 					virtual ~Data();
@@ -86,7 +88,6 @@ namespace rev {
 					template <class Ar>
 					friend void serialize(Ar&, TempData&);
 				public:
-					TempData() = default;
 					TempData(void* ptr, std::size_t s);
 					DEF_METHODS
 			};
@@ -97,13 +98,9 @@ namespace rev {
 					ByteBuff	_buff;
 
 					template <class Ar>
-					friend void load(Ar&, VectorData&);
-					template <class Ar>
-					friend void save(Ar&, const VectorData&);
-
-					void _deserializeFromData(int64_t pos);
+					friend void serialize(Ar&, VectorData&);
+					friend struct cereal::LoadAndConstruct<VectorData>;
 				public:
-					VectorData() = default;
 					VectorData(const URI& uri, ByteBuff&& b);
 					VectorData(const URI& uri, const void* ptr, std::size_t size);
 					DEF_METHODS
@@ -115,15 +112,12 @@ namespace rev {
 					int			_access;
 
 					template <class Ar>
-					friend void load(Ar&, FileData&);
-					template <class Ar>
-					friend void save(Ar&, const FileData&);
+					friend void serialize(Ar&, FileData&);
+					friend struct cereal::LoadAndConstruct<FileData>;
 
-					void _loadFromFile();
-					void _deserializeFromData(int64_t pos);
+					static SDL_RWops* _LoadFromFile(const PathBlock& path, int access);
 				public:
-					FileData() = default;
-					FileData(const PathBlock& path, const int access);
+					FileData(const PathBlock& path, int access);
 					DEF_METHODS
 			};
 			#undef DEF_METHODS

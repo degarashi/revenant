@@ -12,25 +12,13 @@ namespace rev {
 	}
 
 	template <class Ar>
-	void load(Ar& ar, RWops::VectorData& d) {
-		int64_t pos;
-		ar(d._uri, d._buff, pos);
-		d._deserializeFromData(pos);
-	}
-	template <class Ar>
-	void save(Ar& ar, const RWops::VectorData& d) {
+	void serialize(Ar& ar, RWops::VectorData& d) {
 		const int64_t pos = d.tell();
 		ar(d._uri, d._buff, pos);
 	}
 
 	template <class Ar>
-	void load(Ar& ar, RWops::FileData& d) {
-		int64_t pos;
-		ar(d._path, d._access, pos);
-		d._deserializeFromData(pos);
-	}
-	template <class Ar>
-	void save(Ar& ar, const RWops::FileData& d) {
+	void serialize(Ar& ar, RWops::FileData& d) {
 		const int64_t pos = d.tell();
 		ar(d._path, d._access, pos);
 	}
@@ -50,6 +38,37 @@ namespace rev {
 	}
 }
 namespace cereal {
+	template <>
+	struct LoadAndConstruct<::rev::RWops::TempData> {
+		template <class Ar>
+		static void load_and_construct(Ar& /*ar*/, cereal::construct<::rev::RWops::TempData>& /*construct*/) {
+			D_Expect(false, "this object cannot serialize");
+		}
+	};
+	template <>
+	struct LoadAndConstruct<::rev::RWops::VectorData> {
+		template <class Ar>
+		static void load_and_construct(Ar& ar, cereal::construct<::rev::RWops::VectorData>& construct) {
+			::rev::URI uri;
+			::rev::ByteBuff buff;
+			int64_t pos;
+			ar(uri, buff, pos);
+			construct(uri, std::move(buff));
+			construct->_seek(pos);
+		}
+	};
+	template <>
+	struct LoadAndConstruct<::rev::RWops::FileData> {
+		template <class Ar>
+		static void load_and_construct(Ar& ar, cereal::construct<::rev::RWops::FileData>& construct) {
+			::rev::PathBlock path;
+			int access;
+			int64_t pos;
+			ar(path, access, pos);
+			construct(path, access);
+			construct->_seek(pos);
+		}
+	};
 	template <>
 	struct LoadAndConstruct<::rev::RWMgr> {
 		template <class Ar>
