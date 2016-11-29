@@ -2,7 +2,7 @@
 #include <memory>
 
 namespace rev {
-	struct IDrawProc {
+	struct DrawProc {
 		//! 描画コールバック
 		/*!
 			描画スレッドから呼ばれる
@@ -10,8 +10,8 @@ namespace rev {
 			\param[in] bSkip 描画スキップフラグ
 			\return backbufferのswapをかける時はtrue
 		*/
-		virtual bool runU(uint64_t accum, bool bSkip) = 0;
-		virtual ~IDrawProc() {}
+		virtual bool runU(uint64_t accum, bool bSkip);
+		virtual ~DrawProc() {}
 	};
-	using DrawProc_UP = std::unique_ptr<IDrawProc>;
+	using DrawProc_UP = std::unique_ptr<DrawProc>;
 }

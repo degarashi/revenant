@@ -92,6 +92,7 @@ namespace rev {
 			{
 				// 各種リソースマネージャの初期化
 				Manager mgr;
+				HFx hFx;
 				try {
 					auto lk = g_system_shared.lock();
 					_InitManagers(mgr, *lk->param);
@@ -106,7 +107,10 @@ namespace rev {
 					{
 						auto lk = g_system_shared.lock();
 						auto& param = lk->param;
-						mp.reset(param->makeMainProc(lk->window.lock()));
+						mp.reset(param->makeMainProc());
+						// デフォルトエフェクトファイルを読み込み
+						hFx = param->makeDefaultEffect();
+						lk->fx = hFx;
 					}
 					LogR(Verbose, "Mainproc initialized");
 					guiHandler.postMessageNow(msg::MainInit());
@@ -114,7 +118,7 @@ namespace rev {
 		// 			const spn::FracI fracInterval(50000, 3);
 		// 			spn::FracI frac(0,1);
 					Timepoint prevtime = Clock::now();
-					int skip = 0;
+					DrawQuery q(10000000, 0);
 
 					// ゲームの進行や更新タイミングを図って描画など
 					bool bLoop = true;
@@ -183,7 +187,7 @@ namespace rev {
 						}
 						// 次のフレーム開始を待つ
 						auto ntp = prevtime + Microseconds(16666);
-						auto tp = Clock::now();
+						const auto tp = Clock::now();
 						if(ntp <= tp)
 							ntp = tp;
 						else {
@@ -204,27 +208,18 @@ namespace rev {
 							++getInfo()->accumUpd;
 							mgr_input.update();
 							g_sdlInputShared.lock()->reset();
-							IMainProc::Query q(tp, skip);
 							{
 								mgr_info.setInfo(
 									g_system_shared.lock()->window.lock()->getSize(),
 									dth.getInfo()->fps.getFPS()
 								);
-								if(!mp->runU(q)) {
+								if(!mp->runU()) {
 									LogR(Verbose, "Exiting loop by normally");
 									break;
 								}
 							}
-							// 時間が残っていれば描画
-							// 最大スキップフレームを超過してたら必ず描画
-							const bool bSkip = !q.getDraw();
-							if(!bSkip)
-								skip = 0;
-							else
-								++skip;
-
 							GL.glFlush();
-							drawHandler.postMessageNow(msg::DrawReq(++getInfo()->accumDraw, bSkip));
+							drawHandler.postMessageNow(msg::DrawReq(++getInfo()->accumDraw, !q.checkDraw()));
 						} catch(const std::exception& e) {
 							LogR(Error, "RunU() exception\n%s", e.what());
 							throw;

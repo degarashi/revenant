@@ -1,34 +1,45 @@
 #include "mainproc.hpp"
+#include "scene.hpp"
+#include "output.hpp"
 
 namespace rev {
-	const bool detail::c_pauseDefault = false;
-	namespace {
-		constexpr int MAX_SKIPFRAME = 3;
-		constexpr int DRAW_THRESHOLD_USEC = 2000;
-	}
-	// ---------------- IMainProc::Query ----------------
-	IMainProc::Query::Query(const Timepoint tp, const int skip):
-		_bDraw(false),
-		_tp(tp),
-		_skip(skip)
+	// ---------------- DrawQuery ----------------
+	DrawQuery::DrawQuery(const int us, const int maxSkip):
+		_tp(Clock::now()),
+		_usec(us),
+		_skip(0),
+		_maxSkip(maxSkip)
 	{}
-	bool IMainProc::Query::canDraw() const {
-		return true;
-		const auto dur = Clock::now() - _tp;
-		return _skip >= MAX_SKIPFRAME || dur <= Microseconds(DRAW_THRESHOLD_USEC);
-	}
-	void IMainProc::Query::setDraw(const bool bDraw) {
-		_bDraw = bDraw;
-	}
-	bool IMainProc::Query::getDraw() const {
-		return _bDraw;
+	bool DrawQuery::checkDraw() {
+		const auto now = Clock::now();
+		const auto dur = now - _tp;
+		_tp = now;
+		// 時間が残っていれば描画
+		// 最大スキップフレームを超過してたら必ず描画
+		const bool ret = (_skip >= _maxSkip || dur < Microseconds(_usec));
+		if(!ret)
+			++_skip;
+		else
+			_skip = 0;
+		return ret;
 	}
 
-	// ---------------- IMainProc ----------------
-	bool IMainProc::onPause() {
+	// ---------------- MainProc ----------------
+	const bool detail::c_pauseDefault = false;
+	bool MainProc::runU() {
+		return mgr_scene.onUpdate();
+	}
+	bool MainProc::onPause() {
+		LogR(Verbose, "OnPause");
 		return detail::c_pauseDefault;
 	}
-	void IMainProc::onResume() {}
-	void IMainProc::onStop() {}
-	void IMainProc::onReStart() {}
+	void MainProc::onResume() {
+		LogR(Verbose, "OnResume");
+	}
+	void MainProc::onStop() {
+		LogR(Verbose, "OnStop");
+	}
+	void MainProc::onReStart() {
+		LogR(Verbose, "OnRestart");
+	}
 }

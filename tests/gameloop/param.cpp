@@ -26,10 +26,13 @@ namespace rev {
 		HFx Param::loadEffect(const std::string& name) const {
 			return mgr_gl.template loadEffect<GLEffect>(name);
 		}
-		IMainProc* Param::makeMainProc(const Window_SP&) const {
+		HFx Param::makeDefaultEffect() const {
+			return loadEffect("default.glx");
+		}
+		::rev::MainProc* Param::makeMainProc() const {
 			return new MainProc();
 		}
-		IDrawProc* Param::makeDrawProc() const {
+		::rev::DrawProc* Param::makeDrawProc() const {
 			return new DrawProc();
 		}
 		bool Param::getMultiContext() const noexcept {

@@ -10,6 +10,7 @@ namespace rev {
 		lubee::RandomMT		mt;
 		GameloopParam_UP	param;
 		Window_WP			window;
+		WFx					fx;
 
 		ShareData();
 	};

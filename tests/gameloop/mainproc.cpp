@@ -10,7 +10,7 @@ namespace rev {
 			auto hKb = Keyboard::OpenKeyboard();
 			_actQ->addLink(hKb, InputFlag::Button, SDL_SCANCODE_ESCAPE);
 		}
-		bool MainProc::runU(Query& /*q*/) {
+		bool MainProc::runU() {
 			if(_actQ->isKeyPressed())
 				return false;
 			return true;
