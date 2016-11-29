@@ -10,6 +10,7 @@ namespace rev {
 		extern SpinLock<UserShare> g_shared;
 
 		struct MyScene : Scene<MyScene> {
+			util::TextHUD	_fps;
 			HAct			_actQ;
 
 			struct St_None;
