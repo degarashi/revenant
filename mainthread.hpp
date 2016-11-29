@@ -22,6 +22,8 @@ namespace rev {
 	class FontFamily;
 	class FontGen;
 	class FxBlock;
+	class ObjMgr;
+	class SceneMgr;
 	//! メインスレッド
 	class MainThread : public spi::Singleton<MainThread>,
 						public ThreadL<void (const Looper_SP&)>
@@ -50,6 +52,8 @@ namespace rev {
 				SPtr<FontFamily>			font;
 				SPtr<FontGen>				fgen;
 				SPtr<FxBlock>				block;
+				SPtr<ObjMgr>				obj;
+				SPtr<SceneMgr>				scene;
 			};
 			static void _InitManagers(Manager& m, const GameloopParam& param);
 			//! AppPathの場所に置かれたフォントファイルを列挙し、読み込む

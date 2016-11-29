@@ -23,8 +23,8 @@ namespace rev {
 		virtual MainProc* makeMainProc() const = 0;
 		virtual DrawProc* makeDrawProc() const = 0;
 		virtual bool getMultiContext() const noexcept = 0;
-		// 最初のSceneを作る
-		// virtual void makeScene(const HObj& obj) const = 0;
+		// ゲーム開始時、最初のSceneを作る
+		virtual HScene makeFirstScene() const = 0;
 	};
 	using GameloopParam_UP = std::unique_ptr<GameloopParam>;
 }

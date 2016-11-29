@@ -2,6 +2,9 @@
 #include "../../uri.hpp"
 #include "../../glx.hpp"
 #include "../../gl_resource.hpp"
+#include "../../util/sys_unif.hpp"
+#include "../../mainproc.hpp"
+#include "../../drawproc.hpp"
 
 namespace rev {
 	namespace test {
@@ -24,7 +27,7 @@ namespace rev {
 			return uri;
 		}
 		HFx Param::loadEffect(const std::string& name) const {
-			return mgr_gl.template loadEffect<GLEffect>(name);
+			return mgr_gl.template loadEffect<util::GLEffect_2D3D>(name);
 		}
 		HFx Param::makeDefaultEffect() const {
 			return loadEffect("default.glx");
@@ -37,6 +40,9 @@ namespace rev {
 		}
 		bool Param::getMultiContext() const noexcept {
 			return true;
+		}
+		HScene Param::makeFirstScene() const {
+			return rev_mgr_obj.emplace<MyScene>();
 		}
 	}
 }

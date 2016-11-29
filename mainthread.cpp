@@ -16,6 +16,7 @@
 #include <SDL_timer.h>
 #include <SDL_events.h>
 #include "videoparam.hpp"
+#include "scene.hpp"
 
 namespace rev {
 	TLS<VideoParam> tls_videoParam;
@@ -111,6 +112,8 @@ namespace rev {
 						// デフォルトエフェクトファイルを読み込み
 						hFx = param->makeDefaultEffect();
 						lk->fx = hFx;
+						// 最初のシーンを作成
+						mgr_scene.setPushScene(param->makeFirstScene(), false);
 					}
 					LogR(Verbose, "Mainproc initialized");
 					guiHandler.postMessageNow(msg::MainInit());
@@ -232,19 +235,19 @@ namespace rev {
 							break;
 						}
 					} while(bLoop);
+					// シーンマネージャに積んであるシーンを全て終了させる
+					while(auto scene = mgr_scene.getTop()) {
+						mgr_scene.setPopScene(1);
+						auto lk = g_system_shared.lock();
+						const auto w = lk->window.lock();
+						mgr_info.setInfo(w->getSize(), dth.getInfo()->fps.getFPS());
+						mp->runU();
+					}
 				}
-				// シーンマネージャに積んであるシーンを全て終了させる
-				// while(mgr_scene.getTop().valid()) {
-				// 	mgr_scene.setPopScene(1);
-				// 	IMainProc::Query q(Clock::now(), 0xffff);
-				// 	mgr_info.setInfo(w->getSize(), dth.getInfo()->fps.getFPS());
-				// 	mp->runU(q);
-				// }
 				GL.glFlush();
 				// 描画スレッドの処理が追いつくまで待機
 				LogR(Verbose, "Catch up Drawthread");
-				while(dth.getInfo()->accum != getInfo()->accumDraw)
-					SDL_Delay(0);
+				drawHandler.postExec([](){});
 			}
 			// 描画スレッドを後片付けフェーズへ移行
 			LogR(Verbose, "Requesting Drawthread to quit");

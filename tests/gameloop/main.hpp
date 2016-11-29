@@ -1,23 +1,19 @@
 #pragma once
-#include "../test.hpp"
-#include "../../drawproc.hpp"
-#include "../../mainproc.hpp"
 #include "../../gameloopparam.hpp"
+#include "../../sdl_mutex.hpp"
+#include "../../util/texthud.hpp"
+#include "../../scene.hpp"
 
 namespace rev {
 	namespace test {
-		struct DrawProc : ::rev::DrawProc {
-			bool runU(uint64_t accum, bool bSkip) override;
-		};
-		struct MainProc : ::rev::MainProc {
-			HAct _actQ;
+		struct UserShare {};
+		extern SpinLock<UserShare> g_shared;
 
-			MainProc();
-			bool runU() override;
-			bool onPause() override;
-			void onResume() override;
-			void onStop() override;
-			void onReStart() override;
+		struct MyScene : Scene<MyScene> {
+			HAct			_actQ;
+
+			struct St_None;
+			MyScene();
 		};
 		struct Param : GameloopParam {
 			lubee::SizeI getScreenSize() const override;
@@ -32,7 +28,7 @@ namespace rev {
 			::rev::MainProc* makeMainProc() const override;
 			::rev::DrawProc* makeDrawProc() const override;
 			bool getMultiContext() const noexcept override;
+			HScene makeFirstScene() const override;
 		};
-		struct GameloopTest : Random {};
 	}
 }

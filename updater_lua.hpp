@@ -24,10 +24,12 @@ namespace rev {
 		protected:
 			template <class... Ts>
 			LCValue _callLuaMethod(const std::string& method, Ts&&... ts) {
-				auto sp = rev_mgr_obj.getLua();
-				sp->push(_getHandle());
-				LValueS lv(sp->getLS());
-				return lv.callMethodNRet(method, std::forward<Ts>(ts)...);
+				if(const auto& sp = rev_mgr_obj.getLua()) {
+					sp->push(_getHandle());
+					LValueS lv(sp->getLS());
+					return lv.callMethodNRet(method, std::forward<Ts>(ts)...);
+				}
+				return LCValue();
 			}
 			//! Lua側を終端ステートへ移行
 			void _setNullState() {
@@ -71,7 +73,9 @@ namespace rev {
 				}
 			}
 			LCValue recvMsg(const GMessageStr& msg, const LCValue& arg) override {
-				return detail::ObjectT_LuaBase::CallRecvMsg(rev_mgr_obj.getLua(), _getHandle(), msg, arg);
+				if(const auto& sp = rev_mgr_obj.getLua())
+					return detail::ObjectT_LuaBase::CallRecvMsg(sp, _getHandle(), msg, arg);
+				return LCValue();
 			}
 	};
 

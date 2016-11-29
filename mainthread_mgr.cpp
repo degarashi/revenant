@@ -13,6 +13,7 @@
 #include "gl_resource.hpp"
 #include "glx.hpp"
 #include "font.hpp"
+#include "scene.hpp"
 
 namespace rev {
 	void MainThread::_InitManagers(Manager& m, const GameloopParam& param) {
@@ -39,6 +40,8 @@ namespace rev {
 		m.snd = std::make_shared<SoundMgr>(44100);
 		m.snd->makeCurrent();
 		m.block = std::make_shared<FxBlock>();
+		m.obj = std::make_shared<ObjMgr>();
+		m.scene = std::make_shared<SceneMgr>();
 	}
 	void MainThread::_LoadPathfile(const URI& uri, const bool bAppend) {
 		mgr_path.setFromText(mgr_rw.fromURI(uri, Access::Read), bAppend);
