@@ -121,7 +121,6 @@ namespace rev {
 		// 			const spn::FracI fracInterval(50000, 3);
 		// 			spn::FracI frac(0,1);
 					Timepoint prevtime = Clock::now();
-					DrawQuery q(10000000, 0);
 
 					// ゲームの進行や更新タイミングを図って描画など
 					bool bLoop = true;
@@ -222,7 +221,7 @@ namespace rev {
 								}
 							}
 							GL.glFlush();
-							drawHandler.postMessageNow(msg::DrawReq(++getInfo()->accumDraw, !q.checkDraw()));
+							drawHandler.postMessageNow(msg::DrawReq(++getInfo()->accumDraw));
 						} catch(const std::exception& e) {
 							LogR(Error, "RunU() exception\n%s", e.what());
 							throw;

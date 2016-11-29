@@ -1,6 +1,7 @@
 #pragma once
 #include "lubee/random.hpp"
 #include "gameloopparam.hpp"
+#include "sdl_mutex.hpp"
 
 namespace rev {
 	class Window;

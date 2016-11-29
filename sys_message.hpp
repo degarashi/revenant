@@ -41,10 +41,8 @@ namespace rev {
 		struct DrawReq : MsgBase<DrawReq> {
 			// 管理用の描画リクエストID
 			uint64_t	id;
-			bool		bSkip;
-			DrawReq(const uint64_t t, const bool skip):
-				id(t),
-				bSkip(skip)
+			DrawReq(const uint64_t t):
+				id(t)
 			{}
 		};
 		//! スレッド終了リクエスト

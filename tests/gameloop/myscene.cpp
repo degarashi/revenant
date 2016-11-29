@@ -6,6 +6,7 @@
 #include "../../font.hpp"
 #include "../../glx_if.hpp"
 #include "../../util/text2d.hpp"
+#include "../../util/sys_unif.hpp"
 
 namespace rev {
 	namespace test {
@@ -17,13 +18,13 @@ namespace rev {
 				self._actQ->addLink(hKb, InputFlag::Button, SDL_SCANCODE_ESCAPE);
 			}
 			void onUpdate(MyScene& self) override {
-				auto lk = g_system_shared.lock();
-				if(auto fx = lk->fx.lock()) {
-					fx->beginTask();
-					fx->endTask();
-				}
 				if(self._actQ->isKeyPressed())
 					mgr_scene.setPopScene(1);
+			}
+			void onDraw(const MyScene&, IEffect& e) const override {
+				auto& fx = static_cast<util::GLEffect_2D3D&>(e);
+				fx.beginTask();
+				fx.endTask();
 			}
 		};
 		MyScene::MyScene() {

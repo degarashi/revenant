@@ -1,33 +1,19 @@
 #include "mainproc.hpp"
 #include "scene.hpp"
 #include "output.hpp"
+#include "sharedata.hpp"
 
 namespace rev {
-	// ---------------- DrawQuery ----------------
-	DrawQuery::DrawQuery(const int us, const int maxSkip):
-		_tp(Clock::now()),
-		_usec(us),
-		_skip(0),
-		_maxSkip(maxSkip)
-	{}
-	bool DrawQuery::checkDraw() {
-		const auto now = Clock::now();
-		const auto dur = now - _tp;
-		_tp = now;
-		// 時間が残っていれば描画
-		// 最大スキップフレームを超過してたら必ず描画
-		const bool ret = (_skip >= _maxSkip || dur < Microseconds(_usec));
-		if(!ret)
-			++_skip;
-		else
-			_skip = 0;
-		return ret;
-	}
-
 	// ---------------- MainProc ----------------
 	const bool detail::c_pauseDefault = false;
 	bool MainProc::runU() {
-		return mgr_scene.onUpdate();
+		if(mgr_scene.onUpdate()) {
+			auto lk = g_system_shared.lock();
+			if(auto fx = lk->fx.lock())
+				mgr_scene.onDraw(*fx);
+			return true;
+		}
+		return false;
 	}
 	bool MainProc::onPause() {
 		LogR(Verbose, "OnPause");

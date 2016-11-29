@@ -6,16 +6,6 @@ namespace rev {
 	namespace detail {
 		extern const bool c_pauseDefault;
 	}
-	class DrawQuery {
-		private:
-			Timepoint	_tp;
-			int			_usec,
-						_skip,
-						_maxSkip;
-		public:
-			DrawQuery(int us, int maxSkip);
-			bool checkDraw();
-	};
 	struct MainProc {
 		//! 毎フレームのアップデート処理
 		/*! \return falseを返すとアプリケーション終了 */

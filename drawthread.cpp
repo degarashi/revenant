@@ -72,8 +72,8 @@ namespace rev {
 						_info.lock()->state = State::Drawing;
 						// 1フレーム分の描画処理
 						GL.setSwapInterval(0);
-						if(up->runU(p->id, p->bSkip)) {
-							// 描画スキップされてなければFPSカウンタを更新
+						if(up->runU(p->id)) {
+							// FPSカウンタを更新
 							auto lk = _info.lock();
 							lk->fps.update();
 							lk->ctxDrawThread->swapWindow();
