@@ -109,13 +109,13 @@ namespace rev {
 	bool SceneMgr::onUpdate() {
 		UpdGroup::ProcAddRemove();
 		if(_scene.empty())
-			return true;
+			return false;
 
 		_scene.back()->onUpdate(true);
 		// SceneOpがあれば処理
 		_doSceneOp();
 		// スタックが空だったらtrue = 終了の合図 を返す
-		return _scene.empty();
+		return !_scene.empty();
 	}
 	void SceneMgr::onDraw(IEffect& e) {
 		if(_scene.empty())

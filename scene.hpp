@@ -39,6 +39,7 @@ namespace rev {
 			void setPushScene(const HScene& hSc, bool bPop=false);
 			void setPopScene(int nPop, const LCValue& arg=LCValue());
 			//! フレーム更新のタイミングで呼ぶ
+			/*! \return スタックが空の場合はfalseを返す */
 			bool onUpdate();
 			//! 描画のタイミングで呼ぶ
 			void onDraw(IEffect& e);
