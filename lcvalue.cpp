@@ -10,6 +10,45 @@ namespace rev {
 	bool LuaNil::operator == (LuaNil) const { return true; }
 	bool LuaNil::operator != (LuaNil) const { return false; }
 
+	// ---------------- LCTable ----------------
+	namespace {
+		struct CompareVisitor : boost::static_visitor<bool> {
+			template <class T0, class T1>
+			bool operator()(const T0&, const T1&) const {
+				return false;
+			}
+			template <class T>
+			bool operator()(const T& t0, const T& t1) const {
+				return t0 == t1;
+			}
+			bool operator()(const std::string& s, const char* c) const {
+				return s == std::string(c);
+			}
+			bool operator()(const char* c, const std::string& s) const {
+				return std::string(c) == s;
+			}
+			bool operator()(const LCTable_SP& t0, const LCTable_SP& t1) const {
+				return t0->preciseCompare(*t1);
+			}
+		};
+	}
+	bool LCTable::preciseCompare(const LCTable& tbl) const noexcept {
+		if(size() != tbl.size())
+			return false;
+		for(auto& ent : *this) {
+			CompareVisitor cv;
+			auto itr = std::find_if(tbl.begin(), tbl.end(),
+				[&cv, &ent](const auto& p){
+					return boost::apply_visitor(cv, ent.first, p.first);
+				});
+			if(itr == tbl.end())
+				return false;
+			if(!boost::apply_visitor(cv, ent.second, itr->second))
+				return false;
+		}
+		return true;
+	}
+	// ---------------- LCValue ----------------
 	LCValue::LCValue():
 		LCVar(boost::blank())
 	{}

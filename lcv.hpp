@@ -554,6 +554,10 @@ namespace rev {
 		public:
 			using base = std::unordered_map<LCValue, LCValue>;
 			using base::base;
+
+			// 文字列(const char*)とstd::stringの同一視
+			// テーブルはポインタではなく中身を全て比較
+			bool preciseCompare(const LCTable& tbl) const noexcept;
 	};
 
 	template <class... Args, int N, ENABLE_IF_I((N != sizeof...(Args)))>
