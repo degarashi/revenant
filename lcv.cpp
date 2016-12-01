@@ -1,6 +1,7 @@
 #include "lubee/rect.hpp"
 #include "emplace.hpp"
 #include "lvalue.hpp"
+#include "rewindtop.hpp"
 
 namespace rev {
 	DEF_LCV_OSTREAM(void)
@@ -97,7 +98,7 @@ namespace rev {
 
 	namespace {
 		auto GetAngleType(lua_State* ls, const int idx) {
-			LuaState lsc(ls);
+			LuaState lsc(ls, true);
 			lsc.getField(idx, luaNS::objBase::ClassName);
 			auto cname = lsc.toString(-1);
 			lsc.pop();
@@ -284,10 +285,10 @@ namespace rev {
 	Lua_SP LCV<Lua_SP>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		const auto typ = lua_type(ls, idx);
 		if(typ == LUA_TTHREAD)
-			return Lua_SP(new LuaState(lua_tothread(ls, idx), LuaState::TagThread));
+			return LuaState::GetLS_SP(lua_tothread(ls, idx));
 		if(typ == LUA_TNIL || typ == LUA_TNONE) {
 			// 自身を返す
-			return Lua_SP(new LuaState(ls, LuaState::TagThread));
+			return LuaState::GetLS_SP(ls);
 		}
 		LuaState::_CheckType(ls, idx, LuaType::Thread);
 		return Lua_SP();
@@ -358,7 +359,7 @@ namespace rev {
 
 	// [LCV<LCTable_SP> = LUA_TTABLE]
 	int LCV<LCTable_SP>::operator()(lua_State* ls, const LCTable_SP& t) const {
-		LuaState lsc(ls);
+        LuaState lsc(ls, false);
 		lsc.newTable(0, t->size());
 		for(auto& ent : *t) {
 			lsc.setField(-1, ent.first, ent.second);
@@ -373,7 +374,7 @@ namespace rev {
 			opSet = spi::construct();
 			spm = &(*opSet);
 		}
-		LuaState lsc(ls);
+		LuaState lsc(ls, true);
 		const void* ptr = lsc.toPointer(idx);
 		auto itr = spm->find(ptr);
 		if(itr != spm->end())
@@ -429,6 +430,7 @@ namespace rev {
 		return 1;
 	}
 	LCValue LCV<LCValue>::operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
+		const CheckTop ct(ls);
 		const auto typ = lua_type(ls, idx);
 		// Tableにおいて、_prefixフィールド値がVならば_sizeフィールドを読み込みVecTに変換
 		if(typ == LUA_TTABLE) {
@@ -451,6 +453,7 @@ namespace rev {
 				Assert(false, "invalid vector size (%d)", size);
 			}
 		}
+		D_Assert0(typ < int(countof(c_toLCValue)));
 		return c_toLCValue[typ](ls, idx, spm);
 	}
 	std::ostream& LCV<LCValue>::operator()(std::ostream& os, const LCValue& lcv) const {

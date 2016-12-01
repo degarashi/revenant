@@ -173,7 +173,7 @@ namespace rev {
 		public:
 			template <class Callback>
 			void iterateTable(Callback&& cb) const {
-				LuaState lsc(T::getLS());
+				LuaState lsc(T::getLS(), true);
 				typename T::VPop vp(*this, true);
 				// LValueの値がテーブル以外の時は処理しない
 				if(lsc.type(-1) == LuaType::Table) {
@@ -241,7 +241,8 @@ namespace rev {
 			}
 			template <class... Args>
 			LCTable_SP callNRet(Args&&... args) {
-				LuaState lsc(T::getLS());
+				const RewindTop rt(T::getLS());
+				LuaState lsc(T::getLS(), false);
 				const int top = lsc.getTop();
 				T::_prepareValue(true);
 				// 引数をスタックに積んで関数コール
@@ -254,7 +255,6 @@ namespace rev {
 				auto spTbl = std::make_shared<LCTable>();
 				for(int i=0 ; i<nRet ; i++)
 					(*spTbl)[i+1] = lsc.toLCValue(top + i + 1);
-				lsc.setTop(top);
 				return spTbl;
 			}
 			template <class... Ret, class... Args>

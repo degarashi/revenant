@@ -1,5 +1,6 @@
 #pragma once
 #include <lua.hpp>
+#include "lubee/error.hpp"
 
 namespace rev {
 	//! デストラクタでLuaスタック位置を元に戻す
@@ -13,5 +14,13 @@ namespace rev {
 			void setReset(bool r) noexcept;
 			int getNStack() const noexcept;
 			~RewindTop();
+	};
+	class CheckTop {
+		private:
+			lua_State	*const	_ls;
+			const int			_base;		//!< 初期化された時点でのスタック位置
+		public:
+			CheckTop(lua_State* ls) noexcept;
+			~CheckTop() NOEXCEPT_IF_RELEASE;
 	};
 }

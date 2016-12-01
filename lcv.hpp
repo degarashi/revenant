@@ -9,6 +9,7 @@
 #include "frea/fwd.hpp"
 #include "handle.hpp"
 #include "luaimport_types.hpp"
+#include "rewindtop.hpp"
 
 namespace rev {
 	template <class T>
@@ -435,14 +436,19 @@ namespace std {
 		}
 	};
 }
+#include "lubee/meta/typelist.hpp"
 namespace rev {
-	using LCVar = boost::variant<boost::blank, LuaNil,
-					bool, const char*, lua_Integer, lua_Number,
-					// frea::Vec_t<float,2,false>,
-					// frea::Vec_t<float,3,false>,
-					// frea::Vec_t<float,4,false>,
-					frea::Quat,
-					HRes, WRes, Lua_SP, void*, lua_CFunction, std::string, LCTable_SP>;
+	using Vec2 = frea::Vec_t<float,2,false>;
+	using Vec3 = frea::Vec_t<float,3,false>;
+	using Vec4 = frea::Vec_t<float,4,false>;
+	#define SEQ_LCVAR \
+		(boost::blank)(LuaNil) \
+		(bool)(const char*)(lua_Integer)(lua_Number) \
+		(Vec2)(Vec3)(Vec4)(frea::Quat) \
+		(HRes)(WRes)(Lua_SP)(LCTable_SP)(void*)(lua_CFunction)(std::string)
+	using LCVar = boost::variant<BOOST_PP_SEQ_ENUM(SEQ_LCVAR)>;
+	using LCVar_Types = lubee::Types<BOOST_PP_SEQ_ENUM(SEQ_LCVAR)>;
+	#undef SEQ_LCVAR
 
 	class LCValue : public LCVar {
 		private:
@@ -469,16 +475,17 @@ namespace rev {
 			LCValue(lua_IntegerU num);
 			LCValue(lua_OtherIntegerU num);
 			LCValue(lua_OtherInteger num);
-			LCValue(const LCTable_SP& tbl);
-			LCValue(const Lua_SP& sp);
 			template <
 				class T,
 				ENABLE_IF((
-					!frea::is_vector<T>{} &&
-					!IsSPtr<T>{}
+					LCVar_Types::Has<std::decay_t<T>>{}
 				))
 			>
 			LCValue(T&& t): LCVar(std::forward<T>(t)) {}
+			template <class T, ENABLE_IF((!LCVar_Types::Has<T*>{}))>
+			LCValue(T* ptr):
+				LCValue(reinterpret_cast<void*>(ptr))
+			{}
 
 			// Tupleは配列に変換
 			LCValue(std::tuple<>& t);
@@ -490,14 +497,26 @@ namespace rev {
 			LCValue(std::tuple<Args...>&& t);
 			template <class... Args>
 			LCValue(const std::tuple<Args...>& t);
-			template <class V, ENABLE_IF((frea::is_vector<V>{}))>
+			template <
+				class V,
+				ENABLE_IF((
+					!LCVar_Types::Has<std::decay_t<V>>{} &&
+					frea::is_vector<V>{}
+				))
+			>
 			LCValue(const V& v):
 				LCVar(frea::Vec_t<float,V::size, false>(v))
 			{}
 			LCValue& operator = (const LCValue& lcv);
 			LCValue& operator = (LCValue&& lcv);
 			// リソースの固有ハンドルは汎用へ読み替え
-			template <class T, ENABLE_IF((std::is_base_of<Resource, T>{}))>
+			template <
+				class T,
+				ENABLE_IF((
+					!LCVar_Types::Has<std::shared_ptr<T>>{} &&
+					std::is_base_of<Resource, T>{}
+				))
+			>
 			LCValue(const std::shared_ptr<T>& sp):
 				LCVar(std::static_pointer_cast<Resource>(sp))
 			{}
@@ -606,10 +625,13 @@ namespace rev {
 			const static int ENT_ID,
 							ENT_THREAD,
 							ENT_NREF,
-							ENT_SPILUA;
+							ENT_SPILUA,
+							ENT_POINTER;
 			Lua_SP		_base;		//!< メインスレッド (自身がそれな場合はnull)
 			ILua_SP		_lua;		//!< 自身が保有するスレッド
-			int			_id;
+			using CheckTop_OP = spi::Optional<CheckTop>;
+			CheckTop_OP	_opCt;
+
 			static lubee::Freelist<int> s_index;
 			static void Nothing(lua_State* ls);
 			static void Delete(lua_State* ls);
@@ -652,9 +674,11 @@ namespace rev {
 
 			using Deleter = std::function<void (lua_State*)>;
 			static Deleter _MakeDeleter(int id);
+			static Deleter _MakeCoDeleter(int id);
 
 			static struct _TagThread {} TagThread;
-			void _registerNewThread(LuaState& lsc, int id, bool bBase);
+			using Int_OP = spi::Optional<int>;
+			void _registerNewThread(LuaState& lsc, Int_OP id);
 			/* Thread変数の参照カウント機構の為の関数群
 				(Luaのthread変数には__gcフィールドを設定できないため、このような面倒くさい事になっている) */
 			//! global[cs_fromId], global[cs_fromThread]を無ければ作成しスタックに積む
@@ -662,23 +686,24 @@ namespace rev {
 				FromIdはLuaStateのシリアルIdから詳細情報を
 				FromThreadはLuaのスレッド変数から参照する物
 			*/
-			static void _PreapareThreadTable(LuaState& lsc);
+			static void _PrepareThreadTable(LuaState& lsc);
+			using CBGetAuxTable = std::function<void (LuaState&)>;
 			/*!
 				\param[in] cb	対象のLuaStateを取得してスタックのトップに積む関数
 			*/
-			static ILua_SP _Increment(LuaState& lsc, std::function<void (LuaState&)> cb);
+			static ILua_SP _Increment(LuaState& lsc, const CBGetAuxTable& cb);
 			//! Idをキーとして参照カウンタをインクリメント
-			static ILua_SP _Increment_ID(LuaState& lsc, int id);
+			static ILua_SP _Increment_Id(LuaState& lsc, int id);
 			//! スレッド変数をキーとして参照カウンタをインクリメント
 			/*! スタックトップにThread変数を積んでから呼ぶ */
 			static ILua_SP _Increment_Th(LuaState& lsc);
 			/*!
 				\param[in] cb	対象のLuaStateを取得してスタックのトップに積む関数
 			*/
-			static void _Decrement(LuaState& lsc, std::function<void (LuaState&)> cb);
-			static void _Decrement_ID(LuaState& lsc, int id);
+			static void _Decrement(LuaState& lsc, const CBGetAuxTable& cb);
+			static void _Decrement_Id(LuaState& lsc, int id);
 			static void _Decrement_Th(LuaState& lsc);
-			//! NewThread初期化
+			//! NewThread初期化 (コルーチン作成)
 			LuaState(const Lua_SP& spLua);
 			//! スレッド共有初期化
 			/*! lua_Stateから元のLuaStateクラスを辿り、そのshared_ptrをコピーして使う */
@@ -701,18 +726,20 @@ namespace rev {
 				std::get<N>(dst) = toValue<typename std::tuple_element<N, TUP>::type>(ofs + N);
 				_popValues(dst, ofs, IConst<N+1>());
 			}
-			// Luaステートの新規作成
+			// Luaステートの新規作成はNewState()で行う
 			LuaState(lua_Alloc f, void* ud);
 
 		public:
 			LuaState(const LuaState&) = delete;
-			LuaState(LuaState&& ls);
-			// 借り物初期化 (破棄の処理はしない)
-			LuaState(const ILua_SP& ls);
-			LuaState(lua_State* ls);
+			LuaState(LuaState&& ls) = default;
+			// 借り物初期化 (破棄の処理はしない) from ILua_SP -> (lua_State*)で初期化した場合と同じ
+			LuaState(const ILua_SP& ls, bool bCheckTop);
+			// 借り物初期化 (破棄の処理はしない) from lua_State
+			LuaState(lua_State* ls, bool bCheckTop);
 
 			//! リソースパスからファイル名指定でスクリプトを読み込み、標準ライブラリもロードする
 			static Lua_SP FromResource(const std::string& name);
+			//! 新しくLuaステートを作成(コルーチンではない)
 			static Lua_SP NewState(lua_Alloc f=nullptr, void* ud=nullptr);
 			const static char* cs_defaultmode;
 			//! Text/Binary形式でLuaソースを読み取り、チャンクをスタックトップに積む
@@ -739,6 +766,7 @@ namespace rev {
 				pushArgs(std::forward<Args>(args)...);
 			}
 			void pushArgs() {}
+			//! スタックの値をポップすると同時にstd::tupleでそれを受け取る
 			template <class... Ret>
 			void popValues(std::tuple<Ret...>& dst) {
 				int ofs = getTop() - sizeof...(Ret);
@@ -787,7 +815,7 @@ namespace rev {
 			bool isUserdata(int idx) const;
 			void length(int idx);
 			void newTable(int narr=0, int nrec=0);
-			LuaState newThread();
+			Lua_SP newThread();
 			void* newUserData(std::size_t sz);
 			int next(int idx);
 			bool rawEqual(int idx0, int idx1);
@@ -846,6 +874,7 @@ namespace rev {
 			lua_State* getLS() const;
 			Lua_SP getLS_SP();
 			Lua_SP getMainLS_SP();
+			static Lua_SP GetLS_SP(lua_State* ls);
 			static Lua_SP GetMainLS_SP(lua_State* ls);
 			friend std::ostream& operator << (std::ostream& os, const LuaState&);
 	};
@@ -1207,7 +1236,7 @@ namespace rev {
 	struct LCV_In {
 		template <class T2>
 		int operator()(lua_State* ls, T2&& t) const {
-			LuaState lsc(ls);
+			LuaState lsc(ls, true);
 			lsc.getGlobal(lua::LuaName((T*)nullptr));
 			lsc.getField(-1, luaNS::ConstructPtr);
 			lsc.newUserData(sizeof(T));
@@ -1247,7 +1276,7 @@ namespace rev {
 	template <class T>
 	struct LCV<T*> {
 		int operator()(lua_State* ls, const T* t) const {
-			LuaState lsc(ls);
+			LuaState lsc(ls, true);
 			LuaImport::MakePointerInstance(lsc, t);
 			return 1;
 		}

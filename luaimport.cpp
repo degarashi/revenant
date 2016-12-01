@@ -63,7 +63,7 @@ namespace rev {
 		} else {
 			const auto& name = s->getResourceName();
 			D_Assert(name, "invaild resource name.");
-			LuaState lsc(ls);
+			LuaState lsc(ls, true);
 			lsc.getGlobal(name);
 			lsc.getField(-1, luaNS::MakeShared);
 			new(lsc.newUserData(sizeof(HRes))) HRes(s);
@@ -92,7 +92,7 @@ namespace rev {
 	// [LCV<WRes>]
 	int LCV<WRes>::operator()(lua_State* ls, const WRes& w) const {
 		if(auto sp = w.lock()) {
-			LuaState lsc(ls);
+			LuaState lsc(ls, true);
 			const auto& name = sp->getResourceName();
 			D_Assert(name, "invaild resource name.");
 			lsc.getGlobal(name);
@@ -126,7 +126,7 @@ namespace rev {
 	namespace {
 		#ifdef DEBUG
 			void CheckClassName(lua_State* ls, const int idx, const char* name) {
-				LuaState lsc(ls);
+				LuaState lsc(ls, true);
 				lsc.getField(idx, luaNS::objBase::ClassName);
 				auto objname = lsc.toString(-1);
 				Assert(objname==name, "invalid object (required %s, but got %s)", name, objname.c_str());
