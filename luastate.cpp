@@ -600,7 +600,8 @@ namespace rev {
 	std::string LuaState::toString(const int idx) const {
 		return LCV<std::string>()(idx, getLS());
 	}
-	std::string LuaState::cnvString(const int idx) {
+	std::string LuaState::cnvString(int idx) {
+		idx = absIndex(idx);
 		getGlobal(luaNS::ToString);
 		pushValue(idx);
 		call(1,1);
