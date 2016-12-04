@@ -33,8 +33,14 @@ namespace rev {
 	LuaState::EGC::EGC(const std::string& s):
 		EBase("GC", s)
 	{}
-	LuaState::EType::EType(const char* typ0, const char* typ1):
-		EBase("InvalidType", std::string("[") + typ0 + "] to [" + typ1 + "]")
+	LuaState::EType::EType(lua_State* ls, const LuaType expect, const LuaType actual):
+		EBase(
+			"InvalidType",
+			std::string("[") + STypeName(ls, actual) +
+			"] to [" + STypeName(ls, expect) + "]"
+		),
+		expect(expect),
+		actual(actual)
 	{}
 	// ----------------- LuaState -----------------
 	const std::string LuaState::cs_fromId("FromId"),
@@ -274,7 +280,7 @@ namespace rev {
 			(chunkName ? chunkName : "(no name present)"),
 			mode
 		);
-		LuaState::_CheckError(ls, res);
+		LuaState::CheckError(ls, res);
 	}
 	const char* LuaState::Reader::Proc(lua_State* /*ls*/, void* data, std::size_t* size) {
 		auto* self = reinterpret_cast<Reader*>(data);
@@ -361,7 +367,7 @@ namespace rev {
 		D_Scope(call)
 			const int top = getTop() - 1;		// 1は関数の分
 			const int err = lua_pcall(getLS(), nargs, nresults, 0);
-			_checkError(err);
+			checkError(err);
 			return getTop() - top;
 		D_ScopeEnd()
 	}
@@ -369,7 +375,7 @@ namespace rev {
 		D_Scope(callk)
 			const int top = getTop() - 1;		// 1は関数の分
 			const int err = lua_pcallk(getLS(), nargs, nresults, 0, ctx, k);
-			_checkError(err);
+			checkError(err);
 			return getTop() - top;
 		D_ScopeEnd()
 	}
@@ -521,7 +527,7 @@ namespace rev {
 		if(ls0 == ls1)
 			return false;
 		const int res = lua_resume(ls0, ls1, narg);
-		_checkError(res);
+		checkError(res);
 		return res == LUA_YIELD;
 	}
 	void LuaState::setAllocf(lua_Alloc f, void* ud) {
@@ -570,20 +576,17 @@ namespace rev {
 	}
 	bool LuaState::status() const {
 		const int res = lua_status(getLS());
-		_checkError(res);
+		checkError(res);
 		return res != 0;
 	}
-	void LuaState::_checkType(const int idx, const LuaType typ) const {
+	void LuaState::checkType(const int idx, const LuaType typ) const {
 		const LuaType t = type(idx);
-		if(t != typ) {
-			const std::string tmp0(typeName(t)),
-							tmp1(typeName(typ));
-			throw EType(tmp0.c_str(), tmp1.c_str());
-		}
+		if(t != typ)
+			throw EType(getLS(), typ, t);
 	}
-	void LuaState::_CheckType(lua_State* ls, const int idx, const LuaType typ) {
+	void LuaState::CheckType(lua_State* ls, const int idx, const LuaType typ) {
 		LuaState lsc(ls, true);
-		lsc._checkType(idx, typ);
+		lsc.checkType(idx, typ);
 	}
 	bool LuaState::toBoolean(const int idx) const {
 		return LCV<bool>()(idx, getLS());
@@ -694,10 +697,10 @@ namespace rev {
 		void* ptr = lua_touserdata(ls, -1);
 		return reinterpret_cast<LuaState*>(ptr)->shared_from_this();
 	}
-	void LuaState::_checkError(const int code) const {
-		_CheckError(getLS(), code);
+	void LuaState::checkError(const int code) const {
+		CheckError(getLS(), code);
 	}
-	void LuaState::_CheckError(lua_State* ls, const int code) {
+	void LuaState::CheckError(lua_State* ls, const int code) {
 		const CheckTop ct(ls);
 		if(code != LUA_OK) {
 			const char* msg = LCV<const char*>()(-1, ls);

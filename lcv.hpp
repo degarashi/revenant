@@ -640,6 +640,7 @@ namespace rev {
 			static void Nothing(lua_State* ls);
 			static void Delete(lua_State* ls);
 
+		public:
 			// -------------- Exceptions --------------
 			struct EBase : std::runtime_error {
 				EBase(const std::string& typ_msg, const std::string& msg);
@@ -666,16 +667,17 @@ namespace rev {
 			};
 			//! 型エラー
 			struct EType : EBase {
-				EType(const char* typ0, const char* typ1);
+				LuaType expect,
+						actual;
+				EType(lua_State* ls, LuaType expect, LuaType actual);
 			};
-
 			//! Luaのエラーコードに応じて例外を投げる
-			static void _CheckError(lua_State* ls, int code);
-			void _checkError(int code) const;
+			static void CheckError(lua_State* ls, int code);
+			void checkError(int code) const;
 			//! スタック位置idxの値がtypであるかチェック
-			static void _CheckType(lua_State* ls, int idx, LuaType typ);
-			void _checkType(int idx, LuaType typ) const;
-
+			static void CheckType(lua_State* ls, int idx, LuaType typ);
+			void checkType(int idx, LuaType typ) const;
+		private:
 			using Deleter = std::function<void (lua_State*)>;
 			static Deleter _MakeDeleter(int id);
 			static Deleter _MakeCoDeleter(int id);

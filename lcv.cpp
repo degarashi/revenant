@@ -32,7 +32,7 @@ namespace rev {
 		return 1;
 	}
 	LuaNil LCV<LuaNil>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
-		LuaState::_CheckType(ls, idx, LuaType::Nil);
+		LuaState::CheckType(ls, idx, LuaType::Nil);
 		return LuaNil();
 	}
 	std::ostream& LCV<LuaNil>::operator()(std::ostream& os, LuaNil) const {
@@ -49,7 +49,7 @@ namespace rev {
 		return 1;
 	}
 	bool LCV<bool>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
-		LuaState::_CheckType(ls, idx, LuaType::Boolean);
+		LuaState::CheckType(ls, idx, LuaType::Boolean);
 		return lua_toboolean(ls, idx) != 0;
 	}
 	std::ostream& LCV<bool>::operator()(std::ostream& os, const bool b) const {
@@ -66,7 +66,7 @@ namespace rev {
 		return 1;
 	}
 	const char* LCV<const char*>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
-		LuaState::_CheckType(ls, idx, LuaType::String);
+		LuaState::CheckType(ls, idx, LuaType::String);
 		return lua_tostring(ls, idx);
 	}
 	std::ostream& LCV<const char*>::operator()(std::ostream& os, const char* c) const {
@@ -83,7 +83,7 @@ namespace rev {
 		return 1;
 	}
 	std::string LCV<std::string>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
-		LuaState::_CheckType(ls, idx, LuaType::String);
+		LuaState::CheckType(ls, idx, LuaType::String);
 		std::size_t len;
 		const char* c =lua_tolstring(ls, idx, &len);
 		return std::string(c, len);
@@ -157,7 +157,7 @@ namespace rev {
 		return 1;
 	}
 	lua_Integer LCV<lua_Integer>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
-		LuaState::_CheckType(ls, idx, LuaType::Number);
+		LuaState::CheckType(ls, idx, LuaType::Number);
 		return lua_tointeger(ls, idx);
 	}
 	std::ostream& LCV<lua_Integer>::operator()(std::ostream& os, const lua_Integer i) const {
@@ -174,7 +174,7 @@ namespace rev {
 		return 1;
 	}
 	lua_Number LCV<lua_Number>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
-		LuaState::_CheckType(ls, idx, LuaType::Number);
+		LuaState::CheckType(ls, idx, LuaType::Number);
 		return lua_tonumber(ls, idx);
 	}
 	std::ostream& LCV<lua_Number>::operator()(std::ostream& os, const lua_Number f) const {
@@ -203,7 +203,7 @@ namespace rev {
 			// 自身を返す
 			return ls;
 		}
-		LuaState::_CheckType(ls, idx, LuaType::Thread);
+		LuaState::CheckType(ls, idx, LuaType::Thread);
 		return nullptr;
 	}
 	std::ostream& LCV<lua_State*>::operator()(std::ostream& os, lua_State* ls) const {
@@ -290,7 +290,7 @@ namespace rev {
 			// 自身を返す
 			return LuaState::GetLS_SP(ls);
 		}
-		LuaState::_CheckType(ls, idx, LuaType::Thread);
+		LuaState::CheckType(ls, idx, LuaType::Thread);
 		return Lua_SP();
 	}
 	std::ostream& LCV<Lua_SP>::operator()(std::ostream& os, const Lua_SP& /*sp*/) const {
@@ -308,9 +308,9 @@ namespace rev {
 	}
 	void* LCV<void*>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		try {
-			LuaState::_CheckType(ls, idx, LuaType::Userdata);
+			LuaState::CheckType(ls, idx, LuaType::Userdata);
 		} catch(const LuaState::EType& e) {
-			LuaState::_CheckType(ls, idx, LuaType::LightUserdata);
+			LuaState::CheckType(ls, idx, LuaType::LightUserdata);
 		}
 		return lua_touserdata(ls, idx);
 	}
@@ -328,7 +328,7 @@ namespace rev {
 		return 1;
 	}
 	lua_CFunction LCV<lua_CFunction>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
-		LuaState::_CheckType(ls, idx, LuaType::Function);
+		LuaState::CheckType(ls, idx, LuaType::Function);
 		return lua_tocfunction(ls, idx);
 	}
 	std::ostream& LCV<lua_CFunction>::operator()(std::ostream& os, const lua_CFunction f) const {
@@ -367,7 +367,7 @@ namespace rev {
 		return 1;
 	}
 	LCTable_SP LCV<LCTable_SP>::operator()(int idx, lua_State* ls, LPointerSP* spm) const {
-		LuaState::_CheckType(ls, idx, LuaType::Table);
+		LuaState::CheckType(ls, idx, LuaType::Table);
 
 		spi::Optional<LPointerSP> opSet;
 		if(!spm) {
