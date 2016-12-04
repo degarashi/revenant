@@ -301,6 +301,68 @@ namespace rev {
 				lsp->pop(1);
 			}
 		}
+		namespace {
+			const std::string c_testYield(
+				"-- 指定した回数だけ途中でvalをインクリメントしながらyieldする\n"
+				"-- 最後にvalを返す\n"
+				"function YieldTest(val, n)\n"
+				"	for i=1,n do\n"
+				"		coroutine.yield(val)\n"
+				"		val = val+1\n"
+				"		end\n"
+				"	return val\n"
+				"end\n"
+			);
+		}
+		// load(), resume(), newThread(), getLS_SP(), getMainLS_SP(), GetMainLS_SP()
+		TEST_F(LuaState_Test, Coroutine) {
+			auto rw = std::make_shared<RWMgr>("ORG", "APP");
+			auto lsp = this->_lsp;
+			lsp->loadLibraries();
+			lsp->loadFromSource(mgr_rw.fromConstTemporal(c_testYield.c_str(), c_testYield.length()), nullptr, true);
+			struct Entry {
+				Lua_SP	ls;
+				int		value,
+						nLoop,
+						nLoopCur;
+			};
+			using Vec = std::vector<Entry>;
+			Vec vec;
+			const int nThread = _rdi({1, 32});
+			for(int i=0 ; i<nThread ; i++) {
+				Entry v;
+				v.ls = lsp->newThread();
+				v.nLoop = _rdi({0,32});
+				v.nLoopCur = 1;
+				v.value = _rdi({-1000, 1000});
+				v.ls->getGlobal("YieldTest");
+				v.ls->pushArgs(v.value, v.nLoop);
+				const auto res = v.ls->resume(nullptr, 2);
+				ASSERT_NE(res.first, v.nLoop==0);
+				ASSERT_EQ(1, res.second);
+				ASSERT_EQ(v.ls->toInteger(-1), v.value);
+
+				ASSERT_EQ(lsp, v.ls->getMainLS_SP());
+				ASSERT_EQ(lsp, LuaState::GetMainLS_SP(v.ls->getLS()));
+				ASSERT_EQ(v.ls, v.ls->getLS_SP());
+
+				if(v.nLoop > 0)
+					vec.emplace_back(v);
+			}
+			while(!vec.empty()) {
+				Vec tmp;
+				for(auto& v : vec) {
+					const auto res = v.ls->resume(nullptr, 0);
+					ASSERT_NE(res.first, v.nLoop==v.nLoopCur);
+					++v.nLoopCur;
+					ASSERT_EQ(1, res.second);
+					ASSERT_EQ(v.ls->toInteger(-1), v.nLoopCur+v.value-1);
+					if(res.first)
+						tmp.emplace_back(v);
+				}
+				std::swap(vec, tmp);
+			}
+		}
 		// cnvString
 		TEST_F(LuaState_Test, ConvertString) {
 			auto lsp = this->_lsp;
