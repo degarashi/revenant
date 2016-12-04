@@ -699,7 +699,7 @@ namespace rev {
 	}
 	void LuaState::CheckError(lua_State* ls, const int code) {
 		const CheckTop ct(ls);
-		if(code != LUA_OK) {
+		if(code!=LUA_OK && code!=LUA_YIELD) {
 			const char* msg = LCV<const char*>()(-1, ls);
 			switch(code) {
 				case LUA_ERRRUN:
