@@ -819,6 +819,7 @@ namespace rev {
 			bool isThread(int idx) const;
 			bool isUserdata(int idx) const;
 			void length(int idx);
+			int getLength(int idx);
 			void newTable(int narr=0, int nrec=0);
 			Lua_SP newThread();
 			void* newUserData(std::size_t sz);

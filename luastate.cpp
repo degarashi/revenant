@@ -463,6 +463,12 @@ namespace rev {
 	void LuaState::length(const int idx) {
 		lua_len(getLS(), idx);
 	}
+	int LuaState::getLength(const int idx) {
+		length(idx);
+		const int ret = toInteger(-1);
+		pop(1);
+		return ret;
+	}
 	void LuaState::newTable(const int narr, const int nrec) {
 		lua_createtable(getLS(), narr, nrec);
 	}
