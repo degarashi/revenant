@@ -421,6 +421,9 @@ namespace rev {
 	void LuaState::getUserValue(const int idx) {
 		lua_getuservalue(getLS(), idx);
 	}
+	void LuaState::getMetatable(const int idx) {
+		lua_getmetatable(getLS(), idx);
+	}
 	void LuaState::insert(const int idx) {
 		lua_insert(getLS(), idx);
 	}

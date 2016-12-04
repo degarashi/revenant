@@ -805,6 +805,7 @@ namespace rev {
 			const char* getUpvalue(int idx, int n);
 			int getTop() const;
 			void getUserValue(int idx);
+			void getMetatable(int idx);
 			void insert(int idx);
 			bool isBoolean(int idx) const;
 			bool isCFunction(int idx) const;
