@@ -520,15 +520,11 @@ namespace rev {
 	void LuaState::replace(const int idx) {
 		lua_replace(getLS(), idx);
 	}
-	bool LuaState::resume(const Lua_SP& /*from*/, const int narg) {
-		Lua_SP mls(getMainLS_SP());
-		lua_State *ls0 = mls->getLS(),
-					*ls1 = getLS();
-		if(ls0 == ls1)
-			return false;
-		const int res = lua_resume(ls0, ls1, narg);
+	std::pair<bool,int> LuaState::resume(const Lua_SP& from, const int narg) {
+		lua_State *const ls = from ? from->getLS() : nullptr;
+		const int res = lua_resume(getLS(), ls, narg);
 		checkError(res);
-		return res == LUA_YIELD;
+		return std::make_pair(res==LUA_YIELD, getTop());
 	}
 	void LuaState::setAllocf(lua_Alloc f, void* ud) {
 		lua_setallocf(getLS(), f, ud);

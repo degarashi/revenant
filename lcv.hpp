@@ -835,7 +835,11 @@ namespace rev {
 			void rawSetField(int idx, const LCValue& key, const LCValue& val);
 			void remove(int idx);
 			void replace(int idx);
-			bool resume(const Lua_SP& from, int narg=0);
+			//! コルーチンの開始 or 再開
+			/*!
+				\return first=(yieldされた場合はtrue) : second=(戻り値の数)
+			*/
+			std::pair<bool,int> resume(const Lua_SP& from, int narg);
 			void setAllocf(lua_Alloc f, void* ud);
 			void setField(int idx, const LCValue& key, const LCValue& val);
 			void setGlobal(const LCValue& key);
