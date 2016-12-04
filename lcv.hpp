@@ -877,7 +877,7 @@ namespace rev {
 
 			/*! スタックトップのテーブルに"name"というテーブルが無ければ作成
 				既にあれば単にそれを積む */
-			void prepareTable(const std::string& name);
+			void prepareTable(int idx, const std::string& name);
 			void prepareTableGlobal(const std::string& name);
 
 			lua_State* getLS() const;

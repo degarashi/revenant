@@ -654,8 +654,8 @@ namespace rev {
 	int LuaState::yieldk(const int nresults, lua_KContext ctx, lua_KFunction k) {
 		return lua_yieldk(getLS(), nresults, ctx, k);
 	}
-	void LuaState::prepareTable(const std::string& name) {
-		getField(-1, name);
+	void LuaState::prepareTable(const int idx, const std::string& name) {
+		getField(idx, name);
 		if(type(-1) != LuaType::Table) {
 			// テーブルを作成
 			pop(1);
@@ -668,7 +668,7 @@ namespace rev {
 	}
 	void LuaState::prepareTableGlobal(const std::string& name) {
 		pushGlobal();
-		prepareTable(name);
+		prepareTable(-1, name);
 		remove(-2);
 	}
 	lua_State* LuaState::getLS() const {
