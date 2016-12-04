@@ -826,10 +826,10 @@ namespace rev {
 			int next(int idx);
 			bool rawEqual(int idx0, int idx1);
 			void rawGet(int idx);
-			void rawGet(int idx, const LCValue& v);
+			void rawGetField(int idx, const LCValue& key);
 			std::size_t rawLen(int idx) const;
 			void rawSet(int idx);
-			void rawSet(int idx, const LCValue& v);
+			void rawSetField(int idx, const LCValue& key, const LCValue& val);
 			void remove(int idx);
 			void replace(int idx);
 			bool resume(const Lua_SP& from, int narg=0);

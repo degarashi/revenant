@@ -487,11 +487,11 @@ namespace rev {
 	void LuaState::rawGet(const int idx) {
 		lua_rawget(getLS(), idx);
 	}
-	void LuaState::rawGet(int idx, const LCValue& v) {
+	void LuaState::rawGetField(int idx, const LCValue& key) {
 		if(idx < 0)
 			idx = lua_absindex(getLS(), idx);
 		D_Assert0(idx >= 0);
-		push(v);
+		push(key);
 		rawGet(idx);
 	}
 	std::size_t LuaState::rawLen(const int idx) const {
@@ -500,11 +500,12 @@ namespace rev {
 	void LuaState::rawSet(const int idx) {
 		lua_rawset(getLS(), idx);
 	}
-	void LuaState::rawSet(int idx, const LCValue& v) {
+	void LuaState::rawSetField(int idx, const LCValue& key, const LCValue& val) {
 		if(idx < 0)
 			idx = lua_absindex(getLS(), idx);
 		D_Assert0(idx >= 0);
-		push(v);
+		push(key);
+		push(val);
 		rawSet(idx);
 	}
 	void LuaState::remove(const int idx) {

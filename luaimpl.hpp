@@ -85,14 +85,14 @@ namespace rev {
 				lsc.setField(-1, luaNS::objBase::ClassName, #class_name); \
 				\
 				LuaImport::BeginImportBlock("Values"); \
-				lsc.rawGet(-1, ::rev::luaNS::objBase::ValueR); \
-				lsc.rawGet(-2, ::rev::luaNS::objBase::ValueW); \
+				lsc.rawGetField(-1, ::rev::luaNS::objBase::ValueR); \
+				lsc.rawGetField(-2, ::rev::luaNS::objBase::ValueW); \
 				BOOST_PP_SEQ_FOR_EACH(DEF_REGMEMBER_HDL, (typename mgr::data_type)(clazz), seq_member) \
 				lsc.pop(2); \
 				LuaImport::EndImportBlock(); \
 				\
 				LuaImport::BeginImportBlock("Functions"); \
-				lsc.rawGet(-1, ::rev::luaNS::objBase::Func); \
+				lsc.rawGetField(-1, ::rev::luaNS::objBase::Func); \
 				BOOST_PP_SEQ_FOR_EACH(DEF_REGMEMBER_HDL, (typename mgr::data_type)(clazz), seq_method) \
 				lsc.pop(1); \
 				LuaImport::EndImportBlock(); \
@@ -138,14 +138,14 @@ namespace rev {
 				lsc.setField(-1, luaNS::objBase::ClassName, #class_name); \
 				\
 				LuaImport::BeginImportBlock("Values"); \
-				lsc.rawGet(-1, ::rev::luaNS::objBase::ValueR); \
-				lsc.rawGet(-2, ::rev::luaNS::objBase::ValueW); \
+				lsc.rawGetField(-1, ::rev::luaNS::objBase::ValueR); \
+				lsc.rawGetField(-2, ::rev::luaNS::objBase::ValueW); \
 				BOOST_PP_SEQ_FOR_EACH(DEF_REGMEMBER_PTR, clazz, seq_member) \
 				lsc.pop(2); \
 				LuaImport::EndImportBlock(); \
 				\
 				LuaImport::BeginImportBlock("Functions"); \
-				lsc.rawGet(-1, ::rev::luaNS::objBase::Func); \
+				lsc.rawGetField(-1, ::rev::luaNS::objBase::Func); \
 				BOOST_PP_SEQ_FOR_EACH(DEF_REGMEMBER_PTR, clazz, seq_method) \
 				lsc.pop(1); \
 				LuaImport::EndImportBlock(); \
