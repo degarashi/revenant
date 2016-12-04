@@ -32,7 +32,7 @@ namespace rev {
 			}
 		};
 	}
-	bool LCTable::preciseCompare(const LCTable& tbl) const noexcept {
+	bool LCTable::preciseCompare(const LCTable& tbl) const {
 		if(size() != tbl.size())
 			return false;
 		for(auto& ent : *this) {
@@ -49,6 +49,9 @@ namespace rev {
 		return true;
 	}
 	// ---------------- LCValue ----------------
+	bool LCValue::preciseCompare(const LCValue& c) const {
+		return boost::apply_visitor(CompareVisitor(), *this, c);
+	}
 	LCValue::LCValue():
 		LCVar(boost::blank())
 	{}

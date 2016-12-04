@@ -529,6 +529,7 @@ namespace rev {
 			auto toSPtr() const {
 				return std::static_pointer_cast<H>(_toSPtr());
 			}
+			bool preciseCompare(const LCValue& lcv) const;
 			bool operator == (const LCValue& lcv) const noexcept;
 			bool operator != (const LCValue& lcv) const noexcept;
 			//! blank, Nilかfalseの場合にのみfalse, それ以外はtrueを返す
@@ -557,7 +558,7 @@ namespace rev {
 
 			// 文字列(const char*)とstd::stringの同一視
 			// テーブルはポインタではなく中身を全て比較
-			bool preciseCompare(const LCTable& tbl) const noexcept;
+			bool preciseCompare(const LCTable& tbl) const;
 	};
 
 	template <class... Args, int N, ENABLE_IF_I((N != sizeof...(Args)))>
