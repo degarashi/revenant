@@ -289,7 +289,7 @@ namespace rev {
 		// auto msg = LCV<std::string>()(2, ls);
 		// // Noneで無ければ有効な戻り値とする
 		// LCValue lcv = obj->recvMsg(msg, LCV<LCValue>()(3, ls));
-		// if(lcv.type() != LuaType::LNone) {
+		// if(lcv.type() != LuaType::Nil) {
 		// 	lua_pushboolean(ls, true);
 		// 	lcv.push(ls);
 		// 	return 2;

@@ -55,7 +55,6 @@ namespace rev {
 		bool operator != (LuaNil) const;
 	};
 	DefineEnumPair(LuaType,
-		((LNone)(LUA_TNONE))	// NoneだとX11のマクロと衝突する為
 		((Nil)(LUA_TNIL))
 		((Number)(LUA_TNUMBER))
 		((Boolean)(LUA_TBOOLEAN))

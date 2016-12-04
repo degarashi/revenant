@@ -22,7 +22,7 @@ namespace rev {
 		return os << "(none)";
 	}
 	LuaType LCV<boost::blank>::operator()() const {
-		return LuaType::LNone;
+		return LuaType::Nil;
 	}
 	DEF_LCV_OSTREAM(boost::blank)
 
@@ -460,7 +460,7 @@ namespace rev {
 		return os << lcv;
 	}
 	LuaType LCV<LCValue>::operator()() const {
-		return LuaType::LNone;
+		return LuaType::Nil;
 	}
 	DEF_LCV_OSTREAM(LCValue)
 
@@ -477,7 +477,7 @@ namespace rev {
 		return os << t;
 	}
 	LuaType LCV<LValueS>::operator()() const {
-		return LuaType::LNone;
+		return LuaType::Nil;
 	}
 	DEF_LCV_OSTREAM(LValueS)
 
@@ -495,7 +495,7 @@ namespace rev {
 		return os << t;
 	}
 	LuaType LCV<LValueG>::operator()() const {
-		return LuaType::LNone;
+		return LuaType::Nil;
 	}
 	DEF_LCV_OSTREAM(LValueG)
 }
