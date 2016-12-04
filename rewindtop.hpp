@@ -12,6 +12,7 @@ namespace rev {
 		public:
 			RewindTop(lua_State* ls) noexcept;
 			void setReset(bool r) noexcept;
+			int getBase() const noexcept;
 			int getNStack() const noexcept;
 			~RewindTop();
 	};
@@ -22,5 +23,6 @@ namespace rev {
 		public:
 			CheckTop(lua_State* ls) noexcept;
 			~CheckTop() NOEXCEPT_IF_RELEASE;
+			int getBase() const noexcept;
 	};
 }

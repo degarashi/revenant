@@ -14,6 +14,9 @@ namespace rev {
 	void RewindTop::setReset(const bool r) noexcept {
 		_bReset = r;
 	}
+	int RewindTop::getBase() const noexcept {
+		return _base;
+	}
 	int RewindTop::getNStack() const noexcept {
 		return lua_gettop(_ls) - _base;
 	}
@@ -26,5 +29,8 @@ namespace rev {
 	CheckTop::~CheckTop() NOEXCEPT_IF_RELEASE {
 		D_Assert(lua_gettop(_ls) == _base,
 				"stack top position differed: expect=%d, actual=%d", _base, lua_gettop(_ls));
+	}
+	int CheckTop::getBase() const noexcept {
+		return _base;
 	}
 }
