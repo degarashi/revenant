@@ -237,18 +237,6 @@ namespace rev {
 		_base = spLua->getMainLS_SP();
 		_registerNewThread(*spLua,  spi::none);
 	}
-	LuaState::LuaState(lua_State* ls, _TagThread) {
-		LuaState lsc(ls, false);
-		const RewindTop rt(lsc.getLS());
-		// 参照カウンタのインクリメント
-		_lua = _Increment_Th(lsc);
-		// メインスレッドのポインタを取得し、コピー
-		_base = GetMainLS_SP(ls);
-	}
-
-	LuaState::LuaState(const ILua_SP& ls, const bool bCheckTop):
-		LuaState(ls.get(), bCheckTop)
-	{}
 	LuaState::LuaState(lua_State* ls, const bool bCheckTop):
 		_lua(ls, Nothing)
 	{

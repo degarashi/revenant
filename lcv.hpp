@@ -683,7 +683,6 @@ namespace rev {
 			static Deleter _MakeDeleter(int id);
 			static Deleter _MakeCoDeleter(int id);
 
-			static struct _TagThread {} TagThread;
 			using Int_OP = spi::Optional<int>;
 			void _registerNewThread(LuaState& lsc, Int_OP id);
 			/* Thread変数の参照カウント機構の為の関数群
@@ -712,9 +711,6 @@ namespace rev {
 			static void _Decrement_Th(LuaState& lsc);
 			//! NewThread初期化 (コルーチン作成)
 			LuaState(const Lua_SP& spLua);
-			//! スレッド共有初期化
-			/*! lua_Stateから元のLuaStateクラスを辿り、そのshared_ptrをコピーして使う */
-			LuaState(lua_State* ls, _TagThread);
 
 			//! RWopsに対するLua用のリーダークラス
 			struct Reader {
@@ -739,8 +735,6 @@ namespace rev {
 		public:
 			LuaState(const LuaState&) = delete;
 			LuaState(LuaState&& ls) = default;
-			// 借り物初期化 (破棄の処理はしない) from ILua_SP -> (lua_State*)で初期化した場合と同じ
-			LuaState(const ILua_SP& ls, bool bCheckTop);
 			// 借り物初期化 (破棄の処理はしない) from lua_State
 			LuaState(lua_State* ls, bool bCheckTop);
 
