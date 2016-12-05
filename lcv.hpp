@@ -4,7 +4,6 @@
 #include "clock.hpp"
 #include <iostream>
 #include <unordered_map>
-#include <boost/blank.hpp>
 #include "lubee/fwd.hpp"
 #include "frea/fwd.hpp"
 #include "handle.hpp"
@@ -95,7 +94,6 @@ namespace rev {
 		struct LCV<ntyp> : LCV<btyp> {}; \
 		std::ostream& operator << (std::ostream& os, LCV<ntyp>);
 
-	DEF_LCV(boost::blank, boost::blank)
 	DEF_LCV(LuaNil, LuaNil)
 	DEF_LCV(bool, bool)
 	DEF_LCV(const char*, const char*)
@@ -428,22 +426,13 @@ namespace rev {
 }
 #include "frea/vector.hpp"
 #include "frea/quaternion.hpp"
-namespace std {
-	template <>
-	struct hash<boost::blank> {
-		std::size_t operator()(boost::blank) const {
-			return 0;
-		}
-	};
-}
 #include "lubee/meta/typelist.hpp"
 namespace rev {
 	using Vec2 = frea::Vec_t<float,2,false>;
 	using Vec3 = frea::Vec_t<float,3,false>;
 	using Vec4 = frea::Vec_t<float,4,false>;
 	#define SEQ_LCVAR \
-		(boost::blank)(LuaNil) \
-		(bool)(const char*)(lua_Integer)(lua_Number) \
+		(LuaNil)(bool)(const char*)(lua_Integer)(lua_Number) \
 		(Vec2)(Vec3)(Vec4)(frea::Quat) \
 		(HRes)(WRes)(Lua_SP)(LCTable_SP)(void*)(lua_CFunction)(std::string)
 	using LCVar = boost::variant<BOOST_PP_SEQ_ENUM(SEQ_LCVAR)>;
@@ -532,7 +521,7 @@ namespace rev {
 			bool preciseCompare(const LCValue& lcv) const;
 			bool operator == (const LCValue& lcv) const noexcept;
 			bool operator != (const LCValue& lcv) const noexcept;
-			//! blank, Nilかfalseの場合にのみfalse, それ以外はtrueを返す
+			//! Nilかfalseの場合にのみfalse, それ以外はtrueを返す
 			explicit operator bool () const noexcept;
 			void push(lua_State* ls) const;
 			const char* toCStr() const;

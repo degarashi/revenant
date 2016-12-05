@@ -53,7 +53,7 @@ namespace rev {
 		return boost::apply_visitor(CompareVisitor(), *this, c);
 	}
 	LCValue::LCValue():
-		LCVar(boost::blank())
+		LCVar(LuaNil())
 	{}
 	LCValue::LCValue(const LCValue& lc):
 		LCVar(static_cast<const LCVar&>(lc))
@@ -102,7 +102,6 @@ namespace rev {
 	}
 	namespace {
 		struct ConvertBool : boost::static_visitor<bool> {
-			bool operator()(boost::blank) const { return false; }
 			bool operator()(LuaNil) const { return false; }
 			bool operator()(bool b) const { return b; }
 			template <class T>

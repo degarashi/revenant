@@ -9,23 +9,6 @@ namespace rev {
 	DEF_LCV_OSTREAM(lua_OtherInteger)
 	DEF_LCV_OSTREAM(lua_OtherIntegerU)
 
-	// [LCV<boost::blank> = LUA_TNONE]
-	int LCV<boost::blank>::operator()(lua_State* /*ls*/, boost::blank) const {
-		AssertF0();
-		return 0;
-	}
-	boost::blank LCV<boost::blank>::operator()(int /*idx*/, lua_State* /*ls*/, LPointerSP* /*spm*/) const {
-		AssertF0();
-		throw 0;
-	}
-	std::ostream& LCV<boost::blank>::operator()(std::ostream& os, boost::blank) const {
-		return os << "(none)";
-	}
-	LuaType LCV<boost::blank>::operator()() const {
-		return LuaType::Nil;
-	}
-	DEF_LCV_OSTREAM(boost::blank)
-
 	// [LCV<LuaNil> = LUA_TNIL]
 	int LCV<LuaNil>::operator()(lua_State* ls, LuaNil) const {
 		lua_pushnil(ls);
