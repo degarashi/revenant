@@ -81,9 +81,6 @@ namespace rev {
 		}
 		return HRes();
 	}
-	std::ostream& LCV<HRes>::operator()(std::ostream& os, const HRes& s) const {
-		return os << "(HRes)" << std::hex << "0x" << reinterpret_cast<uintptr_t>(s.get());
-	}
 	LuaType LCV<HRes>::operator()() const {
 		return LuaType::Userdata;
 	}
@@ -114,9 +111,6 @@ namespace rev {
 				return *res;
 		}
 		return WRes();
-	}
-	std::ostream& LCV<WRes>::operator()(std::ostream& os, const WRes& w) const {
-		return os << "(WRes)" << std::hex << "0x" << reinterpret_cast<uintptr_t>(w.lock().get());
 	}
 	LuaType LCV<WRes>::operator()() const {
 		return LuaType::LightUserdata;

@@ -18,9 +18,6 @@ namespace rev {
 		LuaState::CheckType(ls, idx, LuaType::Nil);
 		return LuaNil();
 	}
-	std::ostream& LCV<LuaNil>::operator()(std::ostream& os, LuaNil) const {
-		return os << "(nil)";
-	}
 	LuaType LCV<LuaNil>::operator()() const {
 		return LuaType::Nil;
 	}
@@ -35,9 +32,6 @@ namespace rev {
 		LuaState::CheckType(ls, idx, LuaType::Boolean);
 		return lua_toboolean(ls, idx) != 0;
 	}
-	std::ostream& LCV<bool>::operator()(std::ostream& os, const bool b) const {
-		return os << std::boolalpha << b;
-	}
 	LuaType LCV<bool>::operator()() const {
 		return LuaType::Boolean;
 	}
@@ -51,9 +45,6 @@ namespace rev {
 	const char* LCV<const char*>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		LuaState::CheckType(ls, idx, LuaType::String);
 		return lua_tostring(ls, idx);
-	}
-	std::ostream& LCV<const char*>::operator()(std::ostream& os, const char* c) const {
-		return os << c;
 	}
 	LuaType LCV<const char*>::operator()() const {
 		return LuaType::String;
@@ -70,9 +61,6 @@ namespace rev {
 		std::size_t len;
 		const char* c =lua_tolstring(ls, idx, &len);
 		return std::string(c, len);
-	}
-	std::ostream& LCV<std::string>::operator()(std::ostream& os, const std::string& s) const {
-		return os << s;
 	}
 	LuaType LCV<std::string>::operator()() const {
 		return LuaType::String;
@@ -103,9 +91,6 @@ namespace rev {
 			return LCV_In<frea::DegF>()(idx, ls, spm);
 		}
 	}
-	std::ostream& LCV<frea::DegF>::operator()(std::ostream& os, const frea::DegF& d) const {
-		return os << d;
-	}
 	LuaType LCV<frea::DegF>::operator()() const {
 		return LuaType::Userdata;
 	}
@@ -126,9 +111,6 @@ namespace rev {
 			return LCV_In<frea::RadF>()(idx, ls, spm);
 		}
 	}
-	std::ostream& LCV<frea::RadF>::operator()(std::ostream& os, const frea::RadF& r) const {
-		return os << r;
-	}
 	LuaType LCV<frea::RadF>::operator()() const {
 		return LuaType::Userdata;
 	}
@@ -143,9 +125,6 @@ namespace rev {
 		LuaState::CheckType(ls, idx, LuaType::Number);
 		return lua_tointeger(ls, idx);
 	}
-	std::ostream& LCV<lua_Integer>::operator()(std::ostream& os, const lua_Integer i) const {
-		return os << i;
-	}
 	LuaType LCV<lua_Integer>::operator()() const {
 		return LuaType::Number;
 	}
@@ -159,9 +138,6 @@ namespace rev {
 	lua_Number LCV<lua_Number>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		LuaState::CheckType(ls, idx, LuaType::Number);
 		return lua_tonumber(ls, idx);
-	}
-	std::ostream& LCV<lua_Number>::operator()(std::ostream& os, const lua_Number f) const {
-		return os << f;
 	}
 	LuaType LCV<lua_Number>::operator()() const {
 		return LuaType::Number;
@@ -188,9 +164,6 @@ namespace rev {
 		}
 		LuaState::CheckType(ls, idx, LuaType::Thread);
 		return nullptr;
-	}
-	std::ostream& LCV<lua_State*>::operator()(std::ostream& os, lua_State* ls) const {
-		return os << "(thread) " << (uintptr_t)ls;
 	}
 	LuaType LCV<lua_State*>::operator()() const {
 		return LuaType::Thread;
@@ -222,9 +195,6 @@ namespace rev {
 		};
 		return {fnGet(1), fnGet(2), fnGet(3), fnGet(4)};
 	}
-	std::ostream& LCV<lubee::RectF>::operator()(std::ostream& os, const lubee::RectF& r) const {
-		return os << r;
-	}
 	LuaType LCV<lubee::RectF>::operator()() const {
 		return LuaType::Table;
 	}
@@ -251,9 +221,6 @@ namespace rev {
 		};
 		return {fnGet(1), fnGet(2)};
 	}
-	std::ostream& LCV<lubee::SizeF>::operator()(std::ostream& os, const lubee::SizeF& s) const {
-		return os << s.width;
-	}
 	LuaType LCV<lubee::SizeF>::operator()() const {
 		return LuaType::Table;
 	}
@@ -276,9 +243,6 @@ namespace rev {
 		LuaState::CheckType(ls, idx, LuaType::Thread);
 		return Lua_SP();
 	}
-	std::ostream& LCV<Lua_SP>::operator()(std::ostream& os, const Lua_SP& /*sp*/) const {
-		return os;
-	}
 	LuaType LCV<Lua_SP>::operator()() const {
 		return LuaType::Thread;
 	}
@@ -297,9 +261,6 @@ namespace rev {
 		}
 		return lua_touserdata(ls, idx);
 	}
-	std::ostream& LCV<void*>::operator()(std::ostream& os, const void* ud) const {
-		return os << "(userdata)" << std::hex << ud;
-	}
 	LuaType LCV<void*>::operator()() const {
 		return LuaType::LightUserdata;
 	}
@@ -313,9 +274,6 @@ namespace rev {
 	lua_CFunction LCV<lua_CFunction>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		LuaState::CheckType(ls, idx, LuaType::Function);
 		return lua_tocfunction(ls, idx);
-	}
-	std::ostream& LCV<lua_CFunction>::operator()(std::ostream& os, const lua_CFunction f) const {
-		return os << "(function)" << std::hex << reinterpret_cast<uintptr_t>(f);
 	}
 	LuaType LCV<lua_CFunction>::operator()() const {
 		return LuaType::Function;
@@ -331,9 +289,6 @@ namespace rev {
 	Timepoint LCV<Timepoint>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		LCV<Duration> dur;
 		return Timepoint(dur(idx, ls));
-	}
-	std::ostream& LCV<Timepoint>::operator()(std::ostream& os, const Timepoint& t) const {
-		return os << t;
 	}
 	LuaType LCV<Timepoint>::operator()() const {
 		return LuaType::Number;
@@ -376,10 +331,6 @@ namespace rev {
 			lsc.pop(2);
 		}
 		return ret;
-	}
-	//TODO: アドレスを出力しても他のテーブルの区別がつかずあまり意味がないので改善する(出力階層の制限した上で列挙など)
-	std::ostream& LCV<LCTable_SP>::operator()(std::ostream& os, const LCTable_SP& t) const {
-		return os << "(table)" << std::hex << reinterpret_cast<uintptr_t>(t.get());
 	}
 	LuaType LCV<LCTable_SP>::operator()() const {
 		return LuaType::Table;
@@ -439,9 +390,6 @@ namespace rev {
 		D_Assert0(typ < int(countof(c_toLCValue)));
 		return c_toLCValue[typ](ls, idx, spm);
 	}
-	std::ostream& LCV<LCValue>::operator()(std::ostream& os, const LCValue& lcv) const {
-		return os << lcv;
-	}
 	LuaType LCV<LCValue>::operator()() const {
 		return LuaType::Nil;
 	}
@@ -455,9 +403,6 @@ namespace rev {
 	LValueS LCV<LValueS>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		lua_pushvalue(ls, idx);
 		return LValueS(ls);
-	}
-	std::ostream& LCV<LValueS>::operator()(std::ostream& os, const LValueS& t) const {
-		return os << t;
 	}
 	LuaType LCV<LValueS>::operator()() const {
 		return LuaType::Nil;
@@ -473,9 +418,6 @@ namespace rev {
 		lua_pushvalue(ls, idx);
 		Lua_SP sp = LuaState::GetMainLS_SP(ls);
 		return LValueG(sp);
-	}
-	std::ostream& LCV<LValueG>::operator()(std::ostream& os, const LValueG& t) const {
-		return os << t;
 	}
 	LuaType LCV<LValueG>::operator()() const {
 		return LuaType::Nil;

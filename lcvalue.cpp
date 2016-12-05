@@ -207,7 +207,8 @@ namespace rev {
 			{}
 			template <class T>
 			std::ostream* operator()(const T& t) const {
-				 return &LCV<T>()(*_os, t);
+				*_os << t;
+				return _os;
 			}
 		};
 	}

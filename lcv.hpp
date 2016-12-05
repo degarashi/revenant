@@ -82,7 +82,6 @@ namespace rev {
 		struct LCV<typ> { \
 			int operator()(lua_State* ls, argtyp t) const; \
 			rtyp operator()(int idx, lua_State* ls, LPointerSP* spm=nullptr) const; \
-			std::ostream& operator()(std::ostream& os, argtyp t) const; \
 			LuaType operator()() const; \
 		}; \
 		std::ostream& operator << (std::ostream& os, LCV<typ>);
@@ -223,12 +222,6 @@ namespace rev {
 				return spi::none;
 			return GetLCVType<T>()(idx, ls);
 		}
-		std::ostream& operator()(std::ostream& os, const opt_t& t) const {
-			if(t)
-				return GetLCVType<T>()(os, *t);
-			else
-				return os << "(none)";
-		}
 		LuaType operator()() const {
 			return GetLCVType<T>()();
 		}
@@ -247,9 +240,6 @@ namespace rev {
 		}
 		Dur operator()(const int idx, lua_State* ls) const {
 			return Microseconds(LCV<lua_Integer>()(idx, ls));
-		}
-		std::ostream& operator()(std::ostream& os, const Dur& d) const {
-			return os << d;
 		}
 		LuaType operator()() const {
 			return LuaType::Number;
@@ -291,9 +281,6 @@ namespace rev {
 			}
 			lua_settop(ls, stk);
 			return ret;
-		}
-		std::ostream& operator()(std::ostream& os, const Vec_t& v) const {
-			return os << "(vector size=" << v.size() << ")";
 		}
 		LuaType operator()() const {
 			return LuaType::Table;
@@ -340,10 +327,6 @@ namespace rev {
 			_getElem(ret, idx, ls, IConst<0>());
 			return ret;
 		}
-
-		std::ostream& operator()(std::ostream& os, const Tuple& /*v*/) const {
-			return os << "(tuple size=" << sizeof...(Ts) << ")";
-		}
 		LuaType operator()() const {
 			return LuaType::Table;
 		}
@@ -378,9 +361,6 @@ namespace rev {
 		range_t operator()(const int idx, lua_State* ls) const {
 			auto p = LCV_t()(idx, ls);
 			return {p[0], p[1]};
-		}
-		std::ostream& operator()(std::ostream& os, const range_t& r) const {
-			return LCV_t()(os, {r.from, r.to});
 		}
 		LuaType operator()() const {
 			return LCV_t()();
@@ -1245,9 +1225,6 @@ namespace rev {
 		T operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/=nullptr) const {
 			return *LI_GetPtr<T>()(ls, idx);
 		}
-		std::ostream& operator()(std::ostream& os, const T& t) const {
-			return os << "(userdata) 0x" << std::hex << &t;
-		}
 		LuaType operator()() const {
 			return LuaType::Userdata;
 		}
@@ -1264,9 +1241,6 @@ namespace rev {
 		int operator()(lua_State* ls, const T* t) const {
 			return base_t()(ls, *t);
 		}
-		std::ostream& operator()(std::ostream& os, const T* t) const {
-			return base_t()(os, *t);
-		}
 	};
 	// 非const参照またはポインターの場合はLightUserdataに格納
 	template <class T>
@@ -1278,9 +1252,6 @@ namespace rev {
 		}
 		T* operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/=nullptr) const {
 			return LI_GetPtr<T>()(ls, idx);
-		}
-		std::ostream& operator()(std::ostream& os, const T* t) const {
-			return LCV<T>()(os, *t);
 		}
 		LuaType operator()() const {
 			return LuaType::LightUserdata;
@@ -1295,9 +1266,6 @@ namespace rev {
 		}
 		T& operator()(const int idx, lua_State* ls, LPointerSP* spm=nullptr) const {
 			return *base_t()(idx, ls, spm);
-		}
-		std::ostream& operator()(std::ostream& os, const T& t) const {
-			return base_t()(os, &t);
 		}
 	};
 	template <
