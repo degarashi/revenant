@@ -60,6 +60,8 @@ namespace rev {
 				//! 生成するconst char*文字列ストア
 				using StrV = std::vector<std::string>;
 				StrV			_stringVec;
+				using LsV = std::vector<Lua_SP>;
+				LsV				_lsVec;
 
 				LuaTest():
 					_lsp(LuaState::NewState()),
@@ -99,6 +101,10 @@ namespace rev {
 					_stringVec.resize(_stringVec.size()+1);
 					_genValue(_stringVec.back());
 					dst = _stringVec.back().c_str();
+				}
+				void _genValue(lua_State*& ls) {
+					_lsVec.emplace_back(_lsp->newThread());
+					ls = _lsVec.back()->getLS();
 				}
 
 				template <class V>
