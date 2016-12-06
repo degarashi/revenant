@@ -197,31 +197,37 @@ namespace rev {
 					}
 				}
 
-				auto _getValue(const int idx, bool*) {
-					return _lsp->toBoolean(idx);
+				template <class T>
+				static auto _GetValue(T& p, const int idx, bool*) {
+					return p->toBoolean(idx);
 				}
-				template <class V, ENABLE_IF(std::is_integral<V>{})>
-				auto _getValue(const int idx, V*) {
-					return _lsp->toInteger(idx);
+				template <class T, class V, ENABLE_IF(std::is_integral<V>{})>
+				static auto _GetValue(T& p, const int idx, V*) {
+					return p->toInteger(idx);
 				}
-				template <class V, ENABLE_IF(std::is_floating_point<V>{})>
-				auto _getValue(const int idx, V*) {
-					return _lsp->toNumber(idx);
+				template <class T, class V, ENABLE_IF(std::is_floating_point<V>{})>
+				static auto _GetValue(T& p, const int idx, V*) {
+					return p->toNumber(idx);
 				}
-				auto _getValue(const int idx, lua_CFunction*) {
-					return _lsp->toCFunction(idx);
+				template <class T>
+				static auto _GetValue(T& p, const int idx, lua_CFunction*) {
+					return p->toCFunction(idx);
 				}
-				auto _getValue(const int idx, std::string*) {
-					return _lsp->toString(idx);
+				template <class T>
+				static auto _GetValue(T& p, const int idx, std::string*) {
+					return p->toString(idx);
 				}
-				auto _getValue(const int idx, void**) {
-					return _lsp->toUserData(idx);
+				template <class T>
+				static auto _GetValue(T& p, const int idx, void**) {
+					return p->toUserData(idx);
 				}
-				auto _getValue(const int idx, Lua_SP*) {
-					return _lsp->toThread(idx);
+				template <class T>
+				static auto _GetValue(T& p, const int idx, Lua_SP*) {
+					return p->toThread(idx);
 				}
-				auto _getValue(const int idx, LCTable_SP*) {
-					return _lsp->toTable(idx);
+				template <class T>
+				static auto _GetValue(T& p, const int idx, LCTable_SP*) {
+					return p->toTable(idx);
 				}
 		};
 		template <class T>

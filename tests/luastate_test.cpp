@@ -280,7 +280,7 @@ namespace rev {
 			lsp->push(v0);
 			// それを取得し
 			using v0_t = decltype(v0);
-			v0_t v1 = this->_getValue(-1, (v0_t*)nullptr);
+			v0_t v1 = LuaTest::_GetValue(lsp, -1, (v0_t*)nullptr);
 			// 中身が同一かチェック
 			ASSERT_TRUE(v0 == v1);
 
