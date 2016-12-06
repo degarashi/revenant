@@ -5,6 +5,16 @@
 namespace rev {
 	namespace test {
 		template <class T>
+		bool PreciseCompare(const T& v0, const T& v1) {
+			return v0 == v1;
+		}
+		bool PreciseCompare(const LCValue& v0, const LCValue& v1) noexcept {
+			return v0.preciseCompare(v1);
+		}
+		bool PreciseCompare(const char* c0, const char* c1) {
+			return std::string(c0) == std::string(c1);
+		}
+		template <class T>
 		struct LCV_Test : LuaTest {
 			using value_t = T;
 			using LCV_t = LCV<T>;
@@ -36,8 +46,8 @@ namespace rev {
 				// LCV経由で値を取得(正のインデックス & 負のインデックス)
 				const auto v1 = _lcv(nprev+1, ls, nullptr),
 							v2 = _lcv(lsp->getTop()-npost, ls, nullptr);
-				ASSERT_EQ(LCV_FromLua_t<value_t>(v0), v1);
-				ASSERT_EQ(v1, v2);
+				ASSERT_TRUE(PreciseCompare(v0, decltype(v0)(v1)));
+				ASSERT_TRUE(PreciseCompare(v1, v2));
 
 				// スタックの他の値は変化なし
 				for(int i=0 ; i<nprev ; i++)
@@ -57,7 +67,7 @@ namespace rev {
 			LuaNil, bool, const char*, std::string,
 			lua_Integer, lua_Number, lua_OtherNumber,
 			lua_OtherInteger, lua_IntegerU, lua_OtherIntegerU,
-			lua_State*
+			lua_State*, lua_CFunction, LCValue, void*, Lua_SP, LCTable_SP
 		>;
 		template <class T>
 		struct LCV_Test0 : LCV_Test<T> {};

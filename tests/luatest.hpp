@@ -106,6 +106,9 @@ namespace rev {
 					_lsVec.emplace_back(_lsp->newThread());
 					ls = _lsVec.back()->getLS();
 				}
+				void _genValue(LCValue& dst) {
+					dst = _genLCValue(c_luaTypes);
+				}
 
 				template <class V>
 				V _genValue() {
