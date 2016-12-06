@@ -81,7 +81,7 @@ namespace rev {
 		}
 		return HRes();
 	}
-	LuaType LCV<HRes>::operator()() const {
+	LuaType LCV<HRes>::operator()(const HRes&) const {
 		return LuaType::Userdata;
 	}
 	DEF_LCV_OSTREAM(HRes)
@@ -112,7 +112,7 @@ namespace rev {
 		}
 		return WRes();
 	}
-	LuaType LCV<WRes>::operator()() const {
+	LuaType LCV<WRes>::operator()(const WRes&) const {
 		return LuaType::LightUserdata;
 	}
 	DEF_LCV_OSTREAM(WRes)

@@ -77,16 +77,17 @@ namespace rev {
 	// typ: 対象の型
 	// rtyp: Luaから受け取る型
 	// argtype: C++からLuaへ渡す型
-	#define DEF_LCV_PAIR(typ, rtyp, argtyp) \
+	#define DEF_LCV_PROP(typ, rtyp, argtyp, val) \
 		template <> \
 		struct LCV<typ> { \
+			using value_t = val; \
 			int operator()(lua_State* ls, argtyp t) const; \
 			rtyp operator()(int idx, lua_State* ls, LPointerSP* spm=nullptr) const; \
-			LuaType operator()() const; \
+			LuaType operator()(argtyp t) const; \
 		}; \
 		std::ostream& operator << (std::ostream& os, LCV<typ>);
 	// rtyp = typ
-	#define DEF_LCV(typ, argtyp) DEF_LCV_PAIR(typ, typ, argtyp)
+	#define DEF_LCV(typ, argtyp) DEF_LCV_PROP(typ, typ, argtyp, typ)
 	// ntypをbtypと同列に扱う
 	#define DERIVED_LCV(ntyp, btyp)	\
 		template <> \
@@ -96,7 +97,7 @@ namespace rev {
 	DEF_LCV(LuaNil, LuaNil)
 	DEF_LCV(bool, bool)
 	DEF_LCV(const char*, const char*)
-	DEF_LCV(std::string, const std::string&)
+	DEF_LCV_PROP(std::string, std::string, const std::string&, const char*)
 	DEF_LCV(frea::DegF, const frea::DegF&)
 	DEF_LCV(frea::RadF, const frea::RadF&)
 	DERIVED_LCV(const std::string&, std::string)
@@ -117,7 +118,7 @@ namespace rev {
 	DEF_LCV(LValueS, const LValueS&)
 	DEF_LCV(lua_Number, const lua_Number)
 	DERIVED_LCV(lua_OtherNumber, lua_Number)
-	DEF_LCV(lua_Integer, const lua_Integer)
+	DEF_LCV_PROP(lua_Integer, lua_Integer, const lua_Integer, lua_Number)
 	DERIVED_LCV(lua_IntegerU, lua_Integer)
 	DERIVED_LCV(lua_OtherInteger, lua_Integer)
 	DERIVED_LCV(lua_OtherIntegerU, lua_OtherInteger)
@@ -135,7 +136,7 @@ namespace rev {
 	DERIVED_LCV(GLTypeFmt, GLFormat)
 
 	#undef DEF_LCV
-	#undef DEF_LCV_PAIR
+	#undef DEF_LCV_PROP
 	#undef DERIVED_LCV
 
 	// AlignedタイプはUnAlignedと同じ扱いにする
@@ -222,8 +223,8 @@ namespace rev {
 				return spi::none;
 			return GetLCVType<T>()(idx, ls);
 		}
-		LuaType operator()() const {
-			return GetLCVType<T>()();
+		LuaType operator()(const opt_t& op) const {
+			return GetLCVType<T>()(op);
 		}
 	};
 	template <class T>
@@ -241,7 +242,7 @@ namespace rev {
 		Dur operator()(const int idx, lua_State* ls) const {
 			return Microseconds(LCV<lua_Integer>()(idx, ls));
 		}
-		LuaType operator()() const {
+		LuaType operator()(const Dur&) const {
 			return LuaType::Number;
 		}
 	};
@@ -282,7 +283,7 @@ namespace rev {
 			lua_settop(ls, stk);
 			return ret;
 		}
-		LuaType operator()() const {
+		LuaType operator()(const Vec_t&) const {
 			return LuaType::Table;
 		}
 	};
@@ -327,7 +328,7 @@ namespace rev {
 			_getElem(ret, idx, ls, IConst<0>());
 			return ret;
 		}
-		LuaType operator()() const {
+		LuaType operator()(const Tuple&) const {
 			return LuaType::Table;
 		}
 	};
@@ -362,8 +363,8 @@ namespace rev {
 			auto p = LCV_t()(idx, ls);
 			return {p[0], p[1]};
 		}
-		LuaType operator()() const {
-			return LCV_t()();
+		LuaType operator()(const range_t& r) const {
+			return LCV_t()(r.from);
 		}
 	};
 	template <class T>
@@ -1225,7 +1226,7 @@ namespace rev {
 		T operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/=nullptr) const {
 			return *LI_GetPtr<T>()(ls, idx);
 		}
-		LuaType operator()() const {
+		LuaType operator()(const T&) const {
 			return LuaType::Userdata;
 		}
 	};
@@ -1253,7 +1254,7 @@ namespace rev {
 		T* operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/=nullptr) const {
 			return LI_GetPtr<T>()(ls, idx);
 		}
-		LuaType operator()() const {
+		LuaType operator()(const T*) const {
 			return LuaType::LightUserdata;
 		}
 	};

@@ -18,7 +18,7 @@ namespace rev {
 		LuaState::CheckType(ls, idx, LuaType::Nil);
 		return LuaNil();
 	}
-	LuaType LCV<LuaNil>::operator()() const {
+	LuaType LCV<LuaNil>::operator()(LuaNil) const {
 		return LuaType::Nil;
 	}
 	DEF_LCV_OSTREAM(LuaNil)
@@ -32,7 +32,7 @@ namespace rev {
 		LuaState::CheckType(ls, idx, LuaType::Boolean);
 		return lua_toboolean(ls, idx) != 0;
 	}
-	LuaType LCV<bool>::operator()() const {
+	LuaType LCV<bool>::operator()(bool) const {
 		return LuaType::Boolean;
 	}
 	DEF_LCV_OSTREAM(bool)
@@ -46,7 +46,7 @@ namespace rev {
 		LuaState::CheckType(ls, idx, LuaType::String);
 		return lua_tostring(ls, idx);
 	}
-	LuaType LCV<const char*>::operator()() const {
+	LuaType LCV<const char*>::operator()(const char*) const {
 		return LuaType::String;
 	}
 	DEF_LCV_OSTREAM(const char*)
@@ -62,7 +62,7 @@ namespace rev {
 		const char* c =lua_tolstring(ls, idx, &len);
 		return std::string(c, len);
 	}
-	LuaType LCV<std::string>::operator()() const {
+	LuaType LCV<std::string>::operator()(const std::string&) const {
 		return LuaType::String;
 	}
 	DEF_LCV_OSTREAM(std::string)
@@ -91,7 +91,7 @@ namespace rev {
 			return LCV_In<frea::DegF>()(idx, ls, spm);
 		}
 	}
-	LuaType LCV<frea::DegF>::operator()() const {
+	LuaType LCV<frea::DegF>::operator()(const frea::DegF&) const {
 		return LuaType::Userdata;
 	}
 	DEF_LCV_OSTREAM_PAIR(frea::DegF, Degree)
@@ -111,7 +111,7 @@ namespace rev {
 			return LCV_In<frea::RadF>()(idx, ls, spm);
 		}
 	}
-	LuaType LCV<frea::RadF>::operator()() const {
+	LuaType LCV<frea::RadF>::operator()(const frea::RadF&) const {
 		return LuaType::Userdata;
 	}
 	DEF_LCV_OSTREAM_PAIR(frea::RadF, Radian)
@@ -125,7 +125,7 @@ namespace rev {
 		LuaState::CheckType(ls, idx, LuaType::Number);
 		return lua_tointeger(ls, idx);
 	}
-	LuaType LCV<lua_Integer>::operator()() const {
+	LuaType LCV<lua_Integer>::operator()(lua_Integer) const {
 		return LuaType::Number;
 	}
 	DEF_LCV_OSTREAM(lua_Integer)
@@ -139,7 +139,7 @@ namespace rev {
 		LuaState::CheckType(ls, idx, LuaType::Number);
 		return lua_tonumber(ls, idx);
 	}
-	LuaType LCV<lua_Number>::operator()() const {
+	LuaType LCV<lua_Number>::operator()(lua_Number) const {
 		return LuaType::Number;
 	}
 	DEF_LCV_OSTREAM(lua_Number)
@@ -165,7 +165,7 @@ namespace rev {
 		LuaState::CheckType(ls, idx, LuaType::Thread);
 		return nullptr;
 	}
-	LuaType LCV<lua_State*>::operator()() const {
+	LuaType LCV<lua_State*>::operator()(lua_State*) const {
 		return LuaType::Thread;
 	}
 	DEF_LCV_OSTREAM(lua_State*)
@@ -195,7 +195,7 @@ namespace rev {
 		};
 		return {fnGet(1), fnGet(2), fnGet(3), fnGet(4)};
 	}
-	LuaType LCV<lubee::RectF>::operator()() const {
+	LuaType LCV<lubee::RectF>::operator()(const lubee::RectF&) const {
 		return LuaType::Table;
 	}
 	DEF_LCV_OSTREAM_PAIR(lubee::RectF, Rect)
@@ -221,7 +221,7 @@ namespace rev {
 		};
 		return {fnGet(1), fnGet(2)};
 	}
-	LuaType LCV<lubee::SizeF>::operator()() const {
+	LuaType LCV<lubee::SizeF>::operator()(const lubee::SizeF&) const {
 		return LuaType::Table;
 	}
 	DEF_LCV_OSTREAM_PAIR(lubee::SizeF, Size)
@@ -243,7 +243,7 @@ namespace rev {
 		LuaState::CheckType(ls, idx, LuaType::Thread);
 		return Lua_SP();
 	}
-	LuaType LCV<Lua_SP>::operator()() const {
+	LuaType LCV<Lua_SP>::operator()(const Lua_SP&) const {
 		return LuaType::Thread;
 	}
 	DEF_LCV_OSTREAM(Lua_SP)
@@ -261,7 +261,7 @@ namespace rev {
 		}
 		return lua_touserdata(ls, idx);
 	}
-	LuaType LCV<void*>::operator()() const {
+	LuaType LCV<void*>::operator()(const void*) const {
 		return LuaType::LightUserdata;
 	}
 	DEF_LCV_OSTREAM(void*)
@@ -275,7 +275,7 @@ namespace rev {
 		LuaState::CheckType(ls, idx, LuaType::Function);
 		return lua_tocfunction(ls, idx);
 	}
-	LuaType LCV<lua_CFunction>::operator()() const {
+	LuaType LCV<lua_CFunction>::operator()(lua_CFunction) const {
 		return LuaType::Function;
 	}
 	DEF_LCV_OSTREAM(lua_CFunction)
@@ -290,7 +290,7 @@ namespace rev {
 		LCV<Duration> dur;
 		return Timepoint(dur(idx, ls));
 	}
-	LuaType LCV<Timepoint>::operator()() const {
+	LuaType LCV<Timepoint>::operator()(const Timepoint&) const {
 		return LuaType::Number;
 	}
 	DEF_LCV_OSTREAM(Timepoint)
@@ -332,7 +332,7 @@ namespace rev {
 		}
 		return ret;
 	}
-	LuaType LCV<LCTable_SP>::operator()() const {
+	LuaType LCV<LCTable_SP>::operator()(const LCTable_SP&) const {
 		return LuaType::Table;
 	}
 
@@ -390,8 +390,8 @@ namespace rev {
 		D_Assert0(typ < int(countof(c_toLCValue)));
 		return c_toLCValue[typ](ls, idx, spm);
 	}
-	LuaType LCV<LCValue>::operator()() const {
-		return LuaType::Nil;
+	LuaType LCV<LCValue>::operator()(const LCValue& c) const {
+		return c.type();
 	}
 	DEF_LCV_OSTREAM(LCValue)
 
@@ -404,8 +404,8 @@ namespace rev {
 		lua_pushvalue(ls, idx);
 		return LValueS(ls);
 	}
-	LuaType LCV<LValueS>::operator()() const {
-		return LuaType::Nil;
+	LuaType LCV<LValueS>::operator()(const LValueS& t) const {
+		return t.type();
 	}
 	DEF_LCV_OSTREAM(LValueS)
 
@@ -419,8 +419,8 @@ namespace rev {
 		Lua_SP sp = LuaState::GetMainLS_SP(ls);
 		return LValueG(sp);
 	}
-	LuaType LCV<LValueG>::operator()() const {
-		return LuaType::Nil;
+	LuaType LCV<LValueG>::operator()(const LValueG& t) const {
+		return t.type();
 	}
 	DEF_LCV_OSTREAM(LValueG)
 }

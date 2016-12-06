@@ -48,8 +48,9 @@ namespace rev {
 			void typeTest() {
 				// LCV()が返す型タイプが実際Pushした時と一致しているか確認
 				auto& lsp = this->_lsp;
-				_lcv(lsp->getLS(), _genValue<value_t>());
-				ASSERT_EQ(_lcv(), lsp->type(-1));
+				const auto val = _genValue<value_t>();
+				_lcv(lsp->getLS(), val);
+				ASSERT_EQ(_lcv(val), lsp->type(-1));
 			}
 		};
 		using Types0 = ::testing::Types<

@@ -168,8 +168,8 @@ namespace rev {
 	namespace {
 		struct TypeVisitor : boost::static_visitor<LuaType> {
 			template <class T>
-			LuaType operator()(const T&) const {
-				return LCV<T>()();
+			LuaType operator()(const T& t) const {
+				return LCV<T>()(t);
 			}
 		};
 	}

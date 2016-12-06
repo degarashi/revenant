@@ -221,27 +221,16 @@ namespace rev {
 					return _lsp->toTable(idx);
 				}
 		};
-
-		// LCV経由で値を渡した時のLua内部型
 		template <class T>
-		struct LCV_ToLua { using type = T; };
-		template <> struct LCV_ToLua<std::string> { using type = const char*; };
-		template <> struct LCV_ToLua<lua_Number> { using type = lua_Number; };
-		template <> struct LCV_ToLua<lua_OtherNumber> { using type = lua_Number; };
-		template <> struct LCV_ToLua<lua_Integer> { using type = lua_Number; };
-		template <> struct LCV_ToLua<lua_IntegerU> { using type = lua_Number; };
-		template <> struct LCV_ToLua<lua_OtherInteger> { using type = lua_Number; };
-		template <> struct LCV_ToLua<lua_OtherIntegerU> { using type = lua_Number; };
+		struct StringTypeCnv {
+			using type = T;
+		};
+		template <>
+		struct StringTypeCnv<const char*> {
+			using type = std::string;
+		};
 		template <class T>
-		using LCV_ToLua_t = typename LCV_ToLua<T>::type;
-
-		// LCV経由で値を取得した時のC++型
-		template <class T>
-		struct LCV_FromLua { using type = T; };
-		template <> struct LCV_FromLua<const char*> { using type = std::string; };
-		template <class T>
-		using LCV_FromLua_t = typename LCV_FromLua<T>::type;
-
+		using StringTypeCnv_t = typename StringTypeCnv<T>::type;
 		// テーブルの比較はポインタではなく参照先にする
 		// std::stringで入力した値はconst char*で取得される為、専用関数を使う
 		bool operator == (const LCTable_SP& s0, const LCTable_SP& s1) noexcept {

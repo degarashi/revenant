@@ -286,14 +286,14 @@ namespace rev {
 
 			// (LCValueを介したバージョン)
 			const LCValue lcv = lsp->toLCValue(-1);
-			using VD_t = typename LCV_ToLua<value_t>::type;
-			using VD_Dst = typename LCV_FromLua<VD_t>::type;
-			const VD_Dst v2 = v0,
-						v3 = boost::get<VD_t>(lcv);
+			using VRet_t = typename LCV<value_t>::value_t;
+			using VD_t = StringTypeCnv_t<VRet_t>;
+			const VD_t v2 = v0,
+						v3 = boost::get<VRet_t>(lcv);
 			ASSERT_TRUE(v2 == v3);
 
 			// (toValueを介したバージョン)
-			const VD_Dst v4 = lsp->template toValue<VD_Dst>(-1);
+			const VD_t v4 = lsp->template toValue<VD_t>(-1);
 			ASSERT_TRUE(v2 == v4);
 		}
 	}
