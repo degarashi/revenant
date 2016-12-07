@@ -146,23 +146,11 @@ namespace rev {
 
 	// [LCV<lua_State*> = LUA_TTHREAD]
 	int LCV<lua_State*>::operator()(lua_State* ls, lua_State* lsp) const {
-		if(ls == lsp)
-			lua_pushthread(ls);
-		else {
-			lua_pushthread(lsp);
-			lua_xmove(lsp, ls, 1);
-		}
-		return 1;
+		return LCV<Lua_SP>()(ls, LuaState::GetLS_SP(lsp));
 	}
-	lua_State* LCV<lua_State*>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
-		const auto typ = lua_type(ls, idx);
-		if(typ == LUA_TTHREAD)
-			return lua_tothread(ls, idx);
-		if(typ == LUA_TNIL || typ == LUA_TNONE) {
-			// 自身を返す
-			return ls;
-		}
-		LuaState::CheckType(ls, idx, LuaType::Thread);
+	lua_State* LCV<lua_State*>::operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
+		if(auto sp = LCV<Lua_SP>()(idx, ls, spm))
+			return sp->getLS();
 		return nullptr;
 	}
 	LuaType LCV<lua_State*>::operator()(lua_State*) const {
@@ -228,6 +216,7 @@ namespace rev {
 
 	// [LCV<Lua_SP> = LUA_TTHREAD]
 	int LCV<Lua_SP>::operator()(lua_State* ls, const Lua_SP& sp) const {
+		sp->_registerLua();
 		sp->pushSelf();
 		lua_xmove(sp->getLS(), ls, 1);
 		return 1;

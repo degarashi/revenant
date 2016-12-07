@@ -594,22 +594,17 @@ namespace rev {
 			);
 
 		private:
-			const static std::string cs_fromId,
-									cs_fromThread,
+			const static std::string cs_fromCpp,
+									cs_fromLua,
+									cs_mainThreadPtr,
 									cs_mainThread;
-			const static int ENT_ID,
-							ENT_THREAD,
-							ENT_NREF,
-							ENT_SPILUA,
-							ENT_POINTER;
 			Lua_SP		_base;		//!< メインスレッド (自身がそれな場合はnull)
 			ILua_SP		_lua;		//!< 自身が保有するスレッド
 			using CheckTop_OP = spi::Optional<CheckTop>;
 			CheckTop_OP	_opCt;
+			bool		_bWrap;
 
-			static lubee::Freelist<int> s_index;
 			static void Nothing(lua_State* ls);
-			static void Delete(lua_State* ls);
 
 		public:
 			// -------------- Exceptions --------------
@@ -650,35 +645,24 @@ namespace rev {
 			void checkType(int idx, LuaType typ) const;
 		private:
 			using Deleter = std::function<void (lua_State*)>;
-			static Deleter _MakeDeleter(int id);
-			static Deleter _MakeCoDeleter(int id);
+			const static Deleter s_deleter;
+			static Deleter _MakeCoDeleter(LuaState* lsp);
 
-			using Int_OP = spi::Optional<int>;
-			void _registerNewThread(LuaState& lsc, Int_OP id);
-			/* Thread変数の参照カウント機構の為の関数群
-				(Luaのthread変数には__gcフィールドを設定できないため、このような面倒くさい事になっている) */
-			//! global[cs_fromId], global[cs_fromThread]を無ければ作成しスタックに積む
+			//! global[cs_fromCpp], global[cs_fromLua]を作成しスタックに積む
 			/*!
-				FromIdはLuaStateのシリアルIdから詳細情報を
-				FromThreadはLuaのスレッド変数から参照する物
+				FromCpp: LightUserdata(LuaState*) -> Thread
+				FromLua: Weak(Thread) -> Userdata(Lua_SP)
 			*/
-			static void _PrepareThreadTable(LuaState& lsc);
-			using CBGetAuxTable = std::function<void (LuaState&)>;
-			/*!
-				\param[in] cb	対象のLuaStateを取得してスタックのトップに積む関数
-			*/
-			static ILua_SP _Increment(LuaState& lsc, const CBGetAuxTable& cb);
-			//! Idをキーとして参照カウンタをインクリメント
-			static ILua_SP _Increment_Id(LuaState& lsc, int id);
-			//! スレッド変数をキーとして参照カウンタをインクリメント
-			/*! スタックトップにThread変数を積んでから呼ぶ */
-			static ILua_SP _Increment_Th(LuaState& lsc);
-			/*!
-				\param[in] cb	対象のLuaStateを取得してスタックのトップに積む関数
-			*/
-			static void _Decrement(LuaState& lsc, const CBGetAuxTable& cb);
-			static void _Decrement_Id(LuaState& lsc, int id);
-			static void _Decrement_Th(LuaState& lsc);
+			void _initMainThread();
+			void _getThreadTable();
+			static int DeleteSP(lua_State* ls);
+
+			//! Cppで削除されてLuaで生きている場合用
+			void _registerLua();
+			//! Luaで削除されてCppで生きている場合用 (newThreadで呼ばれる)
+			void _registerCpp();
+			// coDeleterで呼ばれる
+			void _unregisterCpp();
 			//! NewThread初期化 (コルーチン作成)
 			LuaState(const Lua_SP& spLua);
 
@@ -845,8 +829,8 @@ namespace rev {
 
 			/*! スタックトップのテーブルに"name"というテーブルが無ければ作成
 				既にあれば単にそれを積む */
-			void prepareTable(int idx, const std::string& name);
-			void prepareTableGlobal(const std::string& name);
+			bool prepareTable(int idx, const std::string& name);
+			bool prepareTableGlobal(const std::string& name);
 
 			lua_State* getLS() const;
 			Lua_SP getLS_SP();
