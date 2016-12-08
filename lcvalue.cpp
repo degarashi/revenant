@@ -33,6 +33,9 @@ namespace rev {
 			bool operator()(const T& t0, const T& t1) const {
 				return t0 == t1;
 			}
+			bool operator()(const char* c0, const char* c1) const {
+				return std::strcmp(c0, c1) == 0;
+			}
 			bool operator()(const std::string& s, const char* c) const {
 				return s == std::string(c);
 			}
