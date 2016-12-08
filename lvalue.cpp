@@ -20,7 +20,7 @@ namespace rev {
 		lv._prepareValue(true);
 		_init(lv._lua);
 	}
-	LV_Global::LV_Global(LV_Global&& lv):
+	LV_Global::LV_Global(LV_Global&& lv) noexcept:
 		_lua(std::move(lv._lua)),
 		_id(lv._id)
 	{}
@@ -61,10 +61,11 @@ namespace rev {
 		_lua->remove(-2);
 		return _lua->getTop();
 	}
-	void LV_Global::_prepareValue(lua_State* ls) const {
+	lua_State* LV_Global::_prepareValue(lua_State* ls) const {
 		VPop vp(*this, true);
 		lua_State* mls = _lua->getLS();
 		lua_xmove(mls, ls, 1);
+		return ls;
 	}
 	void LV_Global::_cleanValue(const int pos) const {
 		_lua->remove(pos);
@@ -85,14 +86,25 @@ namespace rev {
 		lcv.push(ls);
 		_init(ls);
 	}
+	LV_Stack::LV_Stack(LV_Stack&& lv) noexcept {
+		_invalidate();
+		swap(lv);
+	}
 	LV_Stack::~LV_Stack() {
-		if(!std::uncaught_exception()) {
-			D_Assert0(lua_gettop(_ls) >= _pos);
+		if(_ls && _pos>0 && !std::uncaught_exception()) {
+			D_Assert0(lua_gettop(_ls) == _pos);
 			#ifdef DEBUG
 				D_Assert0(LuaState::SType(_ls, _pos) == _type);
 			#endif
-			lua_remove(_ls, _pos);
+			lua_pop(_ls, 1);
 		}
+	}
+	void LV_Stack::_invalidate() {
+		_ls = nullptr;
+		_pos = 0;
+		#ifdef DEBUG
+			_type = LuaType::Nil;
+		#endif
 	}
 	void LV_Stack::_init(lua_State* ls) {
 		_ls = ls;
@@ -103,26 +115,12 @@ namespace rev {
 		#endif
 	}
 	void LV_Stack::_setValue() {
+		Assert0(_pos > 0);
 		lua_replace(_ls, _pos);
 		#ifdef DEBUG
 			_type = LuaState::SType(_ls, _pos);
 		#endif
 	}
-	LV_Stack& LV_Stack::operator = (const LCValue& lcv) {
-		lcv.push(_ls);
-		_setValue();
-		return *this;
-	}
-	LV_Stack& LV_Stack::operator = (lua_State* ls) {
-		if(ls != _ls) {
-			lua_pushthread(ls);
-			lua_xmove(ls, _ls, 1);
-		} else
-			lua_pushthread(_ls);
-		_setValue();
-		return *this;
-	}
-
 	int LV_Stack::_prepareValue(const bool bTop) const {
 		if(bTop) {
 			lua_pushvalue(_ls, _pos);
@@ -130,9 +128,10 @@ namespace rev {
 		}
 		return _pos;
 	}
-	void LV_Stack::_prepareValue(lua_State* ls) const {
+	lua_State* LV_Stack::_prepareValue(lua_State* ls) const {
 		_prepareValue(true);
 		lua_xmove(_ls, ls, 1);
+		return ls;
 	}
 	void LV_Stack::_cleanValue(const int pos) const {
 		if(_pos < pos)
@@ -140,6 +139,23 @@ namespace rev {
 	}
 	lua_State* LV_Stack::getLS() const {
 		return _ls;
+	}
+	void LV_Stack::swap(LV_Stack& lv) noexcept {
+		std::swap(_ls, lv._ls);
+		std::swap(_pos, lv._pos);
+		#ifdef DEBUG
+			std::swap(_type, lv._type);
+		#endif
+	}
+	LV_Stack& LV_Stack::operator = (const LV_Stack& lv) {
+		lv._prepareValue(_ls);
+		_setValue();
+		return *this;
+	}
+	LV_Stack& LV_Stack::operator = (LV_Stack&& lv) {
+		this->~LV_Stack();
+		new(this) LV_Stack(std::move(lv));
+		return *this;
 	}
 
 	std::ostream& operator << (std::ostream& os, const LV_Global& v) {
