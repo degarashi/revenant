@@ -91,5 +91,78 @@ namespace rev {
 			// 作成した時とは逆順で破棄する
 			std::reverse(vec.begin(), vec.end());
 		}
+		TEST_F(LValueS_Test, Compare_Equal) {
+			auto& lsp = this->_lsp;
+			lua_State* ls = lsp->getLS();
+			const auto lc0 = _genLCValue(c_luaTypes),
+						lc1 = _genLCValue(c_luaTypes);
+			LValueS lv0(ls, lc0),
+					lv1(ls, lc1);
+			// operator ==
+			ASSERT_EQ(lc0==lc1, lv0==lv1);
+			// operator !=
+			ASSERT_NE(lv0==lv1, lv0!=lv1);
+			ASSERT_EQ(lc0!=lc1, lv0!=lv1);
+		}
+		TEST_F(LValueS_Test, Compare_Less) {
+			auto& lsp = this->_lsp;
+			lua_State* ls = lsp->getLS();
+			const auto v0 = _genValue<lua_Number>(),
+						v1 = _genValue<lua_Number>();
+			lsp->push(v0);
+			LValueS lv0(ls);
+			lsp->push(v1);
+			LValueS lv1(ls);
+			// operator <
+			ASSERT_EQ(v0<v1, lv0<lv1);
+			if(lv0 < lv1)
+				ASSERT_NE(lv0, lv1);
+			// operator <=
+			ASSERT_EQ(v0<=v1, lv0<=lv1);
+			if(lv0 <= lv1) {
+				ASSERT_TRUE((lv0==lv1) || (lv0<lv1));
+			}
+		}
+
+		template <class T>
+		struct LValueS_TypedTest : LuaTest {
+			using value_t = T;
+			static auto _GetLValue(LValueS& lv, bool*) {
+				return lv.toBoolean();
+			}
+			static auto _GetLValue(LValueS& lv, lua_Integer*) {
+				return lv.toInteger();
+			}
+			static auto _GetLValue(LValueS& lv, lua_Number*) {
+				return lv.toNumber();
+			}
+			static auto _GetLValue(LValueS& lv, void**) {
+				return lv.toUserData();
+			}
+			static auto _GetLValue(LValueS& lv, const char**) {
+				return lv.toString();
+			}
+			static auto _GetLValue(LValueS& lv, LCValue*) {
+				return lv.toLCValue();
+			}
+			static auto _GetLValue(LValueS& lv, LCTable_SP*) {
+				return lv.toTable();
+			}
+			static auto _GetLValue(LValueS& lv, Lua_SP*) {
+				return lv.toThread();
+			}
+		};
+		using Types = ::testing::Types<bool, lua_Integer, lua_Number, void*, const char*, LCValue, Lua_SP>;
+		TYPED_TEST_CASE(LValueS_TypedTest, Types);
+		// to(Value)
+		TYPED_TEST(LValueS_TypedTest, ToValue) {
+			auto& lsp = this->_lsp;
+			USING(value_t);
+			const value_t val0 = this->template _genValue<value_t>();
+			LValueS lv(lsp->getLS(), val0);
+			const auto ret = this->_GetLValue(lv, (value_t*)nullptr);
+			static_assert(std::is_same<value_t, std::decay_t<decltype(ret)>>{}, "something wrong");
+			ASSERT_TRUE(LCValue(val0).preciseCompare(LCValue(ret)));
+		}
 	}
 }
