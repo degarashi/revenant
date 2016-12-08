@@ -412,4 +412,88 @@ namespace rev {
 		return t.type();
 	}
 	DEF_LCV_OSTREAM(LValueG)
+
+	// [LCV<frea::Vec2>]
+	int LCV<frea::Vec2>::operator()(lua_State*, const frea::Vec2&) const {
+		return 0;
+	}
+	frea::Vec2 LCV<frea::Vec2>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
+		return {};
+	}
+	LuaType LCV<frea::Vec2>::operator()(const frea::Vec2&) const {
+		return LuaType::Nil;
+	}
+	DEF_LCV_OSTREAM(frea::Vec2)
+
+	// [LCV<frea::Vec3>]
+	int LCV<frea::Vec3>::operator()(lua_State*, const frea::Vec3&) const {
+		return 0;
+	}
+	frea::Vec3 LCV<frea::Vec3>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
+		return {};
+	}
+	LuaType LCV<frea::Vec3>::operator()(const frea::Vec3&) const {
+		return LuaType::Nil;
+	}
+	DEF_LCV_OSTREAM(frea::Vec3)
+
+	// [LCV<frea::Vec4>]
+	int LCV<frea::Vec4>::operator()(lua_State*, const frea::Vec4&) const {
+		return 0;
+	}
+	frea::Vec4 LCV<frea::Vec4>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
+		return {};
+	}
+	LuaType LCV<frea::Vec4>::operator()(const frea::Vec4&) const {
+		return LuaType::Nil;
+	}
+	DEF_LCV_OSTREAM(frea::Vec4)
+
+	// [LCV<frea::Mat2>]
+	int LCV<frea::Mat2>::operator()(lua_State*, const frea::Mat2&) const {
+		return 0;
+	}
+	frea::Mat2 LCV<frea::Mat2>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
+		return {};
+	}
+	LuaType LCV<frea::Mat2>::operator()(const frea::Mat2&) const {
+		return LuaType::Nil;
+	}
+	DEF_LCV_OSTREAM(frea::Mat2)
+
+	// [LCV<frea::Mat3>]
+	int LCV<frea::Mat3>::operator()(lua_State*, const frea::Mat3&) const {
+		return 0;
+	}
+	frea::Mat3 LCV<frea::Mat3>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
+		return {};
+	}
+	LuaType LCV<frea::Mat3>::operator()(const frea::Mat3&) const {
+		return LuaType::Nil;
+	}
+	DEF_LCV_OSTREAM(frea::Mat3)
+
+	// [LCV<frea::Mat4>]
+	int LCV<frea::Mat4>::operator()(lua_State*, const frea::Mat4&) const {
+		return 0;
+	}
+	frea::Mat4 LCV<frea::Mat4>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
+		return {};
+	}
+	LuaType LCV<frea::Mat4>::operator()(const frea::Mat4&) const {
+		return LuaType::Nil;
+	}
+	DEF_LCV_OSTREAM(frea::Mat4)
+
+	// [LCV<frea::Quat>]
+	int LCV<frea::Quat>::operator()(lua_State*, const frea::Quat&) const {
+		return 0;
+	}
+	frea::Quat LCV<frea::Quat>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
+		return {};
+	}
+	LuaType LCV<frea::Quat>::operator()(const frea::Quat&) const {
+		return LuaType::Nil;
+	}
+	DEF_LCV_OSTREAM(frea::Quat)
 }

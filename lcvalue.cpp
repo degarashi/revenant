@@ -12,10 +12,22 @@ namespace rev {
 
 	// ---------------- LCTable ----------------
 	namespace {
-		struct CompareVisitor : boost::static_visitor<bool> {
+		struct Compare {
 			template <class T0, class T1>
 			bool operator()(const T0&, const T1&) const {
 				return false;
+			}
+			template <class T>
+			bool operator()(const T& t0, const T& t1) const {
+				return t0 == t1;
+			}
+		};
+		struct CompareVisitor : boost::static_visitor<bool> {
+			template <class T0, class T1>
+			bool operator()(const T0& t0, const T1& t1) const {
+				using D0 = StringTypeCnv_t<typename LCV<T0>::value_t>;
+				using D1 = StringTypeCnv_t<typename LCV<T1>::value_t>;
+				return Compare()(D0(t0), D1(t1));
 			}
 			template <class T>
 			bool operator()(const T& t0, const T& t1) const {

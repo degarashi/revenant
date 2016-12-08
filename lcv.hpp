@@ -44,6 +44,17 @@ namespace rev {
 	template <class T>
 	using GetLCVType = LCV<detail::GetLCVType<T>>;
 
+	template <class T>
+	struct StringTypeCnv {
+		using type = T;
+	};
+	template <>
+	struct StringTypeCnv<const char*> {
+		using type = std::string;
+	};
+	template <class T>
+	using StringTypeCnv_t = typename StringTypeCnv<T>::type;
+
 	#define DEF_LCV_OSTREAM_PAIR(typ, name)	std::ostream& operator << (std::ostream& os, LCV<typ>) { return os << #name; }
 	#define DEF_LCV_OSTREAM(typ)		DEF_LCV_OSTREAM_PAIR(typ, typ)
 
@@ -123,6 +134,13 @@ namespace rev {
 	DERIVED_LCV(lua_OtherInteger, lua_Integer)
 	DERIVED_LCV(lua_OtherIntegerU, lua_OtherInteger)
 	DERIVED_LCV(long, lua_Integer)
+	DEF_LCV(frea::Vec2, const frea::Vec2&)
+	DEF_LCV(frea::Vec3, const frea::Vec3&)
+	DEF_LCV(frea::Vec4, const frea::Vec4&)
+	DEF_LCV(frea::Mat2, const frea::Mat2&)
+	DEF_LCV(frea::Mat3, const frea::Mat3&)
+	DEF_LCV(frea::Mat4, const frea::Mat4&)
+	DEF_LCV(frea::Quat, const frea::Quat&)
 
 	DERIVED_LCV(GLFormat, lua_Integer)
 	DERIVED_LCV(GLDepthFmt, GLFormat)
@@ -188,7 +206,9 @@ namespace rev {
 	{};
 	// wrapM_spec -> MatT_spec
 	template <class VW, int M, int N>
-	struct LCV<frea::wrapM_spec<VW,M,N>>: LCV<typename frea::wrapM_spec<VW,M,N>::base_t> {};
+	struct LCV<frea::wrapM_spec<VW,M,N>>:
+		LCV<typename frea::wrapM_spec<VW,M,N>::base_t>
+	{};
 
 	template <class T>
 	struct LCV<frea::QuatT<T,true>>:

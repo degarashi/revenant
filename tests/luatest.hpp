@@ -230,16 +230,6 @@ namespace rev {
 					return p->toTable(idx);
 				}
 		};
-		template <class T>
-		struct StringTypeCnv {
-			using type = T;
-		};
-		template <>
-		struct StringTypeCnv<const char*> {
-			using type = std::string;
-		};
-		template <class T>
-		using StringTypeCnv_t = typename StringTypeCnv<T>::type;
 		// テーブルの比較はポインタではなく参照先にする
 		// std::stringで入力した値はconst char*で取得される為、専用関数を使う
 		bool operator == (const LCTable_SP& s0, const LCTable_SP& s1) noexcept {
