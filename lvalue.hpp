@@ -301,6 +301,7 @@ namespace rev {
 			DEF_FUNC(void*, toUserData)
 			DEF_FUNC(const char*, toString)
 			DEF_FUNC(LCValue, toLCValue)
+			DEF_FUNC(LCTable_SP, toTable)
 			DEF_FUNC(Lua_SP, toThread)
 			#undef DEF_FUNC
 
