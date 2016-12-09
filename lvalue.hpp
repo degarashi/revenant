@@ -18,7 +18,7 @@ namespace rev {
 				LV_Inter(LV_Inter&&) = default;
 
 				void prepareValue(lua_State* ls) const {
-					_src.prepareAtIndex(ls, _index);
+					_src._prepareAtIndex(ls, _index);
 				}
 				template <class VAL>
 				LV_Inter& operator = (VAL&& v) {
@@ -168,6 +168,8 @@ namespace rev {
 	template <class T>
 	class LValue : public T {
 		private:
+			template <class LV, class IDX>
+			friend class detail::LV_Inter;
 			using base_t = T;
 			template <class LV>
 			bool _compare(const LValue<LV>& lv, const int flag) const {
@@ -176,6 +178,16 @@ namespace rev {
 				prepareValue(ls);
 				lv.prepareValue(ls);
 				return lua_compare(ls, -2, -1, flag);
+			}
+			//! この値が指すテーブルからidxが指す要素をスタックに積む
+			template <class IDX>
+			void _prepareAtIndex(lua_State* ls, const IDX& idx) const {
+				D_Assert0(type() == LuaType::Table);
+				prepareValue(ls);
+				idx.push(ls);
+				// [This][Idx]
+				lua_gettable(ls, -2);
+				lua_remove(ls, -2);
 			}
 		public:
 			template <class Callback>
@@ -305,15 +317,11 @@ namespace rev {
 			DEF_FUNC(Lua_SP, toThread)
 			#undef DEF_FUNC
 
+			void push(lua_State* ls) const {
+				prepareValue(ls);
+			}
 			lua_State* prepareValue(lua_State* ls) const {
 				return base_t::_prepareValue(ls);
-			}
-			template <class IDX>
-			void prepareAtIndex(lua_State* ls, const IDX& idx) const {
-				base_t::_prepareValue(ls);
-				idx.push(ls);
-				lua_gettable(ls, -2);
-				lua_remove(ls, -2);
 			}
 			template <class IDX, class VAL>
 			void setField(const IDX& idx, const VAL& val) {
