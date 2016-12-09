@@ -9,14 +9,14 @@ namespace rev {
 			lsp->newTable();
 			const std::string key = lubee::random::GenAlphabetString(_rdi, _rdi({0,32})),
 							key2 = key+"1";
-			const LCValue value = _genLCValue(c_luaTypes_nonil);
+			const LCValue value = genLCValue(c_luaTypes_nonil);
 			lsp->setField(-1, key, value);
 
 			// メタテーブルの用意
 			lsp->newTable();
 			const int num = _rdi({0, CFunction::N_Func-1});
 			lsp->setField(-1, "__index", CFunction::cs_func[num]);
-			static lua_Number check = _genValue<lua_Number>();
+			static lua_Number check = genValue<lua_Number>();
 			lua_CFunction f =
 				[](lua_State* ls) -> int{
 					check = lua_tonumber(ls, -1);
@@ -34,7 +34,7 @@ namespace rev {
 			ASSERT_EQ(lua_Number(num), lsp->toNumber(-1));
 			lsp->pop(1);
 			// table[key]に対してsetすればメタメソッドは呼ばれない
-			const LCValue lcv = _genLCValue(c_luaTypes_key);
+			const LCValue lcv = genLCValue(c_luaTypes_key);
 			lsp->setField(-1, key, lcv);
 			lsp->getField(-1, key);
 			const LCValue lcv2 = lsp->toLCValue(-1);
@@ -42,7 +42,7 @@ namespace rev {
 			lsp->pop(1);
 			// テーブルにsetするとcheck変数がその値に書き換わる
 			{
-				const lua_Number num = _genValue<lua_Number>();
+				const lua_Number num = genValue<lua_Number>();
 				lsp->setField(-1, key2, num);
 				ASSERT_EQ(check, num);
 			}
@@ -58,7 +58,7 @@ namespace rev {
 
 			// 存在するエントリへrawSetField
 			const lua_Number pre_check = check,
-							cur = _genValue<lua_Number>();
+							cur = genValue<lua_Number>();
 			lsp->rawSetField(-1, key, cur);
 			lsp->rawGetField(-1, key);
 			ASSERT_EQ(cur, lsp->toNumber(-1));
@@ -77,7 +77,7 @@ namespace rev {
 				if(from == LuaType::Userdata)
 					continue;
 				const LuaType typ[1] = {from};
-				lsp->push(_genLCValue(typ));
+				lsp->push(genLCValue(typ));
 				for(int j=0 ; j<LuaType::_Num ; j++) {
 					const auto to = static_cast<LuaType::e>(j);
 					if(to == LuaType::Userdata)
@@ -160,7 +160,7 @@ namespace rev {
 			Map m;
 			const int nVal = _rdi({0,64});
 			for(int i=0 ; i<nVal ; i++) {
-				const LCValue cv = _genLCValue(c_luaTypes_key);
+				const LCValue cv = genLCValue(c_luaTypes_key);
 				if(m.count(cv) == 0) {
 					lsp->push(cv);
 					m.emplace(cv, lsp->cnvString(-1));
@@ -176,9 +176,9 @@ namespace rev {
 		}
 		TEST_F(LuaState_Test, PrepareTable) {
 			auto lsp = this->_lsp;
-			const auto name = _genValue<std::string>();
-			const auto key = _genValue<std::string>();
-			const auto value = _genValue<lua_Number>();
+			const auto name = genValue<std::string>();
+			const auto key = genValue<std::string>();
+			const auto value = genValue<lua_Number>();
 			const auto fnChk = [&lsp, &name, &key, &value, this](auto&& cb){
 				const RewindTop rt(lsp->getLS());
 				{
@@ -228,8 +228,8 @@ namespace rev {
 		// setGlobal & getGlobal & pushGlobal
 		TEST_F(LuaState_Test, Table) {
 			auto lsp = this->_lsp;
-			const auto key = _genLCValue(c_luaTypes_key),
-						value0 = LCValue(_genValue<std::string>());
+			const auto key = genLCValue(c_luaTypes_key),
+						value0 = LCValue(genValue<std::string>());
 			lsp->push(value0);
 			lsp->setGlobal(key);
 
@@ -275,12 +275,12 @@ namespace rev {
 			using value_t = TypeParam;
 			auto lsp = this->_lsp;
 			// ランダムな値を生成し、
-			auto v0 = this->template _genValue<value_t>();
+			auto v0 = this->template genValue<value_t>();
 			// LuaへPush
 			lsp->push(v0);
 			// それを取得し
 			using v0_t = decltype(v0);
-			v0_t v1 = LuaTest::_GetValue(lsp, -1, (v0_t*)nullptr);
+			v0_t v1 = LuaTest::GetValue(lsp, -1, (v0_t*)nullptr);
 			// 中身が同一かチェック
 			ASSERT_TRUE(v0 == v1);
 

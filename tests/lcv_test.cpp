@@ -31,16 +31,16 @@ namespace rev {
 						npost = _rdi({0,Max_Other-1});
 				// 前に関係ない値を挟む
 				for(int i=0 ; i<nprev ; i++) {
-					prev[i] = _genLCValue(c_luaTypes_key);
+					prev[i] = genLCValue(c_luaTypes_key);
 					lsp->push(prev[i]);
 				}
 				// LCV経由でPush
-				const auto v0 = _genValue<value_t>();
+				const auto v0 = genValue<value_t>();
 				const int cur = _lcv(ls, v0);
 				ASSERT_EQ(nprev+cur, lsp->getTop());
 				// 後に関係ない値を加える
 				for(int i=0 ; i<npost ; i++) {
-					post[i] = _genLCValue(c_luaTypes_key);
+					post[i] = genLCValue(c_luaTypes_key);
 					lsp->push(post[i]);
 				}
 				// LCV経由で値を取得(正のインデックス & 負のインデックス)
@@ -58,7 +58,7 @@ namespace rev {
 			void typeTest() {
 				// LCV()が返す型タイプが実際Pushした時と一致しているか確認
 				auto& lsp = this->_lsp;
-				const auto val = _genValue<value_t>();
+				const auto val = genValue<value_t>();
 				_lcv(lsp->getLS(), val);
 				ASSERT_EQ(_lcv(val), lsp->type(-1));
 			}

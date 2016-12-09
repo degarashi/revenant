@@ -16,7 +16,7 @@ namespace rev {
 			std::unordered_set<const void*> ptr;
 			const int n = _rdi({1,32});
 			for(int i=0 ; i<n ; i++) {
-				const auto lc0 = _genLCValue(c_luaTypes);
+				const auto lc0 = genLCValue(c_luaTypes);
 				int array=0;
 				if(lc0.type() == LuaType::Table) {
 					if(_rdi({0,1})) {
@@ -52,7 +52,7 @@ namespace rev {
 					case 3:
 					{
 						LValueS lv(ls, lc0);
-						auto lc1 = _genLCValue(c_luaTypes);
+						auto lc1 = genLCValue(c_luaTypes);
 						vec.emplace_back(LValueS(ls, lc1));
 						vec.back() = std::move(lv);
 						ASSERT_TRUE(lc0.preciseCompare(vec.back()->toValue<LCValue>()));
@@ -61,7 +61,7 @@ namespace rev {
 					// LValue = const LValue&
 					case 4:
 					{
-						vec.emplace_back(LValueS(ls, _genLCValue(c_luaTypes)));
+						vec.emplace_back(LValueS(ls, genLCValue(c_luaTypes)));
 						vec.emplace_back(LValueS(ls, lc0));
 						auto& lv0 = *vec[vec.size()-2];
 						auto& lv1 = *vec[vec.size()-1];
@@ -94,8 +94,8 @@ namespace rev {
 		TEST_F(LValueS_Test, Compare_Equal) {
 			auto& lsp = this->_lsp;
 			lua_State* ls = lsp->getLS();
-			const auto lc0 = _genLCValue(c_luaTypes),
-						lc1 = _genLCValue(c_luaTypes);
+			const auto lc0 = genLCValue(c_luaTypes),
+						lc1 = genLCValue(c_luaTypes);
 			LValueS lv0(ls, lc0),
 					lv1(ls, lc1);
 			// operator ==
@@ -107,8 +107,8 @@ namespace rev {
 		TEST_F(LValueS_Test, Compare_Less) {
 			auto& lsp = this->_lsp;
 			lua_State* ls = lsp->getLS();
-			const auto v0 = _genValue<lua_Number>(),
-						v1 = _genValue<lua_Number>();
+			const auto v0 = genValue<lua_Number>(),
+						v1 = genValue<lua_Number>();
 			lsp->push(v0);
 			LValueS lv0(ls);
 			lsp->push(v1);
@@ -158,7 +158,7 @@ namespace rev {
 		TYPED_TEST(LValueS_TypedTest, ToValue) {
 			auto& lsp = this->_lsp;
 			USING(value_t);
-			const value_t val0 = this->template _genValue<value_t>();
+			const value_t val0 = this->template genValue<value_t>();
 			LValueS lv(lsp->getLS(), val0);
 			const auto ret = this->_GetLValue(lv, (value_t*)nullptr);
 			static_assert(std::is_same<value_t, std::decay_t<decltype(ret)>>{}, "something wrong");
