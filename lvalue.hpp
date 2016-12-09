@@ -259,6 +259,8 @@ namespace rev {
 			auto operator [](const LCValue& lcv) const {
 				return detail::LV_Inter<const LValue<base_t>, LCValue>(*this, lcv);
 			}
+			//! LValueが指す関数を任意の引数で呼ぶ
+			/*! 戻り値を引数として与えたstd::tupleで返す */
 			template <class... Ret, class... Args>
 			void operator()(std::tuple<Ret...>& dst, Args&&... args) {
 				LuaState lsc(base_t::getLS());
@@ -269,12 +271,16 @@ namespace rev {
 				// 戻り値をtupleにセットする
 				lsc.popValues(dst);
 			}
+			//! LValueが指す関数を任意の引数で呼ぶ
+			/*! 戻り値をstd::tupleとして返す */
 			template <class... Ret, class... Args>
 			std::tuple<Ret...> call(Args&&... args) {
 				std::tuple<Ret...> ret;
 				this->operator()(ret, std::forward<Args>(args)...);
 				return ret;
 			}
+			//! LValueが指す関数を任意の引数で呼ぶ
+			/*! 戻り値をLCValueとして返す */
 			template <class... Args>
 			LCTable_SP callNRet(Args&&... args) {
 				const RewindTop rt(base_t::getLS());
@@ -293,11 +299,15 @@ namespace rev {
 					(*spTbl)[i+1] = lsc.toLCValue(top + i + 1);
 				return spTbl;
 			}
+			//! LValueが指すテーブルからmethodにある関数を自身を第一引数にして呼ぶ
+			/*! 戻り値をstd::tupleとして返す */
 			template <class... Ret, class... Args>
 			std::tuple<Ret...> callMethod(const std::string& method, Args&&... args) {
 				LValue lv = (*this)[method];
 				return lv.call<Ret...>(*this, std::forward<Args>(args)...);
 			}
+			//! LValueが指すテーブルからmethodにある関数を自身を第一引数にして呼ぶ
+			/*! 戻り値をLCValueとして返す */
 			template <class... Args>
 			LCValue callMethodNRet(const std::string& method, Args&&... args) {
 				LValue lv = (*this)[method];
