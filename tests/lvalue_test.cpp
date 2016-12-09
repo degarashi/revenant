@@ -164,5 +164,85 @@ namespace rev {
 			static_assert(std::is_same<value_t, std::decay_t<decltype(ret)>>{}, "something wrong");
 			ASSERT_TRUE(LCValue(val0).preciseCompare(LCValue(ret)));
 		}
+		// prepareValue
+		TEST_F(LValueS_Test, PrepareValue) {
+			auto& lsp = this->_lsp;
+			const auto lc = genLCValue(c_luaTypes);
+			LValueS lv(lsp->getLS(), lc);
+
+			auto lsp2 = lsp->newThread();
+			lv.prepareValue(lsp2->getLS());
+			lsp2->xmove(lsp, 1);
+			ASSERT_TRUE(lsp->compare(-2, -1, LuaState::CMP::Equal));
+			lsp->pop(1);
+		}
+
+		namespace {
+			template <class LV>
+			struct Chk {
+				template <class Self, class MakeKey>
+				void operator()(Self& self, const MakeKey& makeKey) const {
+					lua_State* ls = self.getLS();
+					const LuaType lct[] = {LuaType::Table};
+					LCValue lcTbl = self.genLCValue(lct);
+					LCTable_SP tbl = boost::get<LCTable_SP>(lcTbl);
+
+					LV lv(ls, lcTbl);
+					const auto key = self.genLCValue(c_luaTypes_key);
+					const auto key2 = makeKey(ls, key);
+					LV lv2{lv[key2]};
+					auto itr = tbl->find(key);
+					if(itr != tbl->end())
+						ASSERT_TRUE(lv2.toLCValue().preciseCompare(itr->second));
+					else
+						ASSERT_EQ(LuaType::Nil, lv2.type());
+				}
+			};
+		}
+		TEST_F(LValueS_Test, TableAccess) {
+			// operator[](const LValue) {const}
+			Chk<LValueS>()(*this, [](lua_State* ls, const LCValue& key) {
+				return LValueS(ls, key);
+			});
+			Chk<const LValueS>()(*this, [](lua_State* ls, const LCValue& key) {
+				return LValueS(ls, key);
+			});
+			// operator[](const LCValue) {const}
+			Chk<LValueS>()(*this, [](lua_State*, const LCValue& key) {
+				return key;
+			});
+			Chk<const LValueS>()(*this, [](lua_State*, const LCValue& key) {
+				return key;
+			});
+		}
+		template <class T>
+		struct LValueS_PTypedTest : LuaTest {
+			using value0_t = std::tuple_element_t<0, T>;
+			using value1_t = std::tuple_element_t<1, T>;
+		};
+		using TypesP = ::testing::Types<
+			std::tuple<bool, lua_Integer>,
+			std::tuple<lua_Number, const char*>,
+			std::tuple<void*, Lua_SP>,
+			std::tuple<Lua_SP, bool>,
+			std::tuple<const char*, lua_Number>,
+			std::tuple<std::string, LCTable_SP>
+		>;
+		TYPED_TEST_CASE(LValueS_PTypedTest, TypesP);
+		// setField(idx,val)
+		TYPED_TEST(LValueS_PTypedTest, SetField) {
+			USING(value0_t);
+			USING(value1_t);
+			auto& lsp = this->_lsp;
+			const LuaType lct[] = {LuaType::Table};
+			LCValue lcTbl = this->genLCValue(lct);
+			LValueS lv(lsp->getLS(), lcTbl);
+			const auto key = this->template genValue<value0_t>();
+			const auto value = this->template genValue<value1_t>();
+			lv.setField(key, value);
+			LValueS lv1(lsp->getLS(), value);
+			LValueS lv2{lv[key]};
+			ASSERT_TRUE(lv1.toLCValue().preciseCompare(lv2.toLCValue()));
+		}
 	}
 }
