@@ -42,7 +42,7 @@ namespace rev {
 		template <class CB, class... Ts,
 					// 何れもstd::tuple型ではない
 					ENABLE_IF(
-						lubee::And<
+						lubee::meta::And<
 							lubee::BConst<!IsTupleBased<
 								std::decay_t<Ts>
 							>::value>...
@@ -55,7 +55,7 @@ namespace rev {
 		template <class CB, class... Ts,
 					// 全てstd::tuple型
 					ENABLE_IF(
-						lubee::And<
+						lubee::meta::And<
 							IsTupleBased<
 								std::decay_t<Ts>
 							>...
