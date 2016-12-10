@@ -263,7 +263,7 @@ namespace rev {
 			/*! 戻り値を引数として与えたstd::tupleで返す */
 			template <class... Ret, class... Args>
 			void operator()(std::tuple<Ret...>& dst, Args&&... args) {
-				LuaState lsc(base_t::getLS());
+				LuaState lsc(base_t::getLS(), true);
 				base_t::_prepareValue(true);
 				// 引数をスタックに積む
 				lsc.pushArgs(std::forward<Args>(args)...);
