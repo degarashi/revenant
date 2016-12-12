@@ -236,6 +236,24 @@ namespace rev {
 					return p->toTable(idx);
 				}
 		};
+		template <class T>
+		class LuaTestT : public LuaTest {
+			public:
+				using lua_t = T;
+				template <class T2=lua_t, ENABLE_IF((std::is_same<T2,LValueS>{}))>
+				lua_State* getLSZ(const Lua_SP& lsp = nullptr) const {
+					if(lsp)
+						return lsp->getLS();
+					return _lsp->getLS();
+				}
+				template <class T2=lua_t, ENABLE_IF((std::is_same<T2,LValueG>{}))>
+				Lua_SP getLSZ(const Lua_SP& lsp = nullptr) const {
+					if(lsp)
+						return lsp;
+					return _lsp;
+				}
+		};
+
 		// テーブルの比較はポインタではなく参照先にする
 		// std::stringで入力した値はconst char*で取得される為、専用関数を使う
 		bool operator == (const LCTable_SP& s0, const LCTable_SP& s1) noexcept {

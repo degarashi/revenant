@@ -7,21 +7,7 @@
 namespace rev {
 	namespace test {
 		template <class LV>
-		struct LValue_Test : LuaTest {
-			using value_t = LV;
-			template <class T=value_t, ENABLE_IF((std::is_same<T,LValueS>{}))>
-			lua_State* getLSZ(const Lua_SP& lsp = nullptr) const {
-				if(lsp)
-					return lsp->getLS();
-				return _lsp->getLS();
-			}
-			template <class T=value_t, ENABLE_IF((std::is_same<T,LValueG>{}))>
-			Lua_SP getLSZ(const Lua_SP& lsp = nullptr) const {
-				if(lsp)
-					return lsp;
-				return _lsp;
-			}
-		};
+		using LValue_Test = LuaTestT<LV>;
 		using VTypes = ::testing::Types<
 			LValueG,
 			LValueS
@@ -29,7 +15,7 @@ namespace rev {
 		TYPED_TEST_CASE(LValue_Test, VTypes);
 		// type(), toPointer(), LValue(lua_State*), LValue(lua_State*, const LCValue&), LValue(LValue&&)
 		TYPED_TEST(LValue_Test, Value) {
-			USING(value_t);
+			using value_t = typename TestFixture::lua_t;
 			auto& lsp = this->_lsp;
 			auto& rdi = this->_rdi;
 			lsp->checkStack(64);
@@ -114,7 +100,7 @@ namespace rev {
 			std::reverse(vec.begin(), vec.end());
 		}
 		TYPED_TEST(LValue_Test, Compare_Equal) {
-			USING(value_t);
+			using value_t = typename TestFixture::lua_t;
 			auto ls = this->getLSZ();
 			const auto lc0 = this->genLCValue(c_luaTypes),
 						lc1 = this->genLCValue(c_luaTypes);
@@ -127,7 +113,7 @@ namespace rev {
 			ASSERT_EQ(lc0!=lc1, lv0!=lv1);
 		}
 		TYPED_TEST(LValue_Test, Compare_Less) {
-			USING(value_t);
+			using value_t = typename TestFixture::lua_t;
 			auto& lsp = this->_lsp;
 			auto ls = this->getLSZ();
 			const auto v0 = this->template genValue<lua_Number>(),
@@ -148,7 +134,7 @@ namespace rev {
 		}
 
 		template <class T>
-		struct LValue_TypedTest2 : LuaTest {
+		struct LValue_TypedTest2 : LuaTestT<std::tuple_element_t<1,T>> {
 			using value_t = std::tuple_element_t<0,T>;
 			using lvalue_t = std::tuple_element_t<1,T>;
 			static auto _GetLValue(lvalue_t& lv, bool*) {
@@ -174,14 +160,6 @@ namespace rev {
 			}
 			static auto _GetLValue(lvalue_t& lv, Lua_SP*) {
 				return lv.toThread();
-			}
-			template <class T2=lvalue_t, ENABLE_IF((std::is_same<T2,LValueS>{}))>
-			lua_State* getLSZ() const {
-				return _lsp->getLS();
-			}
-			template <class T2=lvalue_t, ENABLE_IF((std::is_same<T2,LValueG>{}))>
-			Lua_SP getLSZ() const {
-				return _lsp;
 			}
 		};
 		template <class... Ts>
@@ -210,7 +188,7 @@ namespace rev {
 		}
 		// prepareValue
 		TYPED_TEST(LValue_Test, PrepareValue) {
-			USING(value_t);
+			using value_t = typename TestFixture::lua_t;
 			auto& lsp = this->_lsp;
 			const auto lc = this->genLCValue(c_luaTypes);
 			value_t lv(this->getLSZ(), lc);
@@ -246,7 +224,7 @@ namespace rev {
 			};
 		}
 		TYPED_TEST(LValue_Test, TableAccess) {
-			USING(value_t);
+			using value_t = typename TestFixture::lua_t;
 			// operator[](const LValue) {const}
 			Chk<value_t>()(*this, [](auto&& ls, const LCValue& key) {
 				return value_t(ls, key);
@@ -263,20 +241,11 @@ namespace rev {
 			});
 		}
 		template <class T>
-		struct LValue_PTypedTest : LuaTest {
+		struct LValue_PTypedTest : LuaTestT<std::tuple_element_t<0,T>> {
 			using lvalue_t = std::tuple_element_t<0, T>;
 			using values = std::tuple_element_t<1, T>;
 			using value0_t = std::tuple_element_t<0, values>;
 			using value1_t = std::tuple_element_t<1, values>;
-
-			template <class T2=lvalue_t, ENABLE_IF((std::is_same<T2,LValueS>{}))>
-			lua_State* getLSZ() const {
-				return _lsp->getLS();
-			}
-			template <class T2=lvalue_t, ENABLE_IF((std::is_same<T2,LValueG>{}))>
-			Lua_SP getLSZ() const {
-				return _lsp;
-			}
 		};
 		using TypesPair = std::tuple<
 			std::tuple<bool, lua_Integer>,
@@ -312,14 +281,14 @@ namespace rev {
 		}
 
 		template <class T>
-		struct LValue_FTypedTest : LuaTest {
+		struct LValue_FTypedTest : LuaTestT<std::tuple_element_t<0,T>> {
 			using src_t = T;
 			using lvalue_t = std::tuple_element_t<0,T>;
 			using tuple_t = std::tuple_element_t<1,T>;
 			constexpr static std::size_t tuple_size = std::tuple_size<tuple_t>::value;
 			template <class CB, std::size_t... Idx>
 			void _check(const CB& cb, lvalue_t&& lvs, std::index_sequence<Idx...>) {
-				cb(lvs, reinterpret_cast<void*>(this), genValue<std::tuple_element_t<Idx, tuple_t>>()...);
+				cb(lvs, reinterpret_cast<void*>(this), this->template genValue<std::tuple_element_t<Idx, tuple_t>>()...);
 			}
 			template <class CB>
 			void _check(const CB& cb, const LCValue& f) {
@@ -328,7 +297,7 @@ namespace rev {
 			template <std::size_t... Idx>
 			void pushRandom(LuaState& lsc, std::index_sequence<Idx...>) {
 				auto dummy = [](auto...){};
-				dummy((lsc.push(genValue<std::tuple_element_t<Idx, tuple_t>>()),0)...);
+				dummy((lsc.push(this->template genValue<std::tuple_element_t<Idx, tuple_t>>()),0)...);
 			}
 			void pushRandom(LuaState& lsc) {
 				pushRandom(lsc, std::make_index_sequence<tuple_size>());
@@ -364,14 +333,6 @@ namespace rev {
 					return false;
 				auto tbl = boost::get<LCTable_SP>(lc);
 				return CheckArgsNRet(tbl, lubee::SZConst<0>());
-			}
-			template <class T2=lvalue_t, ENABLE_IF((std::is_same<T2,LValueS>{}))>
-			lua_State* getLSZ() const {
-				return _lsp->getLS();
-			}
-			template <class T2=lvalue_t, ENABLE_IF((std::is_same<T2,LValueG>{}))>
-			Lua_SP getLSZ() const {
-				return _lsp;
 			}
 		};
 		template <class T>
