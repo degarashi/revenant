@@ -6,22 +6,43 @@
 
 namespace rev {
 	namespace test {
-		using LValueS_Test = LuaTest;
-		using LValueG_Test = LuaTest;
+		template <class LV>
+		struct LValue_Test : LuaTest {
+			using value_t = LV;
+			template <class T=value_t, ENABLE_IF((std::is_same<T,LValueS>{}))>
+			lua_State* getLSZ(const Lua_SP& lsp = nullptr) const {
+				if(lsp)
+					return lsp->getLS();
+				return _lsp->getLS();
+			}
+			template <class T=value_t, ENABLE_IF((std::is_same<T,LValueG>{}))>
+			Lua_SP getLSZ(const Lua_SP& lsp = nullptr) const {
+				if(lsp)
+					return lsp;
+				return _lsp;
+			}
+		};
+		using VTypes = ::testing::Types<
+			LValueG,
+			LValueS
+		>;
+		TYPED_TEST_CASE(LValue_Test, VTypes);
 		// type(), toPointer(), LValue(lua_State*), LValue(lua_State*, const LCValue&), LValue(LValue&&)
-		TEST_F(LValueS_Test, Value) {
+		TYPED_TEST(LValue_Test, Value) {
+			USING(value_t);
 			auto& lsp = this->_lsp;
-			auto* ls = lsp->getLS();
+			auto& rdi = this->_rdi;
 			lsp->checkStack(64);
-			std::vector<boost::optional<LValueS>> vec;
+			std::vector<boost::optional<value_t>> vec;
 			std::unordered_set<const void*> ptr;
-			const int n = _rdi({1,32});
+			auto lsz = this->getLSZ();
+			const int n = rdi({1,32});
 			for(int i=0 ; i<n ; i++) {
-				const auto lc0 = genLCValue(c_luaTypes);
+				const auto lc0 = this->genLCValue(c_luaTypes);
 				int array=0;
 				if(lc0.type() == LuaType::Table) {
-					if(_rdi({0,1})) {
-						array = _rdi({1,32});
+					if(rdi({0,1})) {
+						array = rdi({1,32});
 						auto& tbl = boost::get<LCTable_SP>(lc0);
 						tbl->clear();
 						for(int i=1 ; i<=array ; i++) {
@@ -30,21 +51,21 @@ namespace rev {
 					}
 				}
 				// 5通りの方法でLValueを生成
-				switch(_rdi({0,4})) {
+				switch(rdi({0,4})) {
 					// LValue(lua_State*)
 					case 0:
 						lsp->push(lc0);
-						vec.emplace_back(ls);
+						vec.emplace_back(lsz);
 						break;
 					// LValue(lua_State*, const LCValue&)
 					case 1:
-						vec.emplace_back(LValueS(ls, lc0));
+						vec.emplace_back(value_t(lsz, lc0));
 						break;
 					// LValue(LValue&&)
 					case 2:
 					{
-						LValueS lv(ls, lc0);
-						LValueS lv2(lv);
+						value_t lv(lsz, lc0);
+						value_t lv2(lv);
 						vec.emplace_back(std::move(lv));
 						ASSERT_EQ(lv2, vec.back());
 						break;
@@ -52,22 +73,22 @@ namespace rev {
 					// LValue = LValue&&
 					case 3:
 					{
-						LValueS lv(ls, lc0);
-						auto lc1 = genLCValue(c_luaTypes);
-						vec.emplace_back(LValueS(ls, lc1));
+						value_t lv(lsz, lc0);
+						auto lc1 = this->genLCValue(c_luaTypes);
+						vec.emplace_back(value_t(lsz, lc1));
 						vec.back() = std::move(lv);
-						ASSERT_TRUE(lc0.preciseCompare(vec.back()->toValue<LCValue>()));
+						ASSERT_TRUE(lc0.preciseCompare(vec.back()->template toValue<LCValue>()));
 						break;
 					}
 					// LValue = const LValue&
 					case 4:
 					{
-						vec.emplace_back(LValueS(ls, genLCValue(c_luaTypes)));
-						vec.emplace_back(LValueS(ls, lc0));
+						vec.emplace_back(value_t(lsz, this->genLCValue(c_luaTypes)));
+						vec.emplace_back(value_t(lsz, lc0));
 						auto& lv0 = *vec[vec.size()-2];
 						auto& lv1 = *vec[vec.size()-1];
 						lv0 = lv1;
-						ASSERT_TRUE(lv0.toValue<LCValue>().preciseCompare(lv1.toValue<LCValue>()));
+						ASSERT_TRUE(lv0.template toValue<LCValue>().preciseCompare(lv1.template toValue<LCValue>()));
 						break;
 					}
 				}
@@ -92,12 +113,12 @@ namespace rev {
 			// 作成した時とは逆順で破棄する
 			std::reverse(vec.begin(), vec.end());
 		}
-		TEST_F(LValueS_Test, Compare_Equal) {
-			auto& lsp = this->_lsp;
-			lua_State* ls = lsp->getLS();
-			const auto lc0 = genLCValue(c_luaTypes),
-						lc1 = genLCValue(c_luaTypes);
-			LValueS lv0(ls, lc0),
+		TYPED_TEST(LValue_Test, Compare_Equal) {
+			USING(value_t);
+			auto ls = this->getLSZ();
+			const auto lc0 = this->genLCValue(c_luaTypes),
+						lc1 = this->genLCValue(c_luaTypes);
+			value_t lv0(ls, lc0),
 					lv1(ls, lc1);
 			// operator ==
 			ASSERT_EQ(lc0==lc1, lv0==lv1);
@@ -105,15 +126,16 @@ namespace rev {
 			ASSERT_NE(lv0==lv1, lv0!=lv1);
 			ASSERT_EQ(lc0!=lc1, lv0!=lv1);
 		}
-		TEST_F(LValueS_Test, Compare_Less) {
+		TYPED_TEST(LValue_Test, Compare_Less) {
+			USING(value_t);
 			auto& lsp = this->_lsp;
-			lua_State* ls = lsp->getLS();
-			const auto v0 = genValue<lua_Number>(),
-						v1 = genValue<lua_Number>();
+			auto ls = this->getLSZ();
+			const auto v0 = this->template genValue<lua_Number>(),
+						v1 = this->template genValue<lua_Number>();
 			lsp->push(v0);
-			LValueS lv0(ls);
+			value_t lv0(ls);
 			lsp->push(v1);
-			LValueS lv1(ls);
+			value_t lv1(ls);
 			// operator <
 			ASSERT_EQ(v0<v1, lv0<lv1);
 			if(lv0 < lv1)
@@ -126,56 +148,79 @@ namespace rev {
 		}
 
 		template <class T>
-		struct LValueS_TypedTest : LuaTest {
-			using value_t = T;
-			static auto _GetLValue(LValueS& lv, bool*) {
+		struct LValue_TypedTest2 : LuaTest {
+			using value_t = std::tuple_element_t<0,T>;
+			using lvalue_t = std::tuple_element_t<1,T>;
+			static auto _GetLValue(lvalue_t& lv, bool*) {
 				return lv.toBoolean();
 			}
-			static auto _GetLValue(LValueS& lv, lua_Integer*) {
+			static auto _GetLValue(lvalue_t& lv, lua_Integer*) {
 				return lv.toInteger();
 			}
-			static auto _GetLValue(LValueS& lv, lua_Number*) {
+			static auto _GetLValue(lvalue_t& lv, lua_Number*) {
 				return lv.toNumber();
 			}
-			static auto _GetLValue(LValueS& lv, void**) {
+			static auto _GetLValue(lvalue_t& lv, void**) {
 				return lv.toUserData();
 			}
-			static auto _GetLValue(LValueS& lv, const char**) {
+			static auto _GetLValue(lvalue_t& lv, const char**) {
 				return lv.toString();
 			}
-			static auto _GetLValue(LValueS& lv, LCValue*) {
+			static auto _GetLValue(lvalue_t& lv, LCValue*) {
 				return lv.toLCValue();
 			}
-			static auto _GetLValue(LValueS& lv, LCTable_SP*) {
+			static auto _GetLValue(lvalue_t& lv, LCTable_SP*) {
 				return lv.toTable();
 			}
-			static auto _GetLValue(LValueS& lv, Lua_SP*) {
+			static auto _GetLValue(lvalue_t& lv, Lua_SP*) {
 				return lv.toThread();
 			}
+			template <class T2=lvalue_t, ENABLE_IF((std::is_same<T2,LValueS>{}))>
+			lua_State* getLSZ() const {
+				return _lsp->getLS();
+			}
+			template <class T2=lvalue_t, ENABLE_IF((std::is_same<T2,LValueG>{}))>
+			Lua_SP getLSZ() const {
+				return _lsp;
+			}
 		};
-		using Types = ::testing::Types<bool, lua_Integer, lua_Number, void*, const char*, LCValue, Lua_SP>;
-		TYPED_TEST_CASE(LValueS_TypedTest, Types);
+		template <class... Ts>
+		auto ToTestTypes(std::tuple<Ts...>) -> ::testing::Types<Ts...>;
+		template <class T>
+		using ToTestTypes_t = decltype(ToTestTypes(std::declval<T>()));
+
+		using Types2 = lubee::seq::ExpandTypes_t2<
+			std::tuple,
+			std::tuple<
+				std::tuple<bool, lua_Integer, lua_Number, void*, const char*, LCValue, Lua_SP>,
+				std::tuple<LValueG, LValueS>
+			>
+		>;
+		using Types2_t = ToTestTypes_t<Types2>;
+		TYPED_TEST_CASE(LValue_TypedTest2, Types2_t);
 		// to(Value)
-		TYPED_TEST(LValueS_TypedTest, ToValue) {
-			auto& lsp = this->_lsp;
+		TYPED_TEST(LValue_TypedTest2, ToValue) {
 			USING(value_t);
+			USING(lvalue_t);
 			const value_t val0 = this->template genValue<value_t>();
-			LValueS lv(lsp->getLS(), val0);
+			lvalue_t lv(this->getLSZ(), val0);
 			const auto ret = this->_GetLValue(lv, (value_t*)nullptr);
 			static_assert(std::is_same<value_t, std::decay_t<decltype(ret)>>{}, "something wrong");
 			ASSERT_TRUE(LCValue(val0).preciseCompare(LCValue(ret)));
 		}
 		// prepareValue
-		TEST_F(LValueS_Test, PrepareValue) {
+		TYPED_TEST(LValue_Test, PrepareValue) {
+			USING(value_t);
 			auto& lsp = this->_lsp;
-			const auto lc = genLCValue(c_luaTypes);
-			LValueS lv(lsp->getLS(), lc);
+			const auto lc = this->genLCValue(c_luaTypes);
+			value_t lv(this->getLSZ(), lc);
 
 			auto lsp2 = lsp->newThread();
 			lv.prepareValue(lsp2->getLS());
 			lsp2->xmove(lsp, 1);
+			lv.prepareValue(this->getLS());
 			ASSERT_TRUE(lsp->compare(-2, -1, LuaState::CMP::Equal));
-			lsp->pop(1);
+			lsp->pop(2);
 		}
 
 		namespace {
@@ -183,7 +228,7 @@ namespace rev {
 			struct Chk {
 				template <class Self, class MakeKey>
 				void operator()(Self& self, const MakeKey& makeKey) const {
-					lua_State* ls = self.getLS();
+					auto ls = self.getLSZ();
 					const LuaType lct[] = {LuaType::Table};
 					LCValue lcTbl = self.genLCValue(lct);
 					LCTable_SP tbl = boost::get<LCTable_SP>(lcTbl);
@@ -200,28 +245,40 @@ namespace rev {
 				}
 			};
 		}
-		TEST_F(LValueS_Test, TableAccess) {
+		TYPED_TEST(LValue_Test, TableAccess) {
+			USING(value_t);
 			// operator[](const LValue) {const}
-			Chk<LValueS>()(*this, [](lua_State* ls, const LCValue& key) {
-				return LValueS(ls, key);
+			Chk<value_t>()(*this, [](auto&& ls, const LCValue& key) {
+				return value_t(ls, key);
 			});
-			Chk<const LValueS>()(*this, [](lua_State* ls, const LCValue& key) {
-				return LValueS(ls, key);
+			Chk<const value_t>()(*this, [](auto&& ls, const LCValue& key) {
+				return value_t(ls, key);
 			});
 			// operator[](const LCValue) {const}
-			Chk<LValueS>()(*this, [](lua_State*, const LCValue& key) {
+			Chk<value_t>()(*this, [](auto&&, const LCValue& key) {
 				return key;
 			});
-			Chk<const LValueS>()(*this, [](lua_State*, const LCValue& key) {
+			Chk<const value_t>()(*this, [](auto&&, const LCValue& key) {
 				return key;
 			});
 		}
 		template <class T>
-		struct LValueS_PTypedTest : LuaTest {
-			using value0_t = std::tuple_element_t<0, T>;
-			using value1_t = std::tuple_element_t<1, T>;
+		struct LValue_PTypedTest : LuaTest {
+			using lvalue_t = std::tuple_element_t<0, T>;
+			using values = std::tuple_element_t<1, T>;
+			using value0_t = std::tuple_element_t<0, values>;
+			using value1_t = std::tuple_element_t<1, values>;
+
+			template <class T2=lvalue_t, ENABLE_IF((std::is_same<T2,LValueS>{}))>
+			lua_State* getLSZ() const {
+				return _lsp->getLS();
+			}
+			template <class T2=lvalue_t, ENABLE_IF((std::is_same<T2,LValueG>{}))>
+			Lua_SP getLSZ() const {
+				return _lsp;
+			}
 		};
-		using TypesP = ::testing::Types<
+		using TypesPair = std::tuple<
 			std::tuple<bool, lua_Integer>,
 			std::tuple<lua_Number, const char*>,
 			std::tuple<void*, Lua_SP>,
@@ -229,40 +286,44 @@ namespace rev {
 			std::tuple<const char*, lua_Number>,
 			std::tuple<std::string, LCTable_SP>
 		>;
-		TYPED_TEST_CASE(LValueS_PTypedTest, TypesP);
+		using TypesP = lubee::seq::ExpandTypes_t2<
+			std::tuple,
+			std::tuple<
+				std::tuple<LValueG, LValueS>,
+				TypesPair
+			>
+		>;
+		using TypesP_t = ToTestTypes_t<TypesP>;
+		TYPED_TEST_CASE(LValue_PTypedTest, TypesP_t);
 		// setField(idx,val)
-		TYPED_TEST(LValueS_PTypedTest, SetField) {
+		TYPED_TEST(LValue_PTypedTest, SetField) {
+			USING(lvalue_t);
 			USING(value0_t);
 			USING(value1_t);
-			auto& lsp = this->_lsp;
 			const LuaType lct[] = {LuaType::Table};
 			LCValue lcTbl = this->genLCValue(lct);
-			LValueS lv(lsp->getLS(), lcTbl);
+			lvalue_t lv(this->getLSZ(), lcTbl);
 			const auto key = this->template genValue<value0_t>();
 			const auto value = this->template genValue<value1_t>();
 			lv.setField(key, value);
-			LValueS lv1(lsp->getLS(), value);
-			LValueS lv2{lv[key]};
+			lvalue_t lv1(this->getLSZ(), value);
+			lvalue_t lv2{lv[key]};
 			ASSERT_TRUE(lv1.toLCValue().preciseCompare(lv2.toLCValue()));
 		}
 
-		using TypesF = ::testing::Types<
-			std::tuple<>,
-			std::tuple<bool, lua_Number, const char*, void*>,
-			std::tuple<std::string, LCTable_SP>,
-			std::tuple<Lua_SP, lua_Integer, bool, LuaNil>
-		>;
 		template <class T>
-		struct LValueS_FTypedTest : LuaTest {
-			using tuple_t = T;
+		struct LValue_FTypedTest : LuaTest {
+			using src_t = T;
+			using lvalue_t = std::tuple_element_t<0,T>;
+			using tuple_t = std::tuple_element_t<1,T>;
 			constexpr static std::size_t tuple_size = std::tuple_size<tuple_t>::value;
 			template <class CB, std::size_t... Idx>
-			void _check(const CB& cb, LValueS&& lvs, std::index_sequence<Idx...>) {
+			void _check(const CB& cb, lvalue_t&& lvs, std::index_sequence<Idx...>) {
 				cb(lvs, reinterpret_cast<void*>(this), genValue<std::tuple_element_t<Idx, tuple_t>>()...);
 			}
 			template <class CB>
 			void _check(const CB& cb, const LCValue& f) {
-				_check(cb, LValueS(_lsp->getLS(), f), std::make_index_sequence<tuple_size>());
+				_check(cb, lvalue_t(this->getLSZ(), f), std::make_index_sequence<tuple_size>());
 			}
 			template <std::size_t... Idx>
 			void pushRandom(LuaState& lsc, std::index_sequence<Idx...>) {
@@ -304,14 +365,37 @@ namespace rev {
 				auto tbl = boost::get<LCTable_SP>(lc);
 				return CheckArgsNRet(tbl, lubee::SZConst<0>());
 			}
+			template <class T2=lvalue_t, ENABLE_IF((std::is_same<T2,LValueS>{}))>
+			lua_State* getLSZ() const {
+				return _lsp->getLS();
+			}
+			template <class T2=lvalue_t, ENABLE_IF((std::is_same<T2,LValueG>{}))>
+			Lua_SP getLSZ() const {
+				return _lsp;
+			}
 		};
 		template <class T>
-		constexpr std::size_t LValueS_FTypedTest<T>::tuple_size;
-		TYPED_TEST_CASE(LValueS_FTypedTest, TypesF);
+		constexpr std::size_t LValue_FTypedTest<T>::tuple_size;
+
+		using TypesF0 = std::tuple<
+			std::tuple<>,
+			std::tuple<bool, lua_Number, const char*, void*>,
+			std::tuple<std::string, LCTable_SP>,
+			std::tuple<Lua_SP, lua_Integer, bool, LuaNil>
+		>;
+		using TypesF = lubee::seq::ExpandTypes_t2<
+			std::tuple,
+			std::tuple<
+				std::tuple<LValueG, LValueS>,
+				TypesF0
+			>
+		>;
+		using TypesF_t = ToTestTypes_t<TypesF>;
+		TYPED_TEST_CASE(LValue_FTypedTest, TypesF_t);
 		namespace {
-			template <class Tuple>
+			template <class T>
 			int CFunc(lua_State* ls) {
-				using Test = LValueS_FTypedTest<Tuple>;
+				using Test = LValue_FTypedTest<T>;
 				constexpr int size = Test::tuple_size;
 				[ls](){
 					// [self][args...]
@@ -326,9 +410,9 @@ namespace rev {
 				}();
 				return size;
 			}
-			template <class Tuple>
+			template <class T>
 			int MFunc(lua_State* ls) {
-				using Test = LValueS_FTypedTest<Tuple>;
+				using Test = LValue_FTypedTest<T>;
 				constexpr int size = Test::tuple_size;
 				[ls](){
 					// [table][self][args...]
@@ -340,7 +424,7 @@ namespace rev {
 					ASSERT_EQ(LuaType::Table, lsc.type(1));
 					auto tbl = lsc.toValue<LCTable_SP>(1);
 					ASSERT_EQ(1, tbl->size());
-					ASSERT_EQ(&MFunc<Tuple>, boost::get<lua_CFunction>((tbl->begin())->second));
+					ASSERT_EQ(&MFunc<T>, boost::get<lua_CFunction>((tbl->begin())->second));
 					lsc.setTop(0);
 					self->pushRandom(lsc);
 					ASSERT_EQ(size+0, lsc.getTop());
@@ -349,44 +433,45 @@ namespace rev {
 			}
 		}
 
-		TYPED_TEST(LValueS_FTypedTest, Call) {
+		TYPED_TEST(LValue_FTypedTest, Call) {
+			USING(src_t);
 			USING(tuple_t);
 			// call(args...)
 			ASSERT_NO_FATAL_FAILURE(
-				this->_check([](LValueS& lvs, auto&&... args){
+				this->_check([](auto& lvs, auto&&... args){
 					const CheckTop ct(lvs.getLS());
 					lvs.call(std::forward<decltype(args)>(args)...);
-				}, &CFunc<tuple_t>);
+				}, &CFunc<src_t>);
 			);
 			// callNRet()
 			ASSERT_NO_FATAL_FAILURE(
-				this->_check([](LValueS& lvs, auto&&... args){
+				this->_check([](auto& lvs, auto&&... args){
 					const CheckTop ct(lvs.getLS());
 					const auto ret = lvs.callNRet(std::forward<decltype(args)>(args)...);
 					ASSERT_TRUE(TestFixture::CheckArgsNRet(ret));
-				}, &CFunc<tuple_t>);
+				}, &CFunc<src_t>);
 			);
 			// operator()(ret, args...)
 			ASSERT_NO_FATAL_FAILURE(
-				this->_check([](LValueS& lvs, auto&&... args){
+				this->_check([](auto& lvs, auto&&... args){
 					const CheckTop ct(lvs.getLS());
 					tuple_t ret;
 					lvs(ret, std::forward<decltype(args)>(args)...);
-				}, &CFunc<tuple_t>);
+				}, &CFunc<src_t>);
 			);
 			const auto methodName = this->template genValue<const char*>();
 			auto tbl = std::make_shared<LCTable>();
-			(*tbl)[methodName] = &MFunc<tuple_t>;
+			(*tbl)[methodName] = &MFunc<src_t>;
 			// callMethod()
 			ASSERT_NO_FATAL_FAILURE(
-				this->_check([methodName](LValueS& lvs, auto&&... args){
+				this->_check([methodName](auto& lvs, auto&&... args){
 					const CheckTop ct(lvs.getLS());
 					lvs.callMethod(methodName, std::forward<decltype(args)>(args)...);
 				}, tbl);
 			);
 			// callMethodNRet()
 			ASSERT_NO_FATAL_FAILURE(
-				this->_check([=](LValueS& lvs, auto&&... args){
+				this->_check([=](auto& lvs, auto&&... args){
 					const CheckTop ct(lvs.getLS());
 					const auto ret = lvs.callMethodNRet(methodName, std::forward<decltype(args)>(args)...);
 					ASSERT_TRUE(TestFixture::CheckArgsNRet(ret));
