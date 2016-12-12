@@ -60,11 +60,6 @@ namespace rev {
 			lsp->_unregisterCpp();
 		};
 	}
-	int LuaState::DeleteSP(lua_State* ls) {
-		auto* sp = reinterpret_cast<Lua_SP*>(lua_touserdata(ls, 1));
-		sp->~Lua_SP();
-		return 0;
-	}
 	void LuaState::_initMainThread() {
 		const CheckTop ct(getLS());
 		// メインスレッドの登録 -> global[cs_mainThreadPtr]
@@ -98,16 +93,7 @@ namespace rev {
 		getTable(-2);
 		if(type(-1) == LuaType::Nil) {
 			pop(1);
-			auto* sp = reinterpret_cast<Lua_SP*>(newUserData(sizeof(Lua_SP)));
-			new(sp) Lua_SP(shared_from_this());
-
-			// [fromLua][Lua_SP]
-			newTable();
-			push("__gc");
-			push(&DeleteSP);
-			// [fromLua][Lua_SP][table]["__gc"][DeleteSP]
-			setTable(-3);
-			setMetatable(-2);
+			MakeUserdataWithDtor(*this, shared_from_this());
 			// [fromLua][Lua_SP]
 			pushSelf();
 			pushValue(-2);

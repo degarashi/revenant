@@ -675,7 +675,6 @@ namespace rev {
 			*/
 			void _initMainThread();
 			void _getThreadTable();
-			static int DeleteSP(lua_State* ls);
 
 			//! Cppで削除されてLuaで生きている場合用
 			void _registerLua();
@@ -860,6 +859,26 @@ namespace rev {
 			friend std::ostream& operator << (std::ostream& os, const LuaState&);
 	};
 	std::ostream& operator << (std::ostream& os, const LuaState& ls);
+
+	template <class UD>
+	int DeleteUD(lua_State* ls) {
+		auto* ud = reinterpret_cast<UD*>(lua_touserdata(ls, 1));
+		ud->~UD();
+		return 0;
+	}
+	template <class T>
+	void MakeUserdataWithDtor(LuaState& lsc, const T& t) {
+		auto* data = reinterpret_cast<T*>(lsc.newUserData(sizeof(T)));
+		new(data) T(t);
+
+		// [UData]
+		lsc.newTable();
+		lsc.push("__gc");
+		lsc.push(&DeleteUD<T>);
+		// [UData][table]["__gc"][DeleteUD]
+		lsc.setTable(-3);
+		lsc.setMetatable(-2);
+	}
 }
 #include "luaimport.hpp"
 DEF_LUAIMPORT_BASE
