@@ -26,6 +26,7 @@ namespace rev {
 	{}
 	LV_Global::~LV_Global() {
 		if(_lua) {
+			const CheckTop ct(_lua->getLS());
 			// エントリの削除
 			_lua->getGlobal(cs_entry);
 			_lua->setField(-1, _id, LuaNil());
@@ -40,13 +41,7 @@ namespace rev {
 	}
 	void LV_Global::_setValue() {
 		// エントリの登録
-		_lua->getGlobal(cs_entry);
-		if(_lua->type(-1) != LuaType::Table) {
-			_lua->pop(1);
-			_lua->newTable();
-			_lua->pushValue(-1);
-			_lua->setGlobal(cs_entry);
-		}
+		_lua->prepareTableGlobal(cs_entry);
 		_lua->push(_id);
 		_lua->pushValue(-3);
 		// [Value][Entry][id][Value]
@@ -62,7 +57,7 @@ namespace rev {
 		return _lua->getTop();
 	}
 	lua_State* LV_Global::_prepareValue(lua_State* ls) const {
-		VPop vp(*this, true);
+		_prepareValue(true);
 		lua_State* mls = _lua->getLS();
 		lua_xmove(mls, ls, 1);
 		return ls;
@@ -76,6 +71,16 @@ namespace rev {
 	void LV_Global::swap(LV_Global& lv) noexcept {
 		std::swap(_lua, lv._lua);
 		std::swap(_id, lv._id);
+	}
+	LV_Global& LV_Global::operator = (const LV_Global& lv) {
+		lv._prepareValue(_lua->getLS());
+		_setValue();
+		return *this;
+	}
+	LV_Global& LV_Global::operator = (LV_Global&& lv) noexcept {
+		this->~LV_Global();
+		new(this) LV_Global(std::move(lv));
+		return *this;
 	}
 
 	// ------------------- LV_Stack -------------------

@@ -92,25 +92,18 @@ namespace rev {
 				lv.prepareValue(sp->getLS());
 				_init(sp);
 			}
+			template <class LV, class IDX>
+			LV_Global(detail::LV_Inter<LValue<LV>,IDX>&& lv) {
+				lua_State* ls = lv.getLS();
+				lv.prepareValue(ls);
+				_init(LuaState::GetLS_SP(ls));
+			}
 			LV_Global(const LV_Global& lv);
 			LV_Global(LV_Global&& lv) noexcept;
 			~LV_Global();
+			LV_Global& operator = (const LV_Global& lv);
+			LV_Global& operator = (LV_Global&& lv) noexcept;
 
-			template <class LV>
-			LV_Global& operator = (const LValue<LV>& lcv) {
-				lua_State* ls = _lua->getLS();
-				lcv.prepareValue(ls);
-				return *this;
-			}
-			template <class T2>
-			LV_Global& operator = (T2&& t) {
-				_lua->getGlobal(cs_entry);
-				_lua->push(_id);
-				_lua->push(std::forward<T2>(t));
-				_lua->setTable(-3);
-				_lua->pop(1);
-				return *this;
-			}
 			// lua_State*をゲットする関数
 			lua_State* getLS() const;
 			void swap(LV_Global& lv) noexcept;
