@@ -2,6 +2,12 @@
 #include "../lvalue.hpp"
 #include "lubee/rect.hpp"
 
+namespace std {
+	template <class T>
+	bool operator == (const weak_ptr<T>& p0, const weak_ptr<T>& p1) noexcept {
+		return p0.lock() == p1.lock();
+	}
+}
 namespace rev {
 	namespace test {
 		template <class T>

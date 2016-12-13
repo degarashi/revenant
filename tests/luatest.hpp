@@ -51,6 +51,30 @@ namespace rev {
 		#undef PP_CFUNC
 		#undef NUM_CFUNC
 
+		template <class T>
+		struct GenIntegralValue;
+		template <class T>
+		struct GenValue;
+		using LTypes = lubee::Types<bool, void_sp, void_wp>;
+		template <
+			class T,
+			ENABLE_IF(
+				!LTypes::Has<T>{} &&
+				(std::is_integral<T>{} || std::is_floating_point<T>{})
+			)
+		>
+		GenIntegralValue<T> GenValueTF(T*);
+		template <
+			class T,
+			ENABLE_IF(
+				LTypes::Has<T>{} ||
+				!(std::is_integral<T>{} || std::is_floating_point<T>{})
+			)
+		>
+		GenValue<T> GenValueTF(T*);
+		template <class T>
+		using GenValue_t = decltype(GenValueTF((T*)nullptr));
+
 		class LuaTest : public Random {
 			protected:
 				Lua_SP			_lsp;
@@ -62,6 +86,8 @@ namespace rev {
 				StrV			_stringVec;
 				using LsV = std::vector<Lua_SP>;
 				LsV				_lsVec;
+				using SpV = std::vector<void_sp>;
+				SpV				_spVec;
 
 				LuaTest():
 					_lsp(LuaState::NewState()),
@@ -74,55 +100,13 @@ namespace rev {
 				const Lua_SP& getLSP() {
 					return _lsp;
 				}
+				template <class T>
+				friend struct GenValue;
+				template <class T>
+				friend struct GenIntegralValue;
 				// ----------- GenValue -----------
-				void genValue(LuaNil&) {}
-				void genValue(bool& dst) {
-					dst = _rdi({0,1});
-				}
-				template <
-					class Dst,
-					ENABLE_IF(
-						std::is_integral<Dst>{} ||
-						std::is_floating_point<Dst>{}
-					)
-				>
-				void genValue(Dst& dst) {
-					using L = std::numeric_limits<Dst>;
-					dst = mt().template getUniform<Dst>({L::lowest()/4, L::max()/4});
-				}
-				void genValue(lua_CFunction& dst) {
-					// 予め用意したC関数リストから一つを選ぶ
-					dst = CFunction::cs_func[_rdi({0, CFunction::N_Func-1})];
-				}
-				void genValue(std::string& dst) {
-					dst = lubee::random::GenAlphabetString(_rdi, _rdi({0,32}));
-				}
-				void genValue(void*& dst) {
-					// ランダムなポインタを作成 -> LightUserDataなので参照されない
-					dst = reinterpret_cast<void*>(mt().template getUniform<uintptr_t>());
-				}
-				void genValue(Lua_SP& dst) {
-					dst = _lsp->newThread();
-				}
-				void genValue(const char*& dst) {
-					_stringVec.resize(_stringVec.size()+1);
-					genValue(_stringVec.back());
-					dst = _stringVec.back().c_str();
-				}
-				void genValue(lua_State*& ls) {
-					_lsVec.emplace_back(_lsp->newThread());
-					ls = _lsVec.back()->getLS();
-				}
-				void genValue(LCValue& dst) {
-					dst = genLCValue(c_luaTypes);
-				}
-
 				template <class V>
-				V genValue() {
-					V v;
-					genValue(v);
-					return v;
-				}
+				V genValue();
 				template <class CB>
 				void genLuaValue(const LuaType typ, const CB& cb) {
 					switch(typ) {
@@ -178,31 +162,6 @@ namespace rev {
 						ls->push(genLCValue(cand));
 					return n;
 				}
-				void genValue(LCTable_SP& dst) {
-					dst = std::make_shared<LCTable>();
-					// 配列エントリの初期化
-					const int maxEnt = _maxTableEnt;
-					_maxTableEnt /= 2;
-					const int nAr = _rdi({0, maxEnt});
-					for(int i=0 ; i<nAr ; i++) {
-						genLuaValue(c_luaTypes_nonil, [&dst, i](auto&& val){
-							dst->emplace(LCValue(static_cast<lua_Number>(i)), LCValue(val));
-						});
-					}
-					// 連想配列エントリの初期化
-					const int nRec = _rdi({0, maxEnt});
-					for(int i=0 ; i<nRec ; i++) {
-						for(;;) {
-							// キーはテーブル以外
-							LCValue key = genLCValue(c_luaTypes_key);
-							// 既に同じキーを持っている場合は生成しなおし
-							if(dst->count(key) == 0) {
-								dst->emplace(key, genLCValue(c_luaTypes_nonil));
-								break;
-							}
-						}
-					}
-				}
 				template <class T>
 				static auto GetValue(T& p, const int idx, bool*) {
 					return p->toBoolean(idx);
@@ -236,6 +195,132 @@ namespace rev {
 					return p->toTable(idx);
 				}
 		};
+		template <class T>
+		struct GenIntegralValue {
+			T operator()(LuaTest& self) const {
+				using L = std::numeric_limits<T>;
+				return self.mt().template getUniform<T>({L::lowest()/4, L::max()/4});
+			}
+		};
+		template <class T>
+		struct GenValue<std::shared_ptr<T>> {
+			std::shared_ptr<T> operator()(LuaTest& self) const {
+				return std::make_shared<T>(GenValue_t<T>()(self));
+			}
+		};
+		template <class T>
+		struct GenValue<std::weak_ptr<T>> {
+			std::weak_ptr<T> operator()(LuaTest& self) const {
+				auto sp = GenValue_t<std::shared_ptr<T>>()(self);
+				self._spVec.emplace_back(sp);
+				return sp;
+			}
+		};
+		template <>
+		struct GenValue<LuaNil> {
+			LuaNil operator()(LuaTest&) const {
+				return LuaNil{};
+			}
+		};
+		template <>
+		struct GenValue<bool> {
+			bool operator()(LuaTest& self) const {
+				return self._rdi({0,1});
+			}
+		};
+		template <>
+		struct GenValue<void_sp> {
+			void_sp operator()(LuaTest& self) const {
+				return GenValue_t<std::shared_ptr<int>>()(self);
+			}
+		};
+		template <>
+		struct GenValue<void_wp> {
+			void_wp operator()(LuaTest& self) const {
+				return GenValue_t<std::weak_ptr<int>>()(self);
+			}
+		};
+		template <>
+		struct GenValue<lua_CFunction> {
+			lua_CFunction operator()(LuaTest& self) const {
+				// 予め用意したC関数リストから一つを選ぶ
+				return CFunction::cs_func[self._rdi({0, CFunction::N_Func-1})];
+			}
+		};
+		template <>
+		struct GenValue<std::string> {
+			std::string operator()(LuaTest& self) const {
+				return lubee::random::GenAlphabetString(self._rdi, self._rdi({0,32}));
+			}
+		};
+		template <>
+		struct GenValue<void*> {
+			void* operator()(LuaTest& self) const {
+				// ランダムなポインタを作成 -> LightUserDataなので参照されない
+				return reinterpret_cast<void*>(self.mt().template getUniform<uintptr_t>());
+			}
+		};
+		template <>
+		struct GenValue<Lua_SP> {
+			Lua_SP operator()(LuaTest& self) const {
+				return self._lsp->newThread();
+			}
+		};
+		template <>
+		struct GenValue<const char*> {
+			const char* operator()(LuaTest& self) const {
+				self._stringVec.resize(self._stringVec.size()+1);
+				self._stringVec.back() = GenValue_t<std::string>()(self);
+				return self._stringVec.back().c_str();
+			}
+		};
+		template <>
+		struct GenValue<lua_State*> {
+			lua_State* operator()(LuaTest& self) const {
+				self._lsVec.emplace_back(self._lsp->newThread());
+				return self._lsVec.back()->getLS();
+			}
+		};
+		template <>
+		struct GenValue<LCValue> {
+			LCValue operator()(LuaTest& self) const {
+				return self.genLCValue(c_luaTypes);
+			}
+		};
+		template <>
+		struct GenValue<LCTable_SP> {
+			LCTable_SP operator()(LuaTest& self) const {
+				auto ret = std::make_shared<LCTable>();
+				// 配列エントリの初期化
+				const int maxEnt = self._maxTableEnt;
+				self._maxTableEnt /= 2;
+				const int nAr = self._rdi({0, maxEnt});
+				for(int i=0 ; i<nAr ; i++) {
+					self.genLuaValue(c_luaTypes_nonil, [&ret, i](auto&& val){
+						ret->emplace(LCValue(static_cast<lua_Number>(i)), LCValue(val));
+					});
+				}
+				// 連想配列エントリの初期化
+				const int nRec = self._rdi({0, maxEnt});
+				for(int i=0 ; i<nRec ; i++) {
+					for(;;) {
+						// キーはテーブル以外
+						LCValue key = self.genLCValue(c_luaTypes_key);
+						// 既に同じキーを持っている場合は生成しなおし
+						if(ret->count(key) == 0) {
+							ret->emplace(key, self.genLCValue(c_luaTypes_nonil));
+							break;
+						}
+					}
+				}
+				return ret;
+			}
+		};
+		template <class V>
+		V LuaTest::genValue() {
+			return GenValue_t<V>()(*this);
+		}
+
 		template <class T>
 		class LuaTestT : public LuaTest {
 			public:
