@@ -36,7 +36,9 @@ namespace rev {
 									UdataMT,
 									MT,
 									ClassName,
-									_Pointer,
+									IsPointer,
+									Pointer,
+									Udata,
 									_New;
 			namespace valueR {
 				extern const std::string HandleName,

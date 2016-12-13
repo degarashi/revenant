@@ -85,6 +85,9 @@ namespace rev {
 			os << "A";
 		return os << "Mat" << M << N;
 	}
+	using void_sp = std::shared_ptr<void>;
+	using void_wp = std::weak_ptr<void>;
+
 	// typ: 対象の型
 	// rtyp: Luaから受け取る型
 	// argtype: C++からLuaへ渡す型
@@ -119,8 +122,6 @@ namespace rev {
 	DERIVED_LCV(lubee::RectI, lubee::RectF)
 	DEF_LCV(Lua_SP, const Lua_SP&)
 	DEF_LCV(void*, const void*)
-	DEF_LCV(HRes, const HRes&)
-	DEF_LCV(WRes, const WRes&)
 	DEF_LCV(lua_CFunction, lua_CFunction)
 	DEF_LCV(Timepoint, const Timepoint&)
 	DEF_LCV(LCTable_SP, const LCTable_SP&)
@@ -134,6 +135,8 @@ namespace rev {
 	DERIVED_LCV(lua_OtherInteger, lua_Integer)
 	DERIVED_LCV(lua_OtherIntegerU, lua_OtherInteger)
 	DERIVED_LCV(long, lua_Integer)
+	DEF_LCV(void_sp, const void_sp&)
+	DEF_LCV(void_wp, const void_wp&)
 	DEF_LCV(frea::Vec2, const frea::Vec2&)
 	DEF_LCV(frea::Vec3, const frea::Vec3&)
 	DEF_LCV(frea::Vec4, const frea::Vec4&)
@@ -394,30 +397,44 @@ namespace rev {
 
 	// [LCV<shared_ptr<T>>]
 	template <class T>
-	struct LCV<std::shared_ptr<T>> : LCV<HRes> {
-		using sp_t = std::shared_ptr<T>;
-		int operator()(lua_State* ls, const sp_t& t) const {
-			return LCV<HRes>()(ls, t);
+	struct LCV<std::shared_ptr<T>> {
+		using value_t = std::shared_ptr<T>;
+		int operator()(lua_State* ls, const value_t& t) const {
+			LCV<void_sp>()(ls, t);
+			// if(t) {
+				// クラス特有のメンバ関数やらなんやら登録
+				// _loadResourceFuncs(ls, LuaName((T*)nullptr));
+			// }
+			return 1;
 		}
-		sp_t operator()(const int idx, lua_State* ls) const {
-			auto vp = LCV<HRes>()(idx, ls);
-			return std::static_pointer_cast<T>(vp);
+		value_t operator()(const int idx, lua_State* ls, LPointerSP* spm=nullptr) const {
+			if(auto sp = LCV<void_sp>()(idx, ls, spm))
+				return std::static_pointer_cast<T>(sp);
+			return value_t();
+		}
+		LuaType operator()(const value_t& t) const {
+			return LCV<void_sp>()(t);
 		}
 	};
 	template <class T>
 	std::ostream& operator << (std::ostream& os, LCV<std::shared_ptr<T>>) {
 		return os << "shared_ptr";
-	}
+	};
 
 	// [LCV<weak_ptr<T>>]
 	template <class T>
-	struct LCV<std::weak_ptr<T>> : LCV<WRes> {
-		using wp_t = std::weak_ptr<T>;
-		int operator()(lua_State* ls, const wp_t& t) const {
-			return LCV<WRes>()(ls, t);
+	struct LCV<std::weak_ptr<T>> {
+		using value_t = std::weak_ptr<T>;
+		int operator()(lua_State* ls, const value_t& t) const {
+			return LCV<void_wp>()(ls, t);
 		}
-		wp_t operator()(const int idx, lua_State* ls) const {
-			return std::static_pointer_cast<T>(LCV<WRes>()(idx, ls));
+		value_t operator()(const int idx, lua_State* ls) const {
+			if(auto sp = LCV<void_sp>()(idx, ls))
+				return std::static_pointer_cast<T>(sp);
+			return value_t();
+		}
+		LuaType operator()(const value_t& t) const {
+			return LCV<void_wp>()(t);
 		}
 	};
 	template <class T>
@@ -866,6 +883,11 @@ namespace rev {
 		ud->~UD();
 		return 0;
 	}
+	template <class UD>
+	int GetSPfromWP(lua_State* ls) {
+		auto wp = LCV<std::weak_ptr<UD>>()(1, ls, nullptr);
+		return LCV<std::shared_ptr<UD>>()(ls, wp.lock());
+	}
 	template <class T>
 	void MakeUserdataWithDtor(LuaState& lsc, const T& t) {
 		auto* data = reinterpret_cast<T*>(lsc.newUserData(sizeof(T)));
@@ -881,7 +903,6 @@ namespace rev {
 	}
 }
 #include "luaimport.hpp"
-DEF_LUAIMPORT_BASE
 #include <map>
 namespace rev {
 	//! Luaから引数を変換取得して関数を呼ぶ
@@ -955,26 +976,26 @@ namespace rev {
 		}
 	};
 	// --- Lua->C++グルーコードにおけるクラスポインタの取得方法 ---
-	//! "pointer"に生ポインタが記録されている (void*)
+	//! luaNS::objBase::Pointerに生ポインタが記録されている (void*)
 	struct LI_GetPtrBase {
-		void* operator()(lua_State* ls, int idx, const char* name) const;
+		void* operator()(lua_State* ls, int idx) const;
 	};
 	// void*で一旦取得してからT*に変換
 	template <class T>
 	struct LI_GetPtr : LI_GetPtrBase {
 		T* operator()(lua_State* ls, int idx) const {
-			return reinterpret_cast<T*>(LI_GetPtrBase()(ls, idx, lua::LuaName((T*)nullptr)));
+			return reinterpret_cast<T*>(LI_GetPtrBase()(ls, idx));
 		}
 	};
 	struct LI_GetHandleBase {
-		HRes operator()(lua_State* ls, int idx, const char* name) const;
+		std::shared_ptr<void> operator()(lua_State* ls, int idx) const;
 	};
-	//! "udata"にハンドルが記録されている -> void*からそのままポインタ変換
+	//! luaNS::objBase::Udataにハンドルが記録されている -> shared_ptr<void*>からポインタ変換
 	template <class T>
 	struct LI_GetHandle : LI_GetHandleBase {
 		std::shared_ptr<T> operator()(lua_State* ls, const int idx) const {
 			return std::static_pointer_cast<T>(
-						LI_GetHandleBase::operator()(ls, idx, lua::LuaName((T*)nullptr))
+						LI_GetHandleBase::operator()(ls, idx)
 					);
 		}
 	};

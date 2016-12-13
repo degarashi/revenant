@@ -81,7 +81,7 @@ namespace rev {
 				lsc.push(::rev::luaNS::objBase::_New); \
 				lsc.push(makeobj<BOOST_PP_SEQ_ENUM((mgr)(clazz)seq_ctor)>); \
 				lsc.rawSet(-3); \
-				lsc.setField(-1, luaNS::objBase::_Pointer, false); \
+				lsc.setField(-1, luaNS::objBase::IsPointer, false); \
 				lsc.setField(-1, luaNS::objBase::ClassName, #class_name); \
 				\
 				LuaImport::BeginImportBlock("Values"); \
@@ -134,7 +134,7 @@ namespace rev {
 				lsc.push(::rev::luaNS::objBase::_New); \
 				lsc.push(makeobj<BOOST_PP_SEQ_ENUM((clazz)seq_ctor)>); \
 				lsc.rawSet(-3); \
-				lsc.setField(-1, luaNS::objBase::_Pointer, true); \
+				lsc.setField(-1, luaNS::objBase::IsPointer, true); \
 				lsc.setField(-1, luaNS::objBase::ClassName, #class_name); \
 				\
 				LuaImport::BeginImportBlock("Values"); \

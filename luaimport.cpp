@@ -40,7 +40,9 @@ namespace rev {
 								UdataMT("_udata_mt"),
 								MT("_mt"),
 								ClassName("classname"),
-								_Pointer("_pointer"),
+								IsPointer("is_pointer"),
+								Pointer("pointer"),
+								Udata("udata"),
 								_New("_New");
 			namespace valueR {
 				const std::string HandleName("handleName"),
@@ -55,90 +57,115 @@ namespace rev {
 		}
 	}
 
-	// [LCV<HRes>]
-	int LCV<HRes>::operator()(lua_State* ls, const HRes& s) const {
-		if(!s) {
+	template <class T>
+	auto GetPointer(const std::shared_ptr<T>& p) {
+		return p.get();
+	}
+	template <class T>
+	auto GetPointer(const std::weak_ptr<T>& p) {
+		return p.lock().get();
+	}
+	bool PrepareWeakTable(LuaState& lsc, const std::string& name) {
+		if(lsc.prepareTableGlobal(name)) {
+			const CheckTop ct(lsc.getLS());
+			lsc.newTable();
+			lsc.setField(-1, "__mode", "v");
+			lsc.setMetatable(-2);
+			return true;
+		}
+		return false;
+	}
+	template <class UD>
+	bool InsertWeakTable(LuaState& lsc, const int idx, const UD& ud) {
+		void* ptr = GetPointer(ud);
+		lsc.getField(idx, ptr);
+		const bool ret = lsc.type(-1) == LuaType::Nil;
+		if(ret) {
+			lsc.pop(1);
+			lsc.newTable();
+			lsc.push(luaNS::objBase::Udata);
+			MakeUserdataWithDtor(lsc, ud);
+			// [Table]["udata"][UD]
+			lsc.setTable(-3);
+
+			lsc.push(ptr);
+			lsc.pushValue(-2);
+			// [Table][ptr][Table]
+			lsc.setTable(idx);
+		}
+		D_Assert0(lsc.type(-1) == LuaType::Table);
+		return ret;
+	}
+
+	// [LCV<void_sp>]
+	int LCV<void_sp>::operator()(lua_State* ls, const void_sp& p) const {
+		if(!p) {
 			// nullハンドルの場合はnilをpushする
 			LCV<LuaNil>()(ls, LuaNil());
 		} else {
-			const auto& name = s->getResourceName();
-			D_Assert(name, "invaild resource name.");
-			LuaState lsc(ls, true);
-			lsc.getGlobal(name);
-			lsc.getField(-1, luaNS::MakeShared);
-			new(lsc.newUserData(sizeof(HRes))) HRes(s);
-			lsc.call(1,1);
+			LuaState lsc(ls, false);
+			PrepareWeakTable(lsc, "res-sp");
+			InsertWeakTable(lsc, -1, p);
+			// [Res][SP]
 			lsc.remove(-2);
-			D_Assert0(lsc.type(-1) == LuaType::Userdata);
 		}
 		return 1;
 	}
-	HRes LCV<HRes>::operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
-		const auto typ = lua_type(ls, idx);
-		if(typ != LUA_TNIL) {
-			if(auto* res = static_cast<HRes*>(LCV<void*>()(idx, ls, spm)))
-				return *res;
-		}
-		return HRes();
+	void_sp LCV<void_sp>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
+		const RewindTop rt(ls);
+		LuaState lsc(ls, false);
+		const auto typ = lsc.type(idx);
+		if(typ == LuaType::Nil)
+			return void_sp();
+		D_Assert0(typ == LuaType::Table);
+		lsc.getField(-1, luaNS::objBase::Udata);
+		return *reinterpret_cast<void_sp*>(lsc.toUserData(-1));
 	}
-	LuaType LCV<HRes>::operator()(const HRes&) const {
+	LuaType LCV<void_sp>::operator()(const void_sp&) const {
 		return LuaType::Userdata;
 	}
-	DEF_LCV_OSTREAM(HRes)
+	DEF_LCV_OSTREAM(void_sp)
 
-	// [LCV<WRes>]
-	int LCV<WRes>::operator()(lua_State* ls, const WRes& w) const {
+	// [LCV<void_wp>]
+	int LCV<void_wp>::operator()(lua_State* ls, const void_wp& w) const {
 		if(auto sp = w.lock()) {
-			LuaState lsc(ls, true);
-			const auto& name = sp->getResourceName();
-			D_Assert(name, "invaild resource name.");
-			lsc.getGlobal(name);
-			lsc.getField(-1, luaNS::MakeWeak);
-			new(lsc.newUserData(sizeof(WRes))) WRes(w);
-			lsc.call(1,1);
+			LuaState lsc(ls, false);
+			PrepareWeakTable(lsc, "res-wp");
+			InsertWeakTable(lsc, -1, w);
+			// lockメソッドを付加
 			lsc.remove(-2);
-			D_Assert0(lsc.type(-1) == LuaType::Userdata);
 		} else {
 			// nullハンドルの場合はnilをpushする
 			LCV<LuaNil>()(ls, LuaNil());
 		}
 		return 1;
 	}
-	WRes LCV<WRes>::operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
+	void_wp LCV<void_wp>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		const auto typ = lua_type(ls, idx);
-		if(typ != LUA_TNIL) {
-			if(auto* res = static_cast<WRes*>(LCV<void*>()(idx, ls, spm)))
-				return *res;
-		}
-		return WRes();
+		if(typ != LUA_TNIL)
+			return *reinterpret_cast<void_wp*>(lua_touserdata(ls, idx));
+		return void_wp();
 	}
-	LuaType LCV<WRes>::operator()(const WRes&) const {
-		return LuaType::LightUserdata;
+	LuaType LCV<void_wp>::operator()(const void_wp&) const {
+		return LuaType::Userdata;
 	}
-	DEF_LCV_OSTREAM(WRes)
+	DEF_LCV_OSTREAM(void_wp)
 
-	namespace {
-		#ifdef DEBUG
-			void CheckClassName(lua_State* ls, const int idx, const char* name) {
-				LuaState lsc(ls, true);
-				lsc.getField(idx, luaNS::objBase::ClassName);
-				auto objname = lsc.toString(-1);
-				Assert(objname==name, "invalid object (required %s, but got %s)", name, objname.c_str());
-				lsc.pop();
-			}
-		#else
-			void CheckClassName(lua_State*, int, const char*) {}
-		#endif
-	}
 	// ------------- LI_GetPtrBase -------------
-	void* LI_GetPtrBase::operator()(lua_State* ls, const int idx, const char* name) const {
-		CheckClassName(ls, idx, name);
-		return LCV<void*>()(-1, ls);
+	void* LI_GetPtrBase::operator()(lua_State* ls, const int idx) const {
+		LuaState lsc(ls, true);
+		lsc.getField(idx, luaNS::objBase::Pointer);
+		void* ret = LCV<void*>()(-1, ls);
+		lsc.pop();
+		return ret;
 	}
 	// ------------- LI_GetHandleBase -------------
-	HRes LI_GetHandleBase::operator()(lua_State* ls, const int idx, const char* name) const {
-		CheckClassName(ls, idx, name);
-		return LCV<HRes>()(-1, ls);
+	std::shared_ptr<void> LI_GetHandleBase::operator()(lua_State* ls, const int idx) const {
+		LuaState lsc(ls, true);
+		lsc.getField(idx, luaNS::objBase::Udata);
+		auto ret = LCV<std::shared_ptr<void>>()(-1, ls);
+		lsc.pop();
+		return ret;
 	}
 
 	// ------------- LuaImport -------------
