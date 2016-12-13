@@ -110,12 +110,15 @@ if(NOT without-test)
 		${CMAKE_THREAD_LIBS_INIT}
 	)
 
+	set(EXPLICIT tests/luatest.cpp)
 	# ちょっとしたテストコードはシングルファイル、そうでないものはサブディレクトリ
 	# シングルファイルのテストコード: testsディレクトリ以下のソースが対象
 	aux_source_directory(tests TEST_SRC)
 	foreach(SRC IN LISTS TEST_SRC)
-		GetFileName(${SRC}, SRCNAME)
-		AddTest(${SRCNAME} ${SRC} "${TESTEXE_LIB}")
+		if(NOT (${EXPLICIT} STREQUAL ${SRC}))
+			GetFileName(${SRC}, SRCNAME)
+			AddTest(${SRCNAME} "${SRC};${EXPLICIT}" "${TESTEXE_LIB}")
+		endif()
 	endforeach()
 	# サブディレクトリのテストコード
 	add_subdirectory(tests/gameloop)
