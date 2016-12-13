@@ -96,7 +96,7 @@ namespace rev {
 		struct LCV<typ> { \
 			using value_t = val; \
 			int operator()(lua_State* ls, argtyp t) const; \
-			rtyp operator()(int idx, lua_State* ls, LPointerSP* spm=nullptr) const; \
+			rtyp operator()(int idx, lua_State* ls, LPointerSP* spm) const; \
 			LuaType operator()(argtyp t) const; \
 		}; \
 		std::ostream& operator << (std::ostream& os, LCV<typ>);
@@ -241,10 +241,10 @@ namespace rev {
 			else
 				return GetLCVType<T>()(ls, *op);
 		}
-		opt_t operator()(const int idx, lua_State* ls) const {
+		opt_t operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
 			if(lua_type(ls, idx) == LUA_TNIL)
 				return spi::none;
-			return GetLCVType<T>()(idx, ls);
+			return GetLCVType<T>()(idx, ls, spm);
 		}
 		LuaType operator()(const opt_t& op) const {
 			return GetLCVType<T>()(op);
@@ -262,8 +262,8 @@ namespace rev {
 		int operator()(lua_State* ls, const Dur& d) const {
 			return LCV<lua_Integer>()(ls, std::chrono::duration_cast<Microseconds>(d).count());
 		}
-		Dur operator()(const int idx, lua_State* ls) const {
-			return Microseconds(LCV<lua_Integer>()(idx, ls));
+		Dur operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
+			return Microseconds(LCV<lua_Integer>()(idx, ls, spm));
 		}
 		LuaType operator()(const Dur&) const {
 			return LuaType::Number;
@@ -289,7 +289,7 @@ namespace rev {
 			}
 			return 1;
 		}
-		Vec_t operator()(int idx, lua_State* ls) const {
+		Vec_t operator()(int idx, lua_State* ls, LPointerSP* spm) const {
 			idx = lua_absindex(ls, idx);
 			GetLCVType<T> lcv;
 			const int stk = lua_gettop(ls);
@@ -300,7 +300,7 @@ namespace rev {
 			for(int i=0 ; i<sz ; i++) {
 				lua_pushinteger(ls, i+1);
 				lua_gettable(ls, idx);
-				ret[i] = static_cast<T>(lcv(-1, ls));
+				ret[i] = static_cast<T>(lcv(-1, ls, spm));
 				lua_pop(ls, 1);
 			}
 			lua_settop(ls, stk);
@@ -337,18 +337,18 @@ namespace rev {
 		}
 
 		// Table -> std::tuple<>
-		void _getElem(Tuple& /*dst*/, int /*idx*/, lua_State* /*ls*/, IConst<sizeof...(Ts)>) const {}
+		void _getElem(Tuple& /*dst*/, int /*idx*/, lua_State* /*ls*/, LPointerSP* /*spm*/, IConst<sizeof...(Ts)>) const {}
 		template <std::size_t N>
-		void _getElem(Tuple& dst, const int idx, lua_State* ls, IConst<N>) const {
+		void _getElem(Tuple& dst, const int idx, lua_State* ls, LPointerSP* spm, IConst<N>) const {
 			lua_pushinteger(ls, N+1);
 			lua_gettable(ls, idx);
-			std::get<N>(dst) = GetLCVType<typename std::tuple_element<N, Tuple>::type>()(-1, ls);
+			std::get<N>(dst) = GetLCVType<typename std::tuple_element<N, Tuple>::type>()(-1, ls, spm);
 			lua_pop(ls, 1);
 			_getElem(dst, idx, ls, IConst<N+1>());
 		}
-		Tuple operator()(const int idx, lua_State* ls) const {
+		Tuple operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
 			Tuple ret;
-			_getElem(ret, idx, ls, IConst<0>());
+			_getElem(ret, idx, ls, spm, IConst<0>());
 			return ret;
 		}
 		LuaType operator()(const Tuple&) const {
@@ -362,8 +362,8 @@ namespace rev {
 		using base_t = LCV<std::tuple<T0,T1>>;
 		using Pair = std::pair<T0,T1>;
 		using Tuple = std::tuple<T0,T1>;
-		Pair operator()(const int idx, lua_State* ls) const {
-			auto ret = base_t::operator()(idx, ls);
+		Pair operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
+			auto ret = base_t::operator()(idx, ls, spm);
 			return {std::get<0>(ret), std::get<1>(ret)};
 		}
 		using base_t::operator();
@@ -382,8 +382,8 @@ namespace rev {
 		int operator()(lua_State* ls, const range_t& r) const {
 			return LCV_t()(ls, {r.from, r.to});
 		}
-		range_t operator()(const int idx, lua_State* ls) const {
-			auto p = LCV_t()(idx, ls);
+		range_t operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
+			auto p = LCV_t()(idx, ls, spm);
 			return {p[0], p[1]};
 		}
 		LuaType operator()(const range_t& r) const {
@@ -407,7 +407,7 @@ namespace rev {
 			// }
 			return 1;
 		}
-		value_t operator()(const int idx, lua_State* ls, LPointerSP* spm=nullptr) const {
+		value_t operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
 			if(auto sp = LCV<void_sp>()(idx, ls, spm))
 				return std::static_pointer_cast<T>(sp);
 			return value_t();
@@ -428,8 +428,8 @@ namespace rev {
 		int operator()(lua_State* ls, const value_t& t) const {
 			return LCV<void_wp>()(ls, t);
 		}
-		value_t operator()(const int idx, lua_State* ls) const {
-			if(auto sp = LCV<void_sp>()(idx, ls))
+		value_t operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
+			if(auto sp = LCV<void_sp>()(idx, ls, spm))
 				return std::static_pointer_cast<T>(sp);
 			return value_t();
 		}
@@ -851,7 +851,7 @@ namespace rev {
 
 			template <class R>
 			decltype(auto) toValue(const int idx) const {
-				return GetLCVType<R>()(idx, getLS());
+				return GetLCVType<R>()(idx, getLS(), nullptr);
 			}
 
 			LuaType type(int idx) const;
@@ -925,7 +925,7 @@ namespace rev {
 	struct FuncCall<Ts0A, Ts0...> {
 		template <class CB, class... Ts1>
 		static decltype(auto) callCB(const CB& cb, lua_State* ls, const int idx, Ts1&&... ts1) {
-			decltype(auto) value = GetLCVType<std::decay_t<Ts0A>>()(idx, ls);
+			decltype(auto) value = GetLCVType<std::decay_t<Ts0A>>()(idx, ls, nullptr);
 			return FuncCall<Ts0...>::callCB(
 						cb,
 						ls,
@@ -936,7 +936,7 @@ namespace rev {
 		}
 		template <class T, class RT, class FT, class... Args, class... Ts1>
 		static RT procMethod(lua_State* ls, T* ptr, const int idx, RT (FT::*func)(Args...), Ts1&&... ts1) {
-			decltype(auto) value = GetLCVType<std::decay_t<Ts0A>>()(idx, ls);
+			decltype(auto) value = GetLCVType<std::decay_t<Ts0A>>()(idx, ls, nullptr);
 			return FuncCall<Ts0...>::procMethod(
 						ls,
 						ptr,
@@ -948,7 +948,7 @@ namespace rev {
 		}
 		template <class RT, class... Args, class... Ts1>
 		static RT proc(lua_State* ls, const int idx, RT (*func)(Args...), Ts1&&... ts1) {
-			decltype(auto) value = GetLCVType<std::decay_t<Ts0A>>()(idx, ls);
+			decltype(auto) value = GetLCVType<std::decay_t<Ts0A>>()(idx, ls, nullptr);
 			return FuncCall<Ts0...>::proc(
 						ls,
 						idx+1,
@@ -1017,7 +1017,7 @@ namespace rev {
 
 			template <class PTR>
 			static PTR _GetUD(lua_State* ls, const int idx) {
-				void** ud = reinterpret_cast<void**>(LCV<void*>()(idx, ls));
+				void** ud = reinterpret_cast<void**>(LCV<void*>()(idx, ls, nullptr));
 				return *reinterpret_cast<PTR*>(ud);
 			}
 			template <class V, class T>
@@ -1136,7 +1136,7 @@ namespace rev {
 					// [2]		セットする値
 					T* dst = reinterpret_cast<T*>(GET()(ls, 1));
 					auto ptr = GetMember<V,VT>(ls, lua_upvalueindex(1));
-					(dst->*ptr) = GetLCVType<V>()(2, ls);
+					(dst->*ptr) = GetLCVType<V>()(2, ls, nullptr);
 					return 0;
 				} catch(const std::exception& e) {
 					return ReturnException(ls, __PRETTY_FUNCTION__, e, 2);

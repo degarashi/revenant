@@ -508,16 +508,16 @@ namespace rev {
 		lsc.checkType(idx, typ);
 	}
 	bool LuaState::toBoolean(const int idx) const {
-		return LCV<bool>()(idx, getLS());
+		return LCV<bool>()(idx, getLS(), nullptr);
 	}
 	lua_CFunction LuaState::toCFunction(const int idx) const {
-		return LCV<lua_CFunction>()(idx, getLS());
+		return LCV<lua_CFunction>()(idx, getLS(), nullptr);
 	}
 	lua_Integer LuaState::toInteger(const int idx) const {
-		return LCV<lua_Integer>()(idx, getLS());
+		return LCV<lua_Integer>()(idx, getLS(), nullptr);
 	}
 	std::string LuaState::toString(const int idx) const {
-		return LCV<std::string>()(idx, getLS());
+		return LCV<std::string>()(idx, getLS(), nullptr);
 	}
 	std::string LuaState::cnvString(int idx) {
 		idx = absIndex(idx);
@@ -529,16 +529,16 @@ namespace rev {
 		return ret;
 	}
 	lua_Number LuaState::toNumber(const int idx) const {
-		return LCV<lua_Number>()(idx, getLS());
+		return LCV<lua_Number>()(idx, getLS(), nullptr);
 	}
 	const void* LuaState::toPointer(const int idx) const {
 		return lua_topointer(getLS(), idx);
 	}
 	Lua_SP LuaState::toThread(const int idx) const {
-		return LCV<Lua_SP>()(idx, getLS());
+		return LCV<Lua_SP>()(idx, getLS(), nullptr);
 	}
 	void* LuaState::toUserData(const int idx) const {
-		return LCV<void*>()(idx, getLS());
+		return LCV<void*>()(idx, getLS(), nullptr);
 	}
 	LCTable_SP LuaState::toTable(const int idx, LPointerSP* spm) const {
 		return LCV<LCTable_SP>()(idx, getLS(), spm);
@@ -643,7 +643,7 @@ namespace rev {
 	void LuaState::CheckError(lua_State* ls, const int code) {
 		const CheckTop ct(ls);
 		if(code!=LUA_OK && code!=LUA_YIELD) {
-			const char* msg = LCV<const char*>()(-1, ls);
+			const char* msg = LCV<const char*>()(-1, ls, nullptr);
 			switch(code) {
 				case LUA_ERRRUN:
 					throw ERun(msg);

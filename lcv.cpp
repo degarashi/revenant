@@ -275,9 +275,9 @@ namespace rev {
 		dur(ls, Duration(t.time_since_epoch()));
 		return 1;
 	}
-	Timepoint LCV<Timepoint>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
+	Timepoint LCV<Timepoint>::operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
 		LCV<Duration> dur;
-		return Timepoint(dur(idx, ls));
+		return Timepoint(dur(idx, ls, spm));
 	}
 	LuaType LCV<Timepoint>::operator()(const Timepoint&) const {
 		return LuaType::Number;

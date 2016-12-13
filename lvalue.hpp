@@ -309,7 +309,7 @@ namespace rev {
 
 			// --- convert function ---
 			#define DEF_FUNC(typ, name) typ name() const { \
-				return LCV<typ>()(typename base_t::VPop(*this, true), base_t::getLS()); }
+				return LCV<typ>()(typename base_t::VPop(*this, true), base_t::getLS(), nullptr); }
 			DEF_FUNC(bool, toBoolean)
 			DEF_FUNC(lua_Integer, toInteger)
 			DEF_FUNC(lua_Number, toNumber)
@@ -340,7 +340,7 @@ namespace rev {
 			}
 			template <class R>
 			decltype(auto) toValue() const {
-				return GetLCVType<R>()(typename base_t::VPop(*this, false), base_t::getLS());
+				return GetLCVType<R>()(typename base_t::VPop(*this, false), base_t::getLS(), nullptr);
 			}
 			int length() const {
 				typename base_t::VPop vp(*this, true);

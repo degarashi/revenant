@@ -158,7 +158,7 @@ namespace rev {
 	void* LI_GetPtrBase::operator()(lua_State* ls, const int idx) const {
 		LuaState lsc(ls, true);
 		lsc.getField(idx, luaNS::objBase::Pointer);
-		void* ret = LCV<void*>()(-1, ls);
+		void* ret = LCV<void*>()(-1, ls, nullptr);
 		lsc.pop();
 		return ret;
 	}
@@ -166,7 +166,7 @@ namespace rev {
 	std::shared_ptr<void> LI_GetHandleBase::operator()(lua_State* ls, const int idx) const {
 		LuaState lsc(ls, true);
 		lsc.getField(idx, luaNS::objBase::Udata);
-		auto ret = LCV<std::shared_ptr<void>>()(-1, ls);
+		auto ret = LCV<std::shared_ptr<void>>()(-1, ls, nullptr);
 		lsc.pop();
 		return ret;
 	}
