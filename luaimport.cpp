@@ -111,18 +111,24 @@ namespace rev {
 		}
 		return 1;
 	}
+	namespace {
+		template <class P>
+		auto LoadSmartPtr(const int idx, lua_State* ls) {
+			const RewindTop rt(ls);
+			LuaState lsc(ls, false);
+			const auto typ = lsc.type(idx);
+			if(typ == LuaType::Nil)
+				return P();
+			D_Assert0(typ == LuaType::Table);
+			lsc.getField(idx, luaNS::objBase::Udata);
+			return *reinterpret_cast<P*>(lsc.toUserData(-1));
+		}
+	}
 	void_sp LCV<void_sp>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
-		const RewindTop rt(ls);
-		LuaState lsc(ls, false);
-		const auto typ = lsc.type(idx);
-		if(typ == LuaType::Nil)
-			return void_sp();
-		D_Assert0(typ == LuaType::Table);
-		lsc.getField(-1, luaNS::objBase::Udata);
-		return *reinterpret_cast<void_sp*>(lsc.toUserData(-1));
+		return LoadSmartPtr<void_sp>(idx, ls);
 	}
 	LuaType LCV<void_sp>::operator()(const void_sp&) const {
-		return LuaType::Userdata;
+		return LuaType::Table;
 	}
 	DEF_LCV_OSTREAM(void_sp)
 
@@ -141,13 +147,10 @@ namespace rev {
 		return 1;
 	}
 	void_wp LCV<void_wp>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
-		const auto typ = lua_type(ls, idx);
-		if(typ != LUA_TNIL)
-			return *reinterpret_cast<void_wp*>(lua_touserdata(ls, idx));
-		return void_wp();
+		return LoadSmartPtr<void_wp>(idx, ls);
 	}
 	LuaType LCV<void_wp>::operator()(const void_wp&) const {
-		return LuaType::Userdata;
+		return LuaType::Table;
 	}
 	DEF_LCV_OSTREAM(void_wp)
 
