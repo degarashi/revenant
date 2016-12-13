@@ -76,9 +76,19 @@ namespace rev {
 			lua_State*, lua_CFunction, LCValue, void*, Lua_SP, LCTable_SP
 		>;
 		template <class T>
-		struct LCV_Test0 : LCV_Test<T> {};
+		using LCV_Test0 = LCV_Test<T>;
 		TYPED_TEST_CASE(LCV_Test0, Types0);
 		TYPED_TEST(LCV_Test0, Push) { ASSERT_NO_FATAL_FAILURE(this->pushTest()); }
 		TYPED_TEST(LCV_Test0, Type) { ASSERT_NO_FATAL_FAILURE(this->typeTest()); }
+
+		using Types1 = ::testing::Types<
+			void_sp, void_wp,
+			std::shared_ptr<int>, std::weak_ptr<int>
+		>;
+		template <class T>
+		using LCV_Test1 = LCV_Test<T>;
+		TYPED_TEST_CASE(LCV_Test1, Types1);
+		TYPED_TEST(LCV_Test1, Push) { ASSERT_NO_FATAL_FAILURE(this->pushTest()); }
+		TYPED_TEST(LCV_Test1, Type) { ASSERT_NO_FATAL_FAILURE(this->typeTest()); }
 	}
 }
