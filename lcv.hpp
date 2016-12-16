@@ -866,8 +866,9 @@ namespace rev {
 
 			/*! スタックトップのテーブルに"name"というテーブルが無ければ作成
 				既にあれば単にそれを積む */
-			bool prepareTable(int idx, const std::string& name);
-			bool prepareTableGlobal(const std::string& name);
+			bool prepareTable(int idx, const LCValue& key);
+			bool prepareTableGlobal(const LCValue& key);
+			bool prepareTableRegistry(const LCValue& key);
 
 			lua_State* getLS() const;
 			Lua_SP getLS_SP();

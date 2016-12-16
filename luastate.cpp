@@ -574,23 +574,29 @@ namespace rev {
 	int LuaState::yieldk(const int nresults, lua_KContext ctx, lua_KFunction k) {
 		return lua_yieldk(getLS(), nresults, ctx, k);
 	}
-	bool LuaState::prepareTable(const int idx, const std::string& name) {
-		getField(idx, name);
+	bool LuaState::prepareTable(const int idx, const LCValue& key) {
+		getField(idx, key);
 		if(type(-1) != LuaType::Table) {
 			// テーブルを作成
 			pop(1);
 			newTable();
-			push(name);
+			push(key);
 			pushValue(-2);
-			// [Target][NewTable][name][NewTable]
+			// [Target][NewTable][key][NewTable]
 			setTable(-4);
 			return true;
 		}
 		return false;
 	}
-	bool LuaState::prepareTableGlobal(const std::string& name) {
+	bool LuaState::prepareTableGlobal(const LCValue& key) {
 		pushGlobal();
-		const bool b = prepareTable(-1, name);
+		const bool b = prepareTable(-1, key);
+		remove(-2);
+		return b;
+	}
+	bool LuaState::prepareTableRegistry(const LCValue& key) {
+		pushValue(LUA_REGISTRYINDEX);
+		const bool b = prepareTable(-1, key);
 		remove(-2);
 		return b;
 	}
