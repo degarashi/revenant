@@ -498,14 +498,7 @@ namespace rev {
 	DEF_LCV_OSTREAM(frea::Quat)
 
 	namespace {
-		template <class T>
-		auto GetPointer(const std::shared_ptr<T>& p) {
-			return p.get();
-		}
-		template <class T>
-		auto GetPointer(const std::weak_ptr<T>& p) {
-			return p.lock().get();
-		}
+		// global空間にある"name"テーブルを用意。なければ作成(value = weak)
 		bool PrepareWeakTable(LuaState& lsc, const std::string& name) {
 			if(lsc.prepareTableGlobal(name)) {
 				const CheckTop ct(lsc.getLS());
@@ -516,8 +509,17 @@ namespace rev {
 			}
 			return false;
 		}
+		template <class T>
+		auto GetPointer(const std::shared_ptr<T>& p) {
+			return p.get();
+		}
+		template <class T>
+		auto GetPointer(const std::weak_ptr<T>& p) {
+			return p.lock().get();
+		}
+		// key=void*, value=table{"udata" = (shared|weak)pointer}
 		template <class UD>
-		bool InsertWeakTable(LuaState& lsc, const int idx, const UD& ud) {
+		bool __InsertWeakTable(LuaState& lsc, const int idx, const UD& ud) {
 			void* ptr = GetPointer(ud);
 			lsc.getField(idx, ptr);
 			const bool ret = lsc.type(-1) == LuaType::Nil;
@@ -537,6 +539,16 @@ namespace rev {
 			D_Assert0(lsc.type(-1) == LuaType::Table);
 			return ret;
 		}
+		template <class UD>
+		bool _InsertWeakTable(lua_State* ls, const char* name, const UD& ud) {
+			LuaState lsc(ls, false);
+			PrepareWeakTable(lsc, name);
+			const bool b = __InsertWeakTable(lsc, -1, ud);
+			// [Res][SP]
+			lsc.remove(-2);
+			return b;
+		}
+		// idxにある値がnilなら空ポインタを、tableならudataエントリの(shared|weak)ポインタを取り出す
 		template <class P>
 		auto LoadSmartPtr(const int idx, lua_State* ls) {
 			const RewindTop rt(ls);
@@ -549,17 +561,19 @@ namespace rev {
 			return *reinterpret_cast<P*>(lsc.toUserData(-1));
 		}
 	}
+	bool InsertWeakTableSP(lua_State* ls, const void_sp& s) {
+		return _InsertWeakTable(ls,  "res-sp", s);
+	}
+	bool InsertWeakTableWP(lua_State* ls, const void_wp& w) {
+		return _InsertWeakTable(ls,  "res-wp", w);
+	}
 	// [LCV<void_sp>]
 	int LCV<void_sp>::operator()(lua_State* ls, const void_sp& p) const {
 		if(!p) {
 			// nullハンドルの場合はnilをpushする
 			LCV<LuaNil>()(ls, LuaNil());
 		} else {
-			LuaState lsc(ls, false);
-			PrepareWeakTable(lsc, "res-sp");
-			InsertWeakTable(lsc, -1, p);
-			// [Res][SP]
-			lsc.remove(-2);
+			InsertWeakTableSP(ls, p);
 		}
 		return 1;
 	}
@@ -574,11 +588,8 @@ namespace rev {
 	// [LCV<void_wp>]
 	int LCV<void_wp>::operator()(lua_State* ls, const void_wp& w) const {
 		if(auto sp = w.lock()) {
-			LuaState lsc(ls, false);
-			PrepareWeakTable(lsc, "res-wp");
-			InsertWeakTable(lsc, -1, w);
+			InsertWeakTableWP(ls, w);
 			// lockメソッドを付加
-			lsc.remove(-2);
 		} else {
 			// nullハンドルの場合はnilをpushする
 			LCV<LuaNil>()(ls, LuaNil());

@@ -395,16 +395,17 @@ namespace rev {
 		return os << "Range<" << LCV<T>() << '>';
 	}
 
+	bool InsertWeakTableSP(lua_State* ls, const void_sp& s);
+	bool InsertWeakTableWP(lua_State* ls, const void_wp& w);
 	// [LCV<shared_ptr<T>>]
 	template <class T>
 	struct LCV<std::shared_ptr<T>> {
 		using value_t = std::shared_ptr<T>;
 		int operator()(lua_State* ls, const value_t& t) const {
-			LCV<void_sp>()(ls, t);
-			// if(t) {
+			if(InsertWeakTableSP(ls, t)) {
 				// クラス特有のメンバ関数やらなんやら登録
 				// _loadResourceFuncs(ls, LuaName((T*)nullptr));
-			// }
+			}
 			return 1;
 		}
 		value_t operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
