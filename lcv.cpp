@@ -498,9 +498,9 @@ namespace rev {
 	DEF_LCV_OSTREAM(frea::Quat)
 
 	namespace {
-		// global空間にある"name"テーブルを用意。なければ作成(value = weak)
-		bool PrepareWeakTable(LuaState& lsc, const std::string& name) {
-			if(lsc.prepareTableGlobal(name)) {
+		// global空間にある"key"テーブルを用意。なければ作成(value = weak)
+		bool PrepareWeakTable(LuaState& lsc, const LCValue& key) {
+			if(lsc.prepareTableRegistry(key)) {
 				const CheckTop ct(lsc.getLS());
 				lsc.newTable();
 				lsc.setField(-1, "__mode", "v");
@@ -539,10 +539,10 @@ namespace rev {
 			D_Assert0(lsc.type(-1) == LuaType::Table);
 			return ret;
 		}
-		template <class UD>
-		bool _InsertWeakTable(lua_State* ls, const char* name, const UD& ud) {
+		template <class UD, class Key>
+		bool _InsertWeakTable(lua_State* ls, const Key& key, const UD& ud) {
 			LuaState lsc(ls, false);
-			PrepareWeakTable(lsc, name);
+			PrepareWeakTable(lsc, key);
 			const bool b = __InsertWeakTable(lsc, -1, ud);
 			// [Res][SP]
 			lsc.remove(-2);
