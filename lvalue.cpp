@@ -28,9 +28,10 @@ namespace rev {
 		if(_lua) {
 			const CheckTop ct(_lua->getLS());
 			// エントリの削除
-			_lua->getGlobal(cs_entry);
+			_lua->pushValue(LUA_REGISTRYINDEX);
+			_lua->getField(-1, cs_entry);
 			_lua->setField(-1, _id, LuaNil());
-			_lua->pop(1);
+			_lua->pop(2);
 			s_index.put(_id);
 		}
 	}
@@ -41,7 +42,7 @@ namespace rev {
 	}
 	void LV_Global::_setValue() {
 		// エントリの登録
-		_lua->prepareTableGlobal(cs_entry);
+		_lua->prepareTableRegistry(cs_entry);
 		_lua->push(_id);
 		_lua->pushValue(-3);
 		// [Value][Entry][id][Value]
@@ -50,9 +51,11 @@ namespace rev {
 	}
 
 	int LV_Global::_prepareValue(bool /*bTop*/) const {
-		_lua->getGlobal(cs_entry);
+		_lua->pushValue(LUA_REGISTRYINDEX);
+		_lua->getField(-1, cs_entry);
 		_lua->getField(-1, _id);
-		// [Entry][Value]
+		// [Registry][Entry][Value]
+		_lua->remove(-2);
 		_lua->remove(-2);
 		return _lua->getTop();
 	}
