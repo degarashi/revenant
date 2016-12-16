@@ -66,10 +66,10 @@ namespace rev {
 		return ret;
 	}
 	// ------------- LI_GetHandleBase -------------
-	std::shared_ptr<void> LI_GetHandleBase::operator()(lua_State* ls, const int idx) const {
+	void_sp LI_GetHandleBase::operator()(lua_State* ls, const int idx) const {
 		LuaState lsc(ls, true);
 		lsc.getField(idx, luaNS::objBase::Udata);
-		auto ret = LCV<std::shared_ptr<void>>()(-1, ls, nullptr);
+		auto ret = LCV<void_sp>()(-1, ls, nullptr);
 		lsc.pop();
 		return ret;
 	}
