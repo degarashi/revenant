@@ -39,15 +39,22 @@ namespace rev {
 
 	// [LCV<const char*> = LUA_TSTRING]
 	int LCV<const char*>::operator()(lua_State* ls, const char* c) const {
-		lua_pushstring(ls, c);
+		if(c)
+			lua_pushstring(ls, c);
+		else
+			lua_pushnil(ls);
 		return 1;
 	}
 	const char* LCV<const char*>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
+		if(lua_type(ls, idx) == LUA_TNIL)
+			return nullptr;
 		LuaState::CheckType(ls, idx, LuaType::String);
 		return lua_tostring(ls, idx);
 	}
-	LuaType LCV<const char*>::operator()(const char*) const {
-		return LuaType::String;
+	LuaType LCV<const char*>::operator()(const char* c) const {
+		if(c)
+			return LuaType::String;
+		return LuaType::Nil;
 	}
 	DEF_LCV_OSTREAM(const char*)
 
@@ -57,6 +64,8 @@ namespace rev {
 		return 1;
 	}
 	std::string LCV<std::string>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
+		if(lua_type(ls, idx) == LUA_TNIL)
+			return std::string();
 		LuaState::CheckType(ls, idx, LuaType::String);
 		std::size_t len;
 		const char* c =lua_tolstring(ls, idx, &len);
