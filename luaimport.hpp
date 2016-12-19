@@ -1,5 +1,5 @@
 #pragma once
-#include <type_traits>
+#include "lv_common.hpp"
 
 namespace rev {
 	class LuaState;
@@ -7,7 +7,7 @@ namespace rev {
 		template <class T>
 		void LuaExport(LuaState& lsc, T*);
 		template <class T>
-		const char* LuaName(T*);
+		const char* LuaName(T*) { return luaNS::Void.c_str(); }
 		template <class T>
 		struct LuaDefine : std::false_type {};
 	}

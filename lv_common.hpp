@@ -5,6 +5,13 @@
 
 namespace rev {
 	namespace luaNS {
+		extern const std::string HasSP,
+								MakeSP,
+								GetSP,
+								HasWP,
+								MakeWP,
+								GetWP,
+								Void;
 		extern const std::string ScriptResourceEntry,
 								SystemScriptResourceEntry,
 								ScriptExtension;

@@ -507,16 +507,25 @@ namespace rev {
 	DEF_LCV_OSTREAM(frea::Quat)
 
 	namespace {
-		// global空間にある"key"テーブルを用意。なければ作成(value = weak)
-		bool PrepareWeakTable(LuaState& lsc, const LCValue& key) {
-			if(lsc.prepareTableRegistry(key)) {
-				const CheckTop ct(lsc.getLS());
-				lsc.newTable();
-				lsc.setField(-1, "__mode", "v");
-				lsc.setMetatable(-2);
-				return true;
-			}
-			return false;
+		// key=void*, value=table{"udata" = (shared|weak)pointer}
+		// idxにある値がnilなら空ポインタを、tableならudataエントリの(shared|weak)ポインタを取り出す
+		template <class P>
+		auto LoadSmartPtr(int idx, lua_State* ls, const std::string& func) {
+			const RewindTop rt(ls);
+			LuaState lsc(ls, false);
+			idx = lsc.absIndex(idx);
+			lsc.getGlobal(func);
+			lsc.pushValue(idx);
+			lsc.call(1, 1);
+			if(lsc.type(-1) == LuaType::Userdata)
+				return *reinterpret_cast<P*>(lsc.toUserData(-1));
+			return P();
+		}
+		auto LoadVoidWP(const int idx, lua_State* ls) {
+			return LoadSmartPtr<void_wp>(idx, ls, luaNS::GetWP);
+		}
+		auto LoadVoidSP(const int idx, lua_State* ls) {
+			return LoadSmartPtr<void_sp>(idx, ls, luaNS::GetSP);
 		}
 		template <class T>
 		auto GetPointer(const std::shared_ptr<T>& p) {
@@ -526,68 +535,49 @@ namespace rev {
 		auto GetPointer(const std::weak_ptr<T>& p) {
 			return p.lock().get();
 		}
-		// key=void*, value=table{"udata" = (shared|weak)pointer}
-		template <class UD>
-		bool __InsertWeakTable(LuaState& lsc, const int idx, const UD& ud) {
-			void* ptr = GetPointer(ud);
-			lsc.getField(idx, ptr);
-			const bool ret = lsc.type(-1) == LuaType::Nil;
-			if(ret) {
-				lsc.pop(1);
-				lsc.newTable();
-				lsc.push(luaNS::objBase::Udata);
-				MakeUserdataWithDtor(lsc, ud);
-				// [Table]["udata"][UD]
-				lsc.setTable(-3);
-
-				lsc.push(ptr);
-				lsc.pushValue(-2);
-				// [Table][ptr][Table]
-				lsc.setTable(idx);
-			}
-			D_Assert0(lsc.type(-1) == LuaType::Table);
-			return ret;
-		}
-		template <class UD, class Key>
-		bool _InsertWeakTable(lua_State* ls, const Key& key, const UD& ud) {
-			LuaState lsc(ls, false);
-			PrepareWeakTable(lsc, key);
-			const bool b = __InsertWeakTable(lsc, -1, ud);
-			// [Res][SP]
-			lsc.remove(-2);
-			return b;
-		}
-		// idxにある値がnilなら空ポインタを、tableならudataエントリの(shared|weak)ポインタを取り出す
 		template <class P>
-		auto LoadSmartPtr(const int idx, lua_State* ls) {
-			const RewindTop rt(ls);
+		bool PushSmartPtr(lua_State* ls, const std::string& check, const std::string& make, const std::string& name, const P& p) {
 			LuaState lsc(ls, false);
-			const auto typ = lsc.type(idx);
-			if(typ == LuaType::Nil)
-				return P();
-			D_Assert0(typ == LuaType::Table);
-			lsc.getField(idx, luaNS::objBase::Udata);
-			return *reinterpret_cast<P*>(lsc.toUserData(-1));
+			void* ptr = GetPointer(p);
+			lsc.getGlobal(check);
+			lsc.push(ptr);
+			lsc.call(1, 1);
+			if(lsc.type(-1) == LuaType::Nil) {
+				lsc.pop(1);
+				lsc.getGlobal(make);
+				lsc.push(ptr);
+				lsc.push(name);
+				MakeUserdataWithDtor(lsc, p);
+				lsc.call(3, 1);
+				return true;
+			}
+			return false;
 		}
 	}
-	bool InsertWeakTableSP(lua_State* ls, const void_sp& s) {
-		return _InsertWeakTable(ls,  "res-sp", s);
+	bool PushSP(lua_State* ls, const std::string& name, const void_sp& sp) {
+		if(!sp) {
+			// nullハンドルの場合はnilをpushする
+			LCV<LuaNil>()(ls, LuaNil());
+			return false;
+		} else
+			return PushSmartPtr(ls, luaNS::HasSP, luaNS::MakeSP, name, sp);
 	}
-	bool InsertWeakTableWP(lua_State* ls, const void_wp& w) {
-		return _InsertWeakTable(ls,  "res-wp", w);
+	bool PushWP(lua_State* ls, const std::string& name, const void_wp& wp) {
+		if(auto sp = wp.lock()) {
+			return PushSmartPtr(ls, luaNS::HasWP, luaNS::MakeWP, name, wp);
+		} else {
+			// nullハンドルの場合はnilをpushする
+			LCV<LuaNil>()(ls, LuaNil());
+			return false;
+		}
 	}
 	// [LCV<void_sp>]
 	int LCV<void_sp>::operator()(lua_State* ls, const void_sp& p) const {
-		if(!p) {
-			// nullハンドルの場合はnilをpushする
-			LCV<LuaNil>()(ls, LuaNil());
-		} else {
-			InsertWeakTableSP(ls, p);
-		}
+		PushSP(ls, luaNS::Void, p);
 		return 1;
 	}
 	void_sp LCV<void_sp>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
-		return LoadSmartPtr<void_sp>(idx, ls);
+		return LoadVoidSP(idx, ls);
 	}
 	LuaType LCV<void_sp>::operator()(const void_sp&) const {
 		return LuaType::Table;
@@ -596,17 +586,11 @@ namespace rev {
 
 	// [LCV<void_wp>]
 	int LCV<void_wp>::operator()(lua_State* ls, const void_wp& w) const {
-		if(auto sp = w.lock()) {
-			InsertWeakTableWP(ls, w);
-			// lockメソッドを付加
-		} else {
-			// nullハンドルの場合はnilをpushする
-			LCV<LuaNil>()(ls, LuaNil());
-		}
+		PushWP(ls, luaNS::Void, w);
 		return 1;
 	}
 	void_wp LCV<void_wp>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
-		return LoadSmartPtr<void_wp>(idx, ls);
+		return LoadVoidWP(idx, ls);
 	}
 	LuaType LCV<void_wp>::operator()(const void_wp&) const {
 		return LuaType::Table;

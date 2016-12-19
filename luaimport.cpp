@@ -9,6 +9,13 @@ extern "C" {
 
 namespace rev {
 	namespace luaNS {
+		const std::string HasSP("HasSP"),
+						MakeSP("MakeSP"),
+						GetSP("GetSP"),
+						HasWP("HasWP"),
+						MakeWP("MakeWP"),
+						GetWP("GetWP"),
+						Void("Void");
 		const std::string ScriptResourceEntry("script"),
 								SystemScriptResourceEntry("system_script"),
 								ScriptExtension("lua");
@@ -65,14 +72,6 @@ namespace rev {
 		lsc.pop();
 		return ret;
 	}
-	// ------------- LI_GetHandleBase -------------
-	void_sp LI_GetHandleBase::operator()(lua_State* ls, const int idx) const {
-		LuaState lsc(ls, true);
-		lsc.getField(idx, luaNS::objBase::Udata);
-		auto ret = LCV<void_sp>()(-1, ls, nullptr);
-		lsc.pop();
-		return ret;
-	}
 
 	// ------------- LuaImport -------------
 	const char* LuaImport::HandleName(const HRes& sh) {
@@ -81,12 +80,13 @@ namespace rev {
 	lua_Integer LuaImport::NumRef(const HRes& sh) {
 		return static_cast<lua_Integer>(sh.use_count());
 	}
-	bool LuaImport::IsObjectBaseRegistered(LuaState& lsc) {
-		lsc.getGlobal(luaNS::ObjectBase);
+	bool LuaImport::_IsObjectRegistered(LuaState& lsc, const std::string& name) {
+		lsc.getGlobal(name);
 		const bool res = lsc.type(-1) == LuaType::Table;
 		lsc.pop();
 		return res;
 	}
+
 	int LuaImport::ReturnException(lua_State* ls, const char* func, const std::exception& e, const int nNeed) {
 		return luaL_error(ls, "Error occured at\nfunction: %s\ninput argument(s): %d\nneeded argument(s): %d\n"
 								"---------------- error message ----------------\n%s\n"
@@ -105,7 +105,7 @@ namespace rev {
 	}
 	// オブジェクト類を定義する為の基本関数定義など
 	void LuaImport::RegisterObjectBase(LuaState& lsc) {
-		if(IsObjectBaseRegistered(lsc))
+		if(_IsObjectRegistered(lsc, luaNS::ObjectBase))
 			return;
 
 		lsc.newTable();
@@ -158,14 +158,8 @@ namespace rev {
 
 		lsc.loadModule("base");
 	}
-	bool LuaImport::IsUpdaterObjectRegistered(LuaState& lsc) {
-		lsc.getGlobal(luaNS::FSMachine);
-		const bool res = lsc.type(-1) == LuaType::Table;
-		lsc.pop();
-		return res;
-	}
 	void LuaImport::RegisterUpdaterObject(LuaState& lsc) {
-		if(IsUpdaterObjectRegistered(lsc))
+		if(_IsObjectRegistered(lsc, luaNS::FSMachine))
 			return;
 		// LuaImport::RegisterClass<Object>(lsc);
 

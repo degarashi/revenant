@@ -395,17 +395,14 @@ namespace rev {
 		return os << "Range<" << LCV<T>() << '>';
 	}
 
-	bool InsertWeakTableSP(lua_State* ls, const void_sp& s);
-	bool InsertWeakTableWP(lua_State* ls, const void_wp& w);
+	bool PushSP(lua_State* ls, const std::string& name, const void_sp& sp);
+	bool PushWP(lua_State* ls, const std::string& name, const void_wp& wp);
 	// [LCV<shared_ptr<T>>]
 	template <class T>
 	struct LCV<std::shared_ptr<T>> {
 		using value_t = std::shared_ptr<T>;
 		int operator()(lua_State* ls, const value_t& t) const {
-			if(InsertWeakTableSP(ls, t)) {
-				// クラス特有のメンバ関数やらなんやら登録
-				// _loadResourceFuncs(ls, LuaName((T*)nullptr));
-			}
+			PushSP(ls, lua::LuaName((T*)nullptr), t);
 			return 1;
 		}
 		value_t operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
@@ -427,7 +424,8 @@ namespace rev {
 	struct LCV<std::weak_ptr<T>> {
 		using value_t = std::weak_ptr<T>;
 		int operator()(lua_State* ls, const value_t& t) const {
-			return LCV<void_wp>()(ls, t);
+			PushWP(ls, lua::LuaName((T*)nullptr), t);
+			return 1;
 		}
 		value_t operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
 			if(auto sp = LCV<void_sp>()(idx, ls, spm))
@@ -989,18 +987,6 @@ namespace rev {
 			return reinterpret_cast<T*>(LI_GetPtrBase()(ls, idx));
 		}
 	};
-	struct LI_GetHandleBase {
-		std::shared_ptr<void> operator()(lua_State* ls, int idx) const;
-	};
-	//! luaNS::objBase::Udataにハンドルが記録されている -> shared_ptr<void*>からポインタ変換
-	template <class T>
-	struct LI_GetHandle : LI_GetHandleBase {
-		std::shared_ptr<T> operator()(lua_State* ls, const int idx) const {
-			return std::static_pointer_cast<T>(
-						LI_GetHandleBase::operator()(ls, idx)
-					);
-		}
-	};
 
 	//! LuaへC++のクラスをインポート、管理する
 	class LuaImport {
@@ -1209,7 +1195,7 @@ namespace rev {
 				auto* ptr = static_cast<T*>(nullptr);
 				lua::LuaExport(lsc, ptr);
 			}
-			static bool IsObjectBaseRegistered(LuaState& lsc);
+			static bool _IsObjectRegistered(LuaState& lsc, const std::string& name);
 			static bool IsUpdaterObjectRegistered(LuaState& lsc);
 			//! C++クラス登録基盤を初期化
 			static void RegisterObjectBase(LuaState& lsc);
