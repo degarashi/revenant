@@ -1,6 +1,8 @@
 #include "luatest.hpp"
 #include "../lvalue.hpp"
 #include "lubee/rect.hpp"
+#include "../sdl_rw.hpp"
+#include "../dir.hpp"
 
 namespace std {
 	template <class T>
@@ -85,10 +87,29 @@ namespace rev {
 			void_sp, void_wp,
 			std::shared_ptr<int>, std::weak_ptr<int>
 		>;
+
 		template <class T>
-		using LCV_Test1 = LCV_Test<T>;
+		class LCV_Test1 : public LCV_Test<T> {
+			private:
+				static std::unique_ptr<RWMgr> s_rw;
+			public:
+				static void SetUpTestCase() {
+					s_rw = std::make_unique<RWMgr>("APP", "ORG");
+				}
+				static void TearDownTestCase() {
+					s_rw.reset();
+				}
+		};
+		template <class T>
+		std::unique_ptr<RWMgr> LCV_Test1<T>::s_rw;
+
 		TYPED_TEST_CASE(LCV_Test1, Types1);
-		TYPED_TEST(LCV_Test1, Push) { ASSERT_NO_FATAL_FAILURE(this->pushTest()); }
+		TYPED_TEST(LCV_Test1, Push) {
+			auto& lsp = this->_lsp;
+			lsp->addResourcePath(Dir::GetProgramDir() + u8"/resource/sys_script/?.lua");
+			lsp->loadModule("shared_ptr");
+			ASSERT_NO_FATAL_FAILURE(this->pushTest());
+		}
 		TYPED_TEST(LCV_Test1, Type) { ASSERT_NO_FATAL_FAILURE(this->typeTest()); }
 	}
 }
