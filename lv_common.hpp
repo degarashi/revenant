@@ -56,6 +56,8 @@ namespace rev {
 		bool operator == (LuaNil) const;
 		bool operator != (LuaNil) const;
 	};
+	std::ostream& operator << (std::ostream& os, LuaNil);
+
 	DefineEnumPair(LuaType,
 		((Nil)(LUA_TNIL))
 		((Number)(LUA_TNUMBER))

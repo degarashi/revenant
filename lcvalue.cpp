@@ -9,6 +9,9 @@ namespace std {
 namespace rev {
 	bool LuaNil::operator == (LuaNil) const { return true; }
 	bool LuaNil::operator != (LuaNil) const { return false; }
+	std::ostream& operator << (std::ostream& os, LuaNil) {
+		return os << "(Nil)";
+	}
 
 	// ---------------- LCTable ----------------
 	namespace {
