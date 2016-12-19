@@ -728,9 +728,9 @@ namespace rev {
 			LuaState(LuaState&& ls) = default;
 			// 借り物初期化 (破棄の処理はしない) from lua_State
 			LuaState(lua_State* ls, bool bCheckTop);
+			bool isLibraryLoaded();
+			void addResourcePath(const std::string& path);
 
-			//! リソースパスからファイル名指定でスクリプトを読み込み、標準ライブラリもロードする
-			static Lua_SP FromResource(const std::string& name);
 			//! 新しくLuaステートを作成(コルーチンではない)
 			static Lua_SP NewState(lua_Alloc f=nullptr, void* ud=nullptr);
 			const static char* cs_defaultmode;

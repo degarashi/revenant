@@ -128,36 +128,29 @@ namespace rev {
 		// [fromCpp][LuaState*][Nil]
 		setTable(-3);
 	}
-	Lua_SP LuaState::FromResource(const std::string& name) {
-		Lua_SP sp;
-		if(auto hlRW = mgr_path.getRW(luaNS::ScriptResourceEntry, PathBlock(name+"."+luaNS::ScriptExtension), Access::Read, nullptr)) {
-			static spi::Optional<std::string> addpath;
-			if(!addpath) {
-				std::string path;
-				const auto fnCollectPath = [&path](const std::string& ent){
-					mgr_path.enumPath(ent, PathBlock(), [&path](const Dir& d){
-						auto d2 = d;
-						d2 <<= luaNS::system::PathReplaceMark;
-						d2.setExtension(luaNS::ScriptExtension);
-						path += luaNS::system::PathSeparation;
-						path += d2.plain_utf8();
-						return true;
-					});
-				};
-				fnCollectPath(luaNS::ScriptResourceEntry);
-				fnCollectPath(luaNS::SystemScriptResourceEntry);
-				addpath = std::move(path);
-			}
-			sp = NewState();
-			sp->loadLibraries();
+	bool LuaState::isLibraryLoaded() {
+		getGlobal(luaNS::system::Package);
+		const bool res = type(-1) == LuaType::Table;
+		pop(1);
+		return res;
+	}
+	void LuaState::addResourcePath(const std::string& path) {
+		loadLibraries();
 
-			// パッケージのロードパスにアプリケーションリソースパスを追加
-			sp->getGlobal(luaNS::system::Package);
-			LValueS pkg(sp->getLS());
-			pkg[luaNS::system::Path] = std::string(LValueS(pkg[luaNS::system::Path]).toString()) + *addpath;
-			sp->load(hlRW);
-		}
-		return sp;
+		const CheckTop ct(getLS());
+		// パッケージのロードパスにアプリケーションリソースパスを追加
+		getGlobal(luaNS::system::Package);
+		getField(-1, luaNS::system::Path);
+		push(";");
+		push(path);
+		// [package][path-str][;][path]
+		concat(3);
+		// [package][path-str(new)]
+		push(luaNS::system::Path);
+		pushValue(-2);
+		// [package][path-str(new)][path][path-str(new)]
+		setTable(-4);
+		pop(2);
 	}
 	LuaState::LuaState(const Lua_SP& spLua) {
 		_bWrap = false;
@@ -255,7 +248,8 @@ namespace rev {
 		lua_pushthread(getLS());
 	}
 	void LuaState::loadLibraries() {
-		luaL_openlibs(getLS());
+		if(!isLibraryLoaded())
+			luaL_openlibs(getLS());
 	}
 
 	void LuaState::push(const LCValue& v) {
