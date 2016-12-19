@@ -316,23 +316,25 @@ namespace rev {
 			static bool CheckArgs(LuaState& lsc, const int ofs) {
 				return CheckArgs(lsc, ofs, std::make_index_sequence<tuple_size>());
 			}
-			static bool CheckArgsNRet(const LCTable_SP&, lubee::SZConst<tuple_size>) {
+			bool checkArgsNRet(const LCTable_SP&, lubee::SZConst<tuple_size>) {
 				return true;
 			}
 			template <std::size_t I>
-			static bool CheckArgsNRet(const LCTable_SP& tbl, lubee::SZConst<I>) {
+			bool checkArgsNRet(const LCTable_SP& tbl, lubee::SZConst<I>) {
 				auto itr = tbl->find(lua_Integer(I+1));
 				if(itr == tbl->end())
 					return false;
-				if(itr->second.type() != LCValue(te_t<I>()).type())
+				auto c0 = itr->second.type();
+				auto c1 = LCValue(GenValue_t<te_t<I>>()(*this)).type();
+				if(c0 != c1)
 					return false;
-				return CheckArgsNRet(tbl, lubee::SZConst<I+1>());
+				return checkArgsNRet(tbl, lubee::SZConst<I+1>());
 			}
-			static bool CheckArgsNRet(const LCValue& lc) {
+			bool checkArgsNRet(const LCValue& lc) {
 				if(lc.type() != LuaType::Table)
 					return false;
 				auto tbl = boost::get<LCTable_SP>(lc);
-				return CheckArgsNRet(tbl, lubee::SZConst<0>());
+				return checkArgsNRet(tbl, lubee::SZConst<0>());
 			}
 		};
 		template <class T>
@@ -406,10 +408,10 @@ namespace rev {
 			);
 			// callNRet()
 			ASSERT_NO_FATAL_FAILURE(
-				this->_check([](auto& lvs, auto&&... args){
+				this->_check([this](auto& lvs, auto&&... args){
 					const CheckTop ct(lvs.getLS());
 					const auto ret = lvs.callNRet(std::forward<decltype(args)>(args)...);
-					ASSERT_TRUE(TestFixture::CheckArgsNRet(ret));
+					ASSERT_TRUE(this->checkArgsNRet(ret));
 				}, &CFunc<src_t>);
 			);
 			// operator()(ret, args...)
@@ -435,7 +437,7 @@ namespace rev {
 				this->_check([=](auto& lvs, auto&&... args){
 					const CheckTop ct(lvs.getLS());
 					const auto ret = lvs.callMethodNRet(methodName, std::forward<decltype(args)>(args)...);
-					ASSERT_TRUE(TestFixture::CheckArgsNRet(ret));
+					ASSERT_TRUE(this->checkArgsNRet(ret));
 				}, tbl);
 			);
 		}
