@@ -1139,6 +1139,7 @@ namespace rev {
 			/*! lscにFuncTableを積んだ状態で呼ぶ */
 			template <class GET, class T, class RT, class FT, class... Ts>
 			static void RegisterMember(LuaState& lsc, const char* name, RT (FT::*func)(Ts...)) {
+				const CheckTop ct(lsc.getLS());
 				lsc.push(name);
 				SetMethod(lsc.getLS(), func);
 				lsc.pushCClosure(&CallMethod<GET,T,RT,FT,Ts...>, 1);
@@ -1157,6 +1158,7 @@ namespace rev {
 			/*! lscにReadTable, WriteTableを積んだ状態で呼ぶ */
 			template <class GET, class T, class V, class VT>
 			static void RegisterMember(LuaState& lsc, const char* name, V VT::*member) {
+				const CheckTop ct(lsc.getLS());
 				// ReadValue関数の登録
 				lsc.push(name);
 				SetMember(lsc.getLS(), member);
@@ -1172,14 +1174,13 @@ namespace rev {
 				_PushIndent(s_importLog) << LCV<V>() << ' ' << name << std::endl;
 			}
 			//! static関数のエクスポート
-			/*! static なメンバ関数はCFunctionとして登録 */
+			/*! lscにFuncTableを積んだ状態で呼ぶ */
 			template <class GET, class T, class RT, class... Ts>
 			static void RegisterMember(LuaState& lsc, const char* name, RT (*func)(Ts...)) {
-				lsc.prepareTableGlobal(lua::LuaName((T*)nullptr));
+				const CheckTop ct(lsc.getLS());
 				lsc.push(name);
 				PushFunction(lsc, func);
 				lsc.rawSet(-3);
-				lsc.pop(1);
 
 				// ---- ログ出力 ----
 				_PushIndent(s_importLog) << "static " << LCV<RT>() <<  ' ' << name << '(';
@@ -1194,6 +1195,7 @@ namespace rev {
 			//! グローバル関数の登録
 			template <class RT, class... Ts>
 			static void RegisterFunction(LuaState& lsc, const char* name, RT (*func)(Ts...)) {
+				const CheckTop ct(lsc.getLS());
 				PushFunction(lsc, func);
 				lsc.setGlobal(name);
 
@@ -1206,6 +1208,7 @@ namespace rev {
 			//! C++クラスの登録(登録名はクラスから取得)
 			template <class T>
 			static void RegisterClass(LuaState& lsc) {
+				const CheckTop ct(lsc.getLS());
 				RegisterObjectBase(lsc);
 				lua::LuaExport(lsc, (T*)nullptr);
 			}
