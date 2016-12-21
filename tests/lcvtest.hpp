@@ -90,6 +90,5 @@ namespace rev {
 		};
 		template <class T>
 		std::unique_ptr<RWMgr> LCV_TestRW<T>::s_rw;
-
 	}
 }
