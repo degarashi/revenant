@@ -1,3 +1,6 @@
+local setmetatable = setmetatable
+local assert = assert
+
 -- Luaとstd::shared_ptr, std::weak_ptrをやり取りするための関数群
 Void = {
 	handleName = "void"
