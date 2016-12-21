@@ -88,7 +88,7 @@ DEF_LUAIMPLEMENT_DERIVED(frea::AQuat, frea::Quat)
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	frea::ExpQuat, EQuat,
 	(x)(y)(z),
-	(asQuat)(len_sq)(length)(luaAsVec3)(getAngAxis)
+	(asQuat)(len_sq)(length)(getAngAxis)
 	(luaEqual)(luaAddQ)(luaAddF)(luaSubQ)(luaSubF)(luaMulQ)(luaMulF)(luaDivQ)(luaDivF)(luaAsVec3)(luaToString)
 )
 DEF_LUAIMPLEMENT_DERIVED(frea::AExpQuat, frea::ExpQuat)
