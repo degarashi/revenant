@@ -1,6 +1,7 @@
 #pragma once
 #include "luatest.hpp"
 #include "../sdl_rw.hpp"
+#include "../dir.hpp"
 
 namespace std {
 	template <class T>
@@ -81,8 +82,14 @@ namespace rev {
 				static void TearDownTestCase() {
 					s_rw.reset();
 				}
+				void loadSharedPtrModule() {
+					auto& lsp = this->_lsp;
+					lsp->addResourcePath(Dir::GetProgramDir() + u8"/resource/sys_script/?.lua");
+					lsp->loadModule("shared_ptr");
+				}
 		};
 		template <class T>
 		std::unique_ptr<RWMgr> LCV_TestRW<T>::s_rw;
+
 	}
 }

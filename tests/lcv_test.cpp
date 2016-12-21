@@ -1,6 +1,5 @@
 #include "lcvtest.hpp"
 #include "../lvalue.hpp"
-#include "../dir.hpp"
 
 namespace rev {
 	namespace test {
@@ -24,11 +23,12 @@ namespace rev {
 		using LCV_Test1 = LCV_TestRW<T>;
 		TYPED_TEST_CASE(LCV_Test1, Types1);
 		TYPED_TEST(LCV_Test1, Push) {
-			auto& lsp = this->_lsp;
-			lsp->addResourcePath(Dir::GetProgramDir() + u8"/resource/sys_script/?.lua");
-			lsp->loadModule("shared_ptr");
+			this->loadSharedPtrModule();
 			ASSERT_NO_FATAL_FAILURE(this->pushTest());
 		}
-		TYPED_TEST(LCV_Test1, Type) { ASSERT_NO_FATAL_FAILURE(this->typeTest()); }
+		TYPED_TEST(LCV_Test1, Type) {
+			this->loadSharedPtrModule();
+			ASSERT_NO_FATAL_FAILURE(this->typeTest());
+		}
 	}
 }
