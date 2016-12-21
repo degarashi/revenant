@@ -79,7 +79,7 @@ namespace rev {
 	namespace {
 		auto GetAngleType(lua_State* ls, const int idx) {
 			LuaState lsc(ls, true);
-			lsc.getField(idx, luaNS::objBase::ClassName);
+			lsc.getField(idx, luaNS::objBase::Name);
 			auto cname = lsc.toString(-1);
 			lsc.pop();
 			return cname;
@@ -524,9 +524,6 @@ namespace rev {
 		auto LoadVoidWP(const int idx, lua_State* ls) {
 			return LoadSmartPtr<void_wp>(idx, ls, luaNS::GetWP);
 		}
-		auto LoadVoidSP(const int idx, lua_State* ls) {
-			return LoadSmartPtr<void_sp>(idx, ls, luaNS::GetSP);
-		}
 		template <class T>
 		auto GetPointer(const std::shared_ptr<T>& p) {
 			return p.get();
@@ -553,6 +550,9 @@ namespace rev {
 			}
 			return false;
 		}
+	}
+	void_sp LoadVoidSP(const int idx, lua_State* ls) {
+		return LoadSmartPtr<void_sp>(idx, ls, luaNS::GetSP);
 	}
 	bool PushSP(lua_State* ls, const std::string& name, const void_sp& sp) {
 		if(!sp) {

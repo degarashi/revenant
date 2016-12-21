@@ -20,14 +20,12 @@ namespace rev {
 								SystemScriptResourceEntry("system_script"),
 								ScriptExtension("lua");
 		const std::string ToString("tostring");
-		const std::string MakeShared("MakeShared"),
-						MakeWeak("MakeWeak"),
-						SetState("SetState"),
+		const std::string SetState("SetState"),
 						SwitchState("SwitchState"),
 						Null("Null"),
-						ObjectBase("ObjectBase"),
+						Object("Object"),
 						ConstructPtr("ConstructPtr"),
-						DerivedHandle("DerivedHandle"),
+						DefineObject("DefineObject"),
 						MakeFSMachine("MakeFSMachine"),
 						FSMachine("FSMachine"),
 						MakePreENV("MakePreENV"),
@@ -39,21 +37,19 @@ namespace rev {
 						OnEffectReset("OnEffectReset"),
 						OnResume("OnResume"),
 						OnExit("OnExit"),
-						System("System");
+						System("System"),
+						Global("Global");
 		namespace objBase {
 			const std::string ValueR("_valueR"),
 								ValueW("_valueW"),
 								Func("_func"),
-								UdataMT("_udata_mt"),
 								MT("_mt"),
-								ClassName("classname"),
-								IsPointer("is_pointer"),
-								Pointer("pointer"),
-								Udata("udata"),
-								_New("_New");
+								Name("_name"),
+								Pointer("_pointer"),
+								Udata("_udata"),
+								New("_new");
 			namespace valueR {
-				const std::string HandleName("handleName"),
-									NumRef("numRef");
+				const std::string NumRef("numRef");
 			}
 		}
 		namespace system {
@@ -63,20 +59,7 @@ namespace rev {
 								Path("path");
 		}
 	}
-
-	// ------------- LI_GetPtrBase -------------
-	void* LI_GetPtrBase::operator()(lua_State* ls, const int idx) const {
-		LuaState lsc(ls, true);
-		lsc.getField(idx, luaNS::objBase::Pointer);
-		void* ret = LCV<void*>()(-1, ls, nullptr);
-		lsc.pop();
-		return ret;
-	}
-
 	// ------------- LuaImport -------------
-	const char* LuaImport::HandleName(const HRes& sh) {
-		return sh->getResourceName();
-	}
 	lua_Integer LuaImport::NumRef(const HRes& sh) {
 		return static_cast<lua_Integer>(sh.use_count());
 	}
@@ -87,76 +70,74 @@ namespace rev {
 		return res;
 	}
 
-	int LuaImport::ReturnException(lua_State* ls, const char* func, const std::exception& e, const int nNeed) {
+	int LuaImport::_ReturnException(lua_State* ls, const char* func, const std::exception& e, const int nNeed) {
 		return luaL_error(ls, "Error occured at\nfunction: %s\ninput argument(s): %d\nneeded argument(s): %d\n"
 								"---------------- error message ----------------\n%s\n"
 								"-----------------------------------------------",
 								func, lua_gettop(ls), nNeed, e.what());
 	}
 
-	namespace {
-		int MakeShared(lua_State*) {
-			return 0;
-		}
-		int MakeWeak(lua_State*) {
-			return 0;
-		}
-		int EmptyFunction(lua_State*) { return 0; }
-	}
 	// オブジェクト類を定義する為の基本関数定義など
 	void LuaImport::RegisterObjectBase(LuaState& lsc) {
-		if(_IsObjectRegistered(lsc, luaNS::ObjectBase))
+		if(_IsObjectRegistered(lsc, luaNS::Object))
 			return;
 
 		lsc.newTable();
+		// {_name = "Object"}
+		{
+			lsc.push(luaNS::objBase::Name);
+			lsc.push(luaNS::Object);
+			lsc.setTable(-3);
+		}
 		// ValueRの初期化
-		// ValueR = { HandleName=(HandleName), HandleId=(HandleId), NumRef=(NumRef) }
-		lsc.push(luaNS::objBase::ValueR);
-		lsc.newTable();
+		// ValueR = { NumRef=(NumRef) }
+		{
+			lsc.push(luaNS::objBase::ValueR);
+			lsc.newTable();
 
-		// HandleName
-		lsc.push(luaNS::objBase::valueR::HandleName);
-		LuaImport::PushFunction(lsc, &HandleName);
-		lsc.setTable(-3);
-		// NumRef
-		lsc.push(luaNS::objBase::valueR::NumRef);
-		LuaImport::PushFunction(lsc, &NumRef);
-		lsc.setTable(-3);
+			// NumRef
+			lsc.push(luaNS::objBase::valueR::NumRef);
+			LuaImport::PushFunction(lsc, &NumRef);
+			lsc.setTable(-3);
 
-		lsc.setTable(-3);
+			lsc.setTable(-3);
+		}
 		// ValueWの初期化
 		// ValueW = {}
-		lsc.push(luaNS::objBase::ValueW);
-		lsc.newTable();
-		lsc.setTable(-3);
+		{
+			lsc.push(luaNS::objBase::ValueW);
+			lsc.newTable();
+			lsc.setTable(-3);
+		}
 		// Funcの初期化
 		// Func = {}
-		lsc.push(luaNS::objBase::Func);
-		lsc.newTable();
-		lsc.setTable(-3);
+		{
+			lsc.push(luaNS::objBase::Func);
+			lsc.newTable();
+			lsc.setTable(-3);
+		}
 		// RecvMsgCpp = func(RecvMsgCpp)
-		lsc.push(luaNS::RecvMsgCpp);
-		lsc.pushCClosure(LuaImport::RecvMsgCpp, 0);
-		lsc.setTable(-3);
+		{
+			lsc.push(luaNS::RecvMsgCpp);
+			lsc.pushCClosure(LuaImport::RecvMsgCpp, 0);
+			lsc.setTable(-3);
+		}
 		// RecvMsg = func(RecvMsgCpp)
-		lsc.push(luaNS::RecvMsg);
-		lsc.pushCClosure(LuaImport::RecvMsgCpp, 0);
-		lsc.setTable(-3);
-		// Ctor = func(Ctor)
-		lsc.push(luaNS::Ctor);
-		lsc.pushCClosure(EmptyFunction, 0);
-		lsc.setTable(-3);
-		// global["ObjectBase"] = {...}
-		lsc.setGlobal(luaNS::ObjectBase);
+		{
+			lsc.push(luaNS::RecvMsg);
+			lsc.pushCClosure(LuaImport::RecvMsgCpp, 0);
+			lsc.setTable(-3);
+		}
+		{
+			// Ctor = func(Ctor)
+			lsc.push(luaNS::Ctor);
+			lsc.push("InvalidFunc");
+			lsc.setTable(-3);
+		}
+		// global["Object"] = {...}
+		lsc.setGlobal(luaNS::Object);
 
-		// global["MakeShared"] = (MakeShared)
-		lsc.pushCClosure(MakeShared, 0);
-		lsc.setGlobal(luaNS::MakeShared);
-		// global["MakeWeak"] = (MakeWeak)
-		lsc.pushCClosure(MakeWeak, 0);
-		lsc.setGlobal(luaNS::MakeWeak);
-
-		lsc.loadModule("base");
+		lsc.loadModule("object");
 	}
 	void LuaImport::RegisterUpdaterObject(LuaState& lsc) {
 		if(_IsObjectRegistered(lsc, luaNS::FSMachine))
@@ -196,12 +177,13 @@ namespace rev {
 		lsc.pop(1);
 		return;
 	}
-	void LuaImport::MakePointerInstance(LuaState& lsc, const std::string& luaName, void* ptr) {
+	void LuaImport::MakeInstance(LuaState& lsc, const char* luaName, void* ptr) {
 		lsc.getGlobal(luaName);
 		lsc.getField(-1, luaNS::ConstructPtr);
 		lsc.push(ptr);
+		// [ObjectTable][ConstructPtr][UData]
 		lsc.call(1,1);
-		// [ObjDefine][Instance]
+		// [ObjectTable][Instance]
 		lsc.remove(-2);
 	}
 	int LuaImport::RecvMsgCpp(lua_State* ls) {

@@ -2,9 +2,8 @@
 #include "lubee/meta/check_macro.hpp"
 #include "lubee/meta/enable_if.hpp"
 #include "lubee/error.hpp"
-#include <boost/preprocessor.hpp>
 #include "lcv.hpp"
-#include <lua.hpp>
+#include <boost/preprocessor.hpp>
 
 namespace rev {
 	DEF_HASMETHOD(LuaExport)
@@ -17,142 +16,145 @@ namespace rev {
 	template <class T, ENABLE_IF(!HasMethod_LuaExport_t<T>{})>
 	void CallLuaExport(LuaState&) {}
 }
-#define DEF_LUAIMPLEMENT_DERIVED(clazz, der) \
+#define DEF_LUAIMPLEMENT_DERIVED(clazz, base) \
 	namespace rev { \
 		namespace lua { \
 			template <> \
-			const char* LuaName(clazz*) { return LuaName((der*)nullptr); } \
+			const char* LuaName(clazz*) { return LuaName((base*)nullptr); } \
 			template <> \
-			void LuaExport(LuaState& lsc, clazz*) { LuaExport(lsc, (der*)nullptr); } \
+			void LuaExport(LuaState& lsc, clazz*) { LuaExport(lsc, (base*)nullptr); } \
 		} \
 	}
 
 namespace rev {
-	template <class T, class... Ts>
+	template <class Dummy_t, class C, class... Ts>
 	int MakeObject(lua_State* ls) {
-		T ret = FuncCall<Ts...>::callCB(
-			[](auto&&... args){
-				return T{std::forward<decltype(args)>(args)...};
+		auto obj = FuncCall<Ts...>::callCB(
+			[](auto&&... args) {
+				return std::make_shared<C>(std::forward<decltype(args)>(args)...);
 			},
 			ls,
 			static_cast<int>(-sizeof...(Ts))
 		);
-		LCV<T>()(ls, std::move(ret));
+		LCV<decltype(obj)>()(ls, obj);
 		return 1;
 	}
 	//! (LuaのClassT::New()から呼ばれる)オブジェクトのリソースハンドルを作成
 	template <class Mgr_t, class TF, class... Ts>
 	int MakeHandle(lua_State* ls) {
-		auto hObj = FuncCall<Ts...>::callCB(
+		auto obj = FuncCall<Ts...>::callCB(
 			[](auto&&... args) {
 				return Mgr_t::ref().template emplace<TF>(std::forward<decltype(args)>(args)...);
 			},
 			ls,
 			static_cast<int>(-sizeof...(Ts))
 		);
-		LCV<HRes>()(ls, hObj);
+		LCV<decltype(obj)>()(ls, obj);
 		return 1;
 	}
 	//! デフォルトコンストラクタを持たないオブジェクト用
 	template <class... Ts>
-	int MakeHandle_Fake(lua_State* /*ls*/) {
+	int MakeFake(lua_State* /*ls*/) {
 		AssertF("no constructor defined.(can't construct this type of object)");
 		return 0;
 	}
 }
 
-#define DEF_REGMEMBER(n, clazz, elem, getter)	::rev::LuaImport::RegisterMember<getter,clazz>(lsc, BOOST_PP_STRINGIZE(elem), &clazz::elem);
-#define DEF_REGMEMBER_HDL(n, data, elem)	DEF_REGMEMBER(n, BOOST_PP_SEQ_ELEM(1,data), elem, ::rev::LI_GetHandle<BOOST_PP_SEQ_ELEM(0,data)>)
-#define DEF_REGMEMBER_PTR(n, clazz, elem)	DEF_REGMEMBER(n, clazz, elem, ::rev::LI_GetPtr<clazz>)
+namespace rev {
+	namespace lua {
+		struct Dummy {};
+		template <class C, class Getter>
+		void LuaRegisterMember(LuaState&, const std::tuple<>&) {}
+		template <class C, class Getter, class Tag, class... Remain>
+		void LuaRegisterMember(LuaState& lsc, const std::tuple<Tag, Remain...>&) {
+			LuaImport::RegisterMember<Getter, C>(lsc, Tag::name, Tag::pointer);
+			LuaRegisterMember<C, Getter>(lsc, std::tuple<Remain...>());
+		}
 
-#define DEF_LUAIMPLEMENT_HDL_IMPL(mgr, clazz, class_name, base, seq_member, seq_method, seq_ctor, makeobj) \
-	namespace rev { \
-		namespace lua { \
-			template <> \
-			const char* LuaName(clazz*) { return #class_name; } \
-			template <> \
-			void LuaExport(LuaState& lsc, clazz*) { \
-				LuaImport::BeginImportBlock(#class_name); \
-				lsc.getGlobal(::rev::luaNS::DerivedHandle); \
-				lsc.getGlobal(base); \
-				lsc.push(#class_name); \
-				lsc.prepareTableGlobal(#class_name); \
-				lsc.call(3,1); \
-				lsc.push(::rev::luaNS::objBase::_New); \
-				lsc.push(makeobj<BOOST_PP_SEQ_ENUM((mgr)(clazz)seq_ctor)>); \
-				lsc.rawSet(-3); \
-				lsc.setField(-1, luaNS::objBase::IsPointer, false); \
-				lsc.setField(-1, luaNS::objBase::ClassName, #class_name); \
-				\
-				LuaImport::BeginImportBlock("Values"); \
-				lsc.rawGetField(-1, ::rev::luaNS::objBase::ValueR); \
-				lsc.rawGetField(-2, ::rev::luaNS::objBase::ValueW); \
-				BOOST_PP_SEQ_FOR_EACH(DEF_REGMEMBER_HDL, (typename mgr::data_type)(clazz), seq_member) \
-				lsc.pop(2); \
-				LuaImport::EndImportBlock(); \
-				\
-				LuaImport::BeginImportBlock("Functions"); \
-				lsc.rawGetField(-1, ::rev::luaNS::objBase::Func); \
-				BOOST_PP_SEQ_FOR_EACH(DEF_REGMEMBER_HDL, (typename mgr::data_type)(clazz), seq_method) \
-				lsc.pop(1); \
-				LuaImport::EndImportBlock(); \
-				\
-				CallLuaExport<clazz>(lsc); \
-				lsc.pop(1); \
-				LuaImport::EndImportBlock(); \
-			} \
-		} \
+		template <
+			class C, class Getter,
+			class...Member, class... Method, class Maker
+		>
+		void LuaExportImpl(LuaState& lsc,
+				const char* class_name,
+				const char* base_name,
+				const std::tuple<Member...>& member,
+				const std::tuple<Method...>& method,
+				Maker* maker
+		) {
+			LuaImport::BeginImportBlock(class_name);
+			lsc.getGlobal(::rev::luaNS::DefineObject);
+			lsc.getGlobal(base_name);
+			lsc.push(class_name);
+			lsc.newTable();
+			lsc.push(false);
+			lsc.call(4,1);
+
+			lsc.push(::rev::luaNS::objBase::New);
+			lsc.push(maker);
+			lsc.rawSet(-3);
+
+			lsc.setField(-1, luaNS::objBase::Name, class_name);
+
+			LuaImport::BeginImportBlock("Values");
+			lsc.rawGetField(-1, ::rev::luaNS::objBase::ValueR);
+			lsc.rawGetField(-2, ::rev::luaNS::objBase::ValueW);
+			LuaRegisterMember<C, Getter>(lsc, member);
+			lsc.pop(2);
+			LuaImport::EndImportBlock();
+
+			LuaImport::BeginImportBlock("Functions");
+			lsc.rawGetField(-1, ::rev::luaNS::objBase::Func);
+			LuaRegisterMember<C, Getter>(lsc, method);
+			lsc.pop(1);
+			LuaImport::EndImportBlock();
+
+			CallLuaExport<C>(lsc);
+			lsc.setGlobal(class_name);
+
+			LuaImport::EndImportBlock();
+		}
 	}
+}
 
-#define DEF_LUAIMPLEMENT_HDL(mgr, clazz, class_name, base, seq_member, seq_method, seq_ctor) \
-	DEF_LUAIMPLEMENT_HDL_IMPL(mgr, clazz, class_name, base, seq_member, seq_method, seq_ctor, ::rev::MakeHandle)
-#define DEF_LUAIMPLEMENT_HDL_NOBASE(mgr, clazz, class_name, seq_member, seq_method, seq_ctor) \
-	DEF_LUAIMPLEMENT_HDL(mgr, clazz, class_name, ::rev::luaNS::ObjectBase, seq_member, seq_method, seq_ctor)
-#define DEF_LUAIMPLEMENT_HDL_NOCTOR(mgr, clazz, class_name, base, seq_member, seq_method) \
-	DEF_LUAIMPLEMENT_HDL_IMPL(mgr, clazz, class_name, base, seq_member, seq_method, NOTHING, ::rev::MakeHandle_Fake)
-#define DEF_LUAIMPLEMENT_HDL_NOBASE_NOCTOR(mgr, clazz, class_name, seq_member, seq_method) \
-	DEF_LUAIMPLEMENT_HDL_IMPL(mgr, clazz, class_name, ::rev::luaNS::ObjectBase, seq_member, seq_method, NOTHING, ::rev::MakeHandle_Fake)
+// param = (class_raw)(clazz)
+#define DEF_MEMBER_NAME(n, param, elem)	\
+	struct BOOST_PP_CAT(BOOST_PP_CAT(BOOST_PP_SEQ_ELEM(0, param), elem), _tag) { \
+		static const char* name; \
+		static decltype(&BOOST_PP_SEQ_ELEM(1, param)::elem) pointer; \
+	}; \
+	const char* BOOST_PP_CAT(BOOST_PP_CAT(BOOST_PP_SEQ_ELEM(0, param), elem), _tag)::name = #elem; \
+	decltype(BOOST_PP_CAT(BOOST_PP_CAT(BOOST_PP_SEQ_ELEM(0, param), elem), _tag)::pointer) \
+		BOOST_PP_CAT(BOOST_PP_CAT(BOOST_PP_SEQ_ELEM(0, param), elem), _tag)::pointer = \
+		&BOOST_PP_SEQ_ELEM(1, param)::elem;
 
-#define DEF_LUAIMPLEMENT_PTR_NOCTOR(clazz, class_name, seq_member, seq_method) \
-	DEF_LUAIMPLEMENT_PTR_BASE(clazz, class_name, seq_member, seq_method, MakeHandle_Fake, NOTHING)
-#define DEF_LUAIMPLEMENT_PTR(clazz, class_name, seq_member, seq_method, seq_ctor) \
-	DEF_LUAIMPLEMENT_PTR_BASE(clazz, class_name, seq_member, seq_method, MakeObject, seq_ctor)
-#define DEF_LUAIMPLEMENT_PTR_BASE(clazz, class_name, seq_member, seq_method, makeobj, seq_ctor) \
-	namespace rev { \
-		namespace lua { \
-			template <> \
-			const char* LuaName(clazz*) { return #class_name; } \
-			template <> \
-			void LuaExport(LuaState& lsc, clazz*) { \
-				LuaImport::BeginImportBlock(#class_name); \
-				lsc.getGlobal(::rev::luaNS::DerivedHandle); \
-				lsc.getGlobal(::rev::luaNS::ObjectBase); \
-				lsc.push(#class_name); \
-				lsc.prepareTableGlobal(#class_name); \
-				lsc.call(3,1); \
-				\
-				lsc.push(::rev::luaNS::objBase::_New); \
-				lsc.push(makeobj<BOOST_PP_SEQ_ENUM((clazz)seq_ctor)>); \
-				lsc.rawSet(-3); \
-				lsc.setField(-1, luaNS::objBase::IsPointer, true); \
-				lsc.setField(-1, luaNS::objBase::ClassName, #class_name); \
-				\
-				LuaImport::BeginImportBlock("Values"); \
-				lsc.rawGetField(-1, ::rev::luaNS::objBase::ValueR); \
-				lsc.rawGetField(-2, ::rev::luaNS::objBase::ValueW); \
-				BOOST_PP_SEQ_FOR_EACH(DEF_REGMEMBER_PTR, clazz, seq_member) \
-				lsc.pop(2); \
-				LuaImport::EndImportBlock(); \
-				\
-				LuaImport::BeginImportBlock("Functions"); \
-				lsc.rawGetField(-1, ::rev::luaNS::objBase::Func); \
-				BOOST_PP_SEQ_FOR_EACH(DEF_REGMEMBER_PTR, clazz, seq_method) \
-				lsc.pop(1); \
-				LuaImport::EndImportBlock(); \
-				\
-				CallLuaExport<clazz>(lsc); \
-				lsc.pop(1); \
-				LuaImport::EndImportBlock(); \
-			} \
+#define SEQUENCE(S) BOOST_PP_IIF(BOOST_PP_EQUAL(0, BOOST_PP_SEQ_SIZE(S)), (), S)
+#define ENUM_NAME(n, class_raw, elem) (BOOST_PP_CAT(BOOST_PP_CAT(class_raw, elem), _tag))
+#define DEF_LUAIMPLEMENT_IMPL(mgr, clazz, class_raw, base, seq_member, seq_method, seq_ctor, makeobj) \
+namespace rev { \
+	namespace lua { \
+		template <> \
+		const char* LuaName(clazz*) { return #class_raw; } \
+		BOOST_PP_SEQ_FOR_EACH(DEF_MEMBER_NAME, (class_raw)(clazz), seq_member) \
+		BOOST_PP_SEQ_FOR_EACH(DEF_MEMBER_NAME, (class_raw)(clazz), seq_method) \
+		template <> \
+		void LuaExport(LuaState& lsc, clazz*) { \
+			LuaExportImpl<clazz, ::rev::LI_GetPtr<clazz>>( \
+				lsc, \
+				#class_raw, \
+				#base, \
+				std::tuple<BOOST_PP_SEQ_ENUM(SEQUENCE(BOOST_PP_SEQ_FOR_EACH(ENUM_NAME, class_raw, seq_member)))>(), \
+				std::tuple<BOOST_PP_SEQ_ENUM(SEQUENCE(BOOST_PP_SEQ_FOR_EACH(ENUM_NAME, class_raw, seq_method)))>(), \
+				&makeobj<BOOST_PP_SEQ_ENUM((mgr)(clazz) seq_ctor)> \
+			); \
 		} \
-	}
+	} \
+}
+
+#define LUAIMPLEMENT_BASE Object
+#define DEF_LUAIMPLEMENT_SPTR(mgr, clazz, class_raw, base, seq_member, seq_method, seq_ctor) \
+	DEF_LUAIMPLEMENT_IMPL(mgr, clazz, class_raw, base, seq_member, seq_method, seq_ctor, ::rev::MakeHandle)
+#define DEF_LUAIMPLEMENT_PTR(clazz, class_raw, base, seq_member, seq_method, seq_ctor) \
+	DEF_LUAIMPLEMENT_IMPL(::rev::lua::Dummy, clazz, class_raw, base, seq_member, seq_method, seq_ctor, ::rev::MakeObject)
+#define DEF_LUAIMPLEMENT_PTR_NOCTOR(clazz, class_raw, base, seq_member, seq_method) \
+	DEF_LUAIMPLEMENT_IMPL(::rev::lua::Dummy, clazz, class_raw, base, seq_member, seq_method, NOTHING, ::rev::MakeFake)

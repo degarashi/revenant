@@ -4,6 +4,16 @@
 namespace rev {
 	class LuaState;
 	namespace lua {
+		template <
+			class Mgr, class C, class Getter,
+			class...Member, class... Method, class Maker
+		>
+		void LuaExportImpl(
+			LuaState& lsc,
+			const std::tuple<Member...>& member,
+			const std::tuple<Method...>& method,
+			Maker
+		);
 		template <class T>
 		void LuaExport(LuaState& lsc, T*);
 		template <class T>
@@ -13,6 +23,7 @@ namespace rev {
 	}
 }
 
+#define NOTHING
 #define DEF_LUAIMPORT(clazz) \
 	namespace rev { \
 		namespace lua { \

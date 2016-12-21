@@ -1,11 +1,9 @@
 #include "luaimpl.hpp"
-#ifndef NOTHING
-	#define NOTHING
-#endif
-
 #include "frea/vector.hpp"
+
 DEF_LUAIMPLEMENT_PTR(
 	frea::Vec2, Vec2,
+	LUAIMPLEMENT_BASE,
 	(x)(y),
 	(Ccw)(Cw)
 	(dot)(average)(distance)(dist_sq)(getMin)(selectMin)(getMax)(selectMax)(normalize)(normalization)
@@ -16,6 +14,7 @@ DEF_LUAIMPLEMENT_PTR(
 )
 DEF_LUAIMPLEMENT_PTR(
 	frea::Vec3, Vec3,
+	LUAIMPLEMENT_BASE,
 	(x)(y)(z),
 	(cross)(verticalVector)
 	(dot)(average)(distance)(dist_sq)(getMin)(selectMin)(getMax)(selectMax)(normalize)(normalization)
@@ -26,6 +25,7 @@ DEF_LUAIMPLEMENT_PTR(
 )
 DEF_LUAIMPLEMENT_PTR(
 	frea::Vec4, Vec4,
+	LUAIMPLEMENT_BASE,
 	(x)(y)(z)(w),
 	(asVec3Coord)
 	(dot)(average)(distance)(dist_sq)(getMin)(selectMin)(getMax)(selectMax)(normalize)(normalization)
@@ -40,6 +40,7 @@ DEF_LUAIMPLEMENT_DERIVED(frea::AVec4, frea::Vec4)
 #include "frea/matrix.hpp"
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	frea::Mat2, Mat2,
+	LUAIMPLEMENT_BASE,
 	NOTHING,
 	(Rotation)
 	(Identity)(Translation)(Scaling)
@@ -49,6 +50,7 @@ DEF_LUAIMPLEMENT_PTR_NOCTOR(
 )
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	frea::Mat3, Mat3,
+	LUAIMPLEMENT_BASE,
 	NOTHING,
 	(RotationX)(RotationY)(RotationZ)(RotationAxis)
 	(Identity)(Translation)(Scaling)
@@ -58,6 +60,7 @@ DEF_LUAIMPLEMENT_PTR_NOCTOR(
 )
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	frea::Mat4, Mat4,
+	LUAIMPLEMENT_BASE,
 	NOTHING,
 	(LookAt)(LookDir)(PerspectiveFov)
 	(Identity)(Translation)(Scaling)
@@ -73,6 +76,7 @@ DEF_LUAIMPLEMENT_DERIVED(frea::AMat4, frea::Mat4)
 #include "frea/quaternion.hpp"
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	frea::Quat, Quat,
+	LUAIMPLEMENT_BASE,
 	(x)(y)(z)(w),
 	(Identity)(FromAxisF)(FromMat)(FromAxis)(FromMatAxis)(RotationYPR)(RotationX)(RotationY)(RotationZ)(LookAt)(SetLookAt)
 	(rotateX)(rotateY)(rotateZ)(rotate)(identity)(normalize)(conjugate)(invert)(scale)
@@ -87,6 +91,7 @@ DEF_LUAIMPLEMENT_DERIVED(frea::AQuat, frea::Quat)
 
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	frea::ExpQuat, EQuat,
+	LUAIMPLEMENT_BASE,
 	(x)(y)(z),
 	(asQuat)(len_sq)(length)(getAngAxis)
 	(luaEqual)(luaAddQ)(luaAddF)(luaSubQ)(luaSubF)(luaMulQ)(luaMulF)(luaDivQ)(luaDivF)(luaAsVec3)(luaToString)
@@ -96,6 +101,7 @@ DEF_LUAIMPLEMENT_DERIVED(frea::AExpQuat, frea::ExpQuat)
 #include "frea/angle.hpp"
 DEF_LUAIMPLEMENT_PTR(
 	frea::DegF, Degree,
+	LUAIMPLEMENT_BASE,
 	NOTHING,
 	(Rotation)
 	(set)(get)(distance)(semicircle)(single)(rangeValue)(range)
@@ -104,6 +110,7 @@ DEF_LUAIMPLEMENT_PTR(
 )
 DEF_LUAIMPLEMENT_PTR(
 	frea::RadF, Radian,
+	LUAIMPLEMENT_BASE,
 	NOTHING,
 	(Rotation)
 	(set)(get)(distance)(semicircle)(single)(rangeValue)(range)
@@ -114,6 +121,7 @@ DEF_LUAIMPLEMENT_PTR(
 #include "frea/plane.hpp"
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	frea::Plane, Plane,
+	LUAIMPLEMENT_BASE,
 	(x)(y)(z)(w),
 	(FromPtDir)(FromPts)(ChokePoint)(CrossLine)
 	(dot)(move)(getNormal)(placeOnPlane)(placeOnPlaneDirDist)(getOrigin)(asVec4)(flip)(crosspoint)

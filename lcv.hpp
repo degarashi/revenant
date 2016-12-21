@@ -397,6 +397,7 @@ namespace rev {
 
 	bool PushSP(lua_State* ls, const std::string& name, const void_sp& sp);
 	bool PushWP(lua_State* ls, const std::string& name, const void_wp& wp);
+	void_sp LoadVoidSP(int idx, lua_State* ls);
 	// [LCV<shared_ptr<T>>]
 	template <class T>
 	struct LCV<std::shared_ptr<T>> {
@@ -975,16 +976,21 @@ namespace rev {
 			return size;
 		}
 	};
-	// --- Lua->C++グルーコードにおけるクラスポインタの取得方法 ---
-	//! luaNS::objBase::Pointerに生ポインタが記録されている (void*)
-	struct LI_GetPtrBase {
-		void* operator()(lua_State* ls, int idx) const;
-	};
-	// void*で一旦取得してからT*に変換
+	// --- Lua->C++グルーコードにおけるクラスポインタの取得 ---
 	template <class T>
-	struct LI_GetPtr : LI_GetPtrBase {
-		T* operator()(lua_State* ls, int idx) const {
-			return reinterpret_cast<T*>(LI_GetPtrBase()(ls, idx));
+	struct LI_GetPtr {
+		T* operator()(lua_State* ls, const int idx) const {
+			const RewindTop rt(ls);
+			LuaState lsc(ls, false);
+			lsc.getField(idx, luaNS::objBase::Pointer);
+			if(lsc.type(-1) != LuaType::Nil) {
+				// 生ポインタ
+				return reinterpret_cast<T*>(LCV<void*>()(-1, ls, nullptr));
+			} else {
+				// shared_ptr<T>
+				lsc.getField(idx, luaNS::objBase::Udata);
+				return std::static_pointer_cast<T>(*reinterpret_cast<void_sp*>(lsc.toUserData(-1))).get();
+			}
 		}
 	};
 
@@ -999,42 +1005,51 @@ namespace rev {
 			using LogMap = std::map<std::string, std::string>;
 			static LogMap				s_logMap;
 
-			//! ハンドルオブジェクトの基本メソッド
-			static const char* HandleName(const HRes& sh);
+			//! shared_ptrの基本メソッド
 			static lua_Integer NumRef(const HRes& sh);
 
-			template <class PTR>
-			static PTR _GetUD(lua_State* ls, const int idx) {
-				void** ud = reinterpret_cast<void**>(LCV<void*>()(idx, ls, nullptr));
-				return *reinterpret_cast<PTR*>(ud);
-			}
 			template <class V, class T>
 			using PMember = V T::*;
 			template <class RT, class T, class... Args>
 			using PMethod = RT (T::*)(Args...);
+
+			// idxの値をメンバ変数または関数ポインタとして取得
+			template <class PTR>
+			static PTR _GetClassPointer(lua_State* ls, const int idx) {
+				void** ud = reinterpret_cast<void**>(LCV<void*>()(idx, ls, nullptr));
+				return *reinterpret_cast<PTR*>(ud);
+			}
+			// idxの値をメンバ変数ポインタとして取得
 			template <class V, class T>
 			static PMember<V,T> GetMember(lua_State* ls, const int idx) {
-				return _GetUD<PMember<V,T>>(ls, idx);
+				return _GetClassPointer<PMember<V,T>>(ls, idx);
 			}
+			// idxの値をメンバ関数ポインタとして取得
 			template <class RT, class T, class... Args>
 			static PMethod<RT,T,Args...> GetMethod(lua_State* ls, const int idx) {
-				return _GetUD<PMethod<RT,T,Args...>>(ls, idx);
+				return _GetClassPointer<PMethod<RT,T,Args...>>(ls, idx);
 			}
+
 			// クラスの変数、関数ポインタは4byteでない可能性があるのでuserdataとして格納する
 			template <class PTR>
-			static void _SetUD(lua_State* ls, PTR ptr) {
+			static void _SetClassPointer(lua_State* ls, PTR ptr) {
 				void* ud = lua_newuserdata(ls, sizeof(PTR));
 				std::memcpy(ud, reinterpret_cast<void**>(&ptr), sizeof(PTR));
 			}
 			template <class T, class V>
 			static void SetMember(lua_State* ls, V T::*member) {
-				_SetUD(ls, member);
+				_SetClassPointer(ls, member);
 			}
 			template <class T, class RT, class... Args>
 			static void SetMethod(lua_State* ls, RT (T::*method)(Args...)) {
-				_SetUD(ls, method);
+				_SetClassPointer(ls, method);
 			}
 
+			static int _ReturnException(lua_State* ls, const char* func, const std::exception& e, int nNeed);
+			static bool _IsObjectRegistered(LuaState& lsc, const std::string& name);
+			static bool _IsUpdaterObjectRegistered(LuaState& lsc);
+
+			// ------- ログ出力 -------
 			static std::ostream& _PushIndent(std::ostream& s);
 			template <class... Ts, ENABLE_IF(sizeof...(Ts)==0)>
 			static std::ostream& _OutputArgs(std::ostream& s, bool=true) { return s; }
@@ -1050,6 +1065,76 @@ namespace rev {
 			static void EndImportBlock();
 			static void SaveImportLog(const HRW& hRW);
 
+			// ---- Luaから呼ばれる関数 ----
+			//! luaスタックから変数ポインタとクラスを取り出しメンバ変数を読み込む
+			template <class GET, class T, class V, class VT>
+			static int ReadValue(lua_State* ls) {
+				try {
+					// up[1]	変数ポインタ
+					// [1]		クラスポインタ(userdata)
+					const T* src = reinterpret_cast<const T*>(GET()(ls, 1));
+					auto vp = GetMember<V,VT>(ls, lua_upvalueindex(1));
+					GetLCVType<V>()(ls, src->*vp);
+					return 1;
+				} catch(const std::exception& e) {
+					return _ReturnException(ls, __PRETTY_FUNCTION__, e, 1);
+				}
+			}
+			//! luaスタックから変数ポインタとクラスと値を取り出しメンバ変数に書き込む
+			template <class GET, class T, class V, class VT>
+			static int WriteValue(lua_State* ls) {
+				try {
+					// up[1]	変数ポインタ
+					// [1]		クラスポインタ(userdata)
+					// [2]		セットする値
+					T* dst = reinterpret_cast<T*>(GET()(ls, 1));
+					auto ptr = GetMember<V,VT>(ls, lua_upvalueindex(1));
+					(dst->*ptr) = GetLCVType<V>()(2, ls, nullptr);
+					return 0;
+				} catch(const std::exception& e) {
+					return _ReturnException(ls, __PRETTY_FUNCTION__, e, 2);
+				}
+			}
+			//! luaスタックから関数ポインタとクラス、引数を取り出しクラスのメンバ関数を呼ぶ
+			template <class GET, class T, class RT, class FT, class... Args>
+			static int CallMethod(lua_State* ls) {
+				try {
+					// up[1]	関数ポインタ
+					// [1]		クラスポインタ(userdata)
+					// [2以降]	引数
+					using F = RT (FT::*)(Args...);
+					void* tmp = lua_touserdata(ls, lua_upvalueindex(1));
+					F f = *reinterpret_cast<F*>(tmp);
+					auto* ptr = dynamic_cast<T*>(GET()(ls, 1));
+					return CallAndRetSize<RT>::proc(
+							ls,
+							[ls,ptr,f]() -> decltype(auto) {
+								return FuncCall<Args...>::procMethod(ls, ptr, 2, f);
+							}
+					);
+				} catch(const std::exception& e) {
+					return _ReturnException(ls, __PRETTY_FUNCTION__, e, sizeof...(Args)+1);
+				}
+			}
+			//! luaスタックから関数ポインタと引数を取り出しcall
+			template <class RT, class... Args>
+			static int CallFunction(lua_State* ls) {
+				try {
+					// up[1]	関数ポインタ
+					// [1以降]	引数
+					using F = RT (*)(Args...);
+					F f = reinterpret_cast<F>(lua_touserdata(ls, lua_upvalueindex(1)));
+					// 引数を変換しつつ関数を呼んで、戻り値を変換しつつ個数を返す
+					return CallAndRetSize<RT>::proc(
+							ls,
+							[ls,f]() -> decltype(auto) {
+								return FuncCall<Args...>::proc(ls, 1, f);
+							}
+					);
+				} catch(const std::exception& e) {
+					return _ReturnException(ls, __PRETTY_FUNCTION__, e, sizeof...(Args));
+				}
+			}
 			//! メンバ関数のエクスポート
 			/*! lscにFuncTableを積んだ状態で呼ぶ */
 			template <class GET, class T, class RT, class FT, class... Ts>
@@ -1100,76 +1185,6 @@ namespace rev {
 				_PushIndent(s_importLog) << "static " << LCV<RT>() <<  ' ' << name << '(';
 				_OutputArgs<Ts...>(s_importLog) << ')' << std::endl;
 			}
-			static int ReturnException(lua_State* ls, const char* func, const std::exception& e, int nNeed);
-			//! luaスタックから変数ポインタとクラスを取り出しメンバ変数を読み込む
-			template <class GET, class T, class V, class VT>
-			static int ReadValue(lua_State* ls) {
-				try {
-					// up[1]	変数ポインタ
-					// [1]		クラスポインタ(userdata)
-					const T* src = reinterpret_cast<const T*>(GET()(ls, 1));
-					auto vp = GetMember<V,VT>(ls, lua_upvalueindex(1));
-					GetLCVType<V>()(ls, src->*vp);
-					return 1;
-				} catch(const std::exception& e) {
-					return ReturnException(ls, __PRETTY_FUNCTION__, e, 1);
-				}
-			}
-			//! luaスタックから変数ポインタとクラスと値を取り出しメンバ変数に書き込む
-			template <class GET, class T, class V, class VT>
-			static int WriteValue(lua_State* ls) {
-				try {
-					// up[1]	変数ポインタ
-					// [1]		クラスポインタ(userdata)
-					// [2]		セットする値
-					T* dst = reinterpret_cast<T*>(GET()(ls, 1));
-					auto ptr = GetMember<V,VT>(ls, lua_upvalueindex(1));
-					(dst->*ptr) = GetLCVType<V>()(2, ls, nullptr);
-					return 0;
-				} catch(const std::exception& e) {
-					return ReturnException(ls, __PRETTY_FUNCTION__, e, 2);
-				}
-			}
-			//! luaスタックから関数ポインタとクラス、引数を取り出しクラスのメンバ関数を呼ぶ
-			template <class GET, class T, class RT, class FT, class... Args>
-			static int CallMethod(lua_State* ls) {
-				try {
-					// up[1]	関数ポインタ
-					// [1]		クラスポインタ(userdata)
-					// [2以降]	引数
-					using F = RT (FT::*)(Args...);
-					void* tmp = lua_touserdata(ls, lua_upvalueindex(1));
-					F f = *reinterpret_cast<F*>(tmp);
-					auto* ptr = dynamic_cast<T*>(GET()(ls, 1));
-					return CallAndRetSize<RT>::proc(
-							ls,
-							[ls,ptr,f]() -> decltype(auto) {
-								return FuncCall<Args...>::procMethod(ls, ptr, 2, f);
-							}
-					);
-				} catch(const std::exception& e) {
-					return ReturnException(ls, __PRETTY_FUNCTION__, e, sizeof...(Args)+1);
-				}
-			}
-			//! luaスタックから関数ポインタと引数を取り出しcall
-			template <class RT, class... Args>
-			static int CallFunction(lua_State* ls) {
-				try {
-					// up[1]	関数ポインタ
-					// [1以降]	引数
-					using F = RT (*)(Args...);
-					F f = reinterpret_cast<F>(lua_touserdata(ls, lua_upvalueindex(1)));
-					// 引数を変換しつつ関数を呼んで、戻り値を変換しつつ個数を返す
-					return CallAndRetSize<RT>::proc(
-							ls,
-							[ls,f]() -> decltype(auto) {
-								return FuncCall<Args...>::proc(ls, 1, f);
-							}
-					);
-				} catch(const std::exception& e) {
-					return ReturnException(ls, __PRETTY_FUNCTION__, e, sizeof...(Args));
-				}
-			}
 			//! staticな関数をスタックへpush
 			template <class RT, class... Ts>
 			static void PushFunction(LuaState& lsc, RT (*func)(Ts...)) {
@@ -1192,11 +1207,9 @@ namespace rev {
 			template <class T>
 			static void RegisterClass(LuaState& lsc) {
 				RegisterObjectBase(lsc);
-				auto* ptr = static_cast<T*>(nullptr);
-				lua::LuaExport(lsc, ptr);
+				lua::LuaExport(lsc, (T*)nullptr);
 			}
-			static bool _IsObjectRegistered(LuaState& lsc, const std::string& name);
-			static bool IsUpdaterObjectRegistered(LuaState& lsc);
+
 			//! C++クラス登録基盤を初期化
 			static void RegisterObjectBase(LuaState& lsc);
 			static void RegisterUpdaterObject(LuaState& lsc);
@@ -1215,7 +1228,7 @@ namespace rev {
 				const auto* dummy = static_cast<T*>(nullptr);
 				lua::LuaExport(lsc, dummy);
 				if(ptr) {
-					MakePointerInstance(lsc, lua::LuaName(dummy), ptr);
+					MakeInstance(lsc, lua::LuaName(dummy), ptr);
 					// [Instance]
 					if(!tableName.empty())
 						lsc.prepareTableGlobal(tableName);
@@ -1229,10 +1242,10 @@ namespace rev {
 				}
 				lsc.setTop(stk);
 			}
-			static void MakePointerInstance(LuaState& lsc, const std::string& luaName, void* ptr);
+			static void MakeInstance(LuaState& lsc, const char* luaName, void* ptr);
 			template <class T>
-			static void MakePointerInstance(LuaState& lsc, const T* ptr) {
-				MakePointerInstance(lsc, lua::LuaName((T*)nullptr), (void*)ptr);
+			static void MakeInstance(LuaState& lsc, const T* ptr) {
+				MakeInstance(lsc, lua::LuaName((T*)nullptr), (void*)ptr);
 			}
 			static void RegisterRSClass(LuaState& lsc);
 			//! GObjectメッセージを受信
@@ -1245,17 +1258,15 @@ namespace rev {
 	struct LCV_In {
 		template <class T2>
 		int operator()(lua_State* ls, T2&& t) const {
-			LuaState lsc(ls, true);
-			lsc.getGlobal(lua::LuaName((T*)nullptr));
-			lsc.getField(-1, luaNS::ConstructPtr);
-			lsc.newUserData(sizeof(T));
-			new(lsc.toUserData(-1)) T(std::forward<T2>(t));
-			lsc.call(1, 1);
+			LuaState lsc(ls, false);
+			auto* ptr = reinterpret_cast<T*>(lsc.newUserData(sizeof(T)));
+			new(ptr) T(std::forward<T2>(t));
+			LuaImport::MakeInstance(lsc, ptr);
 			lsc.remove(-2);
 			return 1;
 		}
 		// (int, lua_State*)の順なのは、pushの時と引数が被ってしまう為
-		T operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/=nullptr) const {
+		T& operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/=nullptr) const {
 			return *LI_GetPtr<T>()(ls, idx);
 		}
 		LuaType operator()(const T&) const {
@@ -1279,8 +1290,8 @@ namespace rev {
 	template <class T>
 	struct LCV<T*> {
 		int operator()(lua_State* ls, const T* t) const {
-			LuaState lsc(ls, true);
-			LuaImport::MakePointerInstance(lsc, t);
+			LuaState lsc(ls, false);
+			LuaImport::MakeInstance(lsc, t);
 			return 1;
 		}
 		T* operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/=nullptr) const {

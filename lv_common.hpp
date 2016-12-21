@@ -16,14 +16,12 @@ namespace rev {
 								SystemScriptResourceEntry,
 								ScriptExtension;
 		extern const std::string ToString;
-		extern const std::string MakeShared,
-								MakeWeak,
-								SetState,
+		extern const std::string SetState,
 								SwitchState,
 								Null,
-								ObjectBase,
+								Object,
 								ConstructPtr,
-								DerivedHandle,
+								DefineObject,
 								MakeFSMachine,
 								FSMachine,
 								MakePreENV,
@@ -35,21 +33,19 @@ namespace rev {
 								OnEffectReset,
 								OnResume,
 								OnExit,
-								System;
+								System,
+								Global;
 		namespace objBase {
 			extern const std::string ValueR,
 									ValueW,
 									Func,
-									UdataMT,
 									MT,
-									ClassName,
-									IsPointer,
+									Name,
 									Pointer,
 									Udata,
-									_New;
+									New;
 			namespace valueR {
-				extern const std::string HandleName,
-										NumRef;
+				extern const std::string NumRef;
 			}
 		}
 		namespace system {
