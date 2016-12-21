@@ -123,7 +123,7 @@ namespace rev {
 		static const char* name; \
 		static decltype(&BOOST_PP_SEQ_ELEM(1, param)::elem) pointer; \
 	}; \
-	const char* BOOST_PP_CAT(BOOST_PP_CAT(BOOST_PP_SEQ_ELEM(0, param), elem), _tag)::name = #elem; \
+	const char* BOOST_PP_CAT(BOOST_PP_CAT(BOOST_PP_SEQ_ELEM(0, param), elem), _tag)::name = BOOST_PP_STRINGIZE(elem); \
 	decltype(BOOST_PP_CAT(BOOST_PP_CAT(BOOST_PP_SEQ_ELEM(0, param), elem), _tag)::pointer) \
 		BOOST_PP_CAT(BOOST_PP_CAT(BOOST_PP_SEQ_ELEM(0, param), elem), _tag)::pointer = \
 		&BOOST_PP_SEQ_ELEM(1, param)::elem;
