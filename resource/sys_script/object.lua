@@ -158,6 +158,7 @@ function DefineObject(base, name, object, bNoLoadValue)
 	end
 	object._name = name
 	object._base = base
+	object._metatable = _mt
 
 	-- [Public] ポインタからオブジェクトを構築 (from C++)
 	--[[ \param[in] ud(userdata) ]]
