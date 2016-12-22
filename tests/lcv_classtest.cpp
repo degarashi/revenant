@@ -2,10 +2,12 @@
 #include "../luaimpl.hpp"
 
 namespace rev {
+	class MyResMgr;
 	namespace test {
 		class MyClass : public Resource {
 			public:
 				static int s_called;
+				using mgr_t = MyResMgr;
 				using T0 = int;
 				using T1 = float;
 				using T2 = double;
@@ -79,12 +81,18 @@ namespace rev {
 			using T0 = typename value_t::T0;
 			using T1 = typename value_t::T1;
 			using T2 = typename value_t::T2;
+			using Mgr_t = typename value_t::mgr_t;
+			std::unique_ptr<Mgr_t>	_mgr;
 			void SetUp() override {
+				_mgr = std::make_unique<Mgr_t>();
 				value_t::s_called = 0;
 				this->loadSharedPtrModule();
 			}
 			void registerClass() {
 				LuaImport::RegisterClass<value_t>(*this->_lsp);
+			}
+			void TearDown() override {
+				_mgr.reset();
 			}
 		};
 		using TypesC = ::testing::Types<
@@ -92,6 +100,24 @@ namespace rev {
 		>;
 
 		TYPED_TEST_CASE(LCV_ClassTest, TypesC);
+		// Luaからのオブジェクト作成 = New(...)テスト
+		TYPED_TEST(LCV_ClassTest, New) {
+			USING(value_t);
+			this->registerClass();
+			auto& lsp = this->_lsp;
+
+			const value_t myc(*this);
+			const std::string code =
+				std::string("return ") + myc.getResourceName() + ".New("
+				+ std::to_string(myc.value) + ", " + std::to_string(myc.value1) + ", " + std::to_string(myc.value2)
+				+ ")";
+			HRW hRW = mgr_rw.fromConstTemporal(code.c_str(), code.length());
+			lsp->loadFromSource(hRW);
+
+			ASSERT_EQ(LCV<value_t>()(myc), lsp->type(-1));
+			const value_t myc2 = LCV<value_t>()(-1, lsp->getLS());
+			ASSERT_EQ(myc, myc2);
+		}
 		TYPED_TEST(LCV_ClassTest, Member) {
 			USING(value_t);
 			USING(T0);
