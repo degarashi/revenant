@@ -76,6 +76,11 @@ namespace rev {
 								"-----------------------------------------------",
 								func, lua_gettop(ls), nNeed, e.what());
 	}
+	namespace {
+		int EmptyFunction(lua_State*) {
+			return 0;
+		}
+	}
 
 	// オブジェクト類を定義する為の基本関数定義など
 	void LuaImport::RegisterObjectBase(LuaState& lsc) {
@@ -131,7 +136,7 @@ namespace rev {
 		{
 			// Ctor = func(Ctor)
 			lsc.push(luaNS::Ctor);
-			lsc.push("InvalidFunc");
+			lsc.push(&EmptyFunction);
 			lsc.setTable(-3);
 		}
 		// global["Object"] = {...}
