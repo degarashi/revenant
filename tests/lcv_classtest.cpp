@@ -24,6 +24,13 @@ namespace rev {
 				static T1 sFunc(const T1& t) {
 					return t;
 				}
+				MyClass(LuaTest& t):
+					MyClass(
+						t.genValue<T0>(),
+						t.genValue<T1>(),
+						t.genValue<T2>()
+					)
+				{}
 				// Luaに登録するほうのコンストラクタ
 				MyClass(const T0 v0, const T1 v1, const T2 v2):
 					value(v0),
@@ -76,6 +83,9 @@ namespace rev {
 				value_t::s_called = 0;
 				this->loadSharedPtrModule();
 			}
+			void registerClass() {
+				LuaImport::RegisterClass<value_t>(*this->_lsp);
+			}
 		};
 		using TypesC = ::testing::Types<
 			MyClass
@@ -86,25 +96,21 @@ namespace rev {
 			USING(value_t);
 			USING(T0);
 			USING(T1);
-			USING(T2);
+			this->registerClass();
 			auto& lsp = this->_lsp;
-			LuaImport::RegisterClass<value_t>(*lsp);
 
-			const auto v0 = this->template genValue<T0>();
-			const auto v1 = this->template genValue<T1>();
-			const auto v2 = this->template genValue<T2>();
-			value_t myc(v0, v1, v2);
+			const value_t myc(*this);
 			LCV<value_t>()(lsp->getLS(), myc);
 			// メンバ変数 "value" の読み込みテスト
 			lsp->getField(-1, "value");
-			ASSERT_EQ(LCV<T0>()(v0), lsp->type(-1));
-			ASSERT_EQ(LCValue(typename LCV<T0>::value_t(v0)), lsp->toLCValue(-1));
+			ASSERT_EQ(LCV<T0>()(myc.value), lsp->type(-1));
+			ASSERT_EQ(LCValue(typename LCV<T0>::value_t(myc.value)), lsp->toLCValue(-1));
 			lsp->pop(1);
 
 			// メンバ変数 "value1" の読み込みテスト
 			lsp->getField(-1, "value1");
-			ASSERT_EQ(LCV<T1>()(v1), lsp->type(-1));
-			ASSERT_EQ(LCValue(typename LCV<T1>::value_t(v1)), lsp->toLCValue(-1));
+			ASSERT_EQ(LCV<T1>()(myc.value1), lsp->type(-1));
+			ASSERT_EQ(LCValue(typename LCV<T1>::value_t(myc.value1)), lsp->toLCValue(-1));
 			lsp->pop(1);
 
 			// value2は登録してないのでnilが返る
@@ -113,31 +119,23 @@ namespace rev {
 			lsp->pop(1);
 
 			// メンバ変数の書き込みテスト
-			const auto v01 = this->template genValue<T0>();
-			const auto v11 = this->template genValue<T1>();
-			lsp->setField(-1, "value", v01);
-			lsp->setField(-1, "value1", v11);
+			const value_t myc2(*this);
+			lsp->setField(-1, "value", myc2.value);
+			lsp->setField(-1, "value1", myc2.value1);
 
-			const value_t myc2 = LCV<value_t>()(-1, lsp->getLS());
-			ASSERT_EQ(myc2.value, v01);
-			ASSERT_EQ(myc2.value1, v11);
+			const value_t myc3 = LCV<value_t>()(-1, lsp->getLS());
+			ASSERT_EQ(myc3.value, myc2.value);
+			ASSERT_EQ(myc3.value1, myc2.value1);
 		}
 		TYPED_TEST(LCV_ClassTest, PushPop) {
 			USING(value_t);
-			USING(T0);
-			USING(T1);
-			USING(T2);
 			auto& lsp = this->_lsp;
 			// クラスの登録と、LuaExport関数が呼ばれたかの確認
 			ASSERT_EQ(0, value_t::s_called);
-			LuaImport::RegisterClass<value_t>(*lsp);
+			this->registerClass();
 			ASSERT_EQ(1, value_t::s_called);
 
-			const auto v0 = this->template genValue<T0>();
-			const auto v1 = this->template genValue<T1>();
-			const auto v2 = this->template genValue<T2>();
-			value_t myc(v0, v1, v2);
-
+			value_t myc(*this);
 			lua_State *const ls = lsp->getLS();
 			// 3種類のPush
 			// [1]値渡し
@@ -158,10 +156,8 @@ namespace rev {
 			ASSERT_EQ(myc, ret2);
 
 			// [2], [3]のケースでは元の値を改変したらret1, ret2も追従する
-			value_t myc_prev(myc);
-			myc.value = this->template genValue<T0>();
-			myc.value1 = this->template genValue<T1>();
-			myc.value2 = this->template genValue<T2>();
+			const value_t myc_prev(myc);
+			myc = value_t(*this);
 			ASSERT_EQ(myc, *ret1);
 			ASSERT_EQ(myc, ret2);
 
@@ -173,13 +169,10 @@ namespace rev {
 			USING(T0);
 			USING(T1);
 			USING(T2);
+			this->registerClass();
 			auto& lsp = this->_lsp;
-			LuaImport::RegisterClass<value_t>(*lsp);
 
-			auto v0 = this->template genValue<T0>();
-			auto v1 = this->template genValue<T1>();
-			auto v2 = this->template genValue<T2>();
-			const value_t myc(v0, v1, v2);
+			const value_t myc(*this);
 			LCV<value_t>()(lsp->getLS(), myc);
 
 			// Luaを通してmember functionを呼ぶ
@@ -192,22 +185,17 @@ namespace rev {
 			ASSERT_EQ(LCV<T0>()(r), lsp->type(-1));
 			const auto myc2 = LCV<value_t>()(1, lsp->getLS());
 			// クラス内部の変数はそれぞれr倍になっている
-			ASSERT_EQ(v0*=r, myc2.value);
-			ASSERT_EQ(v1*=r, myc2.value1);
-			ASSERT_EQ(v2*=r, myc2.value2);
+			ASSERT_EQ(T0(myc.value * r), myc2.value);
+			ASSERT_EQ(T1(myc.value1 * r), myc2.value1);
+			ASSERT_EQ(T2(myc.value2 * r), myc2.value2);
 		}
 		TYPED_TEST(LCV_ClassTest, StaticFunction) {
 			USING(value_t);
 			USING(T0);
-			USING(T1);
-			USING(T2);
+			this->registerClass();
 			auto& lsp = this->_lsp;
-			LuaImport::RegisterClass<value_t>(*lsp);
 
-			const auto v0 = this->template genValue<T0>();
-			const auto v1 = this->template genValue<T1>();
-			const auto v2 = this->template genValue<T2>();
-			const value_t myc(v0, v1, v2);
+			const value_t myc(*this);
 			LCV<value_t>()(lsp->getLS(), myc);
 
 			// Luaを通してstatic functionを呼ぶ
@@ -218,9 +206,8 @@ namespace rev {
 			// 引数と同じ値が返って来ている筈
 			ASSERT_EQ(LCV<T0>()(r), lsp->type(-1));
 			// クラス内部の変数は変化なし
-			const value_t myc2(v0, v1, v2);
 			const auto* ret = LCV<value_t*>()(1, lsp->getLS());
-			ASSERT_EQ(myc2, *ret);
+			ASSERT_EQ(myc, *ret);
 		}
 	}
 }
