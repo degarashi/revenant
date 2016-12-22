@@ -1274,7 +1274,7 @@ namespace rev {
 			return *LI_GetPtr<T>()(ls, idx);
 		}
 		LuaType operator()(const T&) const {
-			return LuaType::Userdata;
+			return LuaType::Table;
 		}
 	};
 	template <class T>
@@ -1302,7 +1302,7 @@ namespace rev {
 			return LI_GetPtr<T>()(ls, idx);
 		}
 		LuaType operator()(const T*) const {
-			return LuaType::LightUserdata;
+			return LuaType::Table;
 		}
 	};
 	template <class T>
