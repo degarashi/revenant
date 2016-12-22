@@ -979,9 +979,10 @@ namespace rev {
 	// --- Lua->C++グルーコードにおけるクラスポインタの取得 ---
 	template <class T>
 	struct LI_GetPtr {
-		T* operator()(lua_State* ls, const int idx) const {
+		T* operator()(lua_State* ls, int idx) const {
 			const RewindTop rt(ls);
 			LuaState lsc(ls, false);
+			idx = lsc.absIndex(idx);
 			lsc.getField(idx, luaNS::objBase::Pointer);
 			if(lsc.type(-1) != LuaType::Nil) {
 				// 生ポインタ
