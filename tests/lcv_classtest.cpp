@@ -82,6 +82,46 @@ namespace rev {
 		>;
 
 		TYPED_TEST_CASE(LCV_ClassTest, TypesC);
+		TYPED_TEST(LCV_ClassTest, Member) {
+			USING(value_t);
+			USING(T0);
+			USING(T1);
+			USING(T2);
+			auto& lsp = this->_lsp;
+			LuaImport::RegisterClass<value_t>(*lsp);
+
+			const auto v0 = this->template genValue<T0>();
+			const auto v1 = this->template genValue<T1>();
+			const auto v2 = this->template genValue<T2>();
+			value_t myc(v0, v1, v2);
+			LCV<value_t>()(lsp->getLS(), myc);
+			// メンバ変数 "value" の読み込みテスト
+			lsp->getField(-1, "value");
+			ASSERT_EQ(LCV<T0>()(v0), lsp->type(-1));
+			ASSERT_EQ(LCValue(typename LCV<T0>::value_t(v0)), lsp->toLCValue(-1));
+			lsp->pop(1);
+
+			// メンバ変数 "value1" の読み込みテスト
+			lsp->getField(-1, "value1");
+			ASSERT_EQ(LCV<T1>()(v1), lsp->type(-1));
+			ASSERT_EQ(LCValue(typename LCV<T1>::value_t(v1)), lsp->toLCValue(-1));
+			lsp->pop(1);
+
+			// value2は登録してないのでnilが返る
+			lsp->getField(-1, "value2");
+			ASSERT_EQ(LuaType::Nil, lsp->type(-1));
+			lsp->pop(1);
+
+			// メンバ変数の書き込みテスト
+			const auto v01 = this->template genValue<T0>();
+			const auto v11 = this->template genValue<T1>();
+			lsp->setField(-1, "value", v01);
+			lsp->setField(-1, "value1", v11);
+
+			const value_t myc2 = LCV<value_t>()(-1, lsp->getLS());
+			ASSERT_EQ(myc2.value, v01);
+			ASSERT_EQ(myc2.value1, v11);
+		}
 		TYPED_TEST(LCV_ClassTest, PushPop) {
 			USING(value_t);
 			USING(T0);
