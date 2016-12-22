@@ -82,19 +82,27 @@ namespace rev {
 			using T1 = typename value_t::T1;
 			using T2 = typename value_t::T2;
 			using Mgr_t = typename value_t::mgr_t;
-			std::unique_ptr<Mgr_t>	_mgr;
+			static std::unique_ptr<Mgr_t>	s_mgr;
+
+			static void SetUpTestCase() {
+				LCV_TestRW<T>::SetUpTestCase();
+				s_mgr = std::make_unique<Mgr_t>();
+			}
+			static void TearDownTestCase() {
+				s_mgr.reset();
+				LCV_TestRW<T>::TearDownTestCase();
+			}
 			void SetUp() override {
-				_mgr = std::make_unique<Mgr_t>();
 				value_t::s_called = 0;
 				this->loadSharedPtrModule();
 			}
 			void registerClass() {
 				LuaImport::RegisterClass<value_t>(*this->_lsp);
 			}
-			void TearDown() override {
-				_mgr.reset();
-			}
 		};
+		template <class T>
+		std::unique_ptr<typename LCV_ClassTest<T>::Mgr_t> LCV_ClassTest<T>::s_mgr;
+
 		using TypesC = ::testing::Types<
 			MyClass
 		>;
