@@ -31,7 +31,7 @@ end
 -- 新たにハンドルを作成
 function MakeSP(ptr, name, sp)
 	assert(PtrToSP[ptr] == nil)
-	local h = { udata = sp }
+	local h = { _udata = sp }
 	-- オブジェクト固有のメタテーブルを付加
 	setmetatable(h, _G[name].mt)
 	PtrToSP = h
@@ -41,7 +41,7 @@ function GetSP(h)
 	if h == nil then
 		return nil
 	end
-	return h.udata
+	return h._udata
 end
 
 -- weak_ptr保持リスト(弱参照)
@@ -54,7 +54,7 @@ function HasWP(ptr)
 end
 function MakeWP(ptr, name, wp)
 	assert(PtrToWP[ptr] == nil)
-	local h = { udata = wp }
+	local h = { _udata = wp }
 	-- オブジェクト固有のメタテーブルを付加
 	setmetatable(h, _G[name .. "_w"].mt)
 	PtrToWP[ptr] = h
@@ -64,5 +64,5 @@ function GetWP(h)
 	if h == nil then
 		return nil
 	end
-	return h.udata
+	return h._udata
 end
