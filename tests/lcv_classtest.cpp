@@ -50,8 +50,11 @@ namespace rev {
 							value1 == m.value1 &&
 							value2 == m.value2;
 				}
-				const char* getResourceName() const noexcept {
+				const char* getResourceName() const noexcept override {
 					return "MyClass";
+				}
+				const char* getBaseName() const noexcept {
+					return BOOST_PP_STRINGIZE(LUAIMPLEMENT_BASE);
 				}
 				static void LuaExport(LuaState&) {
 					++s_called;
@@ -131,11 +134,23 @@ namespace rev {
 			this->registerClass();
 			auto& lsp = this->_lsp;
 			const value_t myc(*this);
-			// 現時点ではグローバル空間のクラス名にテーブルがあり、その"_name"エントリに名前文字列が入っていればOK
+			// 現時点ではグローバル空間のクラス名にテーブルがあり、
+			// その"_name"エントリに名前文字列
+			// "_base"エントリに継承元クラステーブルが入っていればOK
 			lsp->getGlobal(myc.getResourceName());
-			lsp->getField(-1, luaNS::objBase::Name);
-			const auto name = lsp->toString(-1);
-			ASSERT_EQ(myc.getResourceName(), name);
+			{
+				const RewindTop rt(lsp->getLS());
+				lsp->getField(-1, luaNS::objBase::Name);
+				const auto name = lsp->toString(-1);
+				ASSERT_EQ(myc.getResourceName(), name);
+			}
+			{
+				const RewindTop rt(lsp->getLS());
+				lsp->getField(-1, luaNS::objBase::Base);
+				lsp->getField(-1, luaNS::objBase::Name);
+				const auto base = lsp->toString(-1);
+				ASSERT_EQ(myc.getBaseName(), base);
+			}
 		}
 		TYPED_TEST(LCV_ClassTest, Member) {
 			USING(value_t);
