@@ -126,6 +126,17 @@ namespace rev {
 			const value_t myc2 = LCV<value_t>()(-1, lsp->getLS());
 			ASSERT_EQ(myc, myc2);
 		}
+		TYPED_TEST(LCV_ClassTest, StaticMember) {
+			USING(value_t);
+			this->registerClass();
+			auto& lsp = this->_lsp;
+			const value_t myc(*this);
+			// 現時点ではグローバル空間のクラス名にテーブルがあり、その"_name"エントリに名前文字列が入っていればOK
+			lsp->getGlobal(myc.getResourceName());
+			lsp->getField(-1, luaNS::objBase::Name);
+			const auto name = lsp->toString(-1);
+			ASSERT_EQ(myc.getResourceName(), name);
+		}
 		TYPED_TEST(LCV_ClassTest, Member) {
 			USING(value_t);
 			USING(T0);
