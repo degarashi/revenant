@@ -47,6 +47,9 @@ namespace rev {
 		const Lua_SP& LuaTest::getLSP() {
 			return _lsp;
 		}
+		const typename LuaTest::RdI& LuaTest::getRDI() const {
+			return _rdi;
+		}
 
 		// --------------- GenValue ---------------
 		LuaNil GenValue<LuaNil>::operator()(LuaTest&) const {

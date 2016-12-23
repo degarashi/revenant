@@ -63,6 +63,7 @@ namespace rev {
 			public:
 				lua_State* getLS();
 				const Lua_SP& getLSP();
+				const RdI& getRDI() const;
 				template <class T>
 				friend struct GenValue;
 				template <class T>
@@ -227,6 +228,118 @@ namespace rev {
 		struct GenValue<LCTable_SP> {
 			LCTable_SP operator()(LuaTest& self) const;
 		};
+		namespace detail {
+			template <class Dst, class T, std::size_t... Idx>
+			Dst _make(LuaTest& self, std::index_sequence<Idx...>) {
+				GenValue_t<T> gv;
+				return Dst{(Idx, gv(self))...};
+			}
+			template <class Dst, class T, std::size_t N>
+			Dst MakeValueArray(LuaTest& self) {
+				return _make<Dst,T>(self, std::make_index_sequence<N>());
+			}
+		}
+		template <class W, class DT, int N>
+		struct GenValue<frea::VecT_spec<W, frea::Data<DT,N,false>, N>> {
+			using Vec = frea::VecT_spec<W, frea::Data<DT,N,false>, N>;
+			Vec operator()(LuaTest& self) const {
+				return detail::MakeValueArray<Vec, DT, N>(self);
+			}
+		};
+		template <class W, class DT, int M, int N>
+		struct GenValue<frea::MatT_spec<frea::VecT_spec<W, frea::Data<DT,N,false>, N>, M, N>> {
+			using Mat = frea::MatT_spec<frea::VecT_spec<W, frea::Data<DT,N,false>, N>, M, N>;
+			Mat operator()(LuaTest& self) const {
+				return detail::MakeValueArray<Mat, DT, M*N>(self);
+			}
+		};
+		template <class T>
+		struct GenValue<frea::QuatT<T,false>> {
+			using Quat = frea::QuatT<T,false>;
+			Quat operator()(LuaTest& self) const {
+				return GenValue_t<frea::Vec_t<T,4,false>>(self);
+			}
+		};
+		template <class T>
+		struct GenValue<frea::ExpQuatT<T,false>> {
+			using EQ = frea::ExpQuatT<T,false>;
+			EQ operator()(LuaTest& self) const {
+				return GenValue_t<frea::Vec_t<T,3,false>>(self);
+			}
+		};
+		template <class T>
+		struct GenValue<frea::PlaneT<T,false>> {
+			using Plane = frea::PlaneT<T,false>;
+			Plane operator()(LuaTest& self) const {
+				return GenValue_t<frea::Vec_t<T,4,false>>(self);
+			}
+		};
+		template <class Ang, class Rep>
+		struct GenValue<frea::Angle<Ang, Rep>> {
+			using A = frea::Angle<Ang, Rep>;
+			A operator()(LuaTest& self) const {
+				return A(GenValue_t<Rep>(self));
+			}
+		};
+		template <class T>
+		struct GenValue<spi::Optional<T>> {
+			T operator()(LuaTest& self) const {
+				return GenValue_t<T>(self);
+			}
+		};
+		template <class Rep, class Period>
+		struct GenValue<std::chrono::duration<Rep,Period>> {
+			using Ch = std::chrono::duration<Rep,Period>;
+			Ch operator()(LuaTest& self) const {
+				return Ch(GenValue_t<Rep>(self));
+			}
+		};
+		template <class T, class A>
+		struct GenValue<std::vector<T,A>> {
+			using Vec = std::vector<T>;
+			Vec operator()(LuaTest& self) const {
+				Vec res;
+				const GenValue_t<T> gv;
+				const int n = self.getRDI()({0, 32});
+				for(int i=0 ; i<n ; i++) {
+					res.emplace_back(gv(self));
+				}
+				return res;
+			}
+		};
+		template <class... Ts>
+		struct GenValue<std::tuple<Ts...>> {
+			using T = std::tuple<Ts...>;
+			T operator()(LuaTest& self) const {
+				return T{GenValue_t<Ts>()(self)...};
+			}
+		};
+		template <class T0, class T1>
+		struct GenValue<std::pair<T0,T1>> {
+			using P = std::pair<T0,T1>;
+			P operator()(LuaTest& self) const {
+				return P{
+					GenValue_t<T0>()(self),
+					GenValue_t<T1>()(self)
+				};
+			}
+		};
+		template <class T>
+		struct GenValue<lubee::Range<T>> {
+			using R = lubee::Range<T>;
+			R operator()(LuaTest& self) const {
+				const GenValue_t<T> gv;
+				const T ar[2] = {
+					gv(self),
+					gv(self)
+				};
+				return R{
+					std::min(ar[0], ar[1]),
+					std::max(ar[0], ar[1])
+				};
+			}
+		};
+
 		template <class V>
 		V LuaTest::genValue() {
 			return GenValue_t<V>()(*this);
