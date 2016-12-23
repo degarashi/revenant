@@ -10,5 +10,5 @@ all:
 clean:
 	$(call Clean, $(WORK_DIR))
 tags:
-	@ctags -R -f ./.git/tags .
+	@ctags -R -f ./.git/ctags .
 	@cscope -b -f ./.git/cscope.out
