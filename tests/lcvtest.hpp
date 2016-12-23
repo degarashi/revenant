@@ -2,6 +2,7 @@
 #include "luatest.hpp"
 #include "../sdl_rw.hpp"
 #include "../dir.hpp"
+#include "lubee/logical.hpp"
 
 namespace std {
 	template <class T>
@@ -20,6 +21,21 @@ namespace rev {
 		}
 		bool PreciseCompare(const char* c0, const char* c1) {
 			return std::string(c0) == std::string(c1);
+		}
+		template <class... Ts>
+		bool PreciseCompare(const std::tuple<Ts...>& v0, const std::tuple<Ts...>& v1);
+		template <class... Ts, std::size_t... Idx>
+		bool _PreciseCompare(const std::tuple<Ts...>& v0, const std::tuple<Ts...>& v1, std::index_sequence<Idx...>) {
+			return lubee::And_L(PreciseCompare(std::get<Idx>(v0), std::get<Idx>(v1))...);
+		}
+		template <class... Ts>
+		bool PreciseCompare(const std::tuple<Ts...>& v0, const std::tuple<Ts...>& v1) {
+			return _PreciseCompare(v0, v1, std::make_index_sequence<sizeof...(Ts)>());
+		}
+		template <class T0, class T1>
+		bool PreciseCompare(const std::pair<T0,T1>& v0, const std::pair<T0,T1>& v1) {
+			return PreciseCompare(v0.first, v1.first) &&
+					PreciseCompare(v0.second, v1.second);
 		}
 		template <class T>
 		struct LCV_Test : LuaTest {
