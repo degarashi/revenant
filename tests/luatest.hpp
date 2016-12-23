@@ -260,34 +260,34 @@ namespace rev {
 		struct GenValue<frea::QuatT<T,false>> {
 			using Quat = frea::QuatT<T,false>;
 			Quat operator()(LuaTest& self) const {
-				return GenValue_t<frea::Vec_t<T,4,false>>(self);
+				return GenValue_t<frea::Vec_t<T,4,false>>()(self);
 			}
 		};
 		template <class T>
 		struct GenValue<frea::ExpQuatT<T,false>> {
 			using EQ = frea::ExpQuatT<T,false>;
 			EQ operator()(LuaTest& self) const {
-				return GenValue_t<frea::Vec_t<T,3,false>>(self);
+				return GenValue_t<frea::Vec_t<T,3,false>>()(self);
 			}
 		};
 		template <class T>
 		struct GenValue<frea::PlaneT<T,false>> {
 			using Plane = frea::PlaneT<T,false>;
 			Plane operator()(LuaTest& self) const {
-				return GenValue_t<frea::Vec_t<T,4,false>>(self);
+				return GenValue_t<frea::Vec_t<T,4,false>>()(self);
 			}
 		};
 		template <class Ang, class Rep>
 		struct GenValue<frea::Angle<Ang, Rep>> {
 			using A = frea::Angle<Ang, Rep>;
 			A operator()(LuaTest& self) const {
-				return A(GenValue_t<Rep>(self));
+				return A(GenValue_t<Rep>()(self));
 			}
 		};
 		template <class T>
 		struct GenValue<spi::Optional<T>> {
 			T operator()(LuaTest& self) const {
-				return GenValue_t<T>(self);
+				return GenValue_t<T>()(self);
 			}
 		};
 		template <class Rep, class Period>
