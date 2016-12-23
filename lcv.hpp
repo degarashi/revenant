@@ -323,17 +323,19 @@ namespace rev {
 		using IConst = std::integral_constant<std::size_t, N>;
 
 		// std::tuple<> -> Args...
-		int _pushElem(lua_State* /*ls*/, const Tuple& /*t*/, IConst<sizeof...(Ts)>) const {
-			return 0;
-		}
+		void _pushElem(lua_State* /*ls*/, const Tuple& /*t*/, IConst<sizeof...(Ts)>) const {}
 		template <std::size_t N>
-		int _pushElem(lua_State* ls, const Tuple& t, IConst<N>) const {
+		void _pushElem(lua_State* ls, const Tuple& t, IConst<N>) const {
 			using T = typename std::decay<typename std::tuple_element<N, Tuple>::type>::type;
-			int count = GetLCVType<T>()(ls, std::get<N>(t));
-			return count + _pushElem(ls, t, IConst<N+1>());
+			lua_pushinteger(ls, N+1);
+			GetLCVType<T>()(ls, std::get<N>(t));
+			lua_settable(ls, -3);
+			_pushElem(ls, t, IConst<N+1>());
 		}
 		int operator()(lua_State* ls, const Tuple& t) const {
-			return _pushElem(ls, t, IConst<0>());
+			lua_newtable(ls);
+			_pushElem(ls, t, IConst<0>());
+			return 1;
 		}
 
 		// Table -> std::tuple<>
@@ -344,11 +346,11 @@ namespace rev {
 			lua_gettable(ls, idx);
 			std::get<N>(dst) = GetLCVType<typename std::tuple_element<N, Tuple>::type>()(-1, ls, spm);
 			lua_pop(ls, 1);
-			_getElem(dst, idx, ls, IConst<N+1>());
+			_getElem(dst, idx, ls, spm, IConst<N+1>());
 		}
 		Tuple operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
 			Tuple ret;
-			_getElem(ret, idx, ls, spm, IConst<0>());
+			_getElem(ret, lua_absindex(ls,idx), ls, spm, IConst<0>());
 			return ret;
 		}
 		LuaType operator()(const Tuple&) const {
