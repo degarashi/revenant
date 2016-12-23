@@ -388,8 +388,8 @@ namespace rev {
 			auto p = LCV_t()(idx, ls, spm);
 			return {p[0], p[1]};
 		}
-		LuaType operator()(const range_t& r) const {
-			return LCV_t()(r.from);
+		LuaType operator()(const range_t&) const {
+			return LuaType::Table;
 		}
 	};
 	template <class T>
