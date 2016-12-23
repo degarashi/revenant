@@ -162,8 +162,11 @@ namespace rev {
 		template <class T>
 		struct GenIntegralValue {
 			T operator()(LuaTest& self) const {
-				using L = std::numeric_limits<T>;
-				return self.mt().template getUniform<T>({L::lowest()/4, L::max()/4});
+				const auto FB = lubee::IEEE754<float>::FracBits - 4;
+				return self.mt().template getUniform<T>({
+					-(1<<FB) * static_cast<T>(std::is_signed<T>{}),
+					1<<FB
+				});
 			}
 		};
 		template <class T>
