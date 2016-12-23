@@ -231,6 +231,9 @@ namespace rev {
 		struct GenValue<LCTable_SP> {
 			LCTable_SP operator()(LuaTest& self) const;
 		};
+		#pragma GCC diagnostic push
+		#pragma GCC diagnostic ignored "-Wunused-value"
+		#pragma GCC diagnostic ignored "-Wmissing-braces"
 		namespace detail {
 			template <class Dst, class T, std::size_t... Idx>
 			Dst _make(LuaTest& self, std::index_sequence<Idx...>) {
@@ -242,6 +245,30 @@ namespace rev {
 				return _make<Dst,T>(self, std::make_index_sequence<N>());
 			}
 		}
+		#pragma GCC diagnostic pop
+		template <class T>
+		struct GenValue<lubee::Size<T>> {
+			lubee::Size<T> operator()(LuaTest& self) const {
+				const GenValue_t<T> gv;
+				return {
+					std::abs(gv(self)),
+					std::abs(gv(self))
+				};
+			}
+		};
+		template <class T>
+		struct GenValue<lubee::Rect<T>> {
+			using R = lubee::Rect<T>;
+			using S = lubee::Size<T>;
+			R operator()(LuaTest& self) const {
+				using AR = std::array<T, 2>;
+				AR s = detail::MakeValueArray<AR,T,2>(self),
+				   ofs = detail::MakeValueArray<AR,T,2>(self);
+				s[0] = std::abs(s[0]);
+				s[1] = std::abs(s[1]);
+				return {ofs[0], ofs[0]+s[0], ofs[1], ofs[1]+s[1]};
+			}
+		};
 		template <class W, class DT, int N>
 		struct GenValue<frea::VecT_spec<W, frea::Data<DT,N,false>, N>> {
 			using Vec = frea::VecT_spec<W, frea::Data<DT,N,false>, N>;
