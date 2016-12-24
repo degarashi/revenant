@@ -101,7 +101,7 @@ namespace rev {
 		}
 	}
 	LuaType LCV<frea::DegF>::operator()(const frea::DegF&) const {
-		return LuaType::Userdata;
+		return LuaType::Table;
 	}
 	DEF_LCV_OSTREAM_PAIR(frea::DegF, Degree)
 
@@ -121,7 +121,7 @@ namespace rev {
 		}
 	}
 	LuaType LCV<frea::RadF>::operator()(const frea::RadF&) const {
-		return LuaType::Userdata;
+		return LuaType::Table;
 	}
 	DEF_LCV_OSTREAM_PAIR(frea::RadF, Radian)
 
