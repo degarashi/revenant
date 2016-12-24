@@ -170,7 +170,7 @@ function DefineObject(base, name, object, bNoLoadValue)
 	end
 	-- [Public] インスタンス作成(from Lua & C++)
 	function object.New(...)
-		-- C++側で定義されたインスタンス確保関数を呼ぶ
+		-- C++側で定義されたインスタンス確保関数を呼ぶ -> SPtr
 		local obj = object._new(...)
 		-- インスタンス用メタテーブルをセットした後、
 		setmetatable(obj, _mt)

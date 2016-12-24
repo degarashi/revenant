@@ -183,10 +183,20 @@ namespace rev {
 		lsc.pop(1);
 		return;
 	}
-	void LuaImport::MakeInstance(LuaState& lsc, const char* luaName, void* ptr) {
+	void LuaImport::MakePointerInstance(LuaState& lsc, const char* luaName, void* ptr) {
 		lsc.getGlobal(luaName);
 		lsc.getField(-1, luaNS::ConstructPtr);
 		lsc.push(ptr);
+		// [ObjectTable][ConstructPtr][UData]
+		lsc.call(1,1);
+		// [ObjectTable][Instance]
+		lsc.remove(-2);
+	}
+	void LuaImport::MakeInstance(LuaState& lsc, const char* luaName, int idx) {
+		idx = lsc.absIndex(idx);
+		lsc.getGlobal(luaName);
+		lsc.getField(-1, luaNS::ConstructPtr);
+		lsc.pushValue(idx);
 		// [ObjectTable][ConstructPtr][UData]
 		lsc.call(1,1);
 		// [ObjectTable][Instance]

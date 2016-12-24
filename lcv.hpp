@@ -1234,7 +1234,7 @@ namespace rev {
 				const auto* dummy = static_cast<T*>(nullptr);
 				lua::LuaExport(lsc, dummy);
 				if(ptr) {
-					MakeInstance(lsc, lua::LuaName(dummy), ptr);
+					MakePointerInstance(lsc, lua::LuaName(dummy), ptr);
 					// [Instance]
 					if(!tableName.empty())
 						lsc.prepareTableGlobal(tableName);
@@ -1248,10 +1248,15 @@ namespace rev {
 				}
 				lsc.setTop(stk);
 			}
-			static void MakeInstance(LuaState& lsc, const char* luaName, void* ptr);
+			static void MakePointerInstance(LuaState& lsc, const char* luaName, void* ptr);
 			template <class T>
-			static void MakeInstance(LuaState& lsc, const T* ptr) {
-				MakeInstance(lsc, lua::LuaName((T*)nullptr), (void*)ptr);
+			static void MakePointerInstance(LuaState& lsc, const T* ptr) {
+				MakePointerInstance(lsc, lua::LuaName((T*)nullptr), (void*)ptr);
+			}
+			static void MakeInstance(LuaState& lsc, const char* luaName, int idx);
+			template <class T>
+			static void MakeInstance(LuaState& lsc, const int idx) {
+				MakeInstance(lsc, lua::LuaName((T*)nullptr), idx);
 			}
 			static void RegisterRSClass(LuaState& lsc);
 			//! GObjectメッセージを受信
@@ -1267,7 +1272,7 @@ namespace rev {
 			LuaState lsc(ls, false);
 			auto* ptr = reinterpret_cast<T*>(lsc.newUserData(sizeof(T)));
 			new(ptr) T(std::forward<T2>(t));
-			LuaImport::MakeInstance(lsc, ptr);
+			LuaImport::MakeInstance<T>(lsc, -1);
 			lsc.remove(-2);
 			return 1;
 		}
@@ -1297,7 +1302,7 @@ namespace rev {
 	struct LCV<T*> {
 		int operator()(lua_State* ls, const T* t) const {
 			LuaState lsc(ls, false);
-			LuaImport::MakeInstance(lsc, t);
+			LuaImport::MakePointerInstance(lsc, t);
 			return 1;
 		}
 		T* operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/=nullptr) const {
