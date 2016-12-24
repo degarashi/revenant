@@ -69,7 +69,7 @@ namespace rev {
 				// LCV経由で値を取得(正のインデックス & 負のインデックス)
 				const auto v1 = _lcv(nprev+1, ls, nullptr),
 							v2 = _lcv(lsp->getTop()-npost, ls, nullptr);
-				ASSERT_TRUE(PreciseCompare(v0, decltype(v0)(v1)));
+				ASSERT_TRUE(PreciseCompare(v0, decltype(v0)(v1)) || PreciseCompare(decltype(v1)(v0), v1));
 				ASSERT_TRUE(PreciseCompare(v1, v2));
 
 				// スタックの他の値は変化なし
