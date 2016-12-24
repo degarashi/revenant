@@ -1,5 +1,6 @@
 #include "lcvtest.hpp"
 #include "../luaimpl.hpp"
+#include <boost/lexical_cast.hpp>
 
 namespace rev {
 	class MyResMgr;
@@ -15,6 +16,12 @@ namespace rev {
 				T1 value1;
 				T2 value2;
 
+				// 一旦文字列にしてまた数値へ戻す
+				void stringize() {
+					value = boost::lexical_cast<T0>(std::to_string(value));
+					value1 = boost::lexical_cast<T1>(std::to_string(value1));
+					value2 = boost::lexical_cast<T2>(std::to_string(value2));
+				}
 				// メンバ変数をそれぞれ引数倍する
 				T0 mFunc(const T0& r) {
 					value *= r;
@@ -117,7 +124,8 @@ namespace rev {
 			this->registerClass();
 			auto& lsp = this->_lsp;
 
-			const value_t myc(*this);
+			value_t myc(*this);
+			myc.stringize();
 			const std::string code =
 				std::string("return ") + myc.getResourceName() + ".New("
 				+ std::to_string(myc.value) + ", " + std::to_string(myc.value1) + ", " + std::to_string(myc.value2)
