@@ -49,6 +49,11 @@ namespace rev {
 				extern const std::string NumRef;
 			}
 		}
+		namespace vector {
+			extern const std::string Size,
+									Postfix,
+									V;
+		}
 		namespace system {
 			extern const std::string PathSeparation,
 									PathReplaceMark,

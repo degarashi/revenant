@@ -354,12 +354,12 @@ namespace rev {
 		if(typ == LUA_TTABLE) {
 			lua_pushvalue(ls, idx);
 			LValueS lvs(ls);
-			LValueS postfix = lvs["_postfix"];
+			LValueS postfix = lvs[luaNS::vector::Postfix];
 			if(postfix.type() == LuaType::String &&
-				std::string(postfix.toString()) == "V")
+				std::string(postfix.toString()) == luaNS::vector::V)
 			{
-				const int size = LValueS(lvs["_size"]).toInteger();
-				const void* ptr = LValueS(lvs["pointer"]).toUserData();
+				const int size = LValueS(lvs[luaNS::vector::Size]).toInteger();
+				const void* ptr = LValueS(lvs[luaNS::objBase::Pointer]).toUserData();
 				switch(size) {
 					case 2:
 						return *static_cast<const frea::Vec2*>(ptr);
@@ -405,39 +405,6 @@ namespace rev {
 		return t.type();
 	}
 	DEF_LCV_OSTREAM(LValueG)
-
-	// [LCV<frea::Vec2>]
-	void LCV<frea::Vec2>::operator()(lua_State*, const frea::Vec2&) const {
-	}
-	frea::Vec2 LCV<frea::Vec2>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
-		return {};
-	}
-	LuaType LCV<frea::Vec2>::operator()(const frea::Vec2&) const {
-		return LuaType::Nil;
-	}
-	DEF_LCV_OSTREAM(frea::Vec2)
-
-	// [LCV<frea::Vec3>]
-	void LCV<frea::Vec3>::operator()(lua_State*, const frea::Vec3&) const {
-	}
-	frea::Vec3 LCV<frea::Vec3>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
-		return {};
-	}
-	LuaType LCV<frea::Vec3>::operator()(const frea::Vec3&) const {
-		return LuaType::Nil;
-	}
-	DEF_LCV_OSTREAM(frea::Vec3)
-
-	// [LCV<frea::Vec4>]
-	void LCV<frea::Vec4>::operator()(lua_State*, const frea::Vec4&) const {
-	}
-	frea::Vec4 LCV<frea::Vec4>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
-		return {};
-	}
-	LuaType LCV<frea::Vec4>::operator()(const frea::Vec4&) const {
-		return LuaType::Nil;
-	}
-	DEF_LCV_OSTREAM(frea::Vec4)
 
 	// [LCV<frea::Mat2>]
 	void LCV<frea::Mat2>::operator()(lua_State*, const frea::Mat2&) const {

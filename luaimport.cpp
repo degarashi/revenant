@@ -53,6 +53,11 @@ namespace rev {
 				const std::string NumRef("numRef");
 			}
 		}
+		namespace vector {
+			const std::string Size("_size"),
+							Postfix("_postfix"),
+							V("V");
+		}
 		namespace system {
 			const std::string PathSeparation(";"),
 								PathReplaceMark("?"),

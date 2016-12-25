@@ -9,7 +9,7 @@ DEF_LUAIMPLEMENT_PTR(
 	(dot)(average)(distance)(dist_sq)(getMin)(selectMin)(getMax)(selectMax)(normalize)(normalization)
 	(length)(len_sq)(isNaN)(isOutstanding)(saturation)(l_intp)(absolute)(getMinValue)(getMaxValue)
 	(linearNormalize)(linearNormalization)(isZero)
-	(luaAddV)(luaSubV)(luaMulF)(luaMulM)(luaDivF)(luaInvert)(luaEqual)(luaToString),
+	(luaAddV)(luaSubV)(luaMulF)(luaMulV)(luaMulM)(luaDivF)(luaDivV)(luaInvert)(luaEqual)(luaToString),
 	(float)(float)
 )
 DEF_LUAIMPLEMENT_PTR(
@@ -20,7 +20,7 @@ DEF_LUAIMPLEMENT_PTR(
 	(dot)(average)(distance)(dist_sq)(getMin)(selectMin)(getMax)(selectMax)(normalize)(normalization)
 	(length)(len_sq)(isNaN)(isOutstanding)(saturation)(l_intp)(absolute)(getMinValue)(getMaxValue)
 	(linearNormalize)(linearNormalization)(isZero)
-	(luaAddV)(luaSubV)(luaMulF)(luaMulM)(luaDivF)(luaInvert)(luaEqual)(luaToString),
+	(luaAddV)(luaSubV)(luaMulF)(luaMulV)(luaMulM)(luaDivF)(luaDivV)(luaInvert)(luaEqual)(luaToString),
 	(float)(float)(float)
 )
 DEF_LUAIMPLEMENT_PTR(
@@ -31,7 +31,7 @@ DEF_LUAIMPLEMENT_PTR(
 	(dot)(average)(distance)(dist_sq)(getMin)(selectMin)(getMax)(selectMax)(normalize)(normalization)
 	(length)(len_sq)(isNaN)(isOutstanding)(saturation)(l_intp)(absolute)(getMinValue)(getMaxValue)
 	(linearNormalize)(linearNormalization)(isZero)
-	(luaAddV)(luaSubV)(luaMulF)(luaMulM)(luaDivF)(luaInvert)(luaEqual)(luaToString),
+	(luaAddV)(luaSubV)(luaMulF)(luaMulV)(luaMulM)(luaDivF)(luaDivV)(luaInvert)(luaEqual)(luaToString),
 	(float)(float)(float)(float)
 )
 DEF_LUAIMPLEMENT_DERIVED(frea::AVec2, frea::Vec2)
