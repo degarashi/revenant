@@ -448,7 +448,7 @@ namespace rev {
 	using Vec3 = frea::Vec_t<float,3,false>;
 	using Vec4 = frea::Vec_t<float,4,false>;
 	#define SEQ_LCVAR \
-		(LuaNil)(bool)(const char*)(lua_Integer)(lua_Number) \
+		(LuaNil)(bool)(const char*)(lua_Number) \
 		(Vec2)(Vec3)(Vec4)(frea::Quat) \
 		(HRes)(WRes)(Lua_SP)(LCTable_SP)(void*)(lua_CFunction)(std::string)
 	using LCVar = boost::variant<BOOST_PP_SEQ_ENUM(SEQ_LCVAR)>;
@@ -477,6 +477,7 @@ namespace rev {
 			LCValue(const LCValue& lc);
 			LCValue(LCValue&& lcv);
 			LCValue(lua_OtherNumber num);
+			LCValue(lua_Integer num);
 			LCValue(lua_IntegerU num);
 			LCValue(lua_OtherIntegerU num);
 			LCValue(lua_OtherInteger num);

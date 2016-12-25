@@ -82,14 +82,17 @@ namespace rev {
 	LCValue::LCValue(const lua_OtherNumber num):
 		LCValue(static_cast<lua_Number>(num))
 	{}
+	LCValue::LCValue(const lua_Integer num):
+		LCValue(static_cast<lua_Number>(num))
+	{}
 	LCValue::LCValue(const lua_IntegerU num):
-		LCValue(static_cast<lua_Integer>(num))
+		LCValue(static_cast<lua_Number>(num))
 	{}
 	LCValue::LCValue(const lua_OtherInteger num):
-		LCValue(static_cast<lua_Integer>(num))
+		LCValue(static_cast<lua_Number>(num))
 	{}
 	LCValue::LCValue(const lua_OtherIntegerU num):
-		LCValue(static_cast<lua_Integer>(num))
+		LCValue(static_cast<lua_Number>(num))
 	{}
 
 	bool LCValue::operator == (const LCValue& lcv) const noexcept {
