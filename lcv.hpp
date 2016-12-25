@@ -95,7 +95,7 @@ namespace rev {
 		template <> \
 		struct LCV<typ> { \
 			using value_t = val; \
-			int operator()(lua_State* ls, argtyp t) const; \
+			void operator()(lua_State* ls, argtyp t) const; \
 			rtyp operator()(int idx, lua_State* ls, LPointerSP* spm) const; \
 			LuaType operator()(argtyp t) const; \
 		}; \
@@ -235,11 +235,11 @@ namespace rev {
 	template <class T>
 	struct LCV<spi::Optional<T>> {
 		using opt_t = spi::Optional<T>;
-		int operator()(lua_State* ls, const opt_t& op) const {
+		void operator()(lua_State* ls, const opt_t& op) const {
 			if(!op)
-				return GetLCVType<LuaNil>()(ls, LuaNil());
+				GetLCVType<LuaNil>()(ls, LuaNil());
 			else
-				return GetLCVType<T>()(ls, *op);
+				GetLCVType<T>()(ls, *op);
 		}
 		opt_t operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
 			if(lua_type(ls, idx) == LUA_TNIL)
@@ -259,8 +259,8 @@ namespace rev {
 	template <class Rep, class Period>
 	struct LCV<std::chrono::duration<Rep,Period>> {
 		using Dur = std::chrono::duration<Rep,Period>;
-		int operator()(lua_State* ls, const Dur& d) const {
-			return LCV<lua_Integer>()(ls, std::chrono::duration_cast<Microseconds>(d).count());
+		void operator()(lua_State* ls, const Dur& d) const {
+			LCV<lua_Integer>()(ls, std::chrono::duration_cast<Microseconds>(d).count());
 		}
 		Dur operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
 			return Microseconds(LCV<lua_Integer>()(idx, ls, spm));
@@ -278,7 +278,7 @@ namespace rev {
 	template <class T, class A>
 	struct LCV<std::vector<T, A>> {
 		using Vec_t = std::vector<T,A>;
-		int operator()(lua_State* ls, const Vec_t& v) const {
+		void operator()(lua_State* ls, const Vec_t& v) const {
 			GetLCVType<T> lcv;
 			const auto sz = v.size();
 			lua_createtable(ls, sz, 0);
@@ -287,7 +287,6 @@ namespace rev {
 				lcv(ls, v[i]);
 				lua_settable(ls, -3);
 			}
-			return 1;
 		}
 		Vec_t operator()(int idx, lua_State* ls, LPointerSP* spm) const {
 			idx = lua_absindex(ls, idx);
@@ -332,10 +331,9 @@ namespace rev {
 			lua_settable(ls, -3);
 			_pushElem(ls, t, IConst<N+1>());
 		}
-		int operator()(lua_State* ls, const Tuple& t) const {
+		void operator()(lua_State* ls, const Tuple& t) const {
 			lua_newtable(ls);
 			_pushElem(ls, t, IConst<0>());
-			return 1;
 		}
 
 		// Table -> std::tuple<>
@@ -381,8 +379,8 @@ namespace rev {
 		using Vec_t = std::vector<T>;
 		using LCV_t = GetLCVType<Vec_t>;
 		using range_t = lubee::Range<T>;
-		int operator()(lua_State* ls, const range_t& r) const {
-			return LCV_t()(ls, {r.from, r.to});
+		void operator()(lua_State* ls, const range_t& r) const {
+			LCV_t()(ls, {r.from, r.to});
 		}
 		range_t operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
 			auto p = LCV_t()(idx, ls, spm);
@@ -404,9 +402,8 @@ namespace rev {
 	template <class T>
 	struct LCV<std::shared_ptr<T>> {
 		using value_t = std::shared_ptr<T>;
-		int operator()(lua_State* ls, const value_t& t) const {
+		void operator()(lua_State* ls, const value_t& t) const {
 			PushSP(ls, lua::LuaName((T*)nullptr), t);
-			return 1;
 		}
 		value_t operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
 			if(auto sp = LCV<void_sp>()(idx, ls, spm))
@@ -426,9 +423,8 @@ namespace rev {
 	template <class T>
 	struct LCV<std::weak_ptr<T>> {
 		using value_t = std::weak_ptr<T>;
-		int operator()(lua_State* ls, const value_t& t) const {
+		void operator()(lua_State* ls, const value_t& t) const {
 			PushWP(ls, lua::LuaName((T*)nullptr), t);
-			return 1;
 		}
 		value_t operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
 			if(auto sp = LCV<void_sp>()(idx, ls, spm))
@@ -966,16 +962,16 @@ namespace rev {
 	struct CallAndRetSize {
 		template <class CB>
 		static int proc(lua_State* ls, const CB& cb) {
-			return GetLCVType<T>()(ls, static_cast<detail::GetLCVType<T>>(cb()));
+			GetLCVType<T>()(ls, static_cast<detail::GetLCVType<T>>(cb()));
+			return 1;
 		}
 	};
 	template <>
 	struct CallAndRetSize<void> {
-		constexpr static int size = 0;
 		template <class CB>
 		static int proc(lua_State* /*ls*/, const CB& cb) {
 			cb();
-			return size;
+			return 0;
 		}
 	};
 	// --- Lua->C++グルーコードにおけるクラスポインタの取得 ---
@@ -1268,13 +1264,12 @@ namespace rev {
 	template <class T>
 	struct LCV_In {
 		template <class T2>
-		int operator()(lua_State* ls, T2&& t) const {
+		void operator()(lua_State* ls, T2&& t) const {
 			LuaState lsc(ls, false);
 			auto* ptr = reinterpret_cast<T*>(lsc.newUserData(sizeof(T)));
 			new(ptr) T(std::forward<T2>(t));
 			LuaImport::MakeInstance<T>(lsc, -1);
 			lsc.remove(-2);
-			return 1;
 		}
 		// (int, lua_State*)の順なのは、pushの時と引数が被ってしまう為
 		T& operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/=nullptr) const {
@@ -1293,17 +1288,16 @@ namespace rev {
 	struct LCV<const T*> : LCV<T> {
 		using base_t = LCV<T>;
 		using base_t::operator();
-		int operator()(lua_State* ls, const T* t) const {
-			return base_t()(ls, *t);
+		void operator()(lua_State* ls, const T* t) const {
+			base_t()(ls, *t);
 		}
 	};
 	// 非const参照またはポインターの場合はLightUserdataに格納
 	template <class T>
 	struct LCV<T*> {
-		int operator()(lua_State* ls, const T* t) const {
+		void operator()(lua_State* ls, const T* t) const {
 			LuaState lsc(ls, false);
 			LuaImport::MakePointerInstance(lsc, t);
-			return 1;
 		}
 		T* operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/=nullptr) const {
 			return LI_GetPtr<T>()(ls, idx);
@@ -1316,8 +1310,8 @@ namespace rev {
 	struct LCV<T&> : LCV<T*> {
 		using base_t = LCV<T*>;
 		using base_t::operator();
-		int operator()(lua_State* ls, const T& t) const {
-			return base_t()(ls, &t);
+		void operator()(lua_State* ls, const T& t) const {
+			base_t()(ls, &t);
 		}
 		T& operator()(const int idx, lua_State* ls, LPointerSP* spm=nullptr) const {
 			return *base_t()(idx, ls, spm);

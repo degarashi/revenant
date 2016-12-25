@@ -59,8 +59,8 @@ namespace rev {
 				}
 				// LCV経由でPush
 				const auto v0 = genValue<value_t>();
-				const int cur = _lcv(ls, v0);
-				ASSERT_EQ(nprev+cur, lsp->getTop());
+				_lcv(ls, v0);
+				ASSERT_EQ(nprev+1, lsp->getTop());
 				// 後に関係ない値を加える
 				for(int i=0 ; i<npost ; i++) {
 					post[i] = genLCValue(c_luaTypes_key);
@@ -76,7 +76,7 @@ namespace rev {
 				for(int i=0 ; i<nprev ; i++)
 					ASSERT_TRUE(prev[i].preciseCompare(lsp->toLCValue(i+1)));
 				for(int i=0 ; i<npost ; i++)
-					ASSERT_TRUE(post[i].preciseCompare(lsp->toLCValue(nprev+cur+1+i)));
+					ASSERT_TRUE(post[i].preciseCompare(lsp->toLCValue(nprev+1+1+i)));
 			}
 			void typeTest() {
 				// LCV()が返す型タイプが実際Pushした時と一致しているか確認

@@ -10,9 +10,8 @@ namespace rev {
 	DEF_LCV_OSTREAM(lua_OtherIntegerU)
 
 	// [LCV<LuaNil> = LUA_TNIL]
-	int LCV<LuaNil>::operator()(lua_State* ls, LuaNil) const {
+	void LCV<LuaNil>::operator()(lua_State* ls, LuaNil) const {
 		lua_pushnil(ls);
-		return 1;
 	}
 	LuaNil LCV<LuaNil>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		LuaState::CheckType(ls, idx, LuaType::Nil);
@@ -24,9 +23,8 @@ namespace rev {
 	DEF_LCV_OSTREAM(LuaNil)
 
 	// [LCV<bool> = LUA_TBOOL]
-	int LCV<bool>::operator()(lua_State* ls, const bool b) const {
+	void LCV<bool>::operator()(lua_State* ls, const bool b) const {
 		lua_pushboolean(ls, b);
-		return 1;
 	}
 	bool LCV<bool>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		LuaState::CheckType(ls, idx, LuaType::Boolean);
@@ -38,12 +36,11 @@ namespace rev {
 	DEF_LCV_OSTREAM(bool)
 
 	// [LCV<const char*> = LUA_TSTRING]
-	int LCV<const char*>::operator()(lua_State* ls, const char* c) const {
+	void LCV<const char*>::operator()(lua_State* ls, const char* c) const {
 		if(c)
 			lua_pushstring(ls, c);
 		else
 			lua_pushnil(ls);
-		return 1;
 	}
 	const char* LCV<const char*>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		if(lua_type(ls, idx) == LUA_TNIL)
@@ -59,9 +56,8 @@ namespace rev {
 	DEF_LCV_OSTREAM(const char*)
 
 	// [LCV<std::string> = LUA_TSTRING]
-	int LCV<std::string>::operator()(lua_State* ls, const std::string& s) const {
+	void LCV<std::string>::operator()(lua_State* ls, const std::string& s) const {
 		lua_pushlstring(ls, s.c_str(), s.length());
-		return 1;
 	}
 	std::string LCV<std::string>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		if(lua_type(ls, idx) == LUA_TNIL)
@@ -86,8 +82,8 @@ namespace rev {
 		}
 	}
 	// [LCV<frea::DegF>]
-	int LCV<frea::DegF>::operator()(lua_State* ls, const frea::DegF& d) const {
-		return LCV_In<frea::DegF>()(ls, d);
+	void LCV<frea::DegF>::operator()(lua_State* ls, const frea::DegF& d) const {
+		LCV_In<frea::DegF>()(ls, d);
 	}
 	frea::DegF LCV<frea::DegF>::operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
 		auto cname = GetAngleType(ls, idx);
@@ -106,8 +102,8 @@ namespace rev {
 	DEF_LCV_OSTREAM_PAIR(frea::DegF, Degree)
 
 	// [LCV<frea::RadF>]
-	int LCV<frea::RadF>::operator()(lua_State* ls, const frea::RadF& d) const {
-		return LCV_In<frea::RadF>()(ls, d);
+	void LCV<frea::RadF>::operator()(lua_State* ls, const frea::RadF& d) const {
+		LCV_In<frea::RadF>()(ls, d);
 	}
 	frea::RadF LCV<frea::RadF>::operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
 		auto cname = GetAngleType(ls, idx);
@@ -126,9 +122,8 @@ namespace rev {
 	DEF_LCV_OSTREAM_PAIR(frea::RadF, Radian)
 
 	// [LCV<lua_Integer> = LUA_TNUMBER]
-	int LCV<lua_Integer>::operator()(lua_State* ls, const lua_Integer i) const {
+	void LCV<lua_Integer>::operator()(lua_State* ls, const lua_Integer i) const {
 		lua_pushinteger(ls, i);
-		return 1;
 	}
 	lua_Integer LCV<lua_Integer>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		LuaState::CheckType(ls, idx, LuaType::Number);
@@ -140,9 +135,8 @@ namespace rev {
 	DEF_LCV_OSTREAM(lua_Integer)
 
 	// --- LCV<lua_Number> = LUA_TNUMBER
-	int LCV<lua_Number>::operator()(lua_State* ls, const lua_Number f) const {
+	void LCV<lua_Number>::operator()(lua_State* ls, const lua_Number f) const {
 		lua_pushnumber(ls, f);
-		return 1;
 	}
 	lua_Number LCV<lua_Number>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		LuaState::CheckType(ls, idx, LuaType::Number);
@@ -154,8 +148,8 @@ namespace rev {
 	DEF_LCV_OSTREAM(lua_Number)
 
 	// [LCV<lua_State*> = LUA_TTHREAD]
-	int LCV<lua_State*>::operator()(lua_State* ls, lua_State* lsp) const {
-		return LCV<Lua_SP>()(ls, LuaState::GetLS_SP(lsp));
+	void LCV<lua_State*>::operator()(lua_State* ls, lua_State* lsp) const {
+		LCV<Lua_SP>()(ls, LuaState::GetLS_SP(lsp));
 	}
 	lua_State* LCV<lua_State*>::operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
 		if(auto sp = LCV<Lua_SP>()(idx, ls, spm))
@@ -168,7 +162,7 @@ namespace rev {
 	DEF_LCV_OSTREAM(lua_State*)
 
 	// [LCV<lubee::RectF> = LUA_TTABLE]
-	int LCV<lubee::RectF>::operator()(lua_State* ls, const lubee::RectF& r) const {
+	void LCV<lubee::RectF>::operator()(lua_State* ls, const lubee::RectF& r) const {
 		lua_createtable(ls, 4, 0);
 		int idx = 1;
 		const auto fnSet = [ls, &idx](const float f){
@@ -180,7 +174,6 @@ namespace rev {
 		fnSet(r.x1);
 		fnSet(r.y0);
 		fnSet(r.y1);
-		return 1;
 	}
 	lubee::RectF LCV<lubee::RectF>::operator()(const int idx, lua_State* ls, LPointerSP*) const {
 		const auto fnGet = [ls, idx](const int n){
@@ -198,7 +191,7 @@ namespace rev {
 	DEF_LCV_OSTREAM_PAIR(lubee::RectF, Rect)
 
 	// [LCV<lubee::SizeF> = LUA_TTABLE]
-	int LCV<lubee::SizeF>::operator()(lua_State* ls, const lubee::SizeF& s) const {
+	void LCV<lubee::SizeF>::operator()(lua_State* ls, const lubee::SizeF& s) const {
 		lua_createtable(ls, 2, 0);
 		lua_pushinteger(ls, 1);
 		lua_pushnumber(ls, s.width);
@@ -206,7 +199,6 @@ namespace rev {
 		lua_pushinteger(ls, 2);
 		lua_pushnumber(ls, s.height);
 		lua_settable(ls, -3);
-		return 1;
 	}
 	lubee::SizeF LCV<lubee::SizeF>::operator()(const int idx, lua_State* ls, LPointerSP*) const {
 		const auto fnGet = [ls, idx](const int n){
@@ -224,11 +216,10 @@ namespace rev {
 	DEF_LCV_OSTREAM_PAIR(lubee::SizeF, Size)
 
 	// [LCV<Lua_SP> = LUA_TTHREAD]
-	int LCV<Lua_SP>::operator()(lua_State* ls, const Lua_SP& sp) const {
+	void LCV<Lua_SP>::operator()(lua_State* ls, const Lua_SP& sp) const {
 		sp->_registerLua();
 		sp->pushSelf();
 		lua_xmove(sp->getLS(), ls, 1);
-		return 1;
 	}
 	Lua_SP LCV<Lua_SP>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		const auto typ = lua_type(ls, idx);
@@ -247,9 +238,8 @@ namespace rev {
 	DEF_LCV_OSTREAM(Lua_SP)
 
 	// [LCV<void*> = LUA_TLIGHTUSERDATA]
-	int LCV<void*>::operator()(lua_State* ls, const void* ud) const {
+	void LCV<void*>::operator()(lua_State* ls, const void* ud) const {
 		lua_pushlightuserdata(ls, const_cast<void*>(ud));
-		return 1;
 	}
 	void* LCV<void*>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		try {
@@ -265,9 +255,8 @@ namespace rev {
 	DEF_LCV_OSTREAM(void*)
 
 	// [LCV<lua_CFunction> = LUA_TFUNCTION]
-	int LCV<lua_CFunction>::operator()(lua_State* ls, const lua_CFunction f) const {
+	void LCV<lua_CFunction>::operator()(lua_State* ls, const lua_CFunction f) const {
 		lua_pushcclosure(ls, f, 0);
-		return 1;
 	}
 	lua_CFunction LCV<lua_CFunction>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		LuaState::CheckType(ls, idx, LuaType::Function);
@@ -279,10 +268,9 @@ namespace rev {
 	DEF_LCV_OSTREAM(lua_CFunction)
 
 	// [LCV<Timepoint> = LUA_TNUMBER]
-	int LCV<Timepoint>::operator()(lua_State* ls, const Timepoint& t) const {
+	void LCV<Timepoint>::operator()(lua_State* ls, const Timepoint& t) const {
 		LCV<Duration> dur;
 		dur(ls, Duration(t.time_since_epoch()));
-		return 1;
 	}
 	Timepoint LCV<Timepoint>::operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
 		LCV<Duration> dur;
@@ -294,13 +282,12 @@ namespace rev {
 	DEF_LCV_OSTREAM(Timepoint)
 
 	// [LCV<LCTable_SP> = LUA_TTABLE]
-	int LCV<LCTable_SP>::operator()(lua_State* ls, const LCTable_SP& t) const {
+	void LCV<LCTable_SP>::operator()(lua_State* ls, const LCTable_SP& t) const {
         LuaState lsc(ls, false);
 		lsc.newTable(0, t->size());
 		for(auto& ent : *t) {
 			lsc.setField(-1, ent.first, ent.second);
 		}
-		return 1;
 	}
 	LCTable_SP LCV<LCTable_SP>::operator()(int idx, lua_State* ls, LPointerSP* spm) const {
 		LuaState::CheckType(ls, idx, LuaType::Table);
@@ -357,9 +344,8 @@ namespace rev {
 			[](lua_State* ls, const int idx, LPointerSP* spm){ return LCValue(LCV<Lua_SP>()(idx,ls,spm)); }
 		};
 	}
-	int LCV<LCValue>::operator()(lua_State* ls, const LCValue& lcv) const {
+	void LCV<LCValue>::operator()(lua_State* ls, const LCValue& lcv) const {
 		lcv.push(ls);
-		return 1;
 	}
 	LCValue LCV<LCValue>::operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
 		const CheckTop ct(ls);
@@ -394,9 +380,8 @@ namespace rev {
 	DEF_LCV_OSTREAM(LCValue)
 
 	// [LCV<LValueS>]
-	int LCV<LValueS>::operator()(lua_State* ls, const LValueS& t) const {
+	void LCV<LValueS>::operator()(lua_State* ls, const LValueS& t) const {
 		t.prepareValue(ls);
-		return 1;
 	}
 	LValueS LCV<LValueS>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		lua_pushvalue(ls, idx);
@@ -408,9 +393,8 @@ namespace rev {
 	DEF_LCV_OSTREAM(LValueS)
 
 	// [LCV<LValueG>]
-	int LCV<LValueG>::operator()(lua_State* ls, const LValueG& t) const {
+	void LCV<LValueG>::operator()(lua_State* ls, const LValueG& t) const {
 		t.prepareValue(ls);
-		return 1;
 	}
 	LValueG LCV<LValueG>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		lua_pushvalue(ls, idx);
@@ -423,8 +407,7 @@ namespace rev {
 	DEF_LCV_OSTREAM(LValueG)
 
 	// [LCV<frea::Vec2>]
-	int LCV<frea::Vec2>::operator()(lua_State*, const frea::Vec2&) const {
-		return 0;
+	void LCV<frea::Vec2>::operator()(lua_State*, const frea::Vec2&) const {
 	}
 	frea::Vec2 LCV<frea::Vec2>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
 		return {};
@@ -435,8 +418,7 @@ namespace rev {
 	DEF_LCV_OSTREAM(frea::Vec2)
 
 	// [LCV<frea::Vec3>]
-	int LCV<frea::Vec3>::operator()(lua_State*, const frea::Vec3&) const {
-		return 0;
+	void LCV<frea::Vec3>::operator()(lua_State*, const frea::Vec3&) const {
 	}
 	frea::Vec3 LCV<frea::Vec3>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
 		return {};
@@ -447,8 +429,7 @@ namespace rev {
 	DEF_LCV_OSTREAM(frea::Vec3)
 
 	// [LCV<frea::Vec4>]
-	int LCV<frea::Vec4>::operator()(lua_State*, const frea::Vec4&) const {
-		return 0;
+	void LCV<frea::Vec4>::operator()(lua_State*, const frea::Vec4&) const {
 	}
 	frea::Vec4 LCV<frea::Vec4>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
 		return {};
@@ -459,8 +440,7 @@ namespace rev {
 	DEF_LCV_OSTREAM(frea::Vec4)
 
 	// [LCV<frea::Mat2>]
-	int LCV<frea::Mat2>::operator()(lua_State*, const frea::Mat2&) const {
-		return 0;
+	void LCV<frea::Mat2>::operator()(lua_State*, const frea::Mat2&) const {
 	}
 	frea::Mat2 LCV<frea::Mat2>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
 		return {};
@@ -471,8 +451,7 @@ namespace rev {
 	DEF_LCV_OSTREAM(frea::Mat2)
 
 	// [LCV<frea::Mat3>]
-	int LCV<frea::Mat3>::operator()(lua_State*, const frea::Mat3&) const {
-		return 0;
+	void LCV<frea::Mat3>::operator()(lua_State*, const frea::Mat3&) const {
 	}
 	frea::Mat3 LCV<frea::Mat3>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
 		return {};
@@ -483,8 +462,7 @@ namespace rev {
 	DEF_LCV_OSTREAM(frea::Mat3)
 
 	// [LCV<frea::Mat4>]
-	int LCV<frea::Mat4>::operator()(lua_State*, const frea::Mat4&) const {
-		return 0;
+	void LCV<frea::Mat4>::operator()(lua_State*, const frea::Mat4&) const {
 	}
 	frea::Mat4 LCV<frea::Mat4>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
 		return {};
@@ -495,8 +473,7 @@ namespace rev {
 	DEF_LCV_OSTREAM(frea::Mat4)
 
 	// [LCV<frea::Quat>]
-	int LCV<frea::Quat>::operator()(lua_State*, const frea::Quat&) const {
-		return 0;
+	void LCV<frea::Quat>::operator()(lua_State*, const frea::Quat&) const {
 	}
 	frea::Quat LCV<frea::Quat>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
 		return {};
@@ -572,9 +549,8 @@ namespace rev {
 		}
 	}
 	// [LCV<void_sp>]
-	int LCV<void_sp>::operator()(lua_State* ls, const void_sp& p) const {
+	void LCV<void_sp>::operator()(lua_State* ls, const void_sp& p) const {
 		PushSP(ls, luaNS::Void, p);
-		return 1;
 	}
 	void_sp LCV<void_sp>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		return LoadVoidSP(idx, ls);
@@ -585,9 +561,8 @@ namespace rev {
 	DEF_LCV_OSTREAM(void_sp)
 
 	// [LCV<void_wp>]
-	int LCV<void_wp>::operator()(lua_State* ls, const void_wp& w) const {
+	void LCV<void_wp>::operator()(lua_State* ls, const void_wp& w) const {
 		PushWP(ls, luaNS::Void, w);
-		return 1;
 	}
 	void_wp LCV<void_wp>::operator()(const int idx, lua_State* ls, LPointerSP* /*spm*/) const {
 		return LoadVoidWP(idx, ls);
