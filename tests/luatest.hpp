@@ -270,6 +270,9 @@ namespace rev {
 			}
 		};
 		template <class W, class DT, int N>
+		struct GenValue<frea::VecT_spec<W, frea::Data<DT,N,true>, N>>:
+			GenValue<frea::VecT_spec<W, frea::Data<DT,N,false>, N>> {};
+		template <class W, class DT, int N>
 		struct GenValue<frea::VecT_spec<W, frea::Data<DT,N,false>, N>> {
 			using Vec = frea::VecT_spec<W, frea::Data<DT,N,false>, N>;
 			Vec operator()(LuaTest& self) const {
