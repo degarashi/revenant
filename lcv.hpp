@@ -1264,6 +1264,7 @@ namespace rev {
 namespace rev {
 	template <class T>
 	struct LCV_In {
+		using value_t = T;
 		template <class T2>
 		void operator()(lua_State* ls, T2&& t) const {
 			LuaState lsc(ls, false);
