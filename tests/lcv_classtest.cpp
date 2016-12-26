@@ -86,7 +86,7 @@ DEF_LUAIMPLEMENT_SPTR(
 namespace rev {
 	namespace test {
 		template <class T>
-		struct LCV_ClassTest : LCV_TestRW<T> {
+		struct LCV_ClassTest : LCV_TestRW {
 			using value_t = T;
 			using T0 = typename value_t::T0;
 			using T1 = typename value_t::T1;
@@ -95,12 +95,12 @@ namespace rev {
 			static std::unique_ptr<Mgr_t>	s_mgr;
 
 			static void SetUpTestCase() {
-				LCV_TestRW<T>::SetUpTestCase();
+				LCV_TestRW::SetUpTestCase();
 				s_mgr = std::make_unique<Mgr_t>();
 			}
 			static void TearDownTestCase() {
 				s_mgr.reset();
-				LCV_TestRW<T>::TearDownTestCase();
+				LCV_TestRW::TearDownTestCase();
 			}
 			void SetUp() override {
 				value_t::s_called = 0;

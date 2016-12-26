@@ -3,73 +3,70 @@
 
 namespace rev {
 	namespace test {
-		struct NoImplement {};
+		struct LCVNoImplement {};
 		template <class T>
-		using Pair0 = std::pair<T, NoImplement>;
+		using LCVPair0 = std::pair<T, LCVNoImplement>;
 		template <class T>
-		using Pair1 = std::pair<T,T>;
+		using LCVPair1 = std::pair<T,T>;
 		template <class T0, class T1>
-		using Pair2 = std::pair<T0,T1>;
+		using LCVPair2 = std::pair<T0,T1>;
 
-		template <class T>
-		void LuaRegisterClass(LuaState& lsc, T*) {
-			LuaImport::RegisterClass<T>(lsc);
-		}
-		void LuaRegisterClass(LuaState&, NoImplement*) {}
-
-		using Types3 = ::testing::Types<
-			Pair0<lubee::Range<int>>, Pair0<lubee::Range<float>>, Pair0<lubee::Range<double>>,
-			Pair0<lubee::SizeI>, Pair0<lubee::SizeF>,
-			Pair0<lubee::RectI>, Pair0<lubee::RectF>,
-			Pair1<frea::DegF>, Pair2<frea::DegD, frea::DegF>, Pair1<frea::RadF>, Pair2<frea::RadD, frea::RadF>
+		using TypesL = ::testing::Types<
+			LCVPair0<lubee::Range<int>>, LCVPair0<lubee::Range<float>>, LCVPair0<lubee::Range<double>>,
+			LCVPair0<lubee::SizeI>, LCVPair0<lubee::SizeF>,
+			LCVPair0<lubee::RectI>, LCVPair0<lubee::RectF>,
+			LCVPair1<frea::DegF>, LCVPair2<frea::DegD, frea::DegF>, LCVPair1<frea::RadF>, LCVPair2<frea::RadD, frea::RadF>
 		>;
 		template <class T>
-		struct LCV_Test3 : LCV_TestRW<typename T::first_type> {
+		struct LCV_ClassTest : LCV_TestRW {
+			using base_t = LCV_TestRW;
 			using value_t = typename T::first_type;
 			using lua_type = typename T::second_type;
+
+			template <class TR>
+			void _luaRegisterClass(TR*) {
+				LuaImport::RegisterClass<TR>(*this->_lsp);
+			}
+			void _luaRegisterClass(LCVNoImplement*) {}
+
+			void SetUp() override {
+				base_t::SetUp();
+				this->loadSharedPtrModule();
+				this->_luaRegisterClass((lua_type*)nullptr);
+			}
 		};
-		TYPED_TEST_CASE(LCV_Test3, Types3);
-		TYPED_TEST(LCV_Test3, Push) {
-			USING(lua_type);
-			this->loadSharedPtrModule();
-			LuaRegisterClass(*this->_lsp, (lua_type*)nullptr);
-			ASSERT_NO_FATAL_FAILURE(this->pushTest());
+		TYPED_TEST_CASE(LCV_ClassTest, TypesL);
+		TYPED_TEST(LCV_ClassTest, Push) {
+			USING(value_t);
+			ASSERT_NO_FATAL_FAILURE(this->template pushTest<value_t>());
 		}
-		TYPED_TEST(LCV_Test3, Type) {
-			USING(lua_type);
-			this->loadSharedPtrModule();
-			LuaRegisterClass(*this->_lsp, (lua_type*)nullptr);
-			ASSERT_NO_FATAL_FAILURE(this->typeTest());
+		TYPED_TEST(LCV_ClassTest, Type) {
+			USING(value_t);
+			ASSERT_NO_FATAL_FAILURE(this->template typeTest<value_t>());
 		}
 
 		template <class T>
-		using LCV_Vector = LCV_Test3<T>;
+		using LCV_Vector = LCV_ClassTest<T>;
 		using TypesV = ::testing::Types<
-			Pair1<frea::Vec2>, Pair2<frea::AVec2, frea::Vec2>,
-			Pair1<frea::Vec3>, Pair2<frea::AVec3, frea::Vec3>,
-			Pair1<frea::Vec4>, Pair2<frea::AVec4, frea::Vec4>
+			LCVPair1<frea::Vec2>, LCVPair2<frea::AVec2, frea::Vec2>,
+			LCVPair1<frea::Vec3>, LCVPair2<frea::AVec3, frea::Vec3>,
+			LCVPair1<frea::Vec4>, LCVPair2<frea::AVec4, frea::Vec4>
 		>;
 		TYPED_TEST_CASE(LCV_Vector, TypesV);
 		// Push/Pop等値チェック
 		TYPED_TEST(LCV_Vector, Push) {
-			USING(lua_type);
-			this->loadSharedPtrModule();
-			LuaRegisterClass(*this->_lsp, (lua_type*)nullptr);
-			ASSERT_NO_FATAL_FAILURE(this->pushTest());
+			USING(value_t);
+			ASSERT_NO_FATAL_FAILURE(this->template pushTest<value_t>());
 		}
 		// LCVでLuaへ渡した時の型チェック
 		TYPED_TEST(LCV_Vector, Type) {
-			USING(lua_type);
-			this->loadSharedPtrModule();
-			LuaRegisterClass(*this->_lsp, (lua_type*)nullptr);
-			ASSERT_NO_FATAL_FAILURE(this->typeTest());
+			USING(value_t);
+			ASSERT_NO_FATAL_FAILURE(this->template typeTest<value_t>());
 		}
 		// 一旦LCValueに変換する
 		TYPED_TEST(LCV_Vector, LCValue) {
 			USING(lua_type);
 			USING(value_t);
-			this->loadSharedPtrModule();
-			LuaRegisterClass(*this->_lsp, (lua_type*)nullptr);
 			lua_State* ls = this->_lsp->getLS();
 			const auto val0 = GenValue<value_t>()(*this);
 			LCV<value_t>()(ls, val0);
@@ -114,8 +111,6 @@ namespace rev {
 		TYPED_TEST(LCV_Vector, Operator) {
 			USING(lua_type);
 			USING(value_t);
-			this->loadSharedPtrModule();
-			LuaRegisterClass(*this->_lsp, (lua_type*)nullptr);
 
 			// 2つのベクトル値と1つのスカラー値を生成
 			const GenValue_t<value_t>		gv_v;

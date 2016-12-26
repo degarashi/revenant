@@ -37,13 +37,10 @@ namespace rev {
 			return PreciseCompare(v0.first, v1.first) &&
 					PreciseCompare(v0.second, v1.second);
 		}
-		template <class T>
 		struct LCV_Test : LuaTest {
-			using value_t = T;
-			using LCV_t = LCV<T>;
-			LCV_t	_lcv;
-
+			template <class T>
 			void pushTest() {
+				LCV<T> lcv;
 				auto& lsp = this->_lsp;
 				lua_State *const ls = lsp->getLS();
 				lsp->checkStack(32);
@@ -58,8 +55,8 @@ namespace rev {
 					lsp->push(prev[i]);
 				}
 				// LCV経由でPush
-				const auto v0 = genValue<value_t>();
-				_lcv(ls, v0);
+				const auto v0 = genValue<T>();
+				lcv(ls, v0);
 				ASSERT_EQ(nprev+1, lsp->getTop());
 				// 後に関係ない値を加える
 				for(int i=0 ; i<npost ; i++) {
@@ -67,8 +64,8 @@ namespace rev {
 					lsp->push(post[i]);
 				}
 				// LCV経由で値を取得(正のインデックス & 負のインデックス)
-				const auto v1 = _lcv(nprev+1, ls, nullptr),
-							v2 = _lcv(lsp->getTop()-npost, ls, nullptr);
+				const auto v1 = lcv(nprev+1, ls, nullptr),
+							v2 = lcv(lsp->getTop()-npost, ls, nullptr);
 				ASSERT_TRUE(PreciseCompare(v0, decltype(v0)(v1)) || PreciseCompare(decltype(v1)(v0), v1));
 				ASSERT_TRUE(PreciseCompare(v1, v2));
 
@@ -78,17 +75,18 @@ namespace rev {
 				for(int i=0 ; i<npost ; i++)
 					ASSERT_TRUE(post[i].preciseCompare(lsp->toLCValue(nprev+1+1+i)));
 			}
+			template <class T>
 			void typeTest() {
+				LCV<T> lcv;
 				// LCV()が返す型タイプが実際Pushした時と一致しているか確認
 				auto& lsp = this->_lsp;
-				const auto val = genValue<value_t>();
-				_lcv(lsp->getLS(), val);
-				ASSERT_EQ(_lcv(val), lsp->type(-1));
+				const auto val = genValue<T>();
+				lcv(lsp->getLS(), val);
+				ASSERT_EQ(lcv(val), lsp->type(-1));
 			}
 		};
 
-		template <class T>
-		class LCV_TestRW : public LCV_Test<T> {
+		class LCV_TestRW : public LCV_Test {
 			private:
 				static std::unique_ptr<RWMgr> s_rw;
 			public:
@@ -104,7 +102,6 @@ namespace rev {
 					lsp->loadModule("shared_ptr");
 				}
 		};
-		template <class T>
-		std::unique_ptr<RWMgr> LCV_TestRW<T>::s_rw;
+		std::unique_ptr<RWMgr> LCV_TestRW::s_rw;
 	}
 }
