@@ -80,6 +80,7 @@ namespace rev {
 	);
 	class LuaState;
 	using Lua_SP = std::shared_ptr<LuaState>;
+	using Lua_WP = std::weak_ptr<LuaState>;
 	class LCTable;
 	using LCTable_SP = std::shared_ptr<LCTable>;
 	using ILua_SP = std::shared_ptr<lua_State>;

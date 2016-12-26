@@ -93,7 +93,7 @@ namespace rev {
 		getTable(-2);
 		if(type(-1) == LuaType::Nil) {
 			pop(1);
-			MakeUserdataWithDtor(*this, shared_from_this());
+			MakeUserdataWithDtor(*this, Lua_WP(shared_from_this()));
 			// [fromLua][Lua_SP]
 			pushSelf();
 			pushValue(-2);
@@ -606,7 +606,7 @@ namespace rev {
 		lsc.getTable(-2);
 		if(lsc.type(-1) == LuaType::Userdata) {
 			// [fromLua][LuaState*]
-			return (*reinterpret_cast<Lua_SP*>(lsc.toUserData(-1)))->shared_from_this();
+			return reinterpret_cast<Lua_WP*>(lsc.toUserData(-1))->lock();
 		}
 		lsc.pop(2);
 		// Cppでのみ生きているスレッド

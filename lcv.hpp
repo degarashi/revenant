@@ -684,7 +684,7 @@ namespace rev {
 			//! global[cs_fromCpp], global[cs_fromLua]を作成しスタックに積む
 			/*!
 				FromCpp: LightUserdata(LuaState*) -> Thread
-				FromLua: Weak(Thread) -> Userdata(Lua_SP)
+				FromLua: Weak(Thread) -> Userdata(Lua_WP)
 			*/
 			void _initMainThread();
 			void _getThreadTable();
