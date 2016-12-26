@@ -63,23 +63,15 @@ namespace rev {
 namespace rev {
 	namespace lua {
 		struct Dummy {};
-		template <class C, class Getter>
-		void LuaRegisterMember(LuaState&, const std::tuple<>&) {}
-		template <class C, class Getter, class Tag, class... Remain>
-		void LuaRegisterMember(LuaState& lsc, const std::tuple<Tag, Remain...>&) {
-			LuaImport::RegisterMember<Getter, C>(lsc, Tag::name, Tag::pointer);
-			LuaRegisterMember<C, Getter>(lsc, std::tuple<Remain...>());
-		}
-
 		template <
 			class C, class Getter,
-			class...Member, class... Method, class Maker
+			class CBMember, class CBMethod, class Maker
 		>
 		void LuaExportImpl(LuaState& lsc,
 				const char* class_name,
 				const char* base_name,
-				const std::tuple<Member...>& member,
-				const std::tuple<Method...>& method,
+				const CBMember& cbMember,
+				const CBMethod& cbMethod,
 				Maker* maker
 		) {
 			LuaImport::BeginImportBlock(class_name);
@@ -99,13 +91,13 @@ namespace rev {
 			LuaImport::BeginImportBlock("Values");
 			lsc.rawGetField(-1, ::rev::luaNS::objBase::ValueR);
 			lsc.rawGetField(-2, ::rev::luaNS::objBase::ValueW);
-			LuaRegisterMember<C, Getter>(lsc, member);
+			cbMember();
 			lsc.pop(2);
 			LuaImport::EndImportBlock();
 
 			LuaImport::BeginImportBlock("Functions");
 			lsc.rawGetField(-1, ::rev::luaNS::objBase::Func);
-			LuaRegisterMember<C, Getter>(lsc, method);
+			cbMethod();
 			lsc.pop(1);
 			LuaImport::EndImportBlock();
 
@@ -117,34 +109,21 @@ namespace rev {
 	}
 }
 
-// param = (class_raw)(clazz)
-#define DEF_MEMBER_NAME(n, param, elem)	\
-	struct BOOST_PP_CAT(BOOST_PP_CAT(BOOST_PP_SEQ_ELEM(0, param), elem), _tag) { \
-		static const char* name; \
-		static decltype(&BOOST_PP_SEQ_ELEM(1, param)::elem) pointer; \
-	}; \
-	const char* BOOST_PP_CAT(BOOST_PP_CAT(BOOST_PP_SEQ_ELEM(0, param), elem), _tag)::name = BOOST_PP_STRINGIZE(elem); \
-	decltype(BOOST_PP_CAT(BOOST_PP_CAT(BOOST_PP_SEQ_ELEM(0, param), elem), _tag)::pointer) \
-		BOOST_PP_CAT(BOOST_PP_CAT(BOOST_PP_SEQ_ELEM(0, param), elem), _tag)::pointer = \
-		&BOOST_PP_SEQ_ELEM(1, param)::elem;
-
-#define SEQUENCE(S) BOOST_PP_IIF(BOOST_PP_EQUAL(0, BOOST_PP_SEQ_SIZE(S)), (), S)
-#define ENUM_NAME(n, class_raw, elem) (BOOST_PP_CAT(BOOST_PP_CAT(class_raw, elem), _tag))
+// param = (clazz)(class_raw)
+#define DEF_LUAMEMBER(n, param, elem) LuaImport::RegisterMember<::rev::LI_GetPtr<BOOST_PP_SEQ_ELEM(0,param)>, BOOST_PP_SEQ_ELEM(0,param)>(lsc, BOOST_PP_STRINGIZE(elem), &BOOST_PP_SEQ_ELEM(0,param)::elem);
 #define DEF_LUAIMPLEMENT_IMPL(mgr, clazz, class_raw, base, seq_member, seq_method, seq_ctor, makeobj) \
 namespace rev { \
 	namespace lua { \
 		template <> \
 		const char* LuaName(clazz*) { return #class_raw; } \
-		BOOST_PP_SEQ_FOR_EACH(DEF_MEMBER_NAME, (class_raw)(clazz), seq_member) \
-		BOOST_PP_SEQ_FOR_EACH(DEF_MEMBER_NAME, (class_raw)(clazz), seq_method) \
 		template <> \
 		void LuaExport(LuaState& lsc, clazz*) { \
 			LuaExportImpl<clazz, ::rev::LI_GetPtr<clazz>>( \
 				lsc, \
 				#class_raw, \
 				#base, \
-				std::tuple<BOOST_PP_SEQ_ENUM(SEQUENCE(BOOST_PP_SEQ_FOR_EACH(ENUM_NAME, class_raw, seq_member)))>(), \
-				std::tuple<BOOST_PP_SEQ_ENUM(SEQUENCE(BOOST_PP_SEQ_FOR_EACH(ENUM_NAME, class_raw, seq_method)))>(), \
+				[&lsc](){ BOOST_PP_SEQ_FOR_EACH(DEF_LUAMEMBER, (clazz)(class_raw), seq_member) }, \
+				[&lsc](){ BOOST_PP_SEQ_FOR_EACH(DEF_LUAMEMBER, (clazz)(class_raw), seq_method) }, \
 				&makeobj<BOOST_PP_SEQ_ENUM((mgr)(clazz) seq_ctor)> \
 			); \
 		} \
