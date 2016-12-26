@@ -724,6 +724,7 @@ namespace rev {
 			// 借り物初期化 (破棄の処理はしない) from lua_State
 			LuaState(lua_State* ls, bool bCheckTop);
 			bool isLibraryLoaded();
+			bool isMainThread() const;
 			void addResourcePath(const std::string& path);
 
 			//! 新しくLuaステートを作成(コルーチンではない)

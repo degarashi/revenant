@@ -134,6 +134,9 @@ namespace rev {
 		pop(1);
 		return res;
 	}
+	bool LuaState::isMainThread() const {
+		return !static_cast<bool>(_base);
+	}
 	void LuaState::addResourcePath(const std::string& path) {
 		loadLibraries();
 
