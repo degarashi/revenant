@@ -75,6 +75,16 @@ namespace rev {
 			ASSERT_EQ(val0, val1);
 		}
 		namespace {
+			const std::string lua_MemberRead =
+				"return function(v, n)\n"
+					"local member = {\"x\", \"y\", \"z\", \"w\"}\n"
+					"local res = {}\n"
+					"for i=1,n+1 do\n"
+						"res[i] = v[member[i]]\n"
+					"end\n"
+					"return res\n"
+				"end"
+			;
 			const std::string lua_OperatorCheck =
 				"return function(v0, v1, s)\n"
 					"return {\n"
@@ -105,6 +115,38 @@ namespace rev {
 						return true;
 				}
 				return false;
+			}
+		}
+		// Luaでのメンバ変数読み込みチェック
+		TYPED_TEST(LCV_Vector, ReadMember) {
+			USING(value_t);
+			auto& lsp = this->_lsp;
+			lsp->loadFromSource(mgr_rw.fromConstTemporal(lua_MemberRead.c_str(), lua_MemberRead.length()));
+
+			// テストコードをロードすると1つのLua関数が返る
+			Assert0(lsp->getTop() == 1 &&
+					lsp->type(1) == LuaType::Function);
+			constexpr lua_Number th = 1e-5;
+			const GenValue_t<value_t>		gv_v;
+			value_t v0;
+			do {
+				v0 = gv_v(*this);
+			} while(HasZero(v0, th));
+
+			// 1つのベクトル値と、
+			LCV<value_t>()(lsp->getLS(), v0);
+			// 要素数を積み
+			lsp->push(value_t::size);
+			// 演算テストコードを実行
+			lsp->call(2, 1);
+			// テーブルが1つ返る
+			Assert0(lsp->getTop() == 1 &&
+					lsp->type(1) == LuaType::Table);
+
+			// Lua内での取得結果をC++側と比較
+			auto res = lsp->toTable(1);
+			for(int i=0 ; i<value_t::size ; i++) {
+				ASSERT_EQ(lua_Number(v0[i]), boost::get<lua_Number>((*res)[i+1]));
 			}
 		}
 		// Luaでの演算チェック
