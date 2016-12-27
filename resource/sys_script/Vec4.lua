@@ -5,6 +5,11 @@ local tmp = {
 		return VecC.IsVec(a) and a._size == 4
 	end,
 	_postfix = VecC.Postfix,
-	_metatable = VecC.Metatable
+	_metatable = VecC.Metatable,
+	_renamefunc =
+		RV.RenameFunc(
+			{"toVec2", "convert<2>"},
+			{"toVec3", "convert<3>"}
+		)
 }
 return tmp
