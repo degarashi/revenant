@@ -46,7 +46,42 @@ namespace rev {
 		}
 
 		template <class T>
-		using LCV_Vector = LCV_ClassTest<T>;
+		struct LCV_Vector : LCV_ClassTest<T> {
+			using base_t = LCV_ClassTest<T>;
+			using value_t = typename base_t::value_t;
+			template <class V>
+			static bool HasZero(const V& v, const typename V::value_t& threshold) {
+				for(auto& val : v) {
+					if(std::abs(val) < threshold)
+						return true;
+				}
+				return false;
+			}
+			auto makeNonZero() {
+				return GenValue_t<typename value_t::value_t>()(*this);
+			}
+			value_t makeNonZeroVector() {
+				constexpr lua_Number th = 1e-5;
+				value_t v;
+				do {
+					v = GenValue_t<value_t>()(*this);
+				} while(this->HasZero(v, th));
+				return v;
+			}
+			value_t makeVector() {
+				return GenValue_t<value_t>()(*this);
+			}
+			void loadTestSource_Ret1(const std::string& src, const LuaType retT) {
+				auto& lsp = this->_lsp;
+				const int idx = lsp->getTop();
+				loadTestSource(src);
+				Assert0(lsp->getTop() == idx+1 &&
+						lsp->type(-1) == retT);
+			}
+			void loadTestSource(const std::string& src) {
+				this->_lsp->loadFromSource(mgr_rw.fromConstTemporal(src.c_str(), src.length()));
+			}
+		};
 		using TypesV = ::testing::Types<
 			LCVPair1<frea::Vec2>, LCVPair2<frea::AVec2, frea::Vec2>,
 			LCVPair1<frea::Vec3>, LCVPair2<frea::AVec3, frea::Vec3>,
@@ -117,31 +152,15 @@ namespace rev {
 						"tostring(v0)"
 				"	}\n"
 				"end";
-			template <class V>
-			bool HasZero(const V& v, const typename V::value_t& threshold) {
-				for(auto& val : v) {
-					if(std::abs(val) < threshold)
-						return true;
-				}
-				return false;
-			}
 		}
 		// Luaでのメンバ変数読み込みチェック
 		TYPED_TEST(LCV_Vector, ReadMember) {
 			USING(value_t);
 			auto& lsp = this->_lsp;
-			lsp->loadFromSource(mgr_rw.fromConstTemporal(lua_MemberRead.c_str(), lua_MemberRead.length()));
-
 			// テストコードをロードすると1つのLua関数が返る
-			Assert0(lsp->getTop() == 1 &&
-					lsp->type(1) == LuaType::Function);
-			constexpr lua_Number th = 1e-5;
-			const GenValue_t<value_t>		gv_v;
-			value_t v0;
-			do {
-				v0 = gv_v(*this);
-			} while(HasZero(v0, th));
+			this->loadTestSource_Ret1(lua_MemberRead, LuaType::Function);
 
+			const value_t v0 = this->makeVector();
 			// 1つのベクトル値と、
 			LCV<value_t>()(lsp->getLS(), v0);
 			// 要素数を積み
@@ -162,11 +181,8 @@ namespace rev {
 		TYPED_TEST(LCV_Vector, WriteMember) {
 			USING(value_t);
 			auto& lsp = this->_lsp;
-			lsp->loadFromSource(mgr_rw.fromConstTemporal(lua_MemberWrite.c_str(), lua_MemberWrite.length()));
-
 			// テストコードをロードすると1つのLua関数が返る
-			Assert0(lsp->getTop() == 1 &&
-					lsp->type(1) == LuaType::Function);
+			this->loadTestSource_Ret1(lua_MemberWrite, LuaType::Function);
 
 			const value_t v0 = GenValue_t<value_t>()(*this);
 			const LCV<value_t&> lcv;
@@ -191,31 +207,18 @@ namespace rev {
 			USING(value_t);
 
 			// 2つのベクトル値と1つのスカラー値を生成
-			const GenValue_t<value_t>		gv_v;
-			const GenValue_t<lua_Number>	gv_s;
-			constexpr lua_Number th = 1e-5;
-			value_t v0, v1;
-			do {
-				v0 = gv_v(*this);
-			} while(HasZero(v0, th));
+			value_t v0 = this->makeNonZeroVector(), v1;
 			// 一定の確率でv0とv1を同じ値にする
 			if(this->getRDI()({0,1}) == 0)
 				v1 = v0;
-			else {
-				do {
-					v1 = gv_v(*this);
-				} while(HasZero(v1, th));
-			}
-			lua_Number s;
-			do {
-				s = gv_s(*this);
-			} while(std::abs(s) < th);
+			else
+				v1 = this->makeNonZeroVector();
+
+			const lua_Number s = this->makeNonZero();
 
 			auto& lsp = this->_lsp;
-			lsp->loadFromSource(mgr_rw.fromConstTemporal(lua_OperatorCheck.c_str(), lua_OperatorCheck.length()));
 			// テストコードをロードすると1つのLua関数が返る
-			Assert0(lsp->getTop() == 1 &&
-					lsp->type(1) == LuaType::Function);
+			this->loadTestSource_Ret1(lua_OperatorCheck, LuaType::Function);
 
 			lua_State* ls = lsp->getLS();
 			const LCV<value_t> lcv;
