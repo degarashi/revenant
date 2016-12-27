@@ -129,6 +129,27 @@ namespace rev {
 					"end\n"
 				"end"
 			;
+			const std::string lua_Method =
+				"return function(v1, ...)\n"
+					"local method = {\n"
+						// selectMax
+						"function(v0,v1) v0:selectMax(v1) end,\n"
+						// normalize
+						"function(v0,v1) v0:normalize() end,\n"
+						// selectMin
+						"function(v0,v1) v0:selectMin(v1) end,\n"
+						// linearNormalize
+						"function(v0,v1) v0:linearNormalize() end\n"
+					"}\n"
+					"local res = {}\n"
+					"for i=1,#method do\n"
+						"local v0 = v1.New(...)\n"
+						"method[i](v0,v1)\n"
+						"res[i] = v0\n"
+					"end\n"
+					"return res\n"
+				"end"
+			;
 			const std::string lua_ConstMethod =
 				"return function(v0, v1, sMin, sMax)\n"
 					"return {\n"
@@ -241,6 +262,54 @@ namespace rev {
 			// Luaコードでのメンバ書き換え結果をC++側と比較
 			for(int i=0 ; i<value_t::size ; i++) {
 				ASSERT_EQ(v0[i], (typename value_t::value_t)(arg[i]));
+			}
+		}
+		// Luaでのメンバ関数呼び出しチェック
+		TYPED_TEST(LCV_Vector, Method) {
+			// テストコードをロードすると1つのLua関数が返る
+			this->loadTestSource_Ret1(lua_Method, LuaType::Function);
+
+			USING(value_t);
+			auto& lsp = this->_lsp;
+			lua_State* ls = lsp->getLS();
+
+			// 2つのベクトル値を生成
+			const value_t v0 = this->makeNonZeroVector(),
+							v1 = this->makeNonZeroVector();
+			LCV<value_t>()(ls, v1);
+			for(int i=0 ; i<value_t::size ; i++) {
+				lsp->push(v0[i]);
+			}
+			lsp->call(value_t::size+1, 1);
+			// テーブルが1つ返る
+			Assert0(lsp->getTop() == 1 &&
+					lsp->type(1) == LuaType::Table);
+
+			USING(lua_type);
+			auto res = lsp->toTable(-1);
+			// selectMax
+			{
+				value_t v2(v0);
+				v2.selectMax(v1);
+				ASSERT_EQ(v2, boost::get<lua_type>((*res)[1]));
+			}
+			// normalize
+			{
+				value_t v2(v0);
+				v2.normalize();
+				ASSERT_EQ(v2, boost::get<lua_type>((*res)[2]));
+			}
+			// selectMin
+			{
+				value_t v2(v0);
+				v2.selectMin(v1);
+				ASSERT_EQ(v2, boost::get<lua_type>((*res)[3]));
+			}
+			// linearNormalize
+			{
+				value_t v2(v0);
+				v2.linearNormalize();
+				ASSERT_EQ(v2, boost::get<lua_type>((*res)[4]));
 			}
 		}
 		// LuaでのConstメンバ関数呼び出しチェック
