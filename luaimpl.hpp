@@ -29,6 +29,17 @@ namespace rev {
 namespace rev {
 	template <class Dummy_t, class C, class... Ts>
 	int MakeObject(lua_State* ls) {
+		FuncCall<Ts...>::callCB(
+			[ls](auto&&... args) {
+				LCV<C>()(ls, C(std::forward<decltype(args)>(args)...));
+			},
+			ls,
+			static_cast<int>(-sizeof...(Ts))
+		);
+		return 1;
+	}
+	template <class Dummy_t, class C, class... Ts>
+	int MakeSPObject(lua_State* ls) {
 		auto obj = FuncCall<Ts...>::callCB(
 			[](auto&&... args) {
 				return std::make_shared<C>(std::forward<decltype(args)>(args)...);
