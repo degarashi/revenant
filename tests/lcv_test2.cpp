@@ -129,6 +129,48 @@ namespace rev {
 					"end\n"
 				"end"
 			;
+			const std::string lua_ConstMethod =
+				"return function(v0, v1, sMin, sMax)\n"
+					"return {\n"
+						// dot
+						"v0:dot(v1),\n"
+						// average
+						"v0:average(),\n"
+						// distance
+						"v0:distance(v1),\n"
+						// dist_sq
+						"v0:dist_sq(v1),\n"
+						// getMin
+						"v0:getMin(v1),\n"
+						// getMax
+						"v0:getMax(v1),\n"
+						// normalization
+						"v0:normalization(),\n"
+						// length
+						"v0:length(),\n"
+						// len_sq
+						"v0:len_sq(),\n"
+						// isNaN
+						"v0:isNaN(),\n"
+						// isOutstanding
+						"v0:isOutstanding(),\n"
+						// saturation
+						"v0:saturation(sMin, sMax),\n"
+						// l_intp
+						"v0:l_intp(v1, sMin),\n"
+						// absolute
+						"v0:absolute(),\n"
+						// getMinValue
+						"v0:getMinValue(),\n"
+						// getMaxValue
+						"v0:getMaxValue(),\n"
+						// linearNormalization
+						"v0:linearNormalization(),\n"
+						// isZero
+						"v0:isZero(sMin)\n"
+					"}\n"
+				"end"
+			;
 			const std::string lua_OperatorCheck =
 				"return function(v0, v1, s)\n"
 					"return {\n"
@@ -200,6 +242,76 @@ namespace rev {
 			for(int i=0 ; i<value_t::size ; i++) {
 				ASSERT_EQ(v0[i], (typename value_t::value_t)(arg[i]));
 			}
+		}
+		// LuaでのConstメンバ関数呼び出しチェック
+		TYPED_TEST(LCV_Vector, ConstMethod) {
+			// テストコードをロードすると1つのLua関数が返る
+			this->loadTestSource_Ret1(lua_ConstMethod, LuaType::Function);
+
+			USING(value_t);
+			// 2つのベクトル値と2つのスカラー値を生成
+			value_t v0 = this->makeNonZeroVector(),
+					v1;
+			// 一定の確率でv0とv1を同じ値にする
+			if(this->getRDI()({0,1}) == 0)
+				v1 = v0;
+			else
+				v1 = this->makeNonZeroVector();
+			lua_Number sMin = this->makeNonZero(),
+					   sMax = this->makeNonZero();
+			if(sMin > sMax)
+				std::swap(sMin, sMax);
+
+			auto& lsp = this->_lsp;
+			lua_State* ls = lsp->getLS();
+			const LCV<value_t> lcv_v;
+			lcv_v(ls, v0);
+			lcv_v(ls, v1);
+			lsp->push(sMin);
+			lsp->push(sMax);
+			lsp->call(4, 1);
+			// テーブルが1つ返る
+			Assert0(lsp->getTop() == 1 &&
+					lsp->type(1) == LuaType::Table);
+
+			USING(lua_type);
+			auto res = lsp->toTable(-1);
+			// dot
+			ASSERT_EQ(v0.dot(v1), boost::get<lua_Number>((*res)[1]));
+			// average
+			ASSERT_EQ(v0.average(), boost::get<lua_Number>((*res)[2]));
+			// distance
+			ASSERT_EQ(v0.distance(v1), boost::get<lua_Number>((*res)[3]));
+			// dist_sq
+			ASSERT_EQ(v0.dist_sq(v1), boost::get<lua_Number>((*res)[4]));
+			// getMin
+			ASSERT_EQ(v0.getMin(v1), boost::get<lua_type>((*res)[5]));
+			// getMax
+			ASSERT_EQ(v0.getMax(v1), boost::get<lua_type>((*res)[6]));
+			// normalization
+			ASSERT_EQ(v0.normalization(), boost::get<lua_type>((*res)[7]));
+			// length
+			ASSERT_EQ(v0.length(), boost::get<lua_Number>((*res)[8]));
+			// len_sq
+			ASSERT_EQ(v0.len_sq(), boost::get<lua_Number>((*res)[9]));
+			// isNaN
+			ASSERT_EQ(v0.isNaN(), boost::get<bool>((*res)[10]));
+			// isOutstanding
+			ASSERT_EQ(v0.isOutstanding(), boost::get<bool>((*res)[11]));
+			// saturation
+			ASSERT_EQ(v0.saturation(sMin, sMax), boost::get<lua_type>((*res)[12]));
+			// l_intp
+			ASSERT_EQ(v0.l_intp(v1, sMin), boost::get<lua_type>((*res)[13]));
+			// absolute
+			ASSERT_EQ(v0.absolute(), boost::get<lua_type>((*res)[14]));
+			// getMinValue
+			ASSERT_EQ(v0.getMinValue(), boost::get<lua_Number>((*res)[15]));
+			// getMaxValue
+			ASSERT_EQ(v0.getMaxValue(), boost::get<lua_Number>((*res)[16]));
+			// linearNormalization
+			ASSERT_EQ(v0.linearNormalization(), boost::get<lua_type>((*res)[17]));
+			// isZero
+			ASSERT_EQ(v0.isZero(sMin), boost::get<bool>((*res)[18]));
 		}
 		// Luaでの演算チェック
 		TYPED_TEST(LCV_Vector, Operator) {
