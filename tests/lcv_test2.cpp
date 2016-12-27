@@ -85,6 +85,15 @@ namespace rev {
 					"return res\n"
 				"end"
 			;
+			const std::string lua_MemberWrite =
+				"return function(v, ...)\n"
+					"local member = {\"x\", \"y\", \"z\", \"w\"}\n"
+					"local arg = {...}\n"
+					"for i=1,#arg do\n"
+						"v[member[i]] = arg[i]\n"
+					"end\n"
+				"end"
+			;
 			const std::string lua_OperatorCheck =
 				"return function(v0, v1, s)\n"
 					"return {\n"
@@ -147,6 +156,33 @@ namespace rev {
 			auto res = lsp->toTable(1);
 			for(int i=0 ; i<value_t::size ; i++) {
 				ASSERT_EQ(lua_Number(v0[i]), boost::get<lua_Number>((*res)[i+1]));
+			}
+		}
+		// Luaでのメンバ変数書き込みチェック
+		TYPED_TEST(LCV_Vector, WriteMember) {
+			USING(value_t);
+			auto& lsp = this->_lsp;
+			lsp->loadFromSource(mgr_rw.fromConstTemporal(lua_MemberWrite.c_str(), lua_MemberWrite.length()));
+
+			// テストコードをロードすると1つのLua関数が返る
+			Assert0(lsp->getTop() == 1 &&
+					lsp->type(1) == LuaType::Function);
+
+			const value_t v0 = GenValue_t<value_t>()(*this);
+			const LCV<value_t&> lcv;
+			lcv(lsp->getLS(), v0);
+
+			const GenValue_t<lua_Number>	gv_f;
+			lua_Number arg[value_t::size];
+			for(auto& a : arg) {
+				a = gv_f(*this);
+				lsp->push(a);
+			}
+			lsp->call(countof(arg)+1, 0);
+
+			// Luaコードでのメンバ書き換え結果をC++側と比較
+			for(int i=0 ; i<value_t::size ; i++) {
+				ASSERT_EQ(v0[i], (typename value_t::value_t)(arg[i]));
 			}
 		}
 		// Luaでの演算チェック
