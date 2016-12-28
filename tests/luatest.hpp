@@ -269,42 +269,39 @@ namespace rev {
 				return {ofs[0], ofs[0]+s[0], ofs[1], ofs[1]+s[1]};
 			}
 		};
-		template <class W, class DT, int N>
-		struct GenValue<frea::VecT_spec<W, frea::Data<DT,N,true>, N>>:
-			GenValue<frea::VecT_spec<W, frea::Data<DT,N,false>, N>> {};
-		template <class W, class DT, int N>
-		struct GenValue<frea::VecT_spec<W, frea::Data<DT,N,false>, N>> {
-			using Vec = frea::VecT_spec<W, frea::Data<DT,N,false>, N>;
+		template <class W, class DT, int N, bool A>
+		struct GenValue<frea::VecT_spec<W, frea::Data<DT,N,A>, N>> {
+			using Vec = frea::VecT_spec<W, frea::Data<DT,N,A>, N>;
 			Vec operator()(LuaTest& self) const {
 				return detail::MakeValueArray<Vec, DT, N>(self);
 			}
 		};
-		template <class W, class DT, int M, int N>
-		struct GenValue<frea::MatT_spec<frea::VecT_spec<W, frea::Data<DT,N,false>, N>, M, N>> {
-			using Mat = frea::MatT_spec<frea::VecT_spec<W, frea::Data<DT,N,false>, N>, M, N>;
+		template <class W, class DT, int M, int N, bool A>
+		struct GenValue<frea::MatT_spec<frea::VecT_spec<W, frea::Data<DT,N,A>, N>, M, N>> {
+			using Mat = frea::MatT_spec<frea::VecT_spec<W, frea::Data<DT,N,A>, N>, M, N>;
 			Mat operator()(LuaTest& self) const {
 				return detail::MakeValueArray<Mat, DT, M*N>(self);
 			}
 		};
-		template <class T>
-		struct GenValue<frea::QuatT<T,false>> {
-			using Quat = frea::QuatT<T,false>;
+		template <class T, bool A>
+		struct GenValue<frea::QuatT<T,A>> {
+			using Quat = frea::QuatT<T,A>;
 			Quat operator()(LuaTest& self) const {
-				return GenValue_t<frea::Vec_t<T,4,false>>()(self);
+				return GenValue_t<frea::Vec_t<T,4,A>>()(self);
 			}
 		};
-		template <class T>
-		struct GenValue<frea::ExpQuatT<T,false>> {
-			using EQ = frea::ExpQuatT<T,false>;
+		template <class T, bool A>
+		struct GenValue<frea::ExpQuatT<T,A>> {
+			using EQ = frea::ExpQuatT<T,A>;
 			EQ operator()(LuaTest& self) const {
-				return GenValue_t<frea::Vec_t<T,3,false>>()(self);
+				return GenValue_t<frea::Vec_t<T,3,A>>()(self);
 			}
 		};
-		template <class T>
-		struct GenValue<frea::PlaneT<T,false>> {
-			using Plane = frea::PlaneT<T,false>;
+		template <class T, bool A>
+		struct GenValue<frea::PlaneT<T,A>> {
+			using Plane = frea::PlaneT<T,A>;
 			Plane operator()(LuaTest& self) const {
-				return GenValue_t<frea::Vec_t<T,4,false>>()(self);
+				return GenValue_t<frea::Vec_t<T,4,A>>()(self);
 			}
 		};
 		template <class Ang, class Rep>
