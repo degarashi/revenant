@@ -16,10 +16,10 @@ namespace rev {
 		bool PreciseCompare(const T& v0, const T& v1) {
 			return v0 == v1;
 		}
-		bool PreciseCompare(const LCValue& v0, const LCValue& v1) noexcept {
+		inline bool PreciseCompare(const LCValue& v0, const LCValue& v1) noexcept {
 			return v0.preciseCompare(v1);
 		}
-		bool PreciseCompare(const char* c0, const char* c1) {
+		inline bool PreciseCompare(const char* c0, const char* c1) {
 			return std::string(c0) == std::string(c1);
 		}
 		template <class... Ts>
@@ -102,6 +102,5 @@ namespace rev {
 					lsp->loadModule("shared_ptr");
 				}
 		};
-		std::unique_ptr<RWMgr> LCV_TestRW::s_rw;
 	}
 }

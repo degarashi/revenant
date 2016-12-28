@@ -110,12 +110,17 @@ if(NOT without-test)
 		${CMAKE_THREAD_LIBS_INIT}
 	)
 
-	set(EXPLICIT tests/luatest.cpp)
+	set(EXPLICIT
+		tests/luatest.cpp
+		tests/lcv_classtest_value.cpp
+		tests/lcv_test_value.cpp
+	)
 	# ちょっとしたテストコードはシングルファイル、そうでないものはサブディレクトリ
 	# シングルファイルのテストコード: testsディレクトリ以下のソースが対象
 	aux_source_directory(tests TEST_SRC)
 	foreach(SRC IN LISTS TEST_SRC)
-		if(NOT (${EXPLICIT} STREQUAL ${SRC}))
+		list(FIND EXPLICIT ${SRC} OUTPUT)
+		if(${OUTPUT} LESS 0)
 			GetFileName(${SRC}, SRCNAME)
 			AddTest(${SRCNAME} "${SRC};${EXPLICIT}" "${TESTEXE_LIB}")
 		endif()
