@@ -32,6 +32,14 @@ namespace rev {
 			const auto val1 = boost::get<lua_type>(lc);
 			ASSERT_EQ(val0, val1);
 		}
+		// Luaでのメンバ変数読み込みチェック
+		TYPED_TEST(LCV_Vector, ReadMember) {
+			this->readMemberTestXYZW();
+		}
+		// Luaでのメンバ変数書き込みチェック
+		TYPED_TEST(LCV_Vector, WriteMember) {
+			this->writeMemberTestXYZW();
+		}
 		namespace {
 			const std::string lua_Method =
 				"return function(v1, ...)\n"
@@ -119,54 +127,6 @@ namespace rev {
 						"tostring(v0)"
 				"	}\n"
 				"end";
-		}
-		// Luaでのメンバ変数読み込みチェック
-		TYPED_TEST(LCV_Vector, ReadMember) {
-			USING(value_t);
-			auto& lsp = this->_lsp;
-			// テストコードをロードすると1つのLua関数が返る
-			this->loadTestSource_Ret1(code::lua_MemberReadXYZW, LuaType::Function);
-
-			const value_t v0 = this->template makeVector<value_t>();
-			// 1つのベクトル値と、
-			LCV<value_t>()(lsp->getLS(), v0);
-			// 要素数を積み
-			lsp->push(value_t::size);
-			// 演算テストコードを実行
-			lsp->call(2, 1);
-			// テーブルが1つ返る
-			Assert0(lsp->getTop() == 1 &&
-					lsp->type(1) == LuaType::Table);
-
-			// Lua内での取得結果をC++側と比較
-			auto res = lsp->toTable(1);
-			for(int i=0 ; i<value_t::size ; i++) {
-				ASSERT_EQ(lua_Number(v0[i]), boost::get<lua_Number>((*res)[i+1]));
-			}
-		}
-		// Luaでのメンバ変数書き込みチェック
-		TYPED_TEST(LCV_Vector, WriteMember) {
-			USING(value_t);
-			auto& lsp = this->_lsp;
-			// テストコードをロードすると1つのLua関数が返る
-			this->loadTestSource_Ret1(code::lua_MemberWriteXYZW, LuaType::Function);
-
-			const value_t v0 = GenValue_t<value_t>()(*this);
-			const LCV<value_t&> lcv;
-			lcv(lsp->getLS(), v0);
-
-			const GenValue_t<lua_Number>	gv_f;
-			lua_Number arg[value_t::size];
-			for(auto& a : arg) {
-				a = gv_f(*this);
-				lsp->push(a);
-			}
-			lsp->call(countof(arg)+1, 0);
-
-			// Luaコードでのメンバ書き換え結果をC++側と比較
-			for(int i=0 ; i<value_t::size ; i++) {
-				ASSERT_EQ(v0[i], (typename value_t::value_t)(arg[i]));
-			}
 		}
 		// Luaでのメンバ関数呼び出しチェック
 		TYPED_TEST(LCV_Vector, Method) {

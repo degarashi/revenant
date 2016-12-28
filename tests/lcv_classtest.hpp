@@ -1,6 +1,7 @@
 #pragma once
 #include "lcvtest.hpp"
 #include "../luaimpl.hpp"
+#include "lubee/meta/countof.hpp"
 
 namespace rev {
 	namespace test {
@@ -80,6 +81,56 @@ namespace rev {
 			// LCVでLuaへ渡した時の型チェック
 			void typeTest() {
 				ASSERT_NO_FATAL_FAILURE(base_t::typeTest<value_t>());
+			}
+			void _readMemberTestXYZW() {
+				auto& lsp = this->_lsp;
+				// テストコードをロードすると1つのLua関数が返る
+				this->loadTestSource_Ret1(code::lua_MemberReadXYZW, LuaType::Function);
+
+				const value_t v0 = this->template makeVector<value_t>();
+				// 1つのベクトル値と、
+				LCV<value_t>()(lsp->getLS(), v0);
+				// 要素数を積み
+				lsp->push(value_t::size);
+				// 演算テストコードを実行
+				lsp->call(2, 1);
+				// テーブルが1つ返る
+				Assert0(lsp->getTop() == 1 &&
+						lsp->type(1) == LuaType::Table);
+
+				// Lua内での取得結果をC++側と比較
+				auto res = lsp->toTable(1);
+				for(int i=0 ; i<value_t::size ; i++) {
+					ASSERT_EQ(lua_Number(v0[i]), boost::get<lua_Number>((*res)[i+1]));
+				}
+			}
+			void _writeMemberTestXYZW() {
+				auto& lsp = this->_lsp;
+				// テストコードをロードすると1つのLua関数が返る
+				this->loadTestSource_Ret1(code::lua_MemberWriteXYZW, LuaType::Function);
+
+				const value_t v0 = GenValue_t<value_t>()(*this);
+				const LCV<value_t&> lcv;
+				lcv(lsp->getLS(), v0);
+
+				const GenValue_t<lua_Number>	gv_f;
+				lua_Number arg[value_t::size];
+				for(auto& a : arg) {
+					a = gv_f(*this);
+					lsp->push(a);
+				}
+				lsp->call(countof(arg)+1, 0);
+
+				// Luaコードでのメンバ書き換え結果をC++側と比較
+				for(int i=0 ; i<value_t::size ; i++) {
+					ASSERT_EQ(v0[i], (typename value_t::value_t)(arg[i]));
+				}
+			}
+			void readMemberTestXYZW() {
+				ASSERT_NO_FATAL_FAILURE(_readMemberTestXYZW());
+			}
+			void writeMemberTestXYZW() {
+				ASSERT_NO_FATAL_FAILURE(_writeMemberTestXYZW());
 			}
 		};
 	}
