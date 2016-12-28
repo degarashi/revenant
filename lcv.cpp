@@ -439,17 +439,6 @@ namespace rev {
 	}
 	DEF_LCV_OSTREAM(frea::Mat4)
 
-	// [LCV<frea::Quat>]
-	void LCV<frea::Quat>::operator()(lua_State*, const frea::Quat&) const {
-	}
-	frea::Quat LCV<frea::Quat>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
-		return {};
-	}
-	LuaType LCV<frea::Quat>::operator()(const frea::Quat&) const {
-		return LuaType::Nil;
-	}
-	DEF_LCV_OSTREAM(frea::Quat)
-
 	namespace {
 		// key=void*, value=table{"udata" = (shared|weak)pointer}
 		// idxにある値がnilなら空ポインタを、tableならudataエントリの(shared|weak)ポインタを取り出す

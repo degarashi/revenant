@@ -140,7 +140,6 @@ namespace rev {
 	DEF_LCV(frea::Mat2, const frea::Mat2&)
 	DEF_LCV(frea::Mat3, const frea::Mat3&)
 	DEF_LCV(frea::Mat4, const frea::Mat4&)
-	DEF_LCV(frea::Quat, const frea::Quat&)
 
 	DERIVED_LCV(GLFormat, lua_Integer)
 	DERIVED_LCV(GLDepthFmt, GLFormat)
