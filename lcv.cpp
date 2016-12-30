@@ -406,39 +406,6 @@ namespace rev {
 	}
 	DEF_LCV_OSTREAM(LValueG)
 
-	// [LCV<frea::Mat2>]
-	void LCV<frea::Mat2>::operator()(lua_State*, const frea::Mat2&) const {
-	}
-	frea::Mat2 LCV<frea::Mat2>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
-		return {};
-	}
-	LuaType LCV<frea::Mat2>::operator()(const frea::Mat2&) const {
-		return LuaType::Nil;
-	}
-	DEF_LCV_OSTREAM(frea::Mat2)
-
-	// [LCV<frea::Mat3>]
-	void LCV<frea::Mat3>::operator()(lua_State*, const frea::Mat3&) const {
-	}
-	frea::Mat3 LCV<frea::Mat3>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
-		return {};
-	}
-	LuaType LCV<frea::Mat3>::operator()(const frea::Mat3&) const {
-		return LuaType::Nil;
-	}
-	DEF_LCV_OSTREAM(frea::Mat3)
-
-	// [LCV<frea::Mat4>]
-	void LCV<frea::Mat4>::operator()(lua_State*, const frea::Mat4&) const {
-	}
-	frea::Mat4 LCV<frea::Mat4>::operator()(const int, lua_State*, LPointerSP* /*spm*/) const {
-		return {};
-	}
-	LuaType LCV<frea::Mat4>::operator()(const frea::Mat4&) const {
-		return LuaType::Nil;
-	}
-	DEF_LCV_OSTREAM(frea::Mat4)
-
 	namespace {
 		// key=void*, value=table{"udata" = (shared|weak)pointer}
 		// idxにある値がnilなら空ポインタを、tableならudataエントリの(shared|weak)ポインタを取り出す
