@@ -608,6 +608,10 @@ namespace rev {
 				auto& m = *boost::get<LCMat4>(*this);
 				return m.convert<M,N>();
 			}
+			template <class A>
+			A toAngle() const {
+				return A(boost::get<frea::RadF>(*this));
+			}
 	};
 	std::ostream& operator << (std::ostream& os, const LCValue& lcv);
 	using LCValue_SP = std::shared_ptr<LCValue>;
