@@ -377,6 +377,17 @@ namespace rev {
 					return retAs((frea::DegF*)nullptr);
 				} else if(pf == luaNS::postfix::Radian) {
 					return retAs((frea::RadF*)nullptr);
+				} else if(pf == luaNS::postfix::Matrix) {
+					const int size = LValueS(lvs[luaNS::matrix::Size]).toInteger();
+					switch(size) {
+						case 2:
+							return retAs((Mat2*)nullptr);
+						case 3:
+							return retAs((Mat3*)nullptr);
+						case 4:
+							return retAs((Mat4*)nullptr);
+					}
+					AssertF("invalid matrix size (%d)", size);
 				} else {
 					AssertF("not supported.");
 				}

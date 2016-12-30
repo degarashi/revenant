@@ -109,6 +109,15 @@ namespace rev {
 	LCValue::LCValue(const Vec4& v):
 		LCValue(LCVec4(v))
 	{}
+	LCValue::LCValue(const Mat2& m):
+		LCValue(LCMat4(m.convert<4,4>()))
+	{}
+	LCValue::LCValue(const Mat3& m):
+		LCValue(LCMat4(m.convert<4,4>()))
+	{}
+	LCValue::LCValue(const Mat4& m):
+		LCValue(LCMat4(m))
+	{}
 
 	bool LCValue::operator == (const LCValue& lcv) const noexcept {
 		return static_cast<const LCVar&>(*this) == static_cast<const LCVar&>(lcv);
@@ -205,6 +214,21 @@ namespace rev {
 						return;
 				}
 				AssertF("unknown vector size");
+			}
+			void operator()(const LCMat4& m) const {
+				auto& mr = *m;
+				switch(m.size) {
+					case 2:
+						LCV<Mat2>()(mr.convert<2,2>());
+						return;
+					case 3:
+						LCV<Mat3>()(mr.convert<3,3>());
+						return;
+					case 4:
+						LCV<Mat4>()(mr.convert<4,4>());
+						return;
+				}
+				AssertF("unknown matrix size");
 			}
 			template <class T>
 			void operator()(const T& t) const {

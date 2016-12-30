@@ -66,6 +66,9 @@ namespace rev {
 		namespace vector {
 			const std::string Size("_size");
 		}
+		namespace matrix {
+			const std::string Size("_size");
+		}
 		namespace system {
 			const std::string PathSeparation(";"),
 								PathReplaceMark("?"),

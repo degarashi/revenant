@@ -9,6 +9,7 @@
 #include "handle.hpp"
 #include "luaimport_types.hpp"
 #include "rewindtop.hpp"
+#include "upobj.hpp"
 
 namespace rev {
 	template <class T>
@@ -456,6 +457,27 @@ namespace rev {
 			size(4)
 		{}
 	};
+
+	using Mat2 = frea::Mat2;
+	using Mat3 = frea::Mat3;
+	using Mat4 = frea::Mat4;
+	struct LCMat4 : UPObj<Mat4> {
+		using base_t = UPObj<Mat4>;
+		int	size;
+
+		LCMat4(const Mat2& m):
+			base_t(m.convert<4,4>()),
+			size(2)
+		{}
+		LCMat4(const Mat3& m):
+			base_t(m.convert<4,4>()),
+			size(3)
+		{}
+		LCMat4(const Mat4& m):
+			base_t(m),
+			size(4)
+		{}
+	};
 }
 namespace std {
 	template <>
@@ -464,11 +486,17 @@ namespace std {
 			return std::hash<rev::Vec4>()(v);
 		}
 	};
+	template <>
+	struct hash<rev::LCMat4> {
+		std::size_t operator()(const rev::LCMat4& m) const noexcept {
+			return std::hash<rev::Mat4>()(*m);
+		}
+	};
 }
 namespace rev {
 	#define SEQ_LCVAR \
 		(LuaNil)(bool)(const char*)(lua_Number) \
-		(LCVec4)(frea::Quat)(frea::ExpQuat)(frea::RadF)(frea::DegF) \
+		(LCVec4)(LCMat4)(frea::Quat)(frea::ExpQuat)(frea::RadF)(frea::DegF) \
 		(HRes)(WRes)(Lua_SP)(LCTable_SP)(void*)(lua_CFunction)(std::string)
 	using LCVar = boost::variant<BOOST_PP_SEQ_ENUM(SEQ_LCVAR)>;
 	using LCVar_Types = lubee::Types<BOOST_PP_SEQ_ENUM(SEQ_LCVAR)>;
@@ -505,6 +533,9 @@ namespace rev {
 			LCValue(const Vec2& v);
 			LCValue(const Vec3& v);
 			LCValue(const Vec4& v);
+			LCValue(const Mat2& m);
+			LCValue(const Mat3& m);
+			LCValue(const Mat4& m);
 			template <
 				class T,
 				ENABLE_IF((
@@ -571,6 +602,11 @@ namespace rev {
 			template <int N>
 			auto toVector() const {
 				return boost::get<LCVec4>(*this).convert<N>();
+			}
+			template <int M, int N>
+			auto toMatrix() const {
+				auto& m = *boost::get<LCMat4>(*this);
+				return m.convert<M,N>();
 			}
 	};
 	std::ostream& operator << (std::ostream& os, const LCValue& lcv);
