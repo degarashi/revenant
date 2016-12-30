@@ -1,6 +1,7 @@
 #pragma once
 #include "luaimport.hpp"
 #include "frea/matrix.hpp"
+#include "frea/expquat.hpp"
 #include "frea/fwd.hpp"
 
 DEF_LUAIMPORT(frea::Vec2)
@@ -25,3 +26,6 @@ DEF_LUAIMPORT(frea::APlane)
 
 DEF_LUAIMPORT(frea::DegF)
 DEF_LUAIMPORT(frea::RadF)
+
+DEF_LUAIMPORT(frea::ExpQuat)
+DEF_LUAIMPORT(frea::AExpQuat)
