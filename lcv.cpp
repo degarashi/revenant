@@ -370,7 +370,7 @@ namespace rev {
 						case 4:
 							return retAs((frea::Vec4*)nullptr);
 					}
-					Assert(false, "invalid vector size (%d)", size);
+					AssertF("invalid vector size (%d)", size);
 				} else if(pf == luaNS::postfix::Quat) {
 					return retAs((frea::Quat*)nullptr);
 				} else if(pf == luaNS::postfix::Degree) {
