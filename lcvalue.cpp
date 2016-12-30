@@ -94,6 +94,12 @@ namespace rev {
 	LCValue::LCValue(const lua_OtherIntegerU num):
 		LCValue(static_cast<lua_Number>(num))
 	{}
+	LCValue::LCValue(const frea::DegD& d):
+		LCValue(frea::DegF(d))
+	{}
+	LCValue::LCValue(const frea::RadD& r):
+		LCValue(frea::RadF(r))
+	{}
 
 	bool LCValue::operator == (const LCValue& lcv) const noexcept {
 		return static_cast<const LCVar&>(*this) == static_cast<const LCVar&>(lcv);

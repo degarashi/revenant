@@ -73,12 +73,15 @@ namespace rev {
 	DEF_LCV_OSTREAM(std::string)
 
 	namespace {
-		auto GetAngleType(lua_State* ls, const int idx) {
+		bool IsRadian(lua_State* ls, const int idx) {
 			LuaState lsc(ls, true);
-			lsc.getField(idx, luaNS::objBase::Name);
+			lsc.getField(idx, luaNS::Postfix);
 			auto cname = lsc.toString(-1);
 			lsc.pop();
-			return cname;
+			if(cname == luaNS::postfix::Radian)
+				return true;
+			D_Assert(cname==luaNS::postfix::Degree, "invalid angle type (required Degree or Radian, but got %d", cname.c_str());
+			return false;
 		}
 	}
 	// [LCV<frea::DegF>]
@@ -86,13 +89,11 @@ namespace rev {
 		LCV_In<frea::DegF>()(ls, d);
 	}
 	frea::DegF LCV<frea::DegF>::operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
-		auto cname = GetAngleType(ls, idx);
-		if(cname == "Radian") {
+		if(IsRadian(ls, idx)) {
 			// Degreeに変換して返す
-			auto rad = LCV_In<frea::RadF>()(idx, ls, spm);
+			const auto rad = LCV_In<frea::RadF>()(idx, ls, spm);
 			return frea::DegF(rad);
 		} else {
-			Assert(cname=="Degree", "invalid angle type (required Degree or Radian, but got %d", cname.c_str());
 			return LCV_In<frea::DegF>()(idx, ls, spm);
 		}
 	}
@@ -106,13 +107,11 @@ namespace rev {
 		LCV_In<frea::RadF>()(ls, d);
 	}
 	frea::RadF LCV<frea::RadF>::operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
-		auto cname = GetAngleType(ls, idx);
-		if(cname == "Degree") {
+		if(!IsRadian(ls, idx)) {
 			// Radianに変換して返す
-			auto rad = LCV_In<frea::DegF>()(idx, ls, spm);
+			const auto rad = LCV_In<frea::DegF>()(idx, ls, spm);
 			return frea::RadF(rad);
 		} else {
-			Assert(cname=="Radian", "invalid angle type (required Degree or Radian, but got %d", cname.c_str());
 			return LCV_In<frea::RadF>()(idx, ls, spm);
 		}
 	}
@@ -350,25 +349,37 @@ namespace rev {
 	LCValue LCV<LCValue>::operator()(const int idx, lua_State* ls, LPointerSP* spm) const {
 		const CheckTop ct(ls);
 		const auto typ = lua_type(ls, idx);
-		// Tableにおいて、_prefixフィールド値がVならば_sizeフィールドを読み込みVecTに変換
+		// Tableにおいて、_postfixフィールド値がVならば_sizeフィールドを読み込みVecTに変換
 		if(typ == LUA_TTABLE) {
 			lua_pushvalue(ls, idx);
 			LValueS lvs(ls);
-			LValueS postfix = lvs[luaNS::vector::Postfix];
-			if(postfix.type() == LuaType::String &&
-				std::string(postfix.toString()) == luaNS::vector::V)
-			{
-				const int size = LValueS(lvs[luaNS::vector::Size]).toInteger();
-				const void* ptr = LValueS(lvs[luaNS::objBase::Pointer]).toUserData();
-				switch(size) {
-					case 2:
-						return *static_cast<const frea::Vec2*>(ptr);
-					case 3:
-						return *static_cast<const frea::Vec3*>(ptr);
-					case 4:
-						return *static_cast<const frea::Vec4*>(ptr);
+			LValueS postfix = lvs[luaNS::Postfix];
+			if(postfix.type() == LuaType::String) {
+				const std::string pf(postfix.toString());
+				const auto retAs = [&lvs](auto* p){
+					void* ptr = LValueS(lvs[luaNS::objBase::Pointer]).toUserData();
+					return *static_cast<decltype(p)>(ptr);
+				};
+				if(pf == luaNS::postfix::Vector) {
+					const int size = LValueS(lvs[luaNS::vector::Size]).toInteger();
+					switch(size) {
+						case 2:
+							return retAs((frea::Vec2*)nullptr);
+						case 3:
+							return retAs((frea::Vec3*)nullptr);
+						case 4:
+							return retAs((frea::Vec4*)nullptr);
+					}
+					Assert(false, "invalid vector size (%d)", size);
+				} else if(pf == luaNS::postfix::Quat) {
+					return retAs((frea::Quat*)nullptr);
+				} else if(pf == luaNS::postfix::Degree) {
+					return retAs((frea::DegF*)nullptr);
+				} else if(pf == luaNS::postfix::Radian) {
+					return retAs((frea::RadF*)nullptr);
+				} else {
+					AssertF("not supported.");
 				}
-				Assert(false, "invalid vector size (%d)", size);
 			}
 		}
 		D_Assert0(typ < int(countof(c_toLCValue)));

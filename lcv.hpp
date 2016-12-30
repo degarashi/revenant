@@ -442,7 +442,7 @@ namespace rev {
 	using Vec4 = frea::Vec_t<float,4,false>;
 	#define SEQ_LCVAR \
 		(LuaNil)(bool)(const char*)(lua_Number) \
-		(Vec2)(Vec3)(Vec4)(frea::Quat) \
+		(Vec2)(Vec3)(Vec4)(frea::Quat)(frea::ExpQuat)(frea::RadF)(frea::DegF) \
 		(HRes)(WRes)(Lua_SP)(LCTable_SP)(void*)(lua_CFunction)(std::string)
 	using LCVar = boost::variant<BOOST_PP_SEQ_ENUM(SEQ_LCVAR)>;
 	using LCVar_Types = lubee::Types<BOOST_PP_SEQ_ENUM(SEQ_LCVAR)>;
@@ -474,6 +474,8 @@ namespace rev {
 			LCValue(lua_IntegerU num);
 			LCValue(lua_OtherIntegerU num);
 			LCValue(lua_OtherInteger num);
+			LCValue(const frea::DegD& d);
+			LCValue(const frea::RadD& r);
 			template <
 				class T,
 				ENABLE_IF((

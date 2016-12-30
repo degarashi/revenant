@@ -38,7 +38,8 @@ namespace rev {
 						OnResume("OnResume"),
 						OnExit("OnExit"),
 						System("System"),
-						Global("Global");
+						Global("Global"),
+						Postfix("_postfix");
 		namespace objBase {
 			const std::string ValueR("_valueR"),
 								ValueW("_valueW"),
@@ -53,10 +54,17 @@ namespace rev {
 				const std::string NumRef("numRef");
 			}
 		}
+		namespace postfix {
+			const std::string Vector("V"),
+								Matrix("M"),
+								Quat("Q"),
+								ExpQuat("E"),
+								Plane("P"),
+								Degree("D"),
+								Radian("R");
+		}
 		namespace vector {
-			const std::string Size("_size"),
-							Postfix("_postfix"),
-							V("V");
+			const std::string Size("_size");
 		}
 		namespace system {
 			const std::string PathSeparation(";"),

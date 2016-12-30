@@ -34,7 +34,8 @@ namespace rev {
 								OnResume,
 								OnExit,
 								System,
-								Global;
+								Global,
+								Postfix;
 		namespace objBase {
 			extern const std::string ValueR,
 									ValueW,
@@ -49,10 +50,17 @@ namespace rev {
 				extern const std::string NumRef;
 			}
 		}
+		namespace postfix {
+			extern const std::string Vector,
+									Matrix,
+									Quat,
+									ExpQuat,
+									Plane,
+									Degree,
+									Radian;
+		}
 		namespace vector {
-			extern const std::string Size,
-									Postfix,
-									V;
+			extern const std::string Size;
 		}
 		namespace system {
 			extern const std::string PathSeparation,
