@@ -440,9 +440,35 @@ namespace rev {
 	using Vec2 = frea::Vec_t<float,2,false>;
 	using Vec3 = frea::Vec_t<float,3,false>;
 	using Vec4 = frea::Vec_t<float,4,false>;
+	struct LCVec4 : Vec4 {
+		int size;
+
+		LCVec4(const Vec2& v):
+			Vec4(v.convert<4>()),
+			size(2)
+		{}
+		LCVec4(const Vec3& v):
+			Vec4(v.convert<4>()),
+			size(3)
+		{}
+		LCVec4(const Vec4& v):
+			Vec4(v),
+			size(4)
+		{}
+	};
+}
+namespace std {
+	template <>
+	struct hash<rev::LCVec4> {
+		std::size_t operator()(const rev::LCVec4& v) const noexcept {
+			return std::hash<rev::Vec4>()(v);
+		}
+	};
+}
+namespace rev {
 	#define SEQ_LCVAR \
 		(LuaNil)(bool)(const char*)(lua_Number) \
-		(Vec2)(Vec3)(Vec4)(frea::Quat)(frea::ExpQuat)(frea::RadF)(frea::DegF) \
+		(LCVec4)(frea::Quat)(frea::ExpQuat)(frea::RadF)(frea::DegF) \
 		(HRes)(WRes)(Lua_SP)(LCTable_SP)(void*)(lua_CFunction)(std::string)
 	using LCVar = boost::variant<BOOST_PP_SEQ_ENUM(SEQ_LCVAR)>;
 	using LCVar_Types = lubee::Types<BOOST_PP_SEQ_ENUM(SEQ_LCVAR)>;
@@ -476,6 +502,9 @@ namespace rev {
 			LCValue(lua_OtherInteger num);
 			LCValue(const frea::DegD& d);
 			LCValue(const frea::RadD& r);
+			LCValue(const Vec2& v);
+			LCValue(const Vec3& v);
+			LCValue(const Vec4& v);
 			template <
 				class T,
 				ENABLE_IF((
@@ -539,6 +568,10 @@ namespace rev {
 			const char* toCStr() const;
 			std::string toString() const;
 			LuaType type() const;
+			template <int N>
+			auto toVector() const {
+				return boost::get<LCVec4>(*this).convert<N>();
+			}
 	};
 	std::ostream& operator << (std::ostream& os, const LCValue& lcv);
 	using LCValue_SP = std::shared_ptr<LCValue>;

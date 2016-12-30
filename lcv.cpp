@@ -364,11 +364,11 @@ namespace rev {
 					const int size = LValueS(lvs[luaNS::vector::Size]).toInteger();
 					switch(size) {
 						case 2:
-							return retAs((frea::Vec2*)nullptr);
+							return retAs((Vec2*)nullptr);
 						case 3:
-							return retAs((frea::Vec3*)nullptr);
+							return retAs((Vec3*)nullptr);
 						case 4:
-							return retAs((frea::Vec4*)nullptr);
+							return retAs((Vec4*)nullptr);
 					}
 					AssertF("invalid vector size (%d)", size);
 				} else if(pf == luaNS::postfix::Quat) {

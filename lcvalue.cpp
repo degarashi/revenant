@@ -100,6 +100,15 @@ namespace rev {
 	LCValue::LCValue(const frea::RadD& r):
 		LCValue(frea::RadF(r))
 	{}
+	LCValue::LCValue(const Vec2& v):
+		LCValue(LCVec4(v.convert<4>()))
+	{}
+	LCValue::LCValue(const Vec3& v):
+		LCValue(LCVec4(v.convert<4>()))
+	{}
+	LCValue::LCValue(const Vec4& v):
+		LCValue(LCVec4(v))
+	{}
 
 	bool LCValue::operator == (const LCValue& lcv) const noexcept {
 		return static_cast<const LCVar&>(*this) == static_cast<const LCVar&>(lcv);
@@ -183,6 +192,20 @@ namespace rev {
 			PushVisitor(lua_State* ls):
 				_ls(ls)
 			{}
+			void operator()(const LCVec4& v) const {
+				switch(v.size) {
+					case 2:
+						LCV<Vec2>()(v.convert<2>());
+						return;
+					case 3:
+						LCV<Vec3>()(v.convert<3>());
+						return;
+					case 4:
+						LCV<Vec4>()(v.convert<4>());
+						return;
+				}
+				AssertF("unknown vector size");
+			}
 			template <class T>
 			void operator()(const T& t) const {
 				LCV<T>()(_ls, t);

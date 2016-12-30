@@ -29,7 +29,7 @@ namespace rev {
 			const auto val0 = GenValue<value_t>()(*this);
 			LCV<value_t>()(ls, val0);
 			const auto lc = LCV<LCValue>()(1, ls, nullptr);
-			const auto val1 = boost::get<lua_type>(lc);
+			const auto val1 = lc.toVector<lua_type::size>();
 			ASSERT_EQ(val0, val1);
 		}
 		// Luaでのメンバ変数読み込みチェック
@@ -155,25 +155,25 @@ namespace rev {
 			{
 				value_t v2(v0);
 				v2.selectMax(v1);
-				ASSERT_EQ(v2, boost::get<lua_type>((*res)[1]));
+				ASSERT_EQ(v2, (*res)[1].template toVector<lua_type::size>());
 			}
 			// normalize
 			{
 				value_t v2(v0);
 				v2.normalize();
-				ASSERT_EQ(v2, boost::get<lua_type>((*res)[2]));
+				ASSERT_EQ(v2, (*res)[2].template toVector<lua_type::size>());
 			}
 			// selectMin
 			{
 				value_t v2(v0);
 				v2.selectMin(v1);
-				ASSERT_EQ(v2, boost::get<lua_type>((*res)[3]));
+				ASSERT_EQ(v2, (*res)[3].template toVector<lua_type::size>());
 			}
 			// linearNormalize
 			{
 				value_t v2(v0);
 				v2.linearNormalize();
-				ASSERT_EQ(v2, boost::get<lua_type>((*res)[4]));
+				ASSERT_EQ(v2, (*res)[4].template toVector<lua_type::size>());
 			}
 		}
 		// LuaでのConstメンバ関数呼び出しチェック
@@ -219,11 +219,11 @@ namespace rev {
 			// dist_sq
 			ASSERT_EQ(v0.dist_sq(v1), boost::get<lua_Number>((*res)[4]));
 			// getMin
-			ASSERT_EQ(v0.getMin(v1), boost::get<lua_type>((*res)[5]));
+			ASSERT_EQ(v0.getMin(v1), (*res)[5].template toVector<lua_type::size>());
 			// getMax
-			ASSERT_EQ(v0.getMax(v1), boost::get<lua_type>((*res)[6]));
+			ASSERT_EQ(v0.getMax(v1), (*res)[6].template toVector<lua_type::size>());
 			// normalization
-			ASSERT_EQ(v0.normalization(), boost::get<lua_type>((*res)[7]));
+			ASSERT_EQ(v0.normalization(), (*res)[7].template toVector<lua_type::size>());
 			// length
 			ASSERT_EQ(v0.length(), boost::get<lua_Number>((*res)[8]));
 			// len_sq
@@ -233,17 +233,17 @@ namespace rev {
 			// isOutstanding
 			ASSERT_EQ(v0.isOutstanding(), boost::get<bool>((*res)[11]));
 			// saturation
-			ASSERT_EQ(v0.saturation(sMin, sMax), boost::get<lua_type>((*res)[12]));
+			ASSERT_EQ(v0.saturation(sMin, sMax), (*res)[12].template toVector<lua_type::size>());
 			// l_intp
-			ASSERT_EQ(v0.l_intp(v1, sMin), boost::get<lua_type>((*res)[13]));
+			ASSERT_EQ(v0.l_intp(v1, sMin), (*res)[13].template toVector<lua_type::size>());
 			// absolute
-			ASSERT_EQ(v0.absolute(), boost::get<lua_type>((*res)[14]));
+			ASSERT_EQ(v0.absolute(), (*res)[14].template toVector<lua_type::size>());
 			// getMinValue
 			ASSERT_EQ(v0.getMinValue(), boost::get<lua_Number>((*res)[15]));
 			// getMaxValue
 			ASSERT_EQ(v0.getMaxValue(), boost::get<lua_Number>((*res)[16]));
 			// linearNormalization
-			ASSERT_EQ(v0.linearNormalization(), boost::get<lua_type>((*res)[17]));
+			ASSERT_EQ(v0.linearNormalization(), (*res)[17].template toVector<lua_type::size>());
 			// isZero
 			ASSERT_EQ(v0.isZero(sMin), boost::get<bool>((*res)[18]));
 		}
@@ -283,21 +283,21 @@ namespace rev {
 			// Lua内での演算結果をC++側と比較
 			auto res = lsp->toTable(1);
 			// V + V
-			ASSERT_EQ(lua_type(v0+v1), boost::get<lua_type>((*res)[1]));
+			ASSERT_EQ(lua_type(v0+v1), (*res)[1].template toVector<lua_type::size>());
 			// V - V
-			ASSERT_EQ(lua_type(v0-v1), boost::get<lua_type>((*res)[2]));
+			ASSERT_EQ(lua_type(v0-v1), (*res)[2].template toVector<lua_type::size>());
 			// V * V
-			ASSERT_EQ(lua_type(v0*v1), boost::get<lua_type>((*res)[3]));
+			ASSERT_EQ(lua_type(v0*v1), (*res)[3].template toVector<lua_type::size>());
 			// V * s
-			ASSERT_EQ(lua_type(v0*s), boost::get<lua_type>((*res)[4]));
+			ASSERT_EQ(lua_type(v0*s), (*res)[4].template toVector<lua_type::size>());
 			// V / V
-			ASSERT_EQ(lua_type(v0/v1), boost::get<lua_type>((*res)[5]));
+			ASSERT_EQ(lua_type(v0/v1), (*res)[5].template toVector<lua_type::size>());
 			// V / s
-			ASSERT_EQ(lua_type(v0/s), boost::get<lua_type>((*res)[6]));
+			ASSERT_EQ(lua_type(v0/s), (*res)[6].template toVector<lua_type::size>());
 			// #V
 			ASSERT_EQ(lua_type(v0).length(), boost::get<lua_Number>((*res)[7]));
 			// -V
-			ASSERT_EQ(-lua_type(v0), boost::get<lua_type>((*res)[8]));
+			ASSERT_EQ(-lua_type(v0), (*res)[8].template toVector<lua_type::size>());
 			// V == V
 			ASSERT_EQ(v0==v1, boost::get<bool>((*res)[9]));
 			// tostring(V)
