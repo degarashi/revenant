@@ -1,6 +1,8 @@
 #pragma once
 #include "test.hpp"
 #include "lubee/random/string.hpp"
+#include "frea/random/angle.hpp"
+#include "frea/random/quaternion.hpp"
 #include "../lcv.hpp"
 
 namespace rev {
@@ -287,7 +289,7 @@ namespace rev {
 		struct GenValue<frea::QuatT<T,A>> {
 			using Quat = frea::QuatT<T,A>;
 			Quat operator()(LuaTest& self) const {
-				return GenValue_t<frea::Vec_t<T,4,A>>()(self);
+				return frea::random::GenQuat<Quat>(self.mt().template getUniformF<T>());
 			}
 		};
 		template <class T, bool A>
@@ -308,7 +310,7 @@ namespace rev {
 		struct GenValue<frea::Angle<Ang, Rep>> {
 			using A = frea::Angle<Ang, Rep>;
 			A operator()(LuaTest& self) const {
-				return A(GenValue_t<Rep>()(self));
+				return frea::random::GenAngle<A>(self.mt().template getUniformF<Rep>());
 			}
 		};
 		template <class T>
