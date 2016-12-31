@@ -76,11 +76,12 @@ namespace rev {
 		struct Dummy {};
 		template <
 			class C, class Getter,
-			class CBMember, class CBMethod, class Maker
+			class CBSMethod, class CBMember, class CBMethod, class Maker
 		>
 		void LuaExportImpl(LuaState& lsc,
 				const char* class_name,
 				const char* base_name,
+				const CBSMethod& cbSMethod,
 				const CBMember& cbMember,
 				const CBMethod& cbMethod,
 				Maker* maker
@@ -98,6 +99,10 @@ namespace rev {
 			lsc.rawSet(-3);
 
 			lsc.setField(-1, luaNS::objBase::Name, class_name);
+
+			LuaImport::BeginImportBlock("StaticFunctions");
+			cbSMethod();
+			LuaImport::EndImportBlock();
 
 			LuaImport::BeginImportBlock("Values");
 			lsc.rawGetField(-1, ::rev::luaNS::objBase::ValueR);
@@ -122,7 +127,8 @@ namespace rev {
 
 // param = (clazz)(class_raw)
 #define DEF_LUAMEMBER(n, param, elem) LuaImport::RegisterMember<::rev::LI_GetPtr<BOOST_PP_SEQ_ELEM(0,param)>, BOOST_PP_SEQ_ELEM(0,param)>(lsc, BOOST_PP_STRINGIZE(elem), &BOOST_PP_SEQ_ELEM(0,param)::elem);
-#define DEF_LUAIMPLEMENT_IMPL(mgr, clazz, class_raw, base, seq_member, seq_method, seq_ctor, makeobj) \
+#define DEF_LUASMEMBER(n, clazz, elem) LuaImport::RegisterStatic(lsc, BOOST_PP_STRINGIZE(elem), &clazz::elem);
+#define DEF_LUAIMPLEMENT_IMPL(mgr, clazz, class_raw, base, seq_smethod, seq_member, seq_method, seq_ctor, makeobj) \
 namespace rev { \
 	namespace lua { \
 		template <> \
@@ -133,6 +139,7 @@ namespace rev { \
 				lsc, \
 				#class_raw, \
 				#base, \
+				[&lsc](){ BOOST_PP_SEQ_FOR_EACH(DEF_LUASMEMBER, clazz, seq_smethod) }, \
 				[&lsc](){ BOOST_PP_SEQ_FOR_EACH(DEF_LUAMEMBER, (clazz)(class_raw), seq_member) }, \
 				[&lsc](){ BOOST_PP_SEQ_FOR_EACH(DEF_LUAMEMBER, (clazz)(class_raw), seq_method) }, \
 				&makeobj<BOOST_PP_SEQ_ENUM((mgr)(clazz) seq_ctor)> \
@@ -142,9 +149,9 @@ namespace rev { \
 }
 
 #define LUAIMPLEMENT_BASE Object
-#define DEF_LUAIMPLEMENT_SPTR(mgr, clazz, class_raw, base, seq_member, seq_method, seq_ctor) \
-	DEF_LUAIMPLEMENT_IMPL(mgr, clazz, class_raw, base, seq_member, seq_method, seq_ctor, ::rev::MakeHandle)
-#define DEF_LUAIMPLEMENT_PTR(clazz, class_raw, base, seq_member, seq_method, seq_ctor) \
-	DEF_LUAIMPLEMENT_IMPL(::rev::lua::Dummy, clazz, class_raw, base, seq_member, seq_method, seq_ctor, ::rev::MakeObject)
-#define DEF_LUAIMPLEMENT_PTR_NOCTOR(clazz, class_raw, base, seq_member, seq_method) \
-	DEF_LUAIMPLEMENT_IMPL(::rev::lua::Dummy, clazz, class_raw, base, seq_member, seq_method, NOTHING, ::rev::MakeFake)
+#define DEF_LUAIMPLEMENT_SPTR(mgr, clazz, class_raw, base, seq_smethod, seq_member, seq_method, seq_ctor) \
+	DEF_LUAIMPLEMENT_IMPL(mgr, clazz, class_raw, base, seq_smethod, seq_member, seq_method, seq_ctor, ::rev::MakeHandle)
+#define DEF_LUAIMPLEMENT_PTR(clazz, class_raw, base, seq_smethod, seq_member, seq_method, seq_ctor) \
+	DEF_LUAIMPLEMENT_IMPL(::rev::lua::Dummy, clazz, class_raw, base, seq_smethod, seq_member, seq_method, seq_ctor, ::rev::MakeObject)
+#define DEF_LUAIMPLEMENT_PTR_NOCTOR(clazz, class_raw, base, seq_smethod, seq_member, seq_method) \
+	DEF_LUAIMPLEMENT_IMPL(::rev::lua::Dummy, clazz, class_raw, base, seq_smethod, seq_member, seq_method, NOTHING, ::rev::MakeFake)

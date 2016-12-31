@@ -76,8 +76,9 @@ DEF_LUAIMPLEMENT_SPTR(
 	::rev::MyResMgr,
 	::rev::test::MyClass, MyClass,
 	LUAIMPLEMENT_BASE,
+	(sFunc),
 	(value)(value1),
-	(mFunc)(sFunc),
+	(mFunc),
 	(typename ::rev::test::MyClass::T0)
 	(typename ::rev::test::MyClass::T1)
 	(typename ::rev::test::MyClass::T2)

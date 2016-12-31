@@ -1243,9 +1243,9 @@ namespace rev {
 				_PushIndent(s_importLog) << LCV<V>() << ' ' << name << std::endl;
 			}
 			//! static関数のエクスポート
-			/*! lscにFuncTableを積んだ状態で呼ぶ */
-			template <class GET, class T, class RT, class... Ts>
-			static void RegisterMember(LuaState& lsc, const char* name, RT (*func)(Ts...)) {
+			/*! lscにObjectを積んだ状態で呼ぶ */
+			template <class RT, class... Ts>
+			static void RegisterStatic(LuaState& lsc, const char* name, RT (*func)(Ts...)) {
 				const CheckTop ct(lsc.getLS());
 				lsc.push(name);
 				PushFunction(lsc, func);
