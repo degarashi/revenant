@@ -377,6 +377,8 @@ namespace rev {
 					return retAs((frea::DegF*)nullptr);
 				} else if(pf == luaNS::postfix::Radian) {
 					return retAs((frea::RadF*)nullptr);
+				} else if(pf == luaNS::postfix::ExpQuat) {
+					return retAs((frea::ExpQuat*)nullptr);
 				} else if(pf == luaNS::postfix::Matrix) {
 					const int size = LValueS(lvs[luaNS::matrix::Size]).toInteger();
 					switch(size) {
