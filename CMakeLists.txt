@@ -13,9 +13,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 # windows依存ファイル
-set(DEPENDANT_SRC_WIN ./dir_depWin.cpp)
+set(DEPENDANT_SRC_WIN ./dir_depWin.cpp ./watch_depWin.cpp)
 # unix依存ファイル
-set(DEPENDANT_SRC_UNIX ./dir_depLinux.cpp)
+set(DEPENDANT_SRC_UNIX ./dir_depLinux.cpp ./watch_depLinux.cpp)
 set(OS_DEPENDANT_SRC ${DEPENDANT_SRC_WIN} ${DEPENDANT_SRC_UNIX})
 
 # OpenSL依存ファイル
@@ -111,6 +111,7 @@ if(NOT without-test)
 		tests/luatest.cpp
 		tests/lcv_classtest_value.cpp
 		tests/lcv_test_value.cpp
+		tests/filetree_func.cpp
 	)
 	# ちょっとしたテストコードはシングルファイル、そうでないものはサブディレクトリ
 	# シングルファイルのテストコード: testsディレクトリ以下のソースが対象
