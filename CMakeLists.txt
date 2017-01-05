@@ -103,11 +103,8 @@ if(NOT without-test)
 	)
 	set(TESTEXE_LIB
 		revenant
-		${SDL2_IMAGE_LIBRARY}
-		${SDL2_LIBRARY}
 		${GTEST_MAIN_LIBRARIES}
 		${GTEST_LIBRARIES}
-		${CMAKE_THREAD_LIBS_INIT}
 	)
 
 	set(EXPLICIT
