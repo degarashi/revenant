@@ -79,3 +79,11 @@ namespace rev {
 			std::u32string plain_utf32(bool bAbs=true) const;
 	};
 }
+namespace std {
+	template <>
+	struct hash<rev::Dir> {
+		std::size_t operator()(const rev::Dir& d) const noexcept {
+			return std::hash<rev::PathBlock>()(d);
+		}
+	};
+}
