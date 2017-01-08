@@ -49,7 +49,6 @@ namespace rev {
 	bool Object::onPause() {
 		return detail::c_pauseDefault;
 	}
-	void Object::onEffectReset() {}
 	void Object::onStop() {}
 	void Object::onResume() {}
 	void Object::onReStart() {}

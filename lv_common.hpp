@@ -30,7 +30,6 @@ namespace rev {
 								RecvMsgCpp,
 								OnUpdate,
 								OnPause,
-								OnEffectReset,
 								OnResume,
 								OnExit,
 								System,

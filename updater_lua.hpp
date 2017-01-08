@@ -57,9 +57,6 @@ namespace rev {
 			void onResume() override {
 				_callLuaMethod(luaNS::RecvMsg, luaNS::OnResume);
 			}
-			void onEffectReset() override {
-				_callLuaMethod(luaNS::RecvMsg, luaNS::OnEffectReset);
-			}
 			bool hasLuaState() const override {
 				return true;
 			}

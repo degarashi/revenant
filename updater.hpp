@@ -55,7 +55,6 @@ namespace rev {
 			// ---------- Scene用メソッド ----------
 			virtual void onDown(ObjTypeId_OP prevId, const LCValue& arg);
 			virtual bool onPause();
-			virtual void onEffectReset();
 			virtual void onStop();
 			virtual void onResume();
 			virtual void onReStart();
