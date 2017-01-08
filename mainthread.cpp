@@ -17,6 +17,7 @@
 #include <SDL_events.h>
 #include "videoparam.hpp"
 #include "scene.hpp"
+#include "watch.hpp"
 
 namespace rev {
 	TLS<VideoParam> tls_videoParam;
@@ -93,7 +94,7 @@ namespace rev {
 			{
 				// 各種リソースマネージャの初期化
 				Manager mgr;
-				HFx hFx;
+				FxReload rel;
 				try {
 					auto lk = g_system_shared.lock();
 					_InitManagers(mgr, *lk->param);
@@ -110,13 +111,17 @@ namespace rev {
 						auto& param = lk->param;
 						mp.reset(param->makeMainProc());
 						// デフォルトエフェクトファイルを読み込み
-						hFx = param->makeDefaultEffect();
-						lk->fx = hFx;
+						rel.curFx = param->makeDefaultEffect();
+						lk->fx = rel.curFx;
 						// 最初のシーンを作成
 						mgr_scene.setPushScene(param->makeFirstScene(), false);
 					}
 					LogR(Verbose, "Mainproc initialized");
 					guiHandler.postMessageNow(msg::MainInit());
+
+					// シェーダーファイルが置いてあるディレクトリを監視
+					FNotify ntf;
+					_setupFxNotify(ntf);
 
 		// 			const spn::FracI fracInterval(50000, 3);
 		// 			spn::FracI frac(0,1);
@@ -125,6 +130,9 @@ namespace rev {
 					// ゲームの進行や更新タイミングを図って描画など
 					bool bLoop = true;
 					do {
+						// 必要に応じてシェーダーファイルのリロード処理
+						_checkFxReload(ntf, rel);
+
 						if(!dth.isRunning()) {
 							// 何らかの原因で描画スレッドが終了していた時
 							try {

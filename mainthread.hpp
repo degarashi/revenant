@@ -2,11 +2,16 @@
 #include "spine/singleton.hpp"
 #include "looper_thread.hpp"
 #include "mainproc.hpp"
+#include "dir.hpp"
+#include <unordered_set>
 
 namespace rev {
 	struct GameloopParam;
 	class URI;
 
+	struct IEffect;
+	using HFx = std::shared_ptr<IEffect>;
+	class FNotify;
 	class Camera2DMgr;
 	class Camera3DMgr;
 	class PointerMgr;
@@ -55,6 +60,12 @@ namespace rev {
 				SPtr<ObjMgr>				obj;
 				SPtr<SceneMgr>				scene;
 			};
+			struct FxReload {
+				HFx	curFx, prevFx;
+				int	prevFxCounter = 0;
+				using PathSet = std::unordered_set<Dir>;
+				PathSet updatePath;
+			};
 			static void _InitManagers(Manager& m, const GameloopParam& param);
 			//! AppPathの場所に置かれたフォントファイルを列挙し、読み込む
 			static void _LoadFonts();
@@ -62,6 +73,8 @@ namespace rev {
 			static void _LoadPathfile(const URI& uri, bool bAppend=false);
 			static void _Backup(Manager& m, std::ostream& os);
 			static void _Restore(Manager& m, std::istream& is);
+			void _setupFxNotify(FNotify& ntf);
+			void _checkFxReload(FNotify& ntf, FxReload& rel);
 		protected:
 			void runL(const Looper_SP& guiLooper) override;
 		public:
