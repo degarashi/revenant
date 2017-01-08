@@ -98,7 +98,6 @@ namespace rev {
 			HProg makeProgram(const HSh& vsh, const HSh& gsh, const HSh& psh);
 
 			// ------------ Buffer ------------
-			using CBCreateFx = std::function<IEffect* (const std::string&)>;
 			//! ファイルからエフェクトの読み込み
 			template <class T>
 			HFx loadEffect(const std::string& name) {
