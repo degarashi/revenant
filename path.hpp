@@ -97,6 +97,9 @@ namespace rev {
 			PathBlock(PathBlock&& p) noexcept;
 			PathBlock(To32Str p);
 
+			auto cbegin() const noexcept { return _path.cbegin(); }
+			auto cend() const noexcept { return _path.cend(); }
+
 			bool operator == (const PathBlock& p) const noexcept;
 			bool operator != (const PathBlock& p) const noexcept;
 			PathBlock& operator = (const PathBlock&) = default;
