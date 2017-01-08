@@ -92,15 +92,15 @@ namespace rev {
 			fnCheck(pattern.plain_utf8());
 
 		// リソース名に関連付けされたベースパスを付加して検索
-		const auto itr = _path.find(resname);
-		if(itr != _path.end()) {
-			auto& pathv = itr->second;
-			for(auto& path : pathv) {
-				PathBlock pb = path;
-				pb <<= pattern;
-				fnCheck(pb.plain_utf8());
-			}
+		auto& pathv = getPath(resname);
+		for(auto& path : pathv) {
+			PathBlock pb = path;
+			pb <<= pattern;
+			fnCheck(pb.plain_utf8());
 		}
+	}
+	const AppPath::PathV& AppPath::getPath(const std::string& resname) const {
+		return _path.at(resname);
 	}
 	const PathBlock& AppPath::getAppPath() const {
 		return _pbApp;

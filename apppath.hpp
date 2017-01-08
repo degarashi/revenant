@@ -41,6 +41,7 @@ namespace rev {
 			HRW getRW(const std::string& resname, const PathBlock& pattern, int access, PathBlock* opt) const;
 			using CBEnum = std::function<bool (const Dir&)>;
 			void enumPath(const std::string& resname, const PathBlock& pattern, CBEnum cb) const;
+			const PathV& getPath(const std::string& resname) const;
 	};
 	class URI;
 	//! リソースパスのキャッシュと参照
