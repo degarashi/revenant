@@ -23,13 +23,13 @@ namespace rev {
 			}
 		protected:
 			template <class... Ts>
-			LCValue _callLuaMethod(const std::string& method, Ts&&... ts) {
+			spi::Optional<LCValue> _callLuaMethod(const std::string& method, Ts&&... ts) {
 				if(const auto& sp = rev_mgr_obj.getLua()) {
 					sp->push(_getHandle());
 					LValueS lv(sp->getLS());
 					return lv.callMethodNRet(method, std::forward<Ts>(ts)...);
 				}
-				return LCValue();
+				return spi::none;
 			}
 			//! Lua側を終端ステートへ移行
 			void _setNullState() {
@@ -46,11 +46,12 @@ namespace rev {
 				}
 			}
 			bool onPause() override {
-				auto ret = _callLuaMethod(luaNS::RecvMsg, luaNS::OnPause);
-				auto& tbl = boost::get<LCTable_SP>(ret);
-				// FSMachineから返答があったらそれを返す
-				if(static_cast<bool>((*tbl).at(1)))
-					return static_cast<bool>((*tbl).at(2));
+				if(auto ret = _callLuaMethod(luaNS::RecvMsg, luaNS::OnPause)) {
+					auto& tbl = boost::get<LCTable_SP>(*ret);
+					// FSMachineから返答があったらそれを返す
+					if(static_cast<bool>((*tbl).at(1)))
+						return static_cast<bool>((*tbl).at(2));
+				}
 				// なければデフォルト値を返す
 				return detail::c_pauseDefault;
 			}
