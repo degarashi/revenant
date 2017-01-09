@@ -9,6 +9,7 @@ namespace rev {
 	struct GameloopParam;
 	class URI;
 
+	class DrawThread;
 	struct IEffect;
 	using HFx = std::shared_ptr<IEffect>;
 	class FNotify;
@@ -76,6 +77,7 @@ namespace rev {
 			void _setupFxNotify(FNotify& ntf);
 			void _checkFxReload(FNotify& ntf, FxReload& rel);
 			static Timepoint _WaitForNextInterval(Timepoint prevtime, Duration interval);
+			bool _updateFrame(MainProc* mp, DrawThread& dth, Handler& drawHandler);
 		protected:
 			void runL(const Looper_SP& guiLooper) override;
 		public:

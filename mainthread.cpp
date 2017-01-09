@@ -10,8 +10,6 @@
 #include "systeminfo.hpp"
 #include "output.hpp"
 #include "sdl_window.hpp"
-#include "input.hpp"
-#include "input_sdlvalue.hpp"
 #include "sound.hpp"
 #include <SDL_timer.h>
 #include <SDL_events.h>
@@ -210,37 +208,9 @@ namespace rev {
 						}
 						// 次のフレーム開始時刻を待つ
 						prevtime = _WaitForNextInterval(prevtime, Microseconds(16666));
-						// プロファイラのフレーム切り替え
-						// spn::profiler.onFrame();
-
-						try {
-							// ゲーム進行
-							++getInfo()->accumUpd;
-							mgr_input.update();
-							g_sdlInputShared.lock()->reset();
-							{
-								mgr_info.setInfo(
-									g_system_shared.lock()->window.lock()->getSize(),
-									dth.getInfo()->fps.getFPS()
-								);
-								if(!mp->runU()) {
-									LogR(Verbose, "Exiting loop by normally");
-									break;
-								}
-							}
-							GL.glFlush();
-							drawHandler.postMessageNow(msg::DrawReq(++getInfo()->accumDraw));
-						} catch(const std::exception& e) {
-							LogR(Error, "RunU() exception\n%s", e.what());
-							throw;
-						} catch(...) {
-							LogR(Error, "RunU() unknown exception");
-							throw;
-						}
-						if(isInterrupted()) {
-							LogR(Verbose, "Exiting loop by interrupt");
+						// 1フレーム分の処理を行う
+						if(_updateFrame(mp.get(), dth, drawHandler))
 							break;
-						}
 					} while(bLoop);
 					// シーンマネージャに積んであるシーンを全て終了させる
 					while(auto scene = mgr_scene.getTop()) {
