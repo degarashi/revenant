@@ -16,6 +16,7 @@
 #include "videoparam.hpp"
 #include "scene.hpp"
 #include "watch.hpp"
+#include "drawtoken/task.hpp"
 
 namespace rev {
 	TLS<VideoParam> tls_videoParam;
@@ -184,6 +185,8 @@ namespace rev {
 										} else if(static_cast<msg::StopReq*>(*m)) {
 											// ユーザーに通知(Stop)
 											mp->onStop();
+											// 描画キューに入っているOpenGLリソースは無効になるのでここで削除
+											mgr_drawtask.clear();
 											// MultiContext環境ではContextの関連付けを解除
 											if(MultiContext)
 												dth.getInfo()->ctxMainThread->makeCurrent();
