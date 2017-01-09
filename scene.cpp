@@ -129,6 +129,8 @@ namespace rev {
 		return _scene.front()->name(); }
 	DEF_ADAPTOR(void, onStop)
 	DEF_ADAPTOR(void, onReStart)
+	DEF_ADAPTOR(bool, onPause)
+	DEF_ADAPTOR(void, onResume)
 	#undef DEF_ADAPTOR
 
 	// -------------- U_Scene --------------

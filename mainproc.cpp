@@ -17,15 +17,18 @@ namespace rev {
 	}
 	bool MainProc::onPause() {
 		LogR(Verbose, "OnPause");
-		return detail::c_pauseDefault;
+		return mgr_scene.onPause();
 	}
 	void MainProc::onResume() {
 		LogR(Verbose, "OnResume");
+		mgr_scene.onResume();
 	}
 	void MainProc::onStop() {
 		LogR(Verbose, "OnStop");
+		mgr_scene.onStop();
 	}
 	void MainProc::onReStart() {
 		LogR(Verbose, "OnRestart");
+		mgr_scene.onReStart();
 	}
 }
