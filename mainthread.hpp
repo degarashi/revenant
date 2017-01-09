@@ -75,6 +75,7 @@ namespace rev {
 			static void _Restore(Manager& m, std::istream& is);
 			void _setupFxNotify(FNotify& ntf);
 			void _checkFxReload(FNotify& ntf, FxReload& rel);
+			static Timepoint _WaitForNextInterval(Timepoint prevtime, Duration interval);
 		protected:
 			void runL(const Looper_SP& guiLooper) override;
 		public:

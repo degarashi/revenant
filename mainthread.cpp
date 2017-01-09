@@ -30,7 +30,42 @@ namespace rev {
 		lk->accumUpd = lk->accumDraw = 0;
 		lk->tmBegin = Clock::now();
 	}
+	Timepoint MainThread::_WaitForNextInterval(const Timepoint prevtime, const Duration interval) {
+		auto ntp = prevtime + interval;
+		const auto tp = Clock::now();
+		if(ntp <= tp)
+			ntp = tp;
+		else {
+			const auto dur = ntp - tp;
+			if(dur >= Microseconds(1000)) {
+				// 時間に余裕があるならスリープをかける
+				D_SDLWarn(SDL_Delay, std::chrono::duration_cast<Milliseconds>(dur).count() - 1);
+			}
+			// スピンウェイト
+			while(Clock::now() < ntp);
+		}
+		return ntp;
+	}
 	namespace {
+		// 描画スレッドがOpenGLコンテキストを初期化するまで待機し、MakeCurrentを呼ぶ(MultiContext時)
+		void MakeCurrent(DrawThread& dth, const bool MC) {
+			// ポーリングでコンテキスト初期化の完了を検知
+			for(;;) {
+				{
+					auto op = dth.getInfo();
+					// DrawThreadContextが初期化されていたら同時にMainThread用も初期化されている筈
+					if(op->ctxDrawThread) {
+						// ただしSingleContext環境ではNullなのでmakeCurrentしない
+						if(MC) {
+							auto lk = g_system_shared.lock();
+							op->ctxMainThread->makeCurrent(lk->window.lock());
+						}
+						break;
+					}
+				}
+				SDL_Delay(0);
+			}
+		}
 		template <class T>
 		using UPtr = std::unique_ptr<T>;
 	}
@@ -71,26 +106,7 @@ namespace rev {
 				tls_videoParam = vp;
 			});
 
-			// 描画スレッドがOpenGLコンテキストを初期化するまで待機し、MakeCurrentを呼ぶ(MultiContext時)
-			const auto fnMakeCurrent = [&dth, MultiContext](){
-				// ポーリングでコンテキスト初期化の完了を検知
-				for(;;) {
-					{
-						auto op = dth.getInfo();
-						// DrawThreadContextが初期化されていたら同時にMainThread用も初期化されている筈
-						if(op->ctxDrawThread) {
-							// ただしSingleContext環境ではNullなのでmakeCurrentしない
-							if(MultiContext) {
-								auto lk = g_system_shared.lock();
-								op->ctxMainThread->makeCurrent(lk->window.lock());
-							}
-							break;
-						}
-					}
-					SDL_Delay(0);
-				}
-			};
-			fnMakeCurrent();
+			MakeCurrent(dth, MultiContext);
 			{
 				// 各種リソースマネージャの初期化
 				Manager mgr;
@@ -123,10 +139,7 @@ namespace rev {
 					FNotify ntf;
 					_setupFxNotify(ntf);
 
-		// 			const spn::FracI fracInterval(50000, 3);
-		// 			spn::FracI frac(0,1);
 					Timepoint prevtime = Clock::now();
-
 					// ゲームの進行や更新タイミングを図って描画など
 					bool bLoop = true;
 					do {
@@ -187,7 +200,7 @@ namespace rev {
 											drawHandler.postMessageNow(msg::MakeContext());
 											// 描画スレッドが確実にOpenGLの初期化を行うまで待つ
 											drawHandler.postExec([](){});
-											fnMakeCurrent();
+											MakeCurrent(dth, MultiContext);
 											// ユーザーに通知(Restart)
 											mp->onReStart();
 										}
@@ -195,21 +208,8 @@ namespace rev {
 								} while(bLoop);
 							}
 						}
-						// 次のフレーム開始を待つ
-						auto ntp = prevtime + Microseconds(16666);
-						const auto tp = Clock::now();
-						if(ntp <= tp)
-							ntp = tp;
-						else {
-							auto dur = ntp - tp;
-							if(dur >= Microseconds(1000)) {
-								// 時間に余裕があるならスリープをかける
-								D_SDLWarn(SDL_Delay, std::chrono::duration_cast<Milliseconds>(dur).count() - 1);
-							}
-							// スピンウェイト
-							while(Clock::now() < ntp);
-						}
-						prevtime = ntp;
+						// 次のフレーム開始時刻を待つ
+						prevtime = _WaitForNextInterval(prevtime, Microseconds(16666));
 						// プロファイラのフレーム切り替え
 						// spn::profiler.onFrame();
 
