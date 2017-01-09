@@ -440,9 +440,6 @@ namespace rev {
 	void GLEffect::endTask() {
 		mgr_drawtask.endTask();
 	}
-	void GLEffect::clearTask() {
-		mgr_drawtask.clear();
-	}
 	void GLEffect::execTask() {
 		mgr_drawtask.execTask();
 	}

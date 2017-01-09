@@ -358,8 +358,6 @@ namespace rev {
 
 			// ----------------- Task switching -----------------
 			// ---- from MainThread ----
-			//! バッファを2つともクリア(主にスリープ時)
-			void clearTask() override;
 			//! バッファを切り替えて古いバッファをクリア
 			/*! まだDrawThreadが描画を終えてない場合はブロック */
 			void beginTask() override;
