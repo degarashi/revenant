@@ -1328,6 +1328,8 @@ namespace rev {
 			//! GObjectメッセージを受信
 			/*! Obj(UData), MessageStr, {Args} */
 			static int RecvMsgCpp(lua_State* ls);
+
+			static void RegisterFreaClass(LuaState& lsc);
 	};
 }
 namespace rev {

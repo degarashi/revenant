@@ -135,3 +135,27 @@ DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	(luaEqual)(luaMulM)(luaToString)
 )
 DEF_LUAIMPLEMENT_DERIVED(frea::APlane, frea::Plane)
+
+namespace rev {
+	void LuaImport::RegisterFreaClass(LuaState& lsc) {
+		RegisterClass<frea::Vec2>(lsc);
+		RegisterClass<frea::Vec3>(lsc);
+		RegisterClass<frea::Vec4>(lsc);
+		RegisterClass<frea::AVec2>(lsc);
+		RegisterClass<frea::AVec3>(lsc);
+		RegisterClass<frea::AVec4>(lsc);
+
+		RegisterClass<frea::Mat2>(lsc);
+		RegisterClass<frea::Mat3>(lsc);
+		RegisterClass<frea::Mat4>(lsc);
+		RegisterClass<frea::AMat2>(lsc);
+		RegisterClass<frea::AMat3>(lsc);
+		RegisterClass<frea::AMat4>(lsc);
+
+		RegisterClass<frea::Quat>(lsc);
+		RegisterClass<frea::ExpQuat>(lsc);
+		RegisterClass<frea::DegF>(lsc);
+		RegisterClass<frea::RadF>(lsc);
+		RegisterClass<frea::Plane>(lsc);
+	}
+}
