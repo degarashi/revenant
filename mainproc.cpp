@@ -8,9 +8,11 @@ namespace rev {
 	const bool detail::c_pauseDefault = false;
 	bool MainProc::runU() {
 		if(mgr_scene.onUpdate()) {
-			auto lk = g_system_shared.lock();
-			if(auto fx = lk->fx.lock())
+			auto lk = g_system_shared.lockC();
+			if(auto fx = lk->fx.lock()) {
+				lk.unlock();
 				mgr_scene.onDraw(*fx);
+			}
 			return true;
 		}
 		return false;
