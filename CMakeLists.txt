@@ -94,27 +94,26 @@ target_link_libraries(revenant
 set_target_properties(revenant PROPERTIES VERSION 1.0.0 SOVERSION 1)
 install(TARGETS revenant LIBRARY DESTINATION lib)
 
-if(NOT without-test)
+# ------ テストコード生成 ------
+find_package(GTest REQUIRED)
+set(TESTEXE_LIB
+	revenant
+	${GTEST_MAIN_LIBRARIES}
+	${GTEST_LIBRARIES}
+)
+# ユニットテストはシングルファイル、そうでないものはサブディレクトリを使う
+if(NOT without-unittest)
 	enable_testing()
-	find_package(Threads REQUIRED)
-	find_package(GTest REQUIRED)
 	include_directories(
 		${GTEST_INCLUDE_DIRS}
 	)
-	set(TESTEXE_LIB
-		revenant
-		${GTEST_MAIN_LIBRARIES}
-		${GTEST_LIBRARIES}
-	)
-
 	set(EXPLICIT
 		tests/luatest.cpp
 		tests/lcv_classtest_value.cpp
 		tests/lcv_test_value.cpp
 		tests/filetree_func.cpp
 	)
-	# ちょっとしたテストコードはシングルファイル、そうでないものはサブディレクトリ
-	# シングルファイルのテストコード: testsディレクトリ以下のソースが対象
+	# testsディレクトリ以下のソースが対象
 	aux_source_directory(tests TEST_SRC)
 	foreach(SRC IN LISTS TEST_SRC)
 		list(FIND EXPLICIT ${SRC} OUTPUT)
@@ -123,6 +122,8 @@ if(NOT without-test)
 			AddTest(${SRCNAME} "${SRC};${EXPLICIT}" "${TESTEXE_LIB}")
 		endif()
 	endforeach()
-	# サブディレクトリのテストコード
+endif()
+
+if(NOT without-test)
 	add_subdirectory(tests/gameloop)
 endif()
