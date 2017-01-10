@@ -1,4 +1,4 @@
-#include "luatest.hpp"
+#include "../luatest.hpp"
 
 namespace rev {
 	namespace test {

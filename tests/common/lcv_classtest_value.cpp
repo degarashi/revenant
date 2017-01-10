@@ -1,4 +1,4 @@
-#include "lcv_classtest.hpp"
+#include "../lcv_classtest.hpp"
 
 namespace rev {
 	namespace test {

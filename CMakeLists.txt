@@ -107,19 +107,14 @@ if(NOT without-unittest)
 	include_directories(
 		${GTEST_INCLUDE_DIRS}
 	)
-	set(EXPLICIT
-		tests/luatest.cpp
-		tests/lcv_classtest_value.cpp
-		tests/lcv_test_value.cpp
-		tests/filetree_func.cpp
-	)
+	aux_source_directory(tests/common COMMON)
 	# testsディレクトリ以下のソースが対象
 	aux_source_directory(tests TEST_SRC)
 	foreach(SRC IN LISTS TEST_SRC)
-		list(FIND EXPLICIT ${SRC} OUTPUT)
+		list(FIND COMMON ${SRC} OUTPUT)
 		if(${OUTPUT} LESS 0)
 			GetFileName(${SRC}, SRCNAME)
-			AddTest(${SRCNAME} "${SRC};${EXPLICIT}" "${TESTEXE_LIB}")
+			AddTest(${SRCNAME} "${SRC};${COMMON}" "${TESTEXE_LIB}")
 		endif()
 	endforeach()
 endif()
