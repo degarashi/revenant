@@ -14,19 +14,12 @@ namespace rev {
 	class ObjectT_Lua : public ObjectT<T,Base>, public std::enable_shared_from_this<ObjectT_Lua<T,Base>> {
 		private:
 			using base = ObjectT<T,Base>;
-			HObj _hMe;
-			HObj _getHandle() {
-				static_assert(std::is_base_of<Resource, ObjectT_Lua<T,Base>>{}, "");
-				if(!_hMe)
-					_hMe = this->shared_from_this();
-				return _hMe;
-			}
 		protected:
 			template <class... Ts>
 			spi::Optional<LCValue> _callLuaMethod(const std::string& method, Ts&&... ts) {
 				if(const auto& sp = rev_mgr_obj.getLua()) {
-					sp->push(_getHandle());
-					LValueS lv(sp->getLS());
+					sp->push(this->shared_from_this());
+					const LValueS lv(sp->getLS());
 					return lv.callMethodNRet(method, std::forward<Ts>(ts)...);
 				}
 				return spi::none;
@@ -39,6 +32,9 @@ namespace rev {
 		public:
 			using base::base;
 			void onUpdate(const bool bFirst) override {
+				// このassert文は別にここで無くとも良い
+				static_assert(std::is_base_of<Resource, ObjectT_Lua<T,Base>>{}, "");
+
 				base::onUpdate(false);
 				if(bFirst) {
 					if(!base::isDead())
@@ -72,7 +68,7 @@ namespace rev {
 			}
 			LCValue recvMsg(const GMessageStr& msg, const LCValue& arg) override {
 				if(const auto& sp = rev_mgr_obj.getLua())
-					return detail::ObjectT_LuaBase::CallRecvMsg(sp, _getHandle(), msg, arg);
+					return detail::ObjectT_LuaBase::CallRecvMsg(sp, this->shared_from_this(), msg, arg);
 				return LCValue();
 			}
 	};
