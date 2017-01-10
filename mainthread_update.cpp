@@ -9,6 +9,7 @@
 #include "gl_if.hpp"
 #include "handler.hpp"
 #include "sys_message.hpp"
+#include "sound.hpp"
 
 namespace rev {
 	bool MainThread::_updateFrame(MainProc* mp, DrawThread& dth, Handler& drawHandler) {
@@ -18,6 +19,7 @@ namespace rev {
 			// ゲーム進行
 			++getInfo()->accumUpd;
 			mgr_input.update();
+			mgr_sound.update();
 			g_sdlInputShared.lock()->reset();
 			{
 				mgr_info.setInfo(
