@@ -5,9 +5,24 @@
 
 namespace rev {
 	DEF_LCV_OSTREAM(void)
+	DEF_LCV_OSTREAM(const std::string&)
+	DEF_LCV_OSTREAM(lubee::SizeI)
+	DEF_LCV_OSTREAM(lubee::RectI)
 	DEF_LCV_OSTREAM(lua_OtherNumber)
+	DEF_LCV_OSTREAM(lua_IntegerU)
 	DEF_LCV_OSTREAM(lua_OtherInteger)
 	DEF_LCV_OSTREAM(lua_OtherIntegerU)
+	DEF_LCV_OSTREAM(long)
+	DEF_LCV_OSTREAM(GLFormat)
+	DEF_LCV_OSTREAM(GLDepthFmt)
+	DEF_LCV_OSTREAM(GLStencilFmt)
+	DEF_LCV_OSTREAM(GLDSFmt)
+	DEF_LCV_OSTREAM(GLInFmt)
+	DEF_LCV_OSTREAM(GLInSizedFmt)
+	DEF_LCV_OSTREAM(GLInCompressedFmt)
+	DEF_LCV_OSTREAM(GLInRenderFmt)
+	DEF_LCV_OSTREAM(GLInReadFmt)
+	DEF_LCV_OSTREAM(GLTypeFmt)
 
 	// [LCV<LuaNil> = LUA_TNIL]
 	void LCV<LuaNil>::operator()(lua_State* ls, LuaNil) const {
