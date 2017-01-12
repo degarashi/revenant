@@ -79,7 +79,7 @@ namespace rev {
 	lua_Integer LuaImport::NumRef(const HRes& sh) {
 		return static_cast<lua_Integer>(sh.use_count());
 	}
-	bool LuaImport::_IsObjectRegistered(LuaState& lsc, const std::string& name) {
+	bool LuaImport::IsObjectRegistered(LuaState& lsc, const std::string& name) {
 		lsc.getGlobal(name);
 		const bool res = lsc.type(-1) == LuaType::Table;
 		lsc.pop();
@@ -100,7 +100,7 @@ namespace rev {
 
 	// オブジェクト類を定義する為の基本関数定義など
 	void LuaImport::RegisterObjectBase(LuaState& lsc) {
-		if(_IsObjectRegistered(lsc, luaNS::Object))
+		if(IsObjectRegistered(lsc, luaNS::Object))
 			return;
 
 		lsc.newTable();
@@ -161,7 +161,7 @@ namespace rev {
 		lsc.loadModule("object");
 	}
 	void LuaImport::RegisterUpdaterObject(LuaState& lsc) {
-		if(_IsObjectRegistered(lsc, luaNS::FSMachine))
+		if(IsObjectRegistered(lsc, luaNS::FSMachine))
 			return;
 		// LuaImport::RegisterClass<Object>(lsc);
 

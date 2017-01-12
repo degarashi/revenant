@@ -1115,7 +1115,6 @@ namespace rev {
 			}
 
 			static int _ReturnException(lua_State* ls, const char* func, const std::exception& e, int nNeed);
-			static bool _IsObjectRegistered(LuaState& lsc, const std::string& name);
 			static bool _IsUpdaterObjectRegistered(LuaState& lsc);
 
 			// ------- ログ出力 -------
@@ -1134,6 +1133,7 @@ namespace rev {
 			static void EndImportBlock();
 			static void SaveImportLog(const HRW& hRW);
 
+			static bool IsObjectRegistered(LuaState& lsc, const std::string& name);
 			// ---- Luaから呼ばれる関数 ----
 			//! luaスタックから変数ポインタとクラスを取り出しメンバ変数を読み込む
 			template <class GET, class T, class V, class VT>
