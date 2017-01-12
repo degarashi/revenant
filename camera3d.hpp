@@ -61,5 +61,8 @@ namespace rev {
 			const char* getResourceName() const noexcept override;
 	};
 	#define mgr_cam (::rev::Camera3DMgr::ref())
-	class Camera3DMgr : public spi::ResMgr<Camera3D, lubee::AlignedPool<Camera3D>> {};
+	class Camera3DMgr:
+		public spi::ResMgr<Camera3D, lubee::AlignedPool<Camera3D>>,
+		public spi::Singleton<Camera3DMgr>
+	{};
 }
