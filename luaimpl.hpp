@@ -86,6 +86,12 @@ namespace rev {
 				const CBMethod& cbMethod,
 				Maker* maker
 		) {
+			// 既に登録されていたら警告だけ表示して何もせずリターン
+			if(LuaImport::IsObjectRegistered(lsc, class_name)) {
+				Expect(false, "class \"%s\" is already registered", class_name);
+				return;
+			}
+
 			LuaImport::BeginImportBlock(class_name);
 			lsc.getGlobal(::rev::luaNS::DefineObject);
 			lsc.getGlobal(base_name);
