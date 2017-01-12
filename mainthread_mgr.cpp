@@ -1,4 +1,5 @@
 #include "mainthread.hpp"
+#include "lsys.hpp"
 #include "gameloopparam.hpp"
 #include "systeminfo.hpp"
 #include "sdl_rw.hpp"
@@ -17,6 +18,7 @@
 
 namespace rev {
 	void MainThread::_InitManagers(Manager& m, const GameloopParam& param) {
+		m.lsys = std::make_shared<LSysFunc>();
 		m.cam2 = std::make_shared<Camera2DMgr>();
 		m.cam3 = std::make_shared<Camera3DMgr>();
 		m.ptrm = std::make_shared<PointerMgr>();

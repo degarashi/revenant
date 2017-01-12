@@ -21,6 +21,7 @@ namespace rev {
 	namespace draw {
 		class Task;
 	}
+	class LSysFunc;
 	class RWMgr;
 	class AppPath;
 	class GLRes;
@@ -45,6 +46,7 @@ namespace rev {
 			template <class T>
 			using SPtr = std::shared_ptr<T>;
 			struct Manager : spi::Singleton<Manager> {
+				SPtr<LSysFunc>				lsys;
 				SPtr<Camera2DMgr>			cam2;
 				SPtr<Camera3DMgr>			cam3;
 				SPtr<InputMgr>				inpm;
