@@ -68,4 +68,4 @@ namespace rev {
 			void loadClass(const std::string& name, const Lua_SP& ls);
 	};
 }
-// DEF_LUAIMPORT(rev::LSysFunc)
+DEF_LUAIMPORT(rev::LSysFunc)

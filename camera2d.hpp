@@ -54,3 +54,5 @@ namespace rev {
 		public spi::Singleton<Camera2DMgr>
 	{};
 }
+#include "luaimport.hpp"
+DEF_LUAIMPORT(rev::Camera2D)

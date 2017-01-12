@@ -1284,7 +1284,7 @@ namespace rev {
 
 			//! C++クラス登録基盤を初期化
 			static void RegisterObjectBase(LuaState& lsc);
-			static void RegisterUpdaterObject(LuaState& lsc);
+			static void RegisterFSMachineBase(LuaState& lsc);
 			//! ベースオブジェクトを使った派生クラスの読み込み
 			/*! 1クラス1ファイルの対応
 				ベースクラスの名前はファイルに記載 */
@@ -1294,13 +1294,10 @@ namespace rev {
 				リソースマネージャやシステムクラス用 */
 			template <class T>
 			static void ImportClass(LuaState& lsc, const std::string& tableName, const std::string& name, T* ptr) {
-				RegisterObjectBase(lsc);
-
-				const int stk = lsc.getTop();
-				const auto* dummy = static_cast<T*>(nullptr);
-				lua::LuaExport(lsc, dummy);
+				RegisterClass<T>(lsc);
+				const RewindTop rt(lsc.getLS());
 				if(ptr) {
-					MakePointerInstance(lsc, lua::LuaName(dummy), ptr);
+					MakePointerInstance(lsc, lua::LuaName(static_cast<T*>(nullptr)), ptr);
 					// [Instance]
 					if(!tableName.empty())
 						lsc.prepareTableGlobal(tableName);
@@ -1312,7 +1309,6 @@ namespace rev {
 					// [Instance][Target][name][Instance]
 					lsc.rawSet(-3);
 				}
-				lsc.setTop(stk);
 			}
 			static void MakePointerInstance(LuaState& lsc, const char* luaName, void* ptr);
 			template <class T>
@@ -1330,6 +1326,12 @@ namespace rev {
 			static int RecvMsgCpp(lua_State* ls);
 
 			static void RegisterFreaClass(LuaState& lsc);
+			static void RegisterInputClass(LuaState& lsc);
+			static void RegisterOpenGLClass(LuaState& lsc);
+			static void RegisterOtherClass(LuaState& lsc);
+			static void RegisterRandomClass(LuaState& lsc);
+			static void RegisterSoundClass(LuaState& lsc);
+			static void RegisterUpdaterClass(LuaState& lsc);
 	};
 }
 namespace rev {

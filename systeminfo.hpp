@@ -15,3 +15,5 @@ namespace rev {
 			int getFPS() const noexcept;
 	};
 }
+#include "luaimport.hpp"
+DEF_LUAIMPORT(rev::SystemInfo)

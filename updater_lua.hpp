@@ -80,3 +80,4 @@ namespace rev {
 			U_ObjectUpd();
 	};
 }
+DEF_LUAIMPORT(rev::U_ObjectUpd)

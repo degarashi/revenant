@@ -18,3 +18,5 @@ namespace rev {
 		};
 	}
 }
+#include "../luaimport.hpp"
+DEF_LUAIMPORT(rev::draw::ClearParam)

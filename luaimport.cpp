@@ -26,7 +26,7 @@ namespace rev {
 						Object("Object"),
 						ConstructPtr("ConstructPtr"),
 						DefineObject("DefineObject"),
-						MakeFSMachine("MakeFSMachine"),
+						MakeUserObject("MakeUserObject"),
 						FSMachine("FSMachine"),
 						MakePreENV("MakePreENV"),
 						Ctor("Ctor"),
@@ -160,20 +160,15 @@ namespace rev {
 
 		lsc.loadModule("object");
 	}
-	void LuaImport::RegisterUpdaterObject(LuaState& lsc) {
+	void LuaImport::RegisterFSMachineBase(LuaState& lsc) {
 		if(IsObjectRegistered(lsc, luaNS::FSMachine))
 			return;
-		// LuaImport::RegisterClass<Object>(lsc);
-
-		std::string fileName("fsmachine." + luaNS::ScriptExtension);
-		HRW hRW = mgr_path.getRW(luaNS::SystemScriptResourceEntry, PathBlock(fileName), Access::Read, nullptr);
-		Assert(hRW, "system script file \"%s\" not found.", fileName.c_str());
-		lsc.loadFromSource(hRW, fileName.c_str(), true);
+		lsc.loadModule("fsmachine");
 	}
 	void LuaImport::LoadClass(LuaState& lsc, const std::string& name, const HRW& hRW) {
-		RegisterObjectBase(lsc);
-		RegisterUpdaterObject(lsc);
+		RegisterFSMachineBase(lsc);
 
+		const CheckTop ct(lsc.getLS());
 		// グローバルテーブルの付け替え
 		lsc.newTable();
 		lsc.getGlobal(luaNS::MakePreENV);
@@ -189,10 +184,10 @@ namespace rev {
 		// [NewClassTable][UserChunk]
 		lsc.call(0,0);
 		// [NewClassTable]
-		lsc.getGlobal(luaNS::MakeFSMachine);
+		lsc.getGlobal(luaNS::MakeUserObject);
 		lsc.pushValue(-2);
 		lsc.push(name);
-		// [NewClassTable][Func(MakeFSMachine)][ObjName][NewClassTable]
+		// [NewClassTable][Func(MakeUserObject)][NewClassTable][ObjName]
 		lsc.call(2,1);
 		lsc.setGlobal(name);
 		lsc.pop(1);

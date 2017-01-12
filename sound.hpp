@@ -423,3 +423,8 @@ namespace rev {
 			void invalidate();
 	};
 }
+#include "luaimport.hpp"
+DEF_LUAIMPORT(rev::ABuffer)
+DEF_LUAIMPORT(rev::AGroup)
+DEF_LUAIMPORT(rev::ASource)
+DEF_LUAIMPORT(rev::SoundMgr)

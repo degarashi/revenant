@@ -137,3 +137,5 @@ namespace rev {
 			U_Scene();
 	};
 }
+DEF_LUAIMPORT(rev::SceneMgr)
+DEF_LUAIMPORT(rev::U_Scene)

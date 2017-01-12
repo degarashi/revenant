@@ -293,3 +293,11 @@ namespace rev {
 		}
 	};
 }
+#include "luaimport.hpp"
+DEF_LUAIMPORT(rev::Input)
+DEF_LUAIMPORT(rev::Action)
+DEF_LUAIMPORT(rev::Keyboard)
+DEF_LUAIMPORT(rev::Mouse)
+DEF_LUAIMPORT(rev::Joypad)
+DEF_LUAIMPORT(rev::TPos2D)
+DEF_LUAIMPORT(rev::InputMgr)

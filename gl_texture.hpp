@@ -196,3 +196,5 @@ namespace rev {
 			void onDeviceReset() override;
 	};
 }
+#include "luaimport.hpp"
+DEF_LUAIMPORT(rev::IGLTexture)

@@ -87,3 +87,5 @@ namespace rev {
 	};
 	std::ostream& operator << (std::ostream& os, const Pose3D& ps);
 }
+#include "luaimport.hpp"
+DEF_LUAIMPORT(rev::Pose3D)

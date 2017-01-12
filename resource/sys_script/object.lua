@@ -197,3 +197,9 @@ function DefineObject(base, name, object, bNoLoadValue)
 	})
 	return object
 end
+
+local DefineObject = DefineObject
+function MakeUserObject(object, name)
+	assert(type(object.BaseClass)=="string", "MakeUserObject(): BaseClass type has not defined")
+	return DefineObject(_ENV[object.BaseClass], name, object, true)
+end

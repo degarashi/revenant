@@ -29,3 +29,6 @@ DEF_LUAIMPORT(frea::RadF)
 
 DEF_LUAIMPORT(frea::ExpQuat)
 DEF_LUAIMPORT(frea::AExpQuat)
+
+#include "lubee/random.hpp"
+DEF_LUAIMPORT(lubee::RandomMT)

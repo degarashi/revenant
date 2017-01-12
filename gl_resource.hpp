@@ -8,6 +8,7 @@
 
 namespace rev {
 	class GLFBufferTmp;
+	class LuaState;
 	#define mgr_gl (::rev::GLRes::ref())
 	//! OpenGL関連のリソースマネージャ
 	class GLRes : public ResMgrApp<IGLResource>, public ResMgrBase, public spi::Singleton<GLRes> {
@@ -52,7 +53,7 @@ namespace rev {
 			//! ベースクラスのacquireメソッドを隠す為のダミー
 			void acquire();
 
-			// static void LuaExport(LuaState& lsc);
+			static void LuaExport(LuaState& lsc);
 			// ------------ Texture ------------
 			//! ファイルからテクスチャを読み込む
 			/*!
@@ -127,3 +128,5 @@ namespace rev {
 			const FBInfo_OP& getDefaultColor() const;
 	};
 }
+#include "luaimport.hpp"
+DEF_LUAIMPORT(rev::GLRes)

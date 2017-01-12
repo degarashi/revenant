@@ -173,6 +173,7 @@ namespace rev {
 				using base_t::base_t; \
 		};
 	#define DefineUpdGroup(name) DefineUpdBase(name, ::rev::UpdGroup)
+	DefineUpdGroup(U_UpdGroup)
 
 	namespace detail {
 		//! オブジェクト基底
@@ -395,3 +396,7 @@ namespace rev {
 			using base::base;
 	};
 }
+DEF_LUAIMPORT(rev::Object)
+DEF_LUAIMPORT(rev::U_Object)
+DEF_LUAIMPORT(rev::UpdGroup)
+DEF_LUAIMPORT(rev::U_UpdGroup)

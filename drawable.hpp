@@ -66,4 +66,12 @@ namespace rev {
 	};
 	#define DefineDrawGroup(name)	DefineUpdBase(name, ::rev::DrawGroup)
 	#define DefineDrawGroupProxy(name)	DefineUpdBase(name, ::rev::DrawGroupProxy)
+
+	DefineDrawGroup(U_DrawGroup)
+	DefineDrawGroupProxy(U_DrawGroupProxy)
 }
+DEF_LUAIMPORT(rev::DrawableObj)
+DEF_LUAIMPORT(rev::DrawGroup)
+DEF_LUAIMPORT(rev::DrawGroupProxy)
+DEF_LUAIMPORT(rev::U_DrawGroup)
+DEF_LUAIMPORT(rev::U_DrawGroupProxy)

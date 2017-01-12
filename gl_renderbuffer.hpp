@@ -53,3 +53,5 @@ namespace rev {
 			const char* getResourceName() const noexcept override;
 	};
 }
+#include "luaimport.hpp"
+DEF_LUAIMPORT(rev::GLRBuffer)

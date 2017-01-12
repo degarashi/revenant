@@ -22,7 +22,7 @@ namespace rev {
 								Object,
 								ConstructPtr,
 								DefineObject,
-								MakeFSMachine,
+								MakeUserObject,
 								FSMachine,
 								MakePreENV,
 								Ctor,
