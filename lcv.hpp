@@ -1320,7 +1320,6 @@ namespace rev {
 			static void MakeInstance(LuaState& lsc, const int idx) {
 				MakeInstance(lsc, lua::LuaName((T*)nullptr), idx);
 			}
-			static void RegisterRSClass(LuaState& lsc);
 			//! GObjectメッセージを受信
 			/*! Obj(UData), MessageStr, {Args} */
 			static int RecvMsgCpp(lua_State* ls);

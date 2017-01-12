@@ -114,7 +114,6 @@ namespace rev {
 			HIb makeIBuffer(DrawType dtype);
 
 			HTex getEmptyTexture() const;
-			HGLRes _common(const std::string& key, std::function<HGLRes (const URI&)> cb);
 			GLFBufferTmp& getTmpFramebuffer() const;
 			// --- from ResMgrBase ---
 			HRes loadResource(const URI& uri) override;
