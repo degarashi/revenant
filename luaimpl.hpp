@@ -31,7 +31,7 @@ namespace rev {
 	int MakeObject(lua_State* ls) {
 		FuncCall<Ts...>::callCB(
 			[ls](auto&&... args) {
-				LCV<C>()(ls, C(std::forward<decltype(args)>(args)...));
+				LCV<C>()(ls, C{std::forward<decltype(args)>(args)...});
 			},
 			ls,
 			static_cast<int>(-sizeof...(Ts))
