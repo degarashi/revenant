@@ -217,20 +217,6 @@ namespace rev {
 		// [ObjectTable][Instance]
 		lsc.remove(-2);
 	}
-	int LuaImport::RecvMsgCpp(lua_State* ls) {
-		// MEMO: GameObjectを組み込んだ後にコメントアウト
-		// Object* obj = LI_GetHandle<typename ObjMgr::data_type>()(ls, 1);
-		// auto msg = LCV<std::string>()(2, ls);
-		// // Noneで無ければ有効な戻り値とする
-		// LCValue lcv = obj->recvMsg(msg, LCV<LCValue>()(3, ls));
-		// if(lcv.type() != LuaType::Nil) {
-		// 	lua_pushboolean(ls, true);
-		// 	lcv.push(ls);
-		// 	return 2;
-		// }
-		lua_pushboolean(ls, false);
-		return 1;
-	}
 	LuaImport::LogMap LuaImport::s_logMap;
 	std::stringstream LuaImport::s_importLog;
 	std::string LuaImport::s_firstBlock;
@@ -263,5 +249,23 @@ namespace rev {
 		auto str = ss.str();
 		hRW->write(str.c_str(), 1, str.length());
 		s_logMap.clear();
+	}
+}
+#include "updater.hpp"
+namespace rev {
+	int LuaImport::RecvMsgCpp(lua_State* ls) {
+		auto* obj = LI_GetPtr<Object>()(ls, -3);
+		const auto msg = LCV<GMessageStr>()(-2, ls, nullptr);
+		// Noneで無ければ有効な戻り値とする
+		LCValue lcv = obj->recvMsg(msg, LCV<LCValue>()(-1, ls, nullptr));
+		const bool bRecv = lcv.type() != LuaType::Nil;
+		lua_pushboolean(ls, bRecv);
+		if(bRecv) {
+			// 受信成功
+			lcv.push(ls);
+			return 2;
+		}
+		// 受信失敗
+		return 1;
 	}
 }
