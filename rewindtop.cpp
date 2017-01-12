@@ -27,8 +27,10 @@ namespace rev {
 		_base(lua_gettop(ls))
 	{}
 	CheckTop::~CheckTop() NOEXCEPT_IF_RELEASE {
-		D_Assert(lua_gettop(_ls) == _base,
-				"stack top position differed: expect=%d, actual=%d", _base, lua_gettop(_ls));
+		if(!std::uncaught_exception()) {
+			D_Assert(lua_gettop(_ls) == _base,
+					"stack top position differed: expect=%d, actual=%d", _base, lua_gettop(_ls));
+		}
 	}
 	int CheckTop::getBase() const noexcept {
 		return _base;
