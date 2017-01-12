@@ -80,7 +80,7 @@ namespace rev {
 		>
 		void LuaExportImpl(LuaState& lsc,
 				const char* class_name,
-				const char* base_name,
+				const std::string& base_name,
 				const CBSMethod& cbSMethod,
 				const CBMember& cbMember,
 				const CBMethod& cbMethod,
@@ -144,7 +144,7 @@ namespace rev { \
 			LuaExportImpl<clazz, ::rev::LI_GetPtr<clazz>>( \
 				lsc, \
 				#class_raw, \
-				#base, \
+				base, \
 				[&lsc](){ BOOST_PP_SEQ_FOR_EACH(DEF_LUASMEMBER, clazz, seq_smethod) }, \
 				[&lsc](){ BOOST_PP_SEQ_FOR_EACH(DEF_LUAMEMBER, (clazz)(class_raw), seq_member) }, \
 				[&lsc](){ BOOST_PP_SEQ_FOR_EACH(DEF_LUAMEMBER, (clazz)(class_raw), seq_method) }, \
@@ -154,7 +154,7 @@ namespace rev { \
 	} \
 }
 
-#define LUAIMPLEMENT_BASE Object
+#define LUAIMPLEMENT_BASE luaNS::Object
 #define DEF_LUAIMPLEMENT_SPTR(mgr, clazz, class_raw, base, seq_smethod, seq_member, seq_method, seq_ctor) \
 	DEF_LUAIMPLEMENT_IMPL(mgr, clazz, class_raw, base, seq_smethod, seq_member, seq_method, seq_ctor, ::rev::MakeHandle)
 #define DEF_LUAIMPLEMENT_PTR(clazz, class_raw, base, seq_smethod, seq_member, seq_method, seq_ctor) \
