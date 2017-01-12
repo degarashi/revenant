@@ -141,16 +141,10 @@ namespace rev {
 		RegisterClass<frea::Vec2>(lsc);
 		RegisterClass<frea::Vec3>(lsc);
 		RegisterClass<frea::Vec4>(lsc);
-		RegisterClass<frea::AVec2>(lsc);
-		RegisterClass<frea::AVec3>(lsc);
-		RegisterClass<frea::AVec4>(lsc);
 
 		RegisterClass<frea::Mat2>(lsc);
 		RegisterClass<frea::Mat3>(lsc);
 		RegisterClass<frea::Mat4>(lsc);
-		RegisterClass<frea::AMat2>(lsc);
-		RegisterClass<frea::AMat3>(lsc);
-		RegisterClass<frea::AMat4>(lsc);
 
 		RegisterClass<frea::Quat>(lsc);
 		RegisterClass<frea::ExpQuat>(lsc);
