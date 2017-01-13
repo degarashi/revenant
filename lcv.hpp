@@ -1331,6 +1331,7 @@ namespace rev {
 			static void RegisterRandomClass(LuaState& lsc);
 			static void RegisterSoundClass(LuaState& lsc);
 			static void RegisterUpdaterClass(LuaState& lsc);
+			static void RegisterUtilsClass(LuaState& lsc);
 	};
 }
 namespace rev {
