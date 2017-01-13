@@ -245,6 +245,16 @@ namespace rev {
 		hRW->write(str.c_str(), 1, str.length());
 		s_logMap.clear();
 	}
+	void LuaImport::RegisterAllClass(LuaState& lsc) {
+		RegisterFreaClass(lsc);
+		RegisterInputClass(lsc);
+		RegisterOpenGLClass(lsc);
+		RegisterOtherClass(lsc);
+		RegisterRandomClass(lsc);
+		RegisterSoundClass(lsc);
+		RegisterUpdaterClass(lsc);
+		RegisterUtilsClass(lsc);
+	}
 }
 #include "updater.hpp"
 namespace rev {
