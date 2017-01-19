@@ -28,10 +28,8 @@ namespace rev {
 		for(auto& a : ar)
 			a = 0;
 	}
-	void GPUInfo::Version::loadFromRegex(const std::cmatch& m) {
-		LoadFromRegex(m.cbegin()+1, m.cend(), ar);
-	}
-	void GPUInfo::Version::loadFromRegex(const std::smatch& m) {
+	template <class M>
+	void GPUInfo::Version::loadFromRegex(const M& m) {
 		LoadFromRegex(m.cbegin()+1, m.cend(), ar);
 	}
 	std::ostream& operator << (std::ostream& os, const GPUInfo::Version& ver) {
