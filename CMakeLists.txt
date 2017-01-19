@@ -89,7 +89,7 @@ target_link_libraries(revenant
 	${VORBIS_LIBRARY}
 	${OGG_LIBRARY}
 	${OPENAL_LIBRARY}
-	liblua.a
+	${LUA_LIBRARIES}
 	GL
 )
 set_target_properties(revenant PROPERTIES VERSION 1.0.0 SOVERSION 1)
