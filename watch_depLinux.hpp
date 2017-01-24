@@ -17,7 +17,7 @@ namespace rev {
 				protected:
 					void run(FNotify_depLinux* self) override;
 				public:
-					WatchThread(FNotify_depLinux* self);
+					WatchThread();
 			};
 			WatchThread				_thread;
 			using EventL = std::vector<Event>;

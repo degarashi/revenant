@@ -4,11 +4,9 @@
 
 namespace rev {
 	// ---------------- FNotify_depLinux ----------------
-	FNotify_depLinux::WatchThread::WatchThread(FNotify_depLinux* self):
+	FNotify_depLinux::WatchThread::WatchThread():
 		Thread<void (FNotify_depLinux*)>("WatchThread")
-	{
-		start(self);
-	}
+	{}
 	namespace {
 		constexpr int EVENTSIZE = sizeof(inotify_event);
 	}
@@ -48,17 +46,17 @@ namespace rev {
 		}
 	}
 
-	FNotify_depLinux::FNotify_depLinux():
-		_thread(this)
-	{
+	FNotify_depLinux::FNotify_depLinux() {
 		Assert((_fd = inotify_init()) >= 0, "failed to initialize inotify");
 		::pipe(_cancelFd);
+		_thread.start(this);
 	}
 	FNotify_depLinux::~FNotify_depLinux() {
-		int endflag = ~0;
-		write(_cancelFd[1], &endflag, sizeof(int));
-		_thread.join();
-
+		if(_thread.getStatus() != ThreadState::Idle) {
+			const int endflag = ~0;
+			write(_cancelFd[1], &endflag, sizeof(int));
+			_thread.join();
+		}
 		close(_fd);
 		close(_cancelFd[0]);
 		close(_cancelFd[1]);
