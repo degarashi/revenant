@@ -3,6 +3,7 @@
 #include <memory>
 #include <map>
 #include "spine/enum.hpp"
+#include <iostream>
 
 namespace rev {
 	using String_SP = std::shared_ptr<std::string>;
@@ -48,5 +49,20 @@ namespace rev {
 			cookie(c),
 			bDir(dir)
 		{}
+		std::ostream& print(std::ostream& os) const {
+			using std::endl;
+			os << "FNotifyEvent: [" << endl
+				<< "value: " << dsc << endl
+				<< "event: " << event << endl
+				<< "path: " << path << endl
+				<< "cookie: " << cookie << endl
+				<< "bDir: " << bDir << endl
+				<< "]";
+			return os;
+		}
+	};
+	template <class T>
+	std::ostream& operator << (std::ostream& os, const FNotifyEvent<T>& ntf) {
+		return ntf.print(os);
 	};
 }
