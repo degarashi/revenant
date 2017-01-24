@@ -1,12 +1,16 @@
 #pragma once
 #include "lubee/output.hpp"
 #include <boost/format.hpp>
+#include "sdl_mutex.hpp"
 
 namespace rev {
 	namespace log {
-		struct RevOutput : lubee::log::DefaultOutput {
-			using base = lubee::log::DefaultOutput;
-			void print(const lubee::log::Type::e type, const std::string& s) override;
+		class RevOutput : public lubee::log::DefaultOutput {
+			private:
+				Mutex	_mutex;
+				using base = lubee::log::DefaultOutput;
+			public:
+				void print(const lubee::log::Type::e type, const std::string& s) override;
 		};
 
 		template <class... Ts>

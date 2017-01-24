@@ -5,8 +5,10 @@
 namespace rev {
 	namespace log {
 		void RevOutput::print(const lubee::log::Type::e type, const std::string& s) {
+			// スレッド間で出力が混ざらないようにロックをかける
+			UniLock lk(_mutex);
 			// スレッド名を出力
-			boost::format msg("[%1%]: %2%");
+			boost::format msg("[%1%]:\n%2%");
 			if(tls_threadName.initialized())
 				base::print(type, (msg % *tls_threadName % s).str());
 			else {
