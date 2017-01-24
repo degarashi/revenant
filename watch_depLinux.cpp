@@ -68,7 +68,10 @@ namespace rev {
 		_eventL.push_back(Event{e.wd, DetectEvent(e.mask), e.name, e.cookie, static_cast<bool>(e.mask & IN_ISDIR)});
 	}
 	FNotify_depLinux::DSC FNotify_depLinux::addWatch(const std::string& path, const uint32_t mask) {
-		return inotify_add_watch(_fd, path.c_str(), ConvertMask(mask));
+		const auto dsc = inotify_add_watch(_fd, path.c_str(), ConvertMask(mask));
+		if(dsc < 0)
+			throw AddWatchFailed(::strerror(errno));
+		return dsc;
 	}
 	void FNotify_depLinux::remWatch(const DSC& dsc) {
 		inotify_rm_watch(_fd, dsc);

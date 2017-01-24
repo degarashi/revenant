@@ -64,5 +64,8 @@ namespace rev {
 	template <class T>
 	std::ostream& operator << (std::ostream& os, const FNotifyEvent<T>& ntf) {
 		return ntf.print(os);
+	}
+	struct AddWatchFailed : std::runtime_error {
+		using std::runtime_error::runtime_error;
 	};
 }
