@@ -1,6 +1,7 @@
 #include "watch_depLinux.hpp"
 #include <unistd.h>
 #include <sys/inotify.h>
+#include "output.hpp"
 
 namespace rev {
 	// ---------------- FNotify_depLinux ----------------
@@ -21,25 +22,27 @@ namespace rev {
 			FD_SET(ths->_fd, &fds);
 			FD_SET(ths->_cancelFd[0], &fds);
 			const int ret = ::select(std::max(ths->_fd, ths->_cancelFd[0])+1, &fds, nullptr, nullptr, &tm);
-			if(ret < 0)
+			if(ret < 0) {
+				LogRHere(Info,  "error (or signal caught?): %1%", ::strerror(errno));
 				break;
-			else if(ret == 0) {
-				// Timeout
 			} else {
 				if(FD_ISSET(ths->_fd, &fds)) {
 					// inotify
-					auto nread = read(ths->_fd, buff, 2048);
-					if(nread < 0)
+					auto nread = read(ths->_fd, buff, sizeof(buff));
+					if(nread < 0) {
+						D_Assert("fd has set, but no data was given: %s", ::strerror(errno));
 						break;
+					}
 					int ofs = 0;
 					while(ofs < nread) {
 						auto* e = reinterpret_cast<inotify_event*>(buff + ofs);
 						ths->_pushInfo(*e);
 						ofs += EVENTSIZE + e->len;
 					}
-				} else {
+				}
+				if(FD_ISSET(ths->_cancelFd[0], &fds)) {
 					// end
-					D_Assert0(FD_ISSET(ths->_cancelFd[0], &fds));
+					LogRHere(Verbose,  "Ending mainloop.");
 					break;
 				}
 			}
@@ -72,7 +75,7 @@ namespace rev {
 		return dsc;
 	}
 	void FNotify_depLinux::remWatch(const DSC& dsc) {
-		inotify_rm_watch(_fd, dsc);
+		Expect(inotify_rm_watch(_fd, dsc) == 0, ::strerror(errno));
 	}
 	namespace {
 		const static std::pair<FileEvent, int> c_flags[] = {
