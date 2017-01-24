@@ -3,8 +3,17 @@
 #include "sdl_mutex.hpp"
 #include "spine/optional.hpp"
 #include "spine/argholder.hpp"
+#include "spine/enum.hpp"
 
 namespace rev {
+	DefineEnum(ThreadState,
+		(Idle)					//< スレッド開始前
+		(Running)				//< スレッド実行中
+		(Interrupted)			//< 中断要求がされたが、まだスレッドが終了していない
+		(Interrupted_End)		//< 中断要求によりスレッドが終了した
+		(Error_End)				//< 例外による異常終了
+		(Finished)				//< 正常終了
+	);
 	template <class DER, class RET, class... Args>
 	class _Thread {
 		private:
@@ -16,14 +25,6 @@ namespace rev {
 			using Holder_OP = spi::Optional<Holder>;
 			Holder_OP			_holder;
 
-			enum Stat {
-				Idle,			//!< スレッド開始前
-				Running,		//!< スレッド実行中
-				Interrupted,	//!< 中断要求がされたが、まだスレッドが終了していない
-				Interrupted_End,//!< 中断要求によりスレッドが終了した
-				Error_End,		//!< 例外による異常終了
-				Finished		//!< 正常終了
-			};
 			SDL_atomic_t		_atmStat;
 			SDL_cond			*_condC,		//!< 子スレッドが開始された事を示す
 								*_condP;		//!< 親スレッドがクラス変数にスレッドポインタを格納した事を示す
@@ -44,10 +45,10 @@ namespace rev {
 			// この時点でスレッドのポインタは有効な筈
 			tls_threadID = SDL_GetThreadID(ths->_thread);
 			tls_threadName = ths->_name;
-			Stat stat;
+			ThreadState stat;
 			try {
 				ths->_holder->inorder([ths](Args... args){ ths->runIt(std::forward<Args>(args)...); });
-				stat = (ths->isInterrupted()) ? Interrupted_End : Finished;
+				stat = (ths->isInterrupted()) ? ThreadState::Interrupted_End : ThreadState::Finished;
 			} catch(...) {
 				Expect(false, "thread is finished unexpectedly");
 				#ifdef NO_EXCEPTION_PTR
@@ -55,7 +56,7 @@ namespace rev {
 				#else
 					ths->_eptr = std::current_exception();
 				#endif
-				stat = Error_End;
+				stat = ThreadState::Error_End;
 			}
 			SDL_AtomicSet(&ths->_atmStat, stat);
 			SDL_CondBroadcast(ths->_condP);
@@ -99,7 +100,7 @@ namespace rev {
 				_condP = SDL_CreateCond();
 				// 中断フラグに0をセット
 				SDL_AtomicSet(&_atmInt, 0);
-				SDL_AtomicSet(&_atmStat, Idle);
+				SDL_AtomicSet(&_atmStat, ThreadState::Idle);
 			}
 			~_Thread() {
 				if(_thread) {
@@ -113,8 +114,8 @@ namespace rev {
 			void start(Args0&&... args0) {
 				_holder = Holder(std::forward<Args0>(args0)...);
 				// 2回以上呼ぶとエラー
-				Assert0(SDL_AtomicGet(&_atmStat) == Idle);
-				SDL_AtomicSet(&_atmStat, Running);
+				Assert0(SDL_AtomicGet(&_atmStat) == ThreadState::Idle);
+				SDL_AtomicSet(&_atmStat, ThreadState::Running);
 
 				_mtxC.lock();
 				// 一旦クラス内部に変数を参照で取っておく
@@ -128,16 +129,16 @@ namespace rev {
 				SDL_CondBroadcast(_condP);
 				_mtxP.unlock();
 			}
-			Stat getStatus() noexcept {
-				return static_cast<Stat>(SDL_AtomicGet(&_atmStat));
+			ThreadState getStatus() noexcept {
+				return static_cast<ThreadState::e>(SDL_AtomicGet(&_atmStat));
 			}
 			bool isRunning() noexcept {
-				const Stat stat = getStatus();
-				return stat==Running || stat==Interrupted;
+				const ThreadState stat = getStatus();
+				return stat==ThreadState::Running || stat==ThreadState::Interrupted;
 			}
 			//! 中断を指示する
 			virtual bool interrupt() noexcept {
-				auto ret = SDL_AtomicCAS(&_atmStat, Running, Interrupted);
+				auto ret = SDL_AtomicCAS(&_atmStat, ThreadState::Running, ThreadState::Interrupted);
 				SDL_AtomicSet(&_atmInt, 1);
 				return ret == SDL_TRUE;
 			}
@@ -146,7 +147,7 @@ namespace rev {
 				return SDL_AtomicGet(&_atmInt) == 1;
 			}
 			void join() {
-				Assert0(getStatus() != Stat::Idle);
+				Assert0(getStatus() != ThreadState::Idle);
 				_mtxP.lock();
 				if(_thread) {
 					_mtxP.unlock();
@@ -159,7 +160,7 @@ namespace rev {
 					_mtxP.unlock();
 			}
 			bool try_join(const uint32_t ms) {
-				Assert0(getStatus() != Stat::Idle);
+				Assert0(getStatus() != ThreadState::Idle);
 				_mtxP.lock();
 				if(_thread) {
 					const int res = SDL_CondWaitTimeout(_condP, _mtxP.getMutex(), ms);
