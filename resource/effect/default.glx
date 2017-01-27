@@ -41,3 +41,49 @@ technique Text {
 		FragmentShader = TextFS();
 	}
 }
+
+varying CubeVary {
+	mediump vec2 varTex;
+	mediump vec3 varNormal;
+	highp vec3 varPos;
+}
+attribute SpriteAttr {
+	highp vec3 atPos : POSITION;
+	mediump vec2 atTex : TEXCOORD0;
+}
+uniform SpriteUnif {
+	highp mat3 sys_mTrans2d;
+	sampler2D u_texDiffuse;
+	float u_depth;
+	float u_alpha;
+}
+vertexshader(400) SpriteVS() {
+	gl_Position.xyz = vec3(atPos.xy, 1) * sys_mTrans2d;
+	gl_Position.z = u_depth;
+	gl_Position.w = 1;
+	varTex = atTex;
+}
+fragmentshader(400) SpriteFS() {
+	vec4 c = texture2D(u_texDiffuse, varTex);
+	c.w *= u_alpha;
+	if(c.w < 0.1)
+		discard;
+	gl_FragColor = c;
+}
+technique Sprite {
+	PolygonMode = Fill;
+	CullFace = false;
+	FrontFace = cw;
+	Blend = false;
+	BlendFunc = SrcAlpha InvSrcAlpha;
+	DepthTest = false;
+	DepthMask = false;
+	DepthFunc = LessEqual;
+	Attribute = SpriteAttr;
+	Varying = CubeVary;
+	Uniform = SpriteUnif;
+	pass Default {
+		VertexShader = SpriteVS();
+		FragmentShader = SpriteFS();
+	}
+}
