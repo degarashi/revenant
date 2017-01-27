@@ -20,6 +20,7 @@ namespace rev {
 								SwitchState,
 								Null,
 								Object,
+								DrawableObj,
 								ConstructPtr,
 								DefineObject,
 								MakeUserObject,

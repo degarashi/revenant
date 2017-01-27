@@ -24,6 +24,7 @@ namespace rev {
 						SwitchState("SwitchState"),
 						Null("Null"),
 						Object("Object"),
+						DrawableObj("DrawableObj"),
 						ConstructPtr("ConstructPtr"),
 						DefineObject("DefineObject"),
 						MakeUserObject("MakeUserObject"),
