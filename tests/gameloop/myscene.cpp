@@ -3,7 +3,6 @@
 #include "../../gl_resource.hpp"
 #include "../../sharedata.hpp"
 #include "../../font.hpp"
-#include "../../glx_if.hpp"
 #include "../../util/sys_unif.hpp"
 #include "../../systeminfo.hpp"
 #include <boost/format.hpp>
@@ -32,13 +31,11 @@ namespace rev {
 			}
 			void onDraw(const MyScene& self, IEffect& e) const override {
 				auto& fx = static_cast<util::GLEffect_2D3D&>(e);
-				fx.beginTask();
 				static float a=0;
 				a += 0.02f;
 				e.clearFramebuffer({frea::Vec4{std::sin(a)/2+0.5f,std::sin(a*1.3)/2+0.5,0,0}, 1.f, 0});
 				fx.setTechPassId(::rev::test::Id);
 				self._fps.draw(fx);
-				fx.endTask();
 			}
 		};
 		MyScene::MyScene() {

@@ -2,6 +2,7 @@
 #include "scene.hpp"
 #include "output.hpp"
 #include "sharedata.hpp"
+#include "glx_if.hpp"
 
 namespace rev {
 	// ---------------- MainProc ----------------
@@ -11,7 +12,9 @@ namespace rev {
 			auto lk = g_system_shared.lockC();
 			if(auto fx = lk->fx.lock()) {
 				lk.unlock();
+				fx->beginTask();
 				mgr_scene.onDraw(*fx);
+				fx->endTask();
 			}
 			return true;
 		}
