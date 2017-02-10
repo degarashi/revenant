@@ -287,3 +287,19 @@ namespace rev {
 		return *s_fbSize;
 	}
 }
+#include "lcv.hpp"
+namespace rev {
+	void GLFBuffer::LuaExport(LuaState& lsc) {
+		auto tbl = std::make_shared<LCTable>();
+		(*tbl)["Color0"] = lua_Integer(Att::COLOR0);
+		#ifndef USE_OPENGLES2
+			(*tbl)["Color1"] = lua_Integer(Att::COLOR1);
+			(*tbl)["Color2"] = lua_Integer(Att::COLOR2);
+			(*tbl)["Color3"] = lua_Integer(Att::COLOR3);
+		#endif
+		(*tbl)["Depth"] = lua_Integer(Att::DEPTH);
+		(*tbl)["Stencil"] = lua_Integer(Att::STENCIL);
+		(*tbl)["DepthStencil"] = lua_Integer(Att::DEPTH_STENCIL);
+		lsc.setField(-1, "Attribute", tbl);
+	}
+}

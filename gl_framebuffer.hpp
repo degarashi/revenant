@@ -73,6 +73,7 @@ namespace rev {
 			RUser<GLFBufferTmp> use() const;
 	};
 	using Size_OP = spi::Optional<lubee::SizeI>;
+	class LuaState;
 	//! OpenGL: FrameBufferObjectインタフェース
 	class GLFBuffer : public GLFBufferCore, public IGLResource, public std::enable_shared_from_this<GLFBuffer> {
 		private:
@@ -83,7 +84,7 @@ namespace rev {
 
 		public:
 			static Size_OP GetAttachmentSize(const Res (&att)[Att::NUM_ATTACHMENT], Att::Id id);
-			// static void LuaExport(LuaState& lsc);
+			static void LuaExport(LuaState& lsc);
 			GLFBuffer();
 			~GLFBuffer();
 			void attachRBuffer(Att::Id att, HRb hRb);
