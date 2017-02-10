@@ -164,6 +164,7 @@ namespace rev {
 	void LuaImport::RegisterFSMachineBase(LuaState& lsc) {
 		if(IsObjectRegistered(lsc, luaNS::FSMachine))
 			return;
+		RegisterObjectBase(lsc);
 		lsc.loadModule("fsmachine");
 	}
 	void LuaImport::LoadClass(LuaState& lsc, const std::string& name, const HRW& hRW) {
