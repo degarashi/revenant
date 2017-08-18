@@ -52,6 +52,8 @@ namespace rev {
 	};
 	struct FontName : std::string {
 		using std::string::string;
+		FontName() = default;
+		FontName(const std::string& s): std::string(s) {}
 	};
 }
 namespace std {

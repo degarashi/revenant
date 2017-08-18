@@ -37,6 +37,7 @@ namespace rev {
 			Dir() = default;
 			Dir(const Dir&) = default;
 			Dir(Dir&& d) noexcept;
+			Dir(const PathBlock& pb): PathBlock(pb) {}
 
 			Dir& operator = (Dir&& d) noexcept;
 			Dir& operator = (const Dir&) = default;

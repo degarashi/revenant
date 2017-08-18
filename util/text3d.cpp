@@ -23,7 +23,7 @@ namespace rev {
 			mScale *= getToWorld().convert<4,4>();
 			return Text::draw(
 					e,
-					[&,bRefresh,s](auto&){
+					[&,bRefresh](auto&){
 						frea::AMat4 m;
 						if(_bBillboard) {
 							// Poseの位置とスケーリングだけ取って

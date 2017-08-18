@@ -145,9 +145,9 @@ namespace rev { \
 				lsc, \
 				#class_raw, \
 				base, \
-				[&lsc](){ BOOST_PP_SEQ_FOR_EACH(DEF_LUASMEMBER, clazz, seq_smethod) }, \
-				[&lsc](){ BOOST_PP_SEQ_FOR_EACH(DEF_LUAMEMBER, (clazz)(class_raw), seq_member) }, \
-				[&lsc](){ BOOST_PP_SEQ_FOR_EACH(DEF_LUAMEMBER, (clazz)(class_raw), seq_method) }, \
+				[&](){ BOOST_PP_SEQ_FOR_EACH(DEF_LUASMEMBER, clazz, seq_smethod) }, \
+				[&](){ BOOST_PP_SEQ_FOR_EACH(DEF_LUAMEMBER, (clazz)(class_raw), seq_member) }, \
+				[&](){ BOOST_PP_SEQ_FOR_EACH(DEF_LUAMEMBER, (clazz)(class_raw), seq_method) }, \
 				&makeobj<BOOST_PP_SEQ_ENUM((mgr)(clazz) seq_ctor)> \
 			); \
 		} \

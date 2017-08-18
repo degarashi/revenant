@@ -31,7 +31,7 @@ namespace rev {
 				void moveFrom(IEffect& prev) override {
 					auto& prevE = static_cast<GLEffect_Ts&>(prev);
 					TupleForEach(
-						[this, &prevE](auto& t){
+						[&prevE](auto& t){
 							using T = std::decay_t<decltype(t)>;
 							t.moveFrom(prevE.template ref<T>());
 						},

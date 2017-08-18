@@ -30,7 +30,7 @@ namespace rev {
 			template <> \
 			const char* LuaName(clazz*); \
 			template <> \
-			void LuaExport(LuaState& lsc, clazz*); \
+			void LuaExport(LuaState&, clazz*); \
 			template <> \
 			struct LuaDefine<clazz> : std::true_type {}; \
 		} \
