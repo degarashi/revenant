@@ -21,7 +21,7 @@ namespace rev {
 			m.getRow<3>() = -ps.getOffset().convert<4>();
 
 			const Quat tq = q.inversion();
-			m *= tq.asMat33().convertI<4,4,3>(1);
+			m *= tq.asMat33().convertI<4,4>(1);
 		}
 		return b;
 	}

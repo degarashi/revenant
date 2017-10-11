@@ -5,6 +5,7 @@
 #include "handle.hpp"
 #include "pose3d.hpp"
 #include "spine/resmgr.hpp"
+#include "spine/singleton.hpp"
 
 namespace rev {
 	/*! 姿勢の保持はPose3Dクラスが行い，カメラ固有の変数だけを持つ */

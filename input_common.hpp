@@ -1,6 +1,7 @@
 #pragma once
 #include "spine/resmgr.hpp"
 #include "frea/vector.hpp"
+#include "spine/singleton.hpp"
 #include "handle.hpp"
 
 namespace rev {

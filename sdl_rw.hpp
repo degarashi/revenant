@@ -5,6 +5,7 @@
 #include "spine/resmgr.hpp"
 #include "urihandler.hpp"
 #include "uri.hpp"
+#include "spine/singleton.hpp"
 #include <SDL_rwops.h>
 #include <stdexcept>
 #include <vector>

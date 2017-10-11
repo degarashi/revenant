@@ -2,6 +2,7 @@
 #include "handle.hpp"
 #include "spine/resmgr.hpp"
 #include "lubee/alignedalloc.hpp"
+#include "spine/singleton.hpp"
 
 namespace rev {
 	class LuaState;

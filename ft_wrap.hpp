@@ -4,6 +4,7 @@
 #include FT_OUTLINE_H
 #include "spine/enum.hpp"
 #include "spine/resmgr.hpp"
+#include "spine/singleton.hpp"
 #include "handle.hpp"
 #include <vector>
 

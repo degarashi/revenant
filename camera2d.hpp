@@ -4,6 +4,7 @@
 #include "frea/matrix.hpp"
 #include "handle.hpp"
 #include "spine/resmgr.hpp"
+#include "spine/singleton.hpp"
 
 namespace rev {
 	//! 2Dカメラ姿勢クラス
