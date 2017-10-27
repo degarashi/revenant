@@ -405,10 +405,6 @@ namespace rev {
 			friend struct cereal::LoadAndConstruct;
 
 		public:
-			// デバッグ用
-			bool operator == (const SoundMgr& m) const noexcept;
-			bool operator != (const SoundMgr& m) const noexcept;
-
 			using SoundMgrDep::SoundMgrDep;
 			SoundMgr(const SoundMgr&) = delete;
 			HAb loadWaveBatch(const std::string& name);
