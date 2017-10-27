@@ -48,6 +48,10 @@ namespace rev {
 			//! View座標をワールド座標へ変換
 			Vec2 v2w(const Vec2& pos) const;
 			const char* getResourceName() const noexcept override;
+
+			bool operator == (const Camera2D& c) const noexcept;
+			bool operator != (const Camera2D& c) const noexcept;
+			DEF_RESOURCE_EQUAL
 	};
 	#define mgr_cam2d (::rev::Camera2DMgr::ref())
 	class Camera2DMgr:

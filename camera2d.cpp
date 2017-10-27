@@ -48,4 +48,13 @@ namespace rev {
 	const char* Camera2D::getResourceName() const noexcept {
 		return "Camera2D";
 	}
+
+	bool Camera2D::operator == (const Camera2D& c) const noexcept {
+		// 最下層だけ比較
+		return getPose() == c.getPose() &&
+				getAspectRatio() == c.getAspectRatio();
+	}
+	bool Camera2D::operator != (const Camera2D& c) const noexcept {
+		return !(this->operator == (c));
+	}
 }
