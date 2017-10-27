@@ -97,5 +97,16 @@ namespace rev {
 	const char* Camera3D::getResourceName() const noexcept {
 		return "Camera3D";
 	}
+	bool Camera3D::operator == (const Camera3D& c) const noexcept {
+		// 最下層だけ比較
+		return getPose() == c.getPose() &&
+				getFov() == c.getFov() &&
+				getAspect() == c.getAspect() &&
+				getNearZ() == c.getNearZ() &&
+				getFarZ() == c.getFarZ();
+	}
+	bool Camera3D::operator != (const Camera3D& c) const noexcept {
+		return !(this->operator == (c));
+	}
 }
 

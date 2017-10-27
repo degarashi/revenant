@@ -60,6 +60,10 @@ namespace rev {
 			//! ビューポート座標からワールド座標(FarPlane位置)を取得
 			Vec3 vp2wp(const Vec3& vp) const;
 			const char* getResourceName() const noexcept override;
+
+			bool operator == (const Camera3D& c) const noexcept;
+			bool operator != (const Camera3D& c) const noexcept;
+			DEF_RESOURCE_EQUAL
 	};
 	#define mgr_cam (::rev::Camera3DMgr::ref())
 	class Camera3DMgr:
