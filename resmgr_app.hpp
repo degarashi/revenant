@@ -32,5 +32,10 @@ namespace rev {
 			auto loadResourceApp(KEY&& name, CB&& cb) {
 				return base_t::template acquireWithMake<T2>(std::forward<KEY>(name), cb);
 			}
+			bool deepCmp(const ResMgrApp& r) const noexcept {
+				return static_cast<const base_t&>(*this).deepCmp(r) &&
+					_cache == r._cache &&
+					_idResType == r._idResType;
+			}
 	};
 }
