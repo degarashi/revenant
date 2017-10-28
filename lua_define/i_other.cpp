@@ -9,9 +9,9 @@ DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	(loadResource)(loadResources)(loadResourcesASync)(queryProgress)(getResult)(getNTask)(sleep)(loadClass)
 )
 
-#include "../pose2d.hpp"
+#include "beat/pose2d.hpp"
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
-	rev::Pose2D, Pose2D,
+	beat::g2::Pose, Pose2D,
 	LUAIMPLEMENT_BASE,
 	NOTHING,
 	NOTHING,
@@ -21,9 +21,9 @@ DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	(identity)(moveUp)(moveDown)(moveLeft)(moveRight)(lerp)(equal)(toString)
 )
 
-#include "../pose3d.hpp"
+#include "beat/pose3d.hpp"
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
-	rev::Pose3D, Pose3D,
+	beat::g3::Pose, Pose3D,
 	LUAIMPLEMENT_BASE,
 	NOTHING,
 	NOTHING,
@@ -39,7 +39,7 @@ DEF_LUAIMPLEMENT_SPTR(
 	LUAIMPLEMENT_BASE,
 	NOTHING,
 	NOTHING,
-	(setPose<const Pose3D&>)(setFov<const frea::RadF&>)(setAspect<const float&>)(setNearZ<const float&>)(setFarZ<const float&>)(setZPlane)
+	(setPose<const beat::g3::Pose&>)(setFov<const frea::RadF&>)(setAspect<const float&>)(setNearZ<const float&>)(setFarZ<const float&>)(setZPlane)
 	(refPose)
 	(getPose)(getFov)(getAspect)(getNearZ)(getFarZ)
 	(unproject)(unprojectVec)(vp2wp),
@@ -52,7 +52,7 @@ DEF_LUAIMPLEMENT_SPTR(
 	LUAIMPLEMENT_BASE,
 	NOTHING,
 	NOTHING,
-	(setPose<const Pose2D&>)(setAspectRatio<const float&>)
+	(setPose<const beat::g2::Pose&>)(setAspectRatio<const float&>)
 	(refPose)
 	(getPose)(getAspectRatio)
 	(vp2w)(v2w),
@@ -80,8 +80,8 @@ DEF_LUAIMPLEMENT_PTR_NOCTOR(
 
 namespace rev {
 	void LuaImport::RegisterOtherClass(LuaState& lsc) {
-		RegisterClass<Pose2D>(lsc);
-		RegisterClass<Pose3D>(lsc);
+		RegisterClass<beat::g2::Pose>(lsc);
+		RegisterClass<beat::g3::Pose>(lsc);
 		RegisterClass<Camera2D>(lsc);
 		RegisterClass<Camera3D>(lsc);
 		RegisterClass<draw::ClearParam>(lsc);

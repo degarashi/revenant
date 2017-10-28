@@ -1,5 +1,5 @@
 #pragma once
-#include "../../pose2d.hpp"
+#include "beat/pose2d.hpp"
 #include "../../handle.hpp"
 #include "../../glx_id.hpp"
 #include "../../drawable.hpp"
@@ -21,7 +21,7 @@ namespace rev {
 	struct DrawTag;
 }
 //! 表示テスト用のスプライト
-class Sprite2D : public rev::Pose2D {
+class Sprite2D : public beat::g2::Pose {
 	private:
 		static rev::WVb		s_wVb;
 		static rev::WIb		s_wIb;

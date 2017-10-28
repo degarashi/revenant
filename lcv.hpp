@@ -17,8 +17,6 @@ namespace rev {
 	template <class T>
 	struct IsSPtr<std::shared_ptr<T>> : std::true_type {};
 
-	class Pose2D;
-	class Pose3D;
 	using LPointerSP = std::unordered_map<const void*, LCValue>;
 
 	// 値型の場合はUserdataにデータを格納

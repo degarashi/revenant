@@ -1,9 +1,3 @@
-[submodule "frea"]
-	path = frea
-	url = ../frea
-[submodule "lubee"]
-	path = lubee
-	url = ../lubee
-[submodule "spine"]
-	path = spine
-	url = ../spine
+[submodule "beat"]
+	path = beat
+	url = ../beat

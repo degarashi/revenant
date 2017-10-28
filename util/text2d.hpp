@@ -1,13 +1,13 @@
 #pragma once
 #include "text.hpp"
-#include "../pose2d.hpp"
+#include "beat/pose2d.hpp"
 
 namespace rev {
 	namespace util {
 		// 1行の縦をY=1としたサイズに内部変換
 		// H,V {Negative, Positive, Middle}
 		//! テキスト描画クラス (for 2D)
-		class Text2D : public Pose2D, public Text {
+		class Text2D : public beat::g2::Pose, public Text {
 			private:
 				float		_lineHeight,
 							_depth;

@@ -33,7 +33,7 @@ std::pair<rev::HVb, rev::HIb> Sprite2D::InitBuffer() {
 	return ret;
 }
 Sprite2D::Sprite2D(const rev::HTex& t, const float z):
-	rev::Pose2D({0,0}, frea::RadF(0), {1,1})
+	beat::g2::Pose({0,0}, frea::RadF(0), {1,1})
 {
 	_hTex = t;
 	_zOffset = z;

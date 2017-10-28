@@ -1,6 +1,6 @@
 #pragma once
 #include "spine/rflag.hpp"
-#include "pose2d.hpp"
+#include "beat/pose2d.hpp"
 #include "frea/matrix.hpp"
 #include "handle.hpp"
 #include "spine/resmgr.hpp"
@@ -10,15 +10,15 @@ namespace rev {
 	//! 2Dカメラ姿勢クラス
 	/*!
 		2Dゲームの他にミニマップ表示などで使用
-		姿勢の保持はPose2Dクラスが行い，カメラ固有の変数だけを持つ
+		姿勢の保持はPoseクラスが行い，カメラ固有の変数だけを持つ
 	*/
 	class Camera2D : public lubee::CheckAlign<Camera2D>, public Resource {
 		private:
 			struct Pose;
 			struct Getter : spi::RFlag_Getter<uint32_t> {
 				using RFlag_Getter::operator ();
-				counter_t operator()(const Pose2D& pose, Pose*, const Camera2D&) const {
-					return pose.getAccum();
+				counter_t operator()(const beat::g2::Pose& pose, Pose*, const Camera2D&) const {
+					return *pose.getAccum();
 				}
 			};
 			using AMat3 = frea::AMat3;
@@ -26,7 +26,7 @@ namespace rev {
 			using View_t = spi::AcCheck<AMat3, Getter>;
 			using Accum_t = spi::AcCheck<lubee::Wrapper<uint32_t>, Getter>;
 			#define SEQ \
-				((Pose)(Pose2D)) \
+				((Pose)(beat::g2::Pose)) \
 				((View)(View_t)(Pose)) \
 				((ViewInv)(AMat3)(View)) \
 				((AspectRatio)(float)) \
