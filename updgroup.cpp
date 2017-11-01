@@ -6,7 +6,7 @@ namespace rev {
 		const std::string cs_updgroupname("UpdGroup");
 	}
 	// -------------------- UpdGroup --------------------
-	TLS<bool> UpdGroup::tls_bUpdateRoot = false;
+	TLS<bool> UpdGroup::tls_bUpdateRoot(false);
 	UpdGroup::UGVec UpdGroup::s_ug;
 	UpdGroup::UpdGroup(const Priority p):
 		_priority(p),

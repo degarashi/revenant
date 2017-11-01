@@ -23,6 +23,8 @@ namespace rev {
 			TLS() {
 				_tlsID = SDLAssert(SDL_TLSCreate);
 			}
+			TLS(const TLS&) = delete;
+			TLS(TLS&&) = delete;
 			template <class... Args>
 			TLS(Args&&... args): TLS() {
 				*this = T(std::forward<Args>(args)...);
@@ -36,6 +38,8 @@ namespace rev {
 					*p = std::forward<TA>(t);
 				return *this;
 			}
+			TLS& operator = (const TLS&) = delete;
+			TLS& operator = (TLS&&) = delete;
 			bool valid() const {
 				return static_cast<bool>(*this);
 			}
