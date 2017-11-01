@@ -39,8 +39,8 @@ namespace rev {
 		return *this;
 	}
 	void Looper::Prepare() {
-		Assert0(!tls_looper);
-		tls_looper = Looper_SP(new Looper());
+		if(!tls_looper)
+			tls_looper = Looper_SP(new Looper());
 	}
 	Looper::Message_OP Looper::_procMessage(std::function<bool (UniLock&)> lf) {
 		UniLock lk(_mutex);
