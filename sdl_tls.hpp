@@ -12,10 +12,10 @@ namespace rev {
 			static void Dtor(void* p) {
 				delete reinterpret_cast<T*>(p);
 			}
-			T* _getPtr() {
+			T* _getPtr() noexcept {
 				return reinterpret_cast<T*>(SDL_TLSGet(_tlsID));
 			}
-			const T* _getPtr() const {
+			const T* _getPtr() const noexcept {
 				return reinterpret_cast<const T*>(SDL_TLSGet(_tlsID));
 			}
 
@@ -39,22 +39,22 @@ namespace rev {
 			bool valid() const {
 				return static_cast<bool>(*this);
 			}
-			T& operator * () {
+			T& operator * () noexcept {
 				return *_getPtr();
 			}
-			const T& operator * () const {
+			const T& operator * () const noexcept {
 				return *_getPtr();
 			}
-			T& get() {
+			T& get() noexcept {
 				return this->operator*();
 			}
-			const T& get() const {
+			const T& get() const noexcept {
 				return this->operator*();
 			}
-			explicit operator bool() const {
+			explicit operator bool() const noexcept {
 				return _getPtr() != nullptr;
 			}
-			bool initialized() const {
+			bool initialized() const noexcept {
 				return static_cast<bool>(*this);
 			}
 			void terminate() {
