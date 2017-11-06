@@ -11,6 +11,9 @@
 #include "frea/random/vector.hpp"
 #include "sprite2d.hpp"
 #include "bsprite.hpp"
+#include "../../camera2d.hpp"
+#include "../../sys_uniform_value.hpp"
+#include "../../sys_uniform.hpp"
 
 namespace rev {
 	namespace test {
@@ -22,6 +25,11 @@ namespace rev {
 				mgr_input.addAction(self._actQ);
 				auto hKb = Keyboard::OpenKeyboard();
 				self._actQ->addLink(hKb, InputFlag::Button, SDL_SCANCODE_ESCAPE);
+
+				// カメラ初期化
+				self._camera = mgr_cam2d.emplace();
+				auto scr = mgr_info.getScreenSize();
+				self._camera->setAspectRatio(scr.width / scr.height);
 
 				// フォント初期化
 				CCoreID cid(16, 0, CCoreID::CharFlag_AA, false, 100, CCoreID::SizeType_Pixel);
@@ -41,14 +49,18 @@ namespace rev {
 
 					tex[i]->setFilter(true, true);
 				}
+				using frea::random::GenVecUnit;
+				using frea::random::GenVec;
 				for(int i=0 ; i<16 ; i++) {
-					const auto vDir = frea::random::GenVecUnit<frea::Vec2>(rf);
-					const auto vPos = frea::random::GenVec<frea::Vec2>(rf, {-1.f, 1.f});
+					const auto vDir = GenVecUnit<Vec2>(rf);
+					const auto vPos = GenVec<Vec2>(rf, {-1.f, 1.f});
 					auto obj = std::make_shared<BoundingSprite>(tex[rfi({0,5})], vPos, vDir*0.01f);
-					obj->setScaling(frea::Vec2{0.2,0.2});
+					obj->setScaling(Vec2{0.2,0.2});
 					ug.addObj(obj);
 					dg.addObj(obj);
 				}
+				auto& cp = self._camera->refPose();
+				cp.identity();
 			}
 			void onUpdate(MyScene& self) override {
 				// 終了ボタン判定
@@ -65,6 +77,8 @@ namespace rev {
 				auto& fps = const_cast<decltype(self._fps)&>(self._fps);
 				fps.setText((boost::format("FPS: %1%") % mgr_info.getFPS()).str().c_str());
 				fps.draw(e);
+				auto& e2 = e.ref2D();
+				e2.setCamera(self._camera);
 			}
 		};
 		MyScene::MyScene() {

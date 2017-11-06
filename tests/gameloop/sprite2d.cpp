@@ -13,7 +13,7 @@ std::pair<rev::HVb, rev::HIb> Sprite2D::InitBuffer() {
 	std::pair<rev::HVb, rev::HIb> ret;
 	if(!(ret.first = s_wVb.lock())) {
 		// 大きさ1の矩形を定義して後でスケーリング
-		vertex::sprite tmpV[] = {
+		const vertex::sprite tmpV[] = {
 			{{0,1}, {0,0}},
 			{{1,1}, {1,0}},
 			{{1,0}, {1,1}},
@@ -22,7 +22,7 @@ std::pair<rev::HVb, rev::HIb> Sprite2D::InitBuffer() {
 		ret.first = mgr_gl.makeVBuffer(rev::DrawType::Static);
 		ret.first->initData(tmpV, countof(tmpV), sizeof(vertex::sprite));
 
-		GLushort idx[] = {0,1,2, 2,3,0};
+		const GLushort idx[] = {0,1,2, 2,3,0};
 		ret.second = mgr_gl.makeIBuffer(rev::DrawType::Static);
 		ret.second->initData(idx, countof(idx));
 
@@ -32,9 +32,8 @@ std::pair<rev::HVb, rev::HIb> Sprite2D::InitBuffer() {
 		ret.second = s_wIb.lock();
 	return ret;
 }
-Sprite2D::Sprite2D(const rev::HTex& t, const float z):
-	beat::g2::Pose({0,0}, frea::RadF(0), {1,1})
-{
+Sprite2D::Sprite2D(const rev::HTex& t, const float z) {
+	beat::g2::Pose::identity();
 	_hTex = t;
 	_zOffset = z;
 	_zRange = {0.f, 1.f};
