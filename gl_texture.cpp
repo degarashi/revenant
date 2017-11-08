@@ -242,9 +242,11 @@ namespace rev {
 		}
 	}
 	void Texture_Mem::writeRect(AB_Byte buff, const lubee::RectI& rect, const GLTypeFmt srcFmt, const CubeFace face) {
+#ifdef DEBUG
 		const size_t bs = GLFormat::QueryByteSize(_format.get(), srcFmt);
 		const auto sz = buff.getLength();
 		D_Assert0(sz >= bs*rect.width()*rect.height());
+#endif
 		if(_idTex != 0) {
 			auto& fmt = getFormat();
 			auto u = use();
