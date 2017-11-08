@@ -78,7 +78,11 @@ namespace rev {
 		const Token* TokenBuffer::asToken() const {
 			return const_cast<TokenBuffer*>(this)->asToken();
 		}
-		void* TokenBuffer::allocate_memory(std::size_t s, intptr_t ofs) {
+#ifdef DEBUG
+		void* TokenBuffer::allocate_memory(std::size_t s, const intptr_t ofs) {
+#else
+		void* TokenBuffer::allocate_memory(std::size_t /*s*/, const intptr_t ofs) {
+#endif
 			D_Assert0(_data.size() >= s);
 			D_Assert0(ofs >= 0);
 			if(_bInit)
