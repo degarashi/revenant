@@ -18,7 +18,9 @@ namespace rev {
 	};
 	class CheckTop {
 		private:
+#ifdef DEBUG
 			lua_State	*const	_ls;
+#endif
 			const int			_base;		//!< 初期化された時点でのスタック位置
 		public:
 			CheckTop(lua_State* ls) noexcept;

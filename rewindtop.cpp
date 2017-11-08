@@ -23,7 +23,9 @@ namespace rev {
 
 	// ------------- CheckTop -------------
 	CheckTop::CheckTop(lua_State* ls) noexcept:
+#ifdef DEBUG
 		_ls(ls),
+#endif
 		_base(lua_gettop(ls))
 	{}
 	CheckTop::~CheckTop() NOEXCEPT_IF_RELEASE {
