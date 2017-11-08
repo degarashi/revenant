@@ -55,8 +55,12 @@ namespace rev {
 			lua_close(ls);
 		};
 	LuaState::Deleter LuaState::_MakeCoDeleter(LuaState* lsp) {
+#ifdef DEBUG
 		return [lsp](lua_State* ls) {
 			D_Assert0(lsp->getLS() == ls);
+#else
+		return [lsp](lua_State*) {
+#endif
 			lsp->_unregisterCpp();
 		};
 	}
@@ -268,9 +272,11 @@ namespace rev {
 		lua_pop(getLS(), n);
 	}
 	namespace {
+#ifdef DEBUG
 		bool IsRegistryIndex(const int idx) noexcept {
 			return idx==LUA_REGISTRYINDEX;
 		}
+#endif
 	}
 	int LuaState::absIndex(int idx) const {
 		idx = lua_absindex(getLS(), idx);
