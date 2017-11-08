@@ -11,14 +11,9 @@ namespace rev {
 	struct IGL {
 		#define GLDEFINE(...)
 		#define DEF_GLCONST(...)
-		#ifdef DEBUG
-			#define DEF_GLMETHOD2(ret_type, name, args) virtual ret_type name##_NC(BOOST_PP_SEQ_ENUM(args)) = 0;
-		#else
-			#define DEF_GLMETHOD2(...)
-		#endif
 		#define DEF_GLMETHOD(ret_type, num, name, args, argnames) \
 			virtual ret_type name(BOOST_PP_SEQ_ENUM(args)) = 0; \
-			DEF_GLMETHOD2(ret_type, name, args)
+			virtual ret_type name##_NC(BOOST_PP_SEQ_ENUM(args)) = 0;
 
 		#ifdef ANDROID
 			#include "opengl_define/android_gl.inc"
@@ -46,14 +41,9 @@ namespace rev {
 	struct IGL_Draw : IGL {
 		#define GLDEFINE(...)
 		#define DEF_GLCONST(...)
-		#ifdef DEBUG
-			#define DEF_GLMETHOD2(ret_type, name, args) virtual ret_type name##_NC(BOOST_PP_SEQ_ENUM(args)) override;
-		#else
-			#define DEF_GLMETHOD2(...)
-		#endif
 		#define DEF_GLMETHOD(ret_type, num, name, args, argnames) \
 			virtual ret_type name(BOOST_PP_SEQ_ENUM(args)) override; \
-			DEF_GLMETHOD2(ret_type, name, args)
+			virtual ret_type name##_NC(BOOST_PP_SEQ_ENUM(args)) override;
 
 		#ifdef ANDROID
 			#include "opengl_define/android_gl.inc"
