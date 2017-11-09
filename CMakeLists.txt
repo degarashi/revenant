@@ -11,7 +11,10 @@ add_definitions(-DSSE=${SSE})
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
 	add_definitions(-D_GLIBCXX_DEBUG)
 endif()
+set(BKUP_UNITTEST ${without-unittest})
+set(without-unittest YES)
 add_subdirectory(beat)
+set(without-unittest ${BKUP_UNITTEST})
 
 # windows依存ファイル
 set(DEPENDANT_SRC_WIN ./dir_depWin.cpp ./watch_depWin.cpp)
