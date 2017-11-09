@@ -2,6 +2,7 @@
 #include "sdl_format.hpp"
 #include "lubee/error.hpp"
 #include "sdl_surface.hpp"
+#include "compiler_macro.hpp"
 
 namespace rev {
 	// -------------------- FmtId --------------------
@@ -174,9 +175,12 @@ namespace rev {
 			if(p.sdlFormat!=SDL_PIXELFORMAT_UNKNOWN && itr==s_SDLtoGL->end())
 				s_SDLtoGL->emplace(p.sdlFormat, p);
 		}
-
+		_Initialize();
+	}
+	OPTIMIZE_OFF
+	void GLFormat::_Initialize() {
 		// --------------- Const変数名の登録 ---------------
-		auto fnAddValue = [](std::string name, GLenum value){
+		const auto fnAddValue = [](std::string name, GLenum value){
 			auto itr = s_valueMap->find(value);
 			if(itr == s_valueMap->end()) {
 				// エントリ作成
@@ -201,6 +205,7 @@ namespace rev {
 		#undef GLDEFINE
 		#undef DEF_GLMETHOD
 	}
+	OPTIMIZE_RESET
 	void GLFormat::Terminate() {
 		delete s_valueMap;
 		delete s_SDLtoGL;

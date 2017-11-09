@@ -140,6 +140,7 @@ namespace rev {
 			static IdMap* s_idMap;
 			static SDLtoGL* s_SDLtoGL;
 			static GLValueMap* s_valueMap;
+			static void _Initialize();
 
 		public:
 			using Info_OP = spi::Optional<const GLFormatDesc&>;

@@ -1,5 +1,6 @@
 #include "gl_resource.hpp"
 #include "lcv.hpp"
+#include "compiler_macro.hpp"
 
 namespace rev {
 	// 先頭のGL_を除く(+3)
@@ -9,6 +10,7 @@ namespace rev {
 
 	#define DEF_GLCONST2(name, value) \
 		(*tbl)[#name] = lua_Integer(value)
+	OPTIMIZE_OFF
 	void GLRes::LuaExport(LuaState& lsc) {
 		auto tbl = std::make_shared<LCTable>();
 		#ifdef ANDROID
@@ -28,4 +30,5 @@ namespace rev {
 		DEF_GLCONST2(MirrorClampToEdge, GL_MIRROR_CLAMP_TO_EDGE);
 		lsc.setField(-1, "WrapState", tbl);
 	}
+	OPTIMIZE_RESET
 }
