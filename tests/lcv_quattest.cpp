@@ -196,7 +196,7 @@ namespace rev {
 
 			// 方向ベクトル3つ
 			constexpr elem_t Th = 1e-3;
-			const auto axis = frea::random::GenVecUnitN<3,vec3_t>(mtf, Th);
+			const auto axis = frea::random::GenVecUnitN<vec3_t>(mtf, 3, Th);
 
 			// 角度3つ
 			frea::RadF ang[3];
@@ -206,7 +206,7 @@ namespace rev {
 			// 座標ベクトル2つ
 			constexpr lubee::Range<elem_t>	PosRange{-1e3, 1e3};
 			auto mtf_pos = mt.template getUniformF<elem_t>(PosRange);
-			const auto pos = frea::random::GenVecN<2, vec3_t>(mtf_pos, Th);
+			const auto pos = frea::random::GenVecN<vec3_t>(mtf_pos, 2, Th);
 
 			// 軸フラグ2つ
 			constexpr lubee::Range<int> FlagRange{0, frea::Axis::_Num-1};
