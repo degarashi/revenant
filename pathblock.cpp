@@ -2,8 +2,7 @@
 #include "lubee/compare.hpp"
 
 namespace rev {
-	template <class CB>
-	void PathBlock::_iterateSegment(const char32_t* c, const int /*len*/, const char32_t /*sc*/, CB cb) {
+	void PathBlock::_iterateSegment(const char32_t* c, const int /*len*/, const char32_t /*sc*/, const std::function<void (const char32_t*, int)>& cb) {
 		char32_t tc[128];
 		auto* pTc = tc;
 		while(*c != CharConst<char32_t>::EOS) {
@@ -17,7 +16,7 @@ namespace rev {
 		}
 	}
 	template <class Itr>
-	auto PathBlock::_GetDriveLetter(Itr from, Itr to) -> spi::Optional<typename std::decay_t<decltype(*from)>> {
+	auto  PathBlock::_GetDriveLetter(Itr from, Itr to) -> spi::Optional<typename std::decay_t<decltype(*from)>> {
 		using CH = typename std::decay_t<decltype(*from)>;
 		const auto cnvToCh = [](char c) {
 			char32_t c2 = static_cast<char32_t>(c);
@@ -42,7 +41,7 @@ namespace rev {
 		return spi::none;
 	}
 	template <class Itr>
-	auto PathBlock::StripSC(Itr from, Itr to) -> OPStripResult<typename std::decay_t<decltype(*from)>>{
+	auto PathBlock::StripSC(Itr from, Itr to) -> PathBlock::OPStripResult<typename std::decay_t<decltype(*from)>> {
 		auto* tmp_from = from;
 		if(from == to)
 			return spi::none;
@@ -105,8 +104,8 @@ namespace rev {
 	bool PathBlock::_IsSC(char32_t c) noexcept {
 		return c==U'\\' || c==CharConst<char32_t>::SC;
 	}
-	template <class Itr, class CB>
-	bool PathBlock::_ReWriteSC(Itr from, const Itr to, const char32_t sc, CB cb) {
+	template <class Itr>
+	bool PathBlock::_ReWriteSC(Itr from, Itr to, const char32_t sc, const std::function<void (int)>& cb) {
 		int count = 0;
 		while(from != to) {
 			if(_IsSC(*from)) {
@@ -533,4 +532,10 @@ namespace rev {
 		// 文字列の最初〜Dotまでを対象に、数値を探す
 		return _StringGetNum(path.cbegin(), --itr);
 	}
+	template bool PathBlock::_ReWriteSC(char* from, char* to, char32_t sc, const std::function<void (int)>& cb);
+	template bool PathBlock::_ReWriteSC(char32_t* from, char32_t* to, char32_t sc, const std::function<void (int)>& cb);
+	template auto PathBlock::_GetDriveLetter(const char* from, const char* to) -> spi::Optional<typename std::decay_t<decltype(*from)>>;
+	template auto PathBlock::_GetDriveLetter(const char32_t* from, const char32_t* to) -> spi::Optional<typename std::decay_t<decltype(*from)>>;
+	template auto PathBlock::StripSC(const char* from, const char* to) -> OPStripResult<typename std::decay_t<decltype(*from)>>;
+	template auto PathBlock::StripSC(const char32_t* from, const char32_t* to) -> OPStripResult<typename std::decay_t<decltype(*from)>>;
 }

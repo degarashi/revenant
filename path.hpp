@@ -60,10 +60,9 @@ namespace rev {
 			static bool _IsSC(char32_t c) noexcept;
 			//! パスを分解しながらセグメント長をカウントし、コールバック関数を呼ぶ
 			/*! fromからtoまで1文字ずつ見ながら区切り文字を直す */
-			template <class Itr, class CB>
-			static bool _ReWriteSC(Itr from, Itr to, char32_t sc, CB cb);
-			template <class CB>
-			void _iterateSegment(const char32_t* c, int len, char32_t sc, CB cb);
+			template <class Itr>
+			static bool _ReWriteSC(Itr from, Itr to, char32_t sc, const std::function<void (int)>& cb);
+			void _iterateSegment(const char32_t* c, int len, char32_t sc, const std::function<void (const char32_t*, int)>& cb);
 			template <class Itr>
 			static auto _GetDriveLetter(Itr from, Itr to) -> spi::Optional<typename std::decay_t<decltype(*from)>>;
 			void _outputHeader(std::u32string& dst, bool bAbs) const;
@@ -85,7 +84,7 @@ namespace rev {
 			//! 前後の余分な区切り文字を省く
 			/*! \return [NeedOperation, AbsoluteFlag] */
 			template <class Itr>
-			static auto StripSC(Itr from, Itr to) -> OPStripResult<typename std::decay<decltype(*from)>::type>;
+			static auto  StripSC(Itr from, Itr to) -> OPStripResult<typename std::decay_t<decltype(*from)>>;
 			/*!
 				Windowsの場合は何もせずfromを返す
 				Linuxの場合は先頭のドライブ文字を削った後のポインタを返す
