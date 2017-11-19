@@ -9,6 +9,7 @@ namespace rev {
 			SDL_mutex*	_mutex;
 
 		public:
+			// ---- SDLに起因するエラー時に投げられる例外クラス ----
 			struct InitializeFailed : std::runtime_error {
 				using std::runtime_error::runtime_error;
 			};
@@ -26,6 +27,7 @@ namespace rev {
 			void unlock() noexcept;
 			SDL_mutex* getMutex() noexcept;
 	};
+	//! UniqueLock: コンストラクタでロック、デストラクタでリリース
 	class UniLock {
 		private:
 			Mutex*	_mutex;
@@ -52,10 +54,12 @@ namespace rev {
 			explicit operator bool () const noexcept;
 			SDL_mutex* getMutex() noexcept;
 	};
+	//! ConditionalValue: ラッチ等の実装に使う
 	class CondV {
 		private:
 			SDL_cond*	_cond;
 		public:
+			// ---- SDLに起因するエラー時に投げられる例外クラス ----
 			struct InitializeFailed : std::runtime_error {
 				using std::runtime_error::runtime_error;
 			};
