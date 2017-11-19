@@ -3,7 +3,7 @@
 	#include <intrin.h>
 	#include <windows.h>
 #endif
-#include "sdl_mutex.hpp"
+#include "spinlock.hpp"
 
 namespace rev {
 	struct SDLInputShared {

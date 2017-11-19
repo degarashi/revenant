@@ -4,6 +4,7 @@
 #include "looper_thread.hpp"
 #include "fpscounter.hpp"
 #include "drawproc.hpp"
+#include "spinlock.hpp"
 #include <memory>
 
 namespace rev {

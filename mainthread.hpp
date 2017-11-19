@@ -3,6 +3,7 @@
 #include "looper_thread.hpp"
 #include "mainproc.hpp"
 #include "dir.hpp"
+#include "spinlock.hpp"
 #include <unordered_set>
 
 namespace rev {

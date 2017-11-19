@@ -1,6 +1,6 @@
 #pragma once
 #include "../../gameloopparam.hpp"
-#include "../../sdl_mutex.hpp"
+#include "../../spinlock.hpp"
 #include "../../util/texthud.hpp"
 #include "../../scene.hpp"
 
