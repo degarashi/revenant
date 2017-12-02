@@ -35,12 +35,9 @@ namespace rev {
 			);
 			const static std::string cs_rtname[ResourceType::_Num];
 			void _resourceInit(IGLResource* r);
-
-			//! キューブマップの区別のためのポストフィックス
-			spi::Optional<char>	_chPostfix;
-			void _modifyResourceName(URI& key) const override;
 			void _initDefaultInfo();
 			void _clearDefaultInfo();
+			HTex _createTexture(bool bCube, const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore);
 
 		public:
 			GLRes();
@@ -61,20 +58,12 @@ namespace rev {
 				\param[in] fmt OpenGLの内部フォーマット(not ファイルのフォーマット)<br>
 								指定しなければファイルから推定
 			*/
-			HTex loadTextureUri(const URI& uri, MipState miplevel=MipState::NoMipmap, InCompressedFmt_OP fmt=spi::none);
-			HTex loadTexture(const std::string& name, MipState miplevel=MipState::NoMipmap, InCompressedFmt_OP fmt=spi::none);
-			//! 連番ファイルからキューブテクスチャを作成
-			HTex loadCubeTextureUri(const URI& uri, MipState miplevel=MipState::NoMipmap, InCompressedFmt_OP fmt=spi::none);
-			HTex loadCubeTexture(const std::string& name, MipState miplevel=MipState::NoMipmap, InCompressedFmt_OP fmt=spi::none);
+			HTex loadTexture(const URI& uri, MipState miplevel=MipState::NoMipmap, InCompressedFmt_OP fmt=spi::none);
 			//! 個別のファイルからキューブテクスチャを作成
 			/*! 画像サイズとフォーマットは全て一致していなければならない */
-			HTex _loadCubeTexture(MipState miplevel, InCompressedFmt_OP fmt, const URI& uri0, const URI& uri1, const URI& uri2,
-								  const URI& uri3, const URI& uri4, const URI& uri5);
-			template <class... Ts>
-			HTex loadCubeTextureFromResource(MipState miplevel, InCompressedFmt_OP fmt, Ts&&... ts) {
-				return loadCubeTexture(miplevel, fmt, _uriFromResourceName(std::forward<Ts>(ts))...);
-			}
-			HTex _createTexture(bool bCube, const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore);
+			HTex loadCubeTexture(MipState miplevel, InCompressedFmt_OP fmt,
+								const URI& uri0, const URI& uri1, const URI& uri2,
+								const URI& uri3, const URI& uri4, const URI& uri5);
 			//! 空のテクスチャを作成
 			/*! 領域だけ確保 */
 			HTex createTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore);
@@ -82,12 +71,6 @@ namespace rev {
 			HTex createTextureInit(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore, GLTypeFmt srcFmt, AB_Byte data);
 			//! 空のキューブテクスチャを作成
 			HTex createCubeTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool bRestore, bool bStream);
-			//! 共通のデータで初期化
-			HTex createCubeTextureInit(const lubee::SizeI& size, GLInSizedFmt fmt, bool bRestore, bool bStream, AB_Byte data);
-			//! 個別のデータで初期化
-			HTex createCubeTextureInit(const lubee::SizeI& size, GLInSizedFmt fmt, bool bRestore, bool bStream,
-									AB_Byte data0, AB_Byte data1, AB_Byte data2,
-									AB_Byte data3, AB_Byte data4, AB_Byte data5);
 
 			// ------------ Shader ------------
 			//! 文字列からシェーダーを作成
@@ -102,7 +85,6 @@ namespace rev {
 			//! ファイルからエフェクトの読み込み
 			template <class T>
 			HFx loadEffect(const std::string& name) {
-				_chPostfix = spi::none;
 				_setResourceTypeId(ResourceType::Effect);
 				auto h = base_type::acquireA<T>(name);
 				_resourceInit(h.get());

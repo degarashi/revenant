@@ -22,8 +22,8 @@ namespace rev {
 			return name;
 		}
 		//! パス記述ファイル名
-		const URI& Param::getPathfile() const {
-			static URI uri("file", "./resource/pathlist");
+		const URI_SP& Param::getPathfile() const {
+			static URI_SP uri = std::make_shared<FileURI>("./resource/pathlist");
 			return uri;
 		}
 		HFx Param::loadEffect(const std::string& name) const {

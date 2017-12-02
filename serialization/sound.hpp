@@ -9,6 +9,7 @@
 #include <cereal/access.hpp>
 #include <cereal/types/chrono.hpp>
 #include <cereal/types/vector.hpp>
+#include <cereal/types/memory.hpp>
 
 namespace rev {
 	template <class Ar>

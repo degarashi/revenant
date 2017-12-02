@@ -33,6 +33,7 @@ namespace rev {
 			void addHandler(const Priority prio, const UriHandler_SP& h);
 			void remHandler(const UriHandler_SP& h);
 			HRW procHandler(const URI& uri, const int access) const;
+			HRW procHandler(const std::string& uri, const int access) const ;
 			void clearHandler();
 	};
 }

@@ -45,7 +45,7 @@ namespace rev {
 		if(!bUpdate && !rel.updatePath.empty()) {
 			try {
 				for(auto& p : rel.updatePath)
-					mgr_block.setAnonymous(URI("file", p.plain_utf32()));
+					mgr_block.setAnonymous(FileURI(p.plain_utf32()));
 				rel.updatePath.clear();
 
 				// Effectファイルの再構築(読み込みトライ)

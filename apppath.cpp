@@ -115,19 +115,18 @@ namespace rev {
 		for(std::size_t i=0 ; i<n ; i++)
 			_cache[i].first = rtname[i];
 	}
-	const URI& AppPathCache::uriFromResourceName(const int n, const std::string& name) const {
+	const FileURI_SP& AppPathCache::uriFromResourceName(const int n, const std::string& name) const {
 		auto& cache = _cache[n];
-		auto itr = cache.second.find(name);
+		const auto itr = cache.second.find(name);
 		if(itr != cache.second.end())
 			return itr->second;
 
-		URI uri;
-		uri.setType("file");
+		FileURI_SP uri;
 		mgr_path.enumPath(cache.first, PathBlock(name), [&uri](const Dir& d){
-			static_cast<PathBlock&>(uri) = static_cast<const PathBlock&>(d);
+			uri = std::make_shared<FileURI>(d.plain_utf8());
 			return false;
 		});
-		if(uri.path().empty())
+		if(uri->path().empty())
 			throw ResourceNotFound(name);
 		auto& ent = cache.second[name];
 		ent = std::move(uri);

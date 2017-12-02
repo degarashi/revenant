@@ -6,6 +6,7 @@
 
 namespace rev {
 	class URI;
+	using URI_SP = std::shared_ptr<URI>;
 	class LCTable;
 	using LCTable_SP = std::shared_ptr<LCTable>;
 
@@ -19,7 +20,7 @@ namespace rev {
 					LoadThread();
 			};
 			struct Block {
-				using Pair = std::pair<std::string, URI>;
+				using Pair = std::pair<std::string, URI_SP>;
 				using URIVec = std::vector<Pair>;
 				URIVec		uriVec;
 				int			current;		//!< 現在読み込み中のリソース

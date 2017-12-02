@@ -33,7 +33,7 @@ namespace rev {
 		m.appPath = std::make_shared<AppPath>(PathBlock(Dir::GetProgramDir()));
 		// pathfile文字列が有効ならここでロードする
 		if(const auto& p = param.getPathfile())
-			_LoadPathfile(p);
+			_LoadPathfile(*p);
 		m.glr = std::make_shared<GLRes>();
 		m.glr->onDeviceReset();
 		m.font = std::make_shared<FontFamily>();

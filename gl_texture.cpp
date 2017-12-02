@@ -242,11 +242,11 @@ namespace rev {
 		}
 	}
 	void Texture_Mem::writeRect(AB_Byte buff, const lubee::RectI& rect, const GLTypeFmt srcFmt, const CubeFace face) {
-#ifdef DEBUG
-		const size_t bs = GLFormat::QueryByteSize(_format.get(), srcFmt);
-		const auto sz = buff.getLength();
-		D_Assert0(sz >= bs*rect.width()*rect.height());
-#endif
+		#ifdef DEBUG
+			const size_t bs = GLFormat::QueryByteSize(_format.get(), srcFmt);
+			const auto sz = buff.getLength();
+			D_Assert0(sz >= bs*rect.width()*rect.height());
+		#endif
 		if(_idTex != 0) {
 			auto& fmt = getFormat();
 			auto u = use();
@@ -274,18 +274,20 @@ namespace rev {
 			}
 		}
 	}
-	// ------------------------- Texture_StaticURI -------------------------
-	Texture_StaticURI::Texture_StaticURI(const URI& uri, const MipState miplevel, InCompressedFmt_OP fmt):
+	// ------------------------- Texture_URI -------------------------
+	Texture_URI::Texture_URI(const URI_SP& uri, const MipState miplevel, const InCompressedFmt_OP fmt):
 		IGLTexture(miplevel, fmt, lubee::SizeI(0,0), false),
 		_uri(uri)
 	{}
-	Texture_StaticURI::Texture_StaticURI(Texture_StaticURI&& t):
-		IGLTexture(std::move(static_cast<IGLTexture&>(t))),
-		_uri(std::move(t._uri))
-	{}
-	void Texture_StaticURI::onDeviceReset() {
+	void Texture_URI::onDeviceReset() {
 		if(_onDeviceReset())
-			std::tie(_size, _format) = LoadTexture(*this, mgr_rw.fromURI(_uri, Access::Read), CubeFace::PositiveX);
+			std::tie(_size, _format) = LoadTexture(*this, mgr_rw.fromURI(*_uri, Access::Read), CubeFace::PositiveX);
+	}
+	std::pair<lubee::SizeI, GLInCompressedFmt> Texture_URI::LoadTexture(IGLTexture& tex, const HRW& hRW, const CubeFace face) {
+		const Surface_SP sfc = Surface::Load(hRW);
+		const auto tbd = tex.use();
+		const GLenum tflag = tex.getFaceFlag(face);
+		return MakeTex(tflag, sfc, tex.getFormat(), true, tex.isMipmap());
 	}
 	std::pair<lubee::SizeI,GLInCompressedFmt> MakeTex(GLenum tflag, const Surface_SP& sfc, InCompressedFmt_OP fmt, bool bP2, bool bMip) {
 		// SDLフォーマットから適したOpenGLフォーマットへ変換
@@ -353,34 +355,26 @@ namespace rev {
 		Surface_SP sfc = Surface::Create(buff, pixelsize*size.width, size.width, size.height, info->sdlFormat);
 		return MakeTex(tflag, sfc, spi::none, bP2, bMip);
 	}
-	std::pair<lubee::SizeI, GLInCompressedFmt> Texture_StaticURI::LoadTexture(IGLTexture& tex, HRW hRW, CubeFace face) {
-		Surface_SP sfc = Surface::Load(hRW);
-		auto tbd = tex.use();
-		GLenum tflag = tex.getFaceFlag(face);
-		return MakeTex(tflag, sfc, tex.getFormat(), true, tex.isMipmap());
-	}
 
-	// ------------------------- Texture_StaticCubeURI -------------------------
-	Texture_StaticCubeURI::Texture_StaticCubeURI(Texture_StaticCubeURI&& t):
-		IGLTexture(std::move(static_cast<IGLTexture&>(t))),
-		_uri(std::move(t._uri))
-	{}
-	Texture_StaticCubeURI::Texture_StaticCubeURI(const URI& uri, const MipState miplevel, InCompressedFmt_OP fmt):
+	// ------------------------- Texture_CubeURI -------------------------
+	Texture_CubeURI::Texture_CubeURI(
+		const URI_SP& uri0, const URI_SP& uri1, const URI_SP& uri2,
+		const URI_SP& uri3, const URI_SP& uri4, const URI_SP& uri5,
+		const MipState miplevel, const InCompressedFmt_OP fmt
+	):
 		IGLTexture(miplevel, fmt, lubee::SizeI(0,0), true),
-		_uri(new OPArray<URI, 1>(uri))
+		_uri{uri0, uri1, uri2, uri3, uri4, uri5}
 	{}
-	Texture_StaticCubeURI::Texture_StaticCubeURI(const URI& uri0, const URI& uri1, const URI& uri2,
-			const URI& uri3, const URI& uri4, const URI& uri5, MipState miplevel, InCompressedFmt_OP fmt):
-			IGLTexture(miplevel, fmt, lubee::SizeI(0,0), true),
-			_uri(new OPArray<URI, 6>(uri0, uri1, uri2, uri3, uri4, uri5))
-	{}
-	void Texture_StaticCubeURI::onDeviceReset() {
+	void Texture_CubeURI::onDeviceReset() {
 		if(_onDeviceReset()) {
-			int mask = _uri->getNPacked()==1 ? 0x00 : 0xff;
 			for(int i=0 ; i<6 ; i++) {
-				auto ret = Texture_StaticURI::LoadTexture(*this, mgr_rw.fromURI(_uri->getPacked(i & mask), Access::Read), static_cast<CubeFace::e>(i));
+				const auto size_fmt = Texture_URI::LoadTexture(
+					*this,
+					mgr_rw.fromURI(*_uri[i], Access::Read),
+					static_cast<CubeFace::e>(i)
+				);
 				if(i==0)
-					std::tie(_size, _format) = ret;
+					std::tie(_size, _format) = size_fmt;
 			}
 		}
 	}

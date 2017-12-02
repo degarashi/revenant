@@ -20,7 +20,7 @@ namespace rev {
 	template <class Ar>
 	void serialize(Ar& ar, RWops::FileData& d) {
 		const int64_t pos = d.tell();
-		ar(d._path, d._access, pos);
+		ar(d._uri, d._access, pos);
 	}
 
 	template <class Ar>
@@ -49,7 +49,7 @@ namespace cereal {
 	struct LoadAndConstruct<::rev::RWops::VectorData> {
 		template <class Ar>
 		static void load_and_construct(Ar& ar, cereal::construct<::rev::RWops::VectorData>& construct) {
-			::rev::URI uri;
+			::rev::URI_SP uri;
 			::rev::ByteBuff buff;
 			int64_t pos;
 			ar(uri, buff, pos);

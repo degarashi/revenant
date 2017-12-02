@@ -4,6 +4,7 @@
 
 namespace rev {
 	class URI;
+	using URI_SP = std::shared_ptr<URI>;
 	class Window;
 	using Window_SP = std::shared_ptr<Window>;
 
@@ -17,7 +18,7 @@ namespace rev {
 		//! 組織名(一時ファイル用)
 		virtual const std::string& getOrgName() const = 0;
 		//! パス記述ファイル名
-		virtual const URI& getPathfile() const = 0;
+		virtual const URI_SP& getPathfile() const = 0;
 		virtual HFx loadEffect(const std::string& name) const = 0;
 		virtual HFx makeDefaultEffect() const = 0;
 		virtual MainProc* makeMainProc() const = 0;

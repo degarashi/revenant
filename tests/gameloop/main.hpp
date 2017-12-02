@@ -24,7 +24,7 @@ namespace rev {
 			//! 組織名(一時ファイル用)
 			const std::string& getOrgName() const override;
 			//! パス記述ファイル名
-			const URI& getPathfile() const override;
+			const URI_SP& getPathfile() const override;
 			HFx loadEffect(const std::string& name) const override;
 			HFx makeDefaultEffect() const override;
 			::rev::MainProc* makeMainProc() const override;

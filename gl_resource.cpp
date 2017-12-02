@@ -61,65 +61,35 @@ namespace rev {
 	const FBInfo_OP& GLRes::getDefaultColor() const {
 		return _defaultColor;
 	}
-	void GLRes::_modifyResourceName(URI& key) const {
-		base_type::_modifyResourceName(key);
-		// Cubeプリフィックスを持っている時は末尾に加える
-		if(_chPostfix) {
-			auto str = key.getLast_utf8();
-			str += *_chPostfix;
-			key.popBack();
-			key.pushBack(str);
-		}
-	}
-	HTex GLRes::loadTexture(const std::string& name, MipState miplevel, InCompressedFmt_OP fmt) {
-		return loadTextureUri(URI("", name), miplevel, fmt);
-	}
-	HTex GLRes::loadTextureUri(const URI& uri, MipState miplevel, InCompressedFmt_OP fmt) {
+	HTex GLRes::loadTexture(const URI& uri, const MipState miplevel, const InCompressedFmt_OP fmt) {
 		_setResourceTypeId(ResourceType::Texture);
-		_chPostfix = spi::none;
-		return loadResourceApp<Texture_StaticURI>(
+		return loadResourceApp<Texture_URI>(
 					uri,
 					[this, miplevel, fmt](auto& uri, auto&& mk){
-						mk(uri, miplevel, fmt);
+						mk(uri.uri, miplevel, fmt);
 						_resourceInit(mk.pointer);
 					}
 				).first;
 	}
-	HTex GLRes::loadCubeTexture(const std::string& name, MipState miplevel, InCompressedFmt_OP fmt) {
-		return loadCubeTextureUri(URI("", name), miplevel, fmt);
-	}
-	HTex GLRes::loadCubeTextureUri(const URI& uri, MipState miplevel, InCompressedFmt_OP fmt) {
-		_setResourceTypeId(ResourceType::Texture);
-		// 連番CubeTexutreの場合はキーとなるURIの末尾に"@"を付加する
-		_chPostfix = '@';
-		// Uriの連番展開
-		return
-			loadResourceApp<Texture_StaticCubeURI>(
-				uri,
-				[this, miplevel, fmt](auto& uri, auto&& mk){
-					mk(uri, miplevel, fmt);
-					_resourceInit(mk.pointer);
-				}
-			).first;
-	}
 	// 連番キューブ: Key=(Path+@, ext) URI=(Path, ext)
-	HTex GLRes::_loadCubeTexture(MipState miplevel, InCompressedFmt_OP fmt,
+	HTex GLRes::loadCubeTexture(const MipState miplevel, const InCompressedFmt_OP fmt,
 								const URI& uri0, const URI& uri1, const URI& uri2,
 								const URI& uri3, const URI& uri4, const URI& uri5)
 	{
-		_chPostfix = spi::none;
 		// 個別指定CubeTextureの場合はリソース名はUriを全部つなげた文字列とする
-		std::string tmp(uri0.plainUri_utf8());
+		std::string tmp(uri0.plain());
 		const auto fn = [&tmp](const URI& u) {
-			tmp.append(u.plainUri_utf8());
+			tmp.append(u.plain());
 		};
 		fn(uri1); fn(uri2); fn(uri3); fn(uri4); fn(uri5);
 
 		return
-			loadResourceApp<Texture_StaticCubeURI>(
-				URI("file", tmp),
-				[=](auto& /*uri*/, auto&& mk){
-					mk(uri0,uri1,uri2,uri3,uri4,uri5,miplevel,fmt);
+			loadResourceApp<Texture_CubeURI>(
+				FileURI(tmp),
+				[&](auto& /*uri*/, auto&& mk){
+					mk(uri0.clone(), uri1.clone(), uri2.clone(),
+						uri3.clone(), uri4.clone(), uri5.clone(),
+						miplevel,fmt);
 					_resourceInit(mk.pointer);
 				}
 			).first;
@@ -213,14 +183,18 @@ namespace rev {
 		}
 	}
 	HRes GLRes::loadResource(const URI& uri) {
-		const auto ext = uri.getExtension();
 		HRes ret;
-		// is it Texture?
-		if(ext=="png" || ext=="jpg" || ext=="bmp")
-			ret = loadTextureUri(uri);
-		// is it Effect(Shader)?
-		else if(ext == "glx") {
-			ret = loadEffect<GLEffect>(uri.plain_utf8());
+		if(uri.getType() == URI::Type::File) {
+			// とりあえず今はファイルのみ対応
+			auto& fu = static_cast<const FileURI&>(uri);
+			const auto ext = fu.pathblock().getExtension();
+			// is it Texture?
+			if(ext=="png" || ext=="jpg" || ext=="bmp")
+				ret = loadTexture(uri);
+			// is it Effect(Shader)?
+			else if(ext == "glx") {
+				ret = loadEffect<GLEffect>(fu.pathblock().plain_utf8());
+			}
 		}
 		return ret;
 	}

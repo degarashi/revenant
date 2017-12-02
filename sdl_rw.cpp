@@ -110,7 +110,7 @@ namespace rev {
 	typename RWops::Type::e RWops::TempData::getType() const noexcept {
 		return Type::Temporal;
 	}
-	spi::Optional<const PathBlock&> RWops::TempData::getPath() const noexcept {
+	spi::Optional<const URI&> RWops::TempData::getUri() const noexcept {
 		return spi::none;
 	}
 	std::size_t RWops::TempData::size() const noexcept {
@@ -124,12 +124,12 @@ namespace rev {
 	}
 
 	// --------------------- RWops::VectorData ---------------------
-	RWops::VectorData::VectorData(const URI& uri, ByteBuff&& b):
+	RWops::VectorData::VectorData(const URI_SP& uri, ByteBuff&& b):
 		Data(SDLAssert(SDL_RWFromMem, b.data(), static_cast<int>(b.size()))),
 		_uri(uri),
 		_buff(std::move(b))
 	{}
-	RWops::VectorData::VectorData(const URI& uri, const void* ptr, const std::size_t size):
+	RWops::VectorData::VectorData(const URI_SP& uri, const void* ptr, const std::size_t size):
 		Data(SDL_RWFromConstMem(ptr, size)),
 		_uri(uri),
 		_buff(reinterpret_cast<const uint8_t*>(ptr),
@@ -141,10 +141,10 @@ namespace rev {
 	typename RWops::Type::e RWops::VectorData::getType() const noexcept {
 		return Type::Vector;
 	}
-	spi::Optional<const PathBlock&> RWops::VectorData::getPath() const noexcept {
-		if(_uri.empty())
-			return spi::none;
-		return _uri;
+	spi::Optional<const URI&> RWops::VectorData::getUri() const noexcept {
+		if(_uri)
+			return *_uri;
+		return spi::none;
 	}
 	std::size_t RWops::VectorData::size() const noexcept {
 		return _buff.size();
@@ -163,8 +163,8 @@ namespace rev {
 	typename RWops::Type::e RWops::FileData::getType() const noexcept {
 		return Type::File;
 	}
-	spi::Optional<const PathBlock&> RWops::FileData::getPath() const noexcept {
-		return _path;
+	spi::Optional<const URI&> RWops::FileData::getUri() const noexcept {
+		return _uri;
 	}
 	std::size_t RWops::FileData::size() const noexcept {
 		const auto pos = SDL_RWtell(_ops);
@@ -193,7 +193,7 @@ namespace rev {
 	}
 	RWops::FileData::FileData(const PathBlock& path, const int access):
 		Data(_LoadFromFile(path, access)),
-		_path(path),
+		_uri(path.plain_utf8()),
 		_access(access)
 	{}
 	// --------------------- RWops ---------------------
@@ -206,14 +206,14 @@ namespace rev {
 			cb
 		);
 	}
-	RWops RWops::FromByteBuffMove(const URI& uri, ByteBuff&& buff, const Callback_SP& cb) {
+	RWops RWops::FromByteBuffMove(const URI_SP& uri, ByteBuff&& buff, const Callback_SP& cb) {
 		return RWops(
 			Access::Read|Access::Write,
 			std::make_unique<VectorData>(uri, std::move(buff)),
 			cb
 		);
 	}
-	RWops RWops::FromVector(const URI& uri, const void* mem, const std::size_t size, const Callback_SP& cb) {
+	RWops RWops::FromVector(const URI_SP& uri, const void* mem, const std::size_t size, const Callback_SP& cb) {
 		return RWops(
 			Access::Read|Access::Write,
 			std::make_unique<VectorData>(uri, mem, size),
@@ -461,7 +461,7 @@ namespace rev {
 	HRW RWMgr::fromURI(const URI& uri, const int access) {
 		HRW ret = procHandler(uri, access);
 		if(!ret)
-			throw RWops::RWE_File(uri.plain_utf8().c_str());
+			throw RWops::RWE_File(uri.plain().c_str());
 		return ret;
 	}
 	HRW RWMgr::fromFile(const PathBlock& path, const int access) {

@@ -128,9 +128,9 @@ namespace rev {
 				// inclsetから1つ取り出して読み込み
 				auto itr = inclset.begin();
 				auto hdl = mgr_block.loadResourceApp<GLXStruct>(
-								URI(*itr),
+								UserURI(*itr),
 								[](auto& uri, auto&& mk){
-									auto s = mgr_rw.fromURI(uri, Access::Read);
+									auto s = mgr_rw.fromURI(*uri.uri, Access::Read);
 									mk();
 									ParseGlx(*mk.pointer, s->readAllAsString());
 								}

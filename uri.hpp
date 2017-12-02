@@ -1,43 +1,134 @@
 #pragma once
 #include "path.hpp"
+#include "lubee/operators.hpp"
+#include "spine/enum.hpp"
+#include <regex>
 
+namespace cereal {
+	template <class T>
+	struct LoadAndConstruct;
+}
 namespace rev {
-	class URI : public PathBlock {
-		private:
-			const static std::string SEP;
-			const static std::u32string SEP32;
-			std::string		_type;
-
-			template <class Ar>
-			friend void serialize(Ar&, URI&);
-
+	class URI;
+	using URI_SP = std::shared_ptr<URI>;
+	class URI : lubee::op::Ne<URI> {
 		public:
-			URI() = default;
-			URI(To8Str p);
-			URI(const URI& u) = default;
-			URI(URI&& u) noexcept;
-			URI(To8Str typ, To8Str path);
-			URI(To8Str typ, const PathBlock& pb);
+			DefineEnum(Type,
+				(Id)
+				(User)
+				(File)
+				(Data)
+			);
+			virtual std::string path() const = 0;
+			virtual const std::string& scheme() const noexcept = 0;
+			virtual std::string plain() const = 0;
+			virtual Type getType() const noexcept = 0;
+			virtual std::size_t getHash() const noexcept = 0;
+			virtual URI_SP clone() const = 0;
 
-			URI& operator = (const URI&) = default;
-			URI& operator = (URI&& u) noexcept;
 			bool operator == (const URI& u) const noexcept;
-			bool operator != (const URI& u) const noexcept;
+			virtual ~URI();
+	};
+	URI_SP MakeURIFromString(const char* s);
 
-			void setPath(To8Str p);
-			const std::string& getType_utf8() const noexcept;
-			std::string plainUri_utf8() const;
-			std::u32string plainUri_utf32() const;
-			void setType(To8Str typ);
-			const PathBlock& path() const noexcept;
-			PathBlock& path() noexcept;
+	#define DEF_URIMETHOD \
+		std::string path() const override; \
+		const std::string& scheme() const noexcept override; \
+		std::string plain() const override; \
+		Type getType() const noexcept override; \
+		std::size_t getHash() const noexcept override; \
+		URI_SP clone() const override;
+
+	// 内部管理用
+	class IdURI;
+	using IdURI_SP = std::shared_ptr<IdURI>;
+	class IdURI : public URI {
+		private:
+			uint64_t	_num;
+		public:
+			IdURI(uint64_t num);
+			uint64_t getId() const noexcept;
+			DEF_URIMETHOD
+			bool operator == (const IdURI& u) const noexcept;
 	};
+
+	class UserURI;
+	using UserURI_SP = std::shared_ptr<UserURI>;
+	class UserURI : public URI {
+		private:
+			template <class Ar>
+			friend void serialize(Ar&, UserURI&);
+			template <class T>
+			friend struct cereal::LoadAndConstruct;
+
+			std::string		_name;
+		public:
+			UserURI(const std::string& name);
+			UserURI(const std::smatch& s);
+			static UserURI_SP Interpret(const std::string& uri);
+			const std::string& getName() const noexcept;
+			DEF_URIMETHOD
+			bool operator == (const UserURI& u) const noexcept;
+	};
+
+	class FileURI;
+	using FileURI_SP = std::shared_ptr<FileURI>;
+	class FileURI : public URI {
+		private:
+			template <class Ar>
+			friend void serialize(Ar&, FileURI&);
+			template <class T>
+			friend struct cereal::LoadAndConstruct;
+
+			PathBlock	_path;
+		public:
+			FileURI(To8Str p);
+			FileURI(const std::smatch& s);
+			static FileURI_SP Interpret(const std::string& uri);
+			PathBlock& pathblock() noexcept;
+			const PathBlock& pathblock() const noexcept;
+			DEF_URIMETHOD
+			bool operator == (const FileURI& f) const noexcept;
+	};
+
+	class DataURI;
+	using DataURI_SP = std::shared_ptr<DataURI>;
+	class DataURI : public URI {
+		private:
+			template <class Ar>
+			friend void serialize(Ar&, DataURI&);
+			template <class T>
+			friend struct cereal::LoadAndConstruct;
+
+			using MediaType = std::pair<std::string, std::string>;
+			using MediaTypeV = std::vector<MediaType>;
+			MediaTypeV		_mediaType;
+			bool			_bBase64;
+			std::string		_data;
+		public:
+			static DataURI_SP Interpret(const std::string& uri);
+			DataURI() = default;
+			DataURI(const std::string& media,
+					bool base64,
+					const std::string& data);
+			DataURI(const std::smatch& s);
+			DEF_URIMETHOD
+
+			bool operator == (const DataURI& d) const noexcept;
+	};
+	#undef DEF_URIMETHOD
 }
+#define DEF_HASH(typ)	\
+	template <> \
+	struct hash<typ> { \
+		std::size_t operator()(const typ& uri) const noexcept { \
+			return uri.getHash(); \
+		} \
+	};
 namespace std {
-	template <>
-	struct hash<rev::URI> {
-		std::size_t operator()(const rev::URI& uri) const noexcept {
-			return std::hash<std::u32string>()(uri.plain_utf32());
-		}
-	};
+	DEF_HASH(rev::URI)
+	DEF_HASH(rev::UserURI)
+	DEF_HASH(rev::FileURI)
+	DEF_HASH(rev::DataURI)
 }
+#undef DEF_HASH

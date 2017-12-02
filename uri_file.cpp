@@ -8,8 +8,7 @@ namespace rev {
 		_basePath(path.moveTo())
 	{}
 	bool URI_File::Capable(const URI& uri, int /*access*/) {
-		const auto typ = uri.getType_utf8();
-		return (typ == "file" || typ == "res");
+		return uri.getType() == URI::Type::File;
 	}
 	HRW URI_File::_openURI(const PathBlock& path, int access) {
 		// 相対パス時はプログラムが置いてある地点から探索
@@ -26,8 +25,10 @@ namespace rev {
 		return nullptr;
 	}
 	HRW URI_File::openURI(const URI& uri, int access) {
-		if(Capable(uri, access))
-			return _openURI(uri, access);
+		if(Capable(uri, access)) {
+			auto& fu = static_cast<const FileURI&>(uri);
+			return _openURI(fu.pathblock(), access);
+		}
 		return nullptr;
 	}
 }

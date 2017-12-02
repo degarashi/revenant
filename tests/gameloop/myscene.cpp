@@ -45,7 +45,7 @@ namespace rev {
 				auto rf = lk->mt.getUniformF<float>();
 				HTex tex[6];
 				for(uint32_t i=0 ; i<countof(tex) ; i++) {
-					tex[i] = mgr_gl.loadTexture((boost::format("spr%1%.png") % i).str(), MipState::MipmapLinear);
+					tex[i] = mgr_gl.loadTexture(UserURI((boost::format("spr%1%.png") % i).str()), MipState::MipmapLinear);
 
 					tex[i]->setFilter(true, true);
 				}

@@ -725,20 +725,20 @@ namespace rev {
 	// ------------------ SoundMgr ------------------
 	HAb SoundMgr::loadWaveBatch(const std::string& name) {
 		return _buffMgr.loadResourceApp<AWaveBatch>(
-			URI(name),
-			[](auto& uri, auto&& mk){ MakeAb<AWaveBatch>(uri, mk); }
+			FileURI(name),
+			[](auto& uri, auto&& mk){ MakeAb<AWaveBatch>(*uri.uri, mk); }
 		).first;
 	}
 	HAb SoundMgr::loadOggBatch(const std::string& name) {
 		return _buffMgr.loadResourceApp<AOggBatch>(
-			URI(name),
-			[](auto& uri, auto&& mk){ MakeAb<AOggBatch>(uri, mk); }
+			FileURI(name),
+			[](auto& uri, auto&& mk){ MakeAb<AOggBatch>(*uri.uri, mk); }
 		).first;
 	}
 	HAb SoundMgr::loadOggStream(const std::string& name) {
 		return _buffMgr.loadResourceApp<AOggStream>(
-			URI(name),
-			[](auto& uri, auto&& mk){ MakeAb<AOggStream>(uri, mk); }
+			FileURI(name),
+			[](auto& uri, auto&& mk){ MakeAb<AOggStream>(*uri.uri, mk); }
 		).first;
 	}
 	HSg SoundMgr::createSourceGroup(const int n) {

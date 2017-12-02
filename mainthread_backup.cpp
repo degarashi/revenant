@@ -4,8 +4,7 @@
 #include "serialization/sdl_rw.hpp"
 #include "serialization/uri_file.hpp"
 #include "serialization/sound.hpp"
-#include <cereal/archives/binary.hpp>
-#include <cereal/types/memory.hpp>
+#include "serialization/uriwrap.hpp"
 
 namespace rev {
 	void MainThread::_Backup(Manager& m, std::ostream& os) {

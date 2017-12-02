@@ -27,7 +27,7 @@ namespace rev {
 					auto& cur = blk.uriVec[blk.current];
 					// 並列処理のため、一旦ロックを解除
 					lk.unlock();
-					TryEmplace(*blk.result, cur.first, ResMgrBase::LoadResource(cur.second));
+					TryEmplace(*blk.result, cur.first, ResMgrBase::LoadResource(*cur.second));
 					lk.lock();
 					self._progress = ++blk.current / static_cast<float>(blk.uriVec.size());
 					if(blk.current == static_cast<int>(blk.uriVec.size()))
@@ -63,7 +63,7 @@ namespace rev {
 	}
 	// 呼び出しスレッドで読み込む
 	HRes LSysFunc::loadResource(const std::string& urisrc) {
-		URI uri(urisrc);
+		FileURI uri(urisrc);
 		return ResMgrBase::LoadResource(uri);
 	}
 	// 呼び出しスレッドで読み込む
@@ -72,8 +72,8 @@ namespace rev {
 		LCTable ret;
 		tbl.iterateTable([&ret](LuaState& lsc) {
 			LCValue ent = lsc.toLCValue(-2);
-			const URI uri(lsc.toString(-1));
-			auto h = ResMgrBase::LoadResource(uri);
+			const URI_SP uri = MakeURIFromString(lsc.toString(-1).c_str());
+			auto h = ResMgrBase::LoadResource(*uri);
 			LCValue lcv(h);
 			TryEmplace(ret, std::move(ent), h);
 		});
@@ -85,7 +85,10 @@ namespace rev {
 		auto id = _serialCur++;
 		Block block;
 		tbl.iterateTable([&block](LuaState& lsc) {
-			block.uriVec.emplace_back(lsc.toString(-2), URI(lsc.toString(-1)));
+			block.uriVec.emplace_back(
+				lsc.toString(-2),
+				MakeURIFromString(lsc.toString(-1).c_str())
+			);
 		});
 		TryEmplace(_async, id, std::move(block));
 		_cond.signal_all();

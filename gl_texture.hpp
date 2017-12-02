@@ -121,78 +121,31 @@ namespace rev {
 	std::pair<lubee::SizeI,GLInCompressedFmt> MakeTex(GLenum tflag, const Surface_SP& sfc, InCompressedFmt_OP fmt, bool bP2, bool bMip);
 	std::pair<lubee::SizeI,GLInCompressedFmt> MakeMip(GLenum tflag, GLenum format, const lubee::SizeI& size, const ByteBuff& buff, bool bP2, bool bMip);
 
-	//! 画像ファイルから2Dテクスチャを読む
-	/*! DeviceReset時:
-		再度ファイルから読み出す */
-	class Texture_StaticURI : public IGLTexture {
+	//! URIから2Dテクスチャを読む
+	/*!
+		DeviceReset時:
+		再度URIを参照
+	*/
+	class Texture_URI : public IGLTexture {
 		private:
-			URI					_uri;
+			URI_SP				_uri;
 			InCompressedFmt_OP	_opFmt;
 		public:
-			static std::pair<lubee::SizeI, GLInCompressedFmt> LoadTexture(IGLTexture& tex, HRW hRW, CubeFace face);
-			Texture_StaticURI(Texture_StaticURI&& t);
-			Texture_StaticURI(const URI& uri, MipState miplevel, InCompressedFmt_OP fmt);
+			static std::pair<lubee::SizeI, GLInCompressedFmt> LoadTexture(IGLTexture& tex, const HRW& hRW, CubeFace face);
+			Texture_URI(const URI_SP& uri, MipState miplevel, InCompressedFmt_OP fmt);
 			void onDeviceReset() override;
 	};
-
-	template <class T>
-	struct IOPArray {
-		virtual int getNPacked() const = 0;
-		virtual const T& getPacked(int n) const = 0;
-		virtual ~IOPArray() {}
-		virtual uint32_t getID() const = 0;
-		virtual bool operator == (const IOPArray& p) const = 0;
-	};
-	template <class T, int N>
-	class OPArray : public IOPArray<T> {
+	//! 6つの画像ファイルからCubeテクスチャを構成
+	class Texture_CubeURI : public IGLTexture {
 		private:
-			spi::Optional<T>	_packed[N];
-
-			void _init(spi::Optional<T>* /*dst*/) {}
-			template <class TA, class... Ts>
-			void _init(spi::Optional<T>* dst, TA&& ta, Ts&&... ts) {
-				*dst++ = std::forward<TA>(ta);
-				_init(dst, std::forward<Ts>(ts)...);
-			}
-		public:
-			template <class... Ts>
-			OPArray(Ts&&... ts) {
-				static_assert(sizeof...(Ts)==N, "invalid number of argument(s)");
-				_init(_packed, std::forward<Ts>(ts)...);
-			}
-			int getNPacked() const override {
-				return N;
-			}
-			const T& getPacked(const int n) const override {
-				Assert0(n<=N);
-				return *_packed[n];
-			}
-			bool operator == (const IOPArray<T>& p) const override {
-				if(getID()==p.getID() && getNPacked()==p.getNPacked()) {
-					auto& p2 = reinterpret_cast<const OPArray&>(p);
-					for(int i=0 ; i<N ; i++) {
-						if(_packed[i] != p2._packed[i])
-							return false;
-					}
-					return true;
-				}
-				return false;
-			}
-			uint32_t getID() const override {
-				return MakeChunk('P','a','c','k');
-			}
-	};
-	using SPPackURI = std::shared_ptr<IOPArray<URI>>;
-	//! 連番または6つの画像ファイルからCubeテクスチャを読む
-	class Texture_StaticCubeURI : public IGLTexture {
-		private:
-			SPPackURI			_uri;
+			URI_SP				_uri[6];
 			InCompressedFmt_OP	_opFmt;
 		public:
-			Texture_StaticCubeURI(Texture_StaticCubeURI&& t);
-			Texture_StaticCubeURI(const URI& uri, MipState miplevel, InCompressedFmt_OP fmt);
-			Texture_StaticCubeURI(const URI& uri0, const URI& uri1, const URI& uri2,
-				const URI& uri3, const URI& uri4, const URI& uri5, MipState miplevel, InCompressedFmt_OP fmt);
+			Texture_CubeURI(
+				const URI_SP& uri0, const URI_SP& uri1, const URI_SP& uri2,
+				const URI_SP& uri3, const URI_SP& uri4, const URI_SP& uri5,
+				MipState miplevel, InCompressedFmt_OP fmt
+			);
 			void onDeviceReset() override;
 	};
 }

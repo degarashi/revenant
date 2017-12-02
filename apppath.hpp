@@ -43,13 +43,14 @@ namespace rev {
 			void enumPath(const std::string& resname, const PathBlock& pattern, CBEnum cb) const;
 			const PathV& getPath(const std::string& resname) const;
 	};
-	class URI;
+	class FileURI;
+	using FileURI_SP = std::shared_ptr<FileURI>;
 	//! リソースパスのキャッシュと参照
 	/*! リソースマネージャクラスに内包して使う */
 	class AppPathCache {
 		private:
 			// リソース名 -> URIのキャッシュ
-			using Cache = std::unordered_map<std::string, URI>;
+			using Cache = std::unordered_map<std::string, FileURI_SP>;
 			// リソース番号 -> リソースマップ
 			using CacheV = std::vector<std::pair<std::string, Cache>>;
 			mutable CacheV	_cache;
@@ -72,6 +73,6 @@ namespace rev {
 			{
 				_init(rtname, N);
 			}
-			const URI& uriFromResourceName(int n, const std::string& name) const;
+			const FileURI_SP& uriFromResourceName(int n, const std::string& name) const;
 	};
 }

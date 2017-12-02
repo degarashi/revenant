@@ -66,7 +66,7 @@ namespace rev {
 
 					virtual bool isMemory() const noexcept = 0;
 					virtual Type::e getType() const noexcept = 0;
-					virtual spi::Optional<const PathBlock&> getPath() const noexcept = 0;
+					virtual spi::Optional<const URI&> getUri() const noexcept = 0;
 					virtual std::size_t size() const noexcept = 0;
 					virtual DataPtr getMemory() = 0;
 					virtual DataPtrC getMemoryC() const = 0;
@@ -75,7 +75,7 @@ namespace rev {
 			#define DEF_METHODS \
 				bool isMemory() const noexcept override; \
 				Type::e getType() const noexcept override; \
-				spi::Optional<const PathBlock&> getPath() const noexcept override; \
+				spi::Optional<const URI&> getUri() const noexcept override; \
 				std::size_t size() const noexcept override; \
 				DataPtr getMemory() override; \
 				DataPtrC getMemoryC() const override;
@@ -95,21 +95,21 @@ namespace rev {
 			//! 内部(メモリ上の)データ
 			class VectorData : public Data {
 				private:
-					URI			_uri;
-					ByteBuff	_buff;
+					URI_SP			_uri;
+					ByteBuff		_buff;
 
 					template <class Ar>
 					friend void serialize(Ar&, VectorData&);
 					friend struct cereal::LoadAndConstruct<VectorData>;
 				public:
-					VectorData(const URI& uri, ByteBuff&& b);
-					VectorData(const URI& uri, const void* ptr, std::size_t size);
+					VectorData(const URI_SP& uri, ByteBuff&& b);
+					VectorData(const URI_SP& uri, const void* ptr, std::size_t size);
 					DEF_METHODS
 			};
 			//! ファイルシステムと関連付けされた外部データ
 			class FileData : public Data {
 				private:
-					PathBlock	_path;
+					FileURI		_uri;
 					int			_access;
 
 					template <class Ar>
@@ -195,9 +195,9 @@ namespace rev {
 			static std::string ReadModeStr(int mode);
 
 			// メモリ上のデータ(ムーブ)
-			static RWops FromByteBuffMove(const URI& uri, ByteBuff&& buff, const Callback_SP& cb);
+			static RWops FromByteBuffMove(const URI_SP& uri, ByteBuff&& buff, const Callback_SP& cb);
 			// メモリ上のデータ(コピー)
-			static RWops FromVector(const URI& uri, const void* mem, std::size_t size, const Callback_SP& cb);
+			static RWops FromVector(const URI_SP& uri, const void* mem, std::size_t size, const Callback_SP& cb);
 			// 外部データ(ポインタ+データ長)
 			static RWops FromTemporal(void* mem, std::size_t size, const Callback_SP& cb);
 			static RWops FromConstTemporal(const void* mem, std::size_t size, const Callback_SP& cb);
@@ -265,12 +265,12 @@ namespace rev {
 			HRW fromFile(const PathBlock& pb, int access);
 			template <class T, ENABLE_IF((is_bytebuff<T>{} && !std::is_const<T>{}))>
 			HRW fromVector(T&& t) {
-				return base_t::emplace(RWops::FromByteBuffMove(URI(), std::forward<T>(t), nullptr));
+				return base_t::emplace(RWops::FromByteBuffMove(nullptr, std::forward<T>(t), nullptr));
 			}
 			template <class T, ENABLE_IF((!is_bytebuff<T>{} || std::is_const<T>{}))>
 			HRW fromVector(T&& t) {
 				constexpr std::size_t s = sizeof(typename std::decay_t<T>::value_t);
-				return base_t::emplace(RWops::FromVector(URI(), t.data(), reinterpret_cast<uintptr_t>(t.data())+t.size()*s, nullptr));
+				return base_t::emplace(RWops::FromVector(nullptr, t.data(), reinterpret_cast<uintptr_t>(t.data())+t.size()*s, nullptr));
 			}
 			HRW fromConstTemporal(const void* p, std::size_t size, const typename RWops::Callback_SP& cb=nullptr);
 			HRW fromTemporal(void* p, std::size_t size, const typename RWops::Callback_SP& cb=nullptr);
