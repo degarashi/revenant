@@ -5,9 +5,6 @@
 #include <iostream>
 
 namespace rev {
-	using OStream_UP = std::unique_ptr<std::ostream>;
-	using IStream_UP = std::unique_ptr<std::istream>;
-
 	struct Access {
 		enum e : int {
 			Read = 0x01,
