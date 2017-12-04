@@ -482,20 +482,19 @@ namespace rev {
 		};
 		using SDLPtr = std::unique_ptr<void, SDLDeleter>;
 	}
-	PathBlock RWMgr::makeFilePath(const std::string& dirName) const {
+	PathBlock RWMgr::makeFilePath() const {
 		#ifdef ANDROID
 			PathBlock path(SDL_AndroidGetInternalStoragePath());
 		#else
 			SDLPtr str(SDL_GetPrefPath(_orgName.c_str(), _appName.c_str()));
 			PathBlock path(reinterpret_cast<const char*>(str.get()));
 		#endif
-		if(!dirName.empty())
-			path.pushBack(dirName);
 		return path;
 	}
 	std::pair<HRW,std::string> RWMgr::createTemporaryFile() {
 		// Temporaryディレクトリ構造を作る
-		Dir tmpdir(makeFilePath(c_tmpDirName));
+		Dir tmpdir = makeFilePath();
+		tmpdir.pushBack(c_tmpDirName);
 		// 既に別のファイルがあるなどしてディレクトリが作れなければ内部で例外を投げる
 		tmpdir.mkdir(FStatus::GroupRead | FStatus::OtherRead | FStatus::UserRWX);
 		// ランダムなファイル名[A-Za-z0-9_]{8,16}を重複考えず作る
@@ -519,7 +518,8 @@ namespace rev {
 		return std::make_pair(HRW(), std::string());
 	}
 	void RWMgr::_cleanupTemporaryFile() {
-		PathBlock path = makeFilePath(c_tmpDirName);
+		PathBlock path = makeFilePath();
+		path.pushBack(c_tmpDirName);
 		path.pushBack("*");
 		auto strlist = Dir::EnumEntryWildCard(path.plain_utf8());
 		for(auto& s : strlist) {

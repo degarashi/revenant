@@ -277,6 +277,6 @@ namespace rev {
 			//! ランダムな名前の一時ファイルを作ってそのハンドルとファイルパスを返す
 			std::pair<HRW, std::string> createTemporaryFile();
 			//! OrgNameとAppNameからなるプライベートなディレクトリパス
-			PathBlock makeFilePath(const std::string& dirName) const;
+			PathBlock makeFilePath() const;
 	};
 }
