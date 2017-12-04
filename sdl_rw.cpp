@@ -1,5 +1,4 @@
 #include "sdl_rw.hpp"
-#include "sdl_error.hpp"
 #include "dir.hpp"
 #include "lubee/random.hpp"
 #include <SDL_filesystem.h>
@@ -76,9 +75,11 @@ namespace rev {
 	{}
 
 	// --------------------- RWops::Data ---------------------
-	RWops::Data::Data(SDL_RWops* ops) NOEXCEPT_IF_RELEASE:
-		_ops(ops)
-	{
+	RWops::Data::Data(SDL_RWops* ops) NOEXCEPT_IF_RELEASE {
+		_init(ops);
+	}
+	void RWops::Data::_init(SDL_RWops* ops) NOEXCEPT_IF_RELEASE {
+		_ops = ops;
 		D_Assert0(ops);
 	}
 	RWops::Data::~Data() {
@@ -125,15 +126,19 @@ namespace rev {
 
 	// --------------------- RWops::VectorData ---------------------
 	RWops::VectorData::VectorData(const URI_SP& uri, ByteBuff&& b):
-		Data(SDLAssert(SDL_RWFromMem, b.data(), static_cast<int>(b.size()))),
 		_uri(uri),
 		_buff(std::move(b))
-	{}
+	{
+		_init(SDLAssert(SDL_RWFromMem, _buff.data(), _buff.size()));
+	}
 	RWops::VectorData::VectorData(const URI_SP& uri, const void* ptr, const std::size_t size):
-		Data(SDL_RWFromConstMem(ptr, size)),
-		_uri(uri),
-		_buff(reinterpret_cast<const uint8_t*>(ptr),
-			reinterpret_cast<const uint8_t*>(ptr)+size)
+		VectorData(
+			uri,
+			ByteBuff(
+				reinterpret_cast<const uint8_t*>(ptr),
+				reinterpret_cast<const uint8_t*>(ptr) + size
+			)
+		)
 	{}
 	bool RWops::VectorData::isMemory() const noexcept {
 		return true;
@@ -466,6 +471,12 @@ namespace rev {
 	}
 	HRW RWMgr::fromFile(const PathBlock& path, const int access) {
 		return base_t::emplace(RWops::FromFile(path, access));
+	}
+	HRW RWMgr::fromVector(ByteBuff&& buff) {
+		return base_t::emplace(RWops::FromByteBuffMove(nullptr, std::move(buff), nullptr));
+	}
+	HRW RWMgr::fromMemory(const void* buff, const std::size_t size) {
+		return base_t::emplace(RWops::FromVector(nullptr, buff, size, nullptr));
 	}
 	HRW RWMgr::fromConstTemporal(const void* p, const std::size_t size, const typename RWops::Callback_SP& cb) {
 		return base_t::emplace(RWops::FromConstTemporal(p, size, cb));

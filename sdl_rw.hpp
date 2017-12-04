@@ -9,6 +9,7 @@
 #include <SDL_rwops.h>
 #include <stdexcept>
 #include <vector>
+#include "sdl_error.hpp"
 
 namespace cereal {
 	class access;
@@ -17,11 +18,18 @@ namespace cereal {
 }
 namespace rev {
 	using ByteBuff = std::vector<uint8_t>;
+	template <class Itr>
+	ByteBuff ToByteBuff(Itr itr, const Itr itrE) {
+		constexpr auto unit = sizeof(decltype(*itr));
+		const auto n = std::distance(itr, itrE);
+		ByteBuff buff(unit * n);
+		auto* dst = buff.data();
+		while(itr != itrE) {
+			*dst++ = *itr++;
+		}
+		return buff;
+	}
 	class URI;
-	template <class T>
-	struct is_bytebuff : std::false_type {};
-	template <>
-	struct is_bytebuff<ByteBuff> : std::true_type {};
 	class RWMgr;
 
 	class RWops : public Resource {
@@ -58,7 +66,9 @@ namespace rev {
 					friend struct cereal::LoadAndConstruct;
 					void _seek(int64_t pos);
 				protected:
+					Data() = default;
 					Data(SDL_RWops* ops) NOEXCEPT_IF_RELEASE;
+					void _init(SDL_RWops* ops) NOEXCEPT_IF_RELEASE;
 				public:
 					SDL_RWops* getOps() const noexcept;
 					int64_t tell() const noexcept;
@@ -173,6 +183,7 @@ namespace rev {
 			};
 
 		private:
+			//! アクセス許可フラグ
 			uint32_t	_access;
 			Data_UP		_data;
 			//! RWopsが解放される直前に呼ばれる関数
@@ -260,19 +271,27 @@ namespace rev {
 		public:
 			RWMgr(const std::string& org_name, const std::string& app_name);
 
-			//! 任意のURIからハンドル作成(ReadOnly)
+			//! 任意のURIからハンドル作成
 			HRW fromURI(const URI& uri, int access);
+			//! ローカルファイルからハンドル作成
 			HRW fromFile(const PathBlock& pb, int access);
-			template <class T, ENABLE_IF((is_bytebuff<T>{} && !std::is_const<T>{}))>
-			HRW fromVector(T&& t) {
-				return base_t::emplace(RWops::FromByteBuffMove(nullptr, std::forward<T>(t), nullptr));
+			// ------ メモリ上のデータからハンドル作成 ------
+			HRW fromVector(ByteBuff&& buff);
+			template <class T>
+			HRW fromVector(const std::vector<T>& buff) {
+				constexpr std::size_t s = sizeof(T);
+				return fromMemory(buff.data(), reinterpret_cast<uintptr_t>(buff.data())+buff.size()*s);
 			}
-			template <class T, ENABLE_IF((!is_bytebuff<T>{} || std::is_const<T>{}))>
-			HRW fromVector(T&& t) {
-				constexpr std::size_t s = sizeof(typename std::decay_t<T>::value_t);
-				return base_t::emplace(RWops::FromVector(nullptr, t.data(), reinterpret_cast<uintptr_t>(t.data())+t.size()*s, nullptr));
+			template <class Itr>
+			HRW fromIterator(const Itr itr, const Itr itrE) {
+				return fromVector(ToByteBuff(itr, itrE));
 			}
+			HRW fromMemory(const void* buff, std::size_t size);
+			//! ポインタから一時的なハンドル作成(const)
+			/*!  \param[in]	cb		ハンドルが削除される時に呼び出される関数 */
 			HRW fromConstTemporal(const void* p, std::size_t size, const typename RWops::Callback_SP& cb=nullptr);
+			//! ポインタから一時的なハンドル作成(mutable)
+			/*!  \param[in]	cb		ハンドルが削除される時に呼び出される関数 */
 			HRW fromTemporal(void* p, std::size_t size, const typename RWops::Callback_SP& cb=nullptr);
 			//! ランダムな名前の一時ファイルを作ってそのハンドルとファイルパスを返す
 			std::pair<HRW, std::string> createTemporaryFile();
