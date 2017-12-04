@@ -100,11 +100,12 @@ namespace rev {
 			template <class T>
 			friend struct cereal::LoadAndConstruct;
 
+			using Data_t = std::string;
 			using MediaType = std::pair<std::string, std::string>;
 			using MediaTypeV = std::vector<MediaType>;
 			MediaTypeV		_mediaType;
 			bool			_bBase64;
-			std::string		_data;
+			Data_t			_data;
 		public:
 			static DataURI_SP Interpret(const std::string& uri);
 			DataURI() = default;
@@ -114,6 +115,7 @@ namespace rev {
 			DataURI(const std::smatch& s);
 			DEF_URIMETHOD
 
+			const Data_t& data() const noexcept;
 			bool operator == (const DataURI& d) const noexcept;
 	};
 	#undef DEF_URIMETHOD

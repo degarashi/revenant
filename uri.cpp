@@ -256,6 +256,9 @@ namespace rev {
 		ret += h(_data);
 		return ret;
 	}
+	const DataURI::Data_t& DataURI::data() const noexcept {
+		return _data;
+	}
 	bool DataURI::operator == (const DataURI& d) const noexcept {
 		return _bBase64 == d._bBase64 &&
 				_data == d._data &&
