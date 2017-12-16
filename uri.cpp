@@ -3,13 +3,24 @@
 #include "text.hpp"
 
 namespace {
-	template <class T>
-	std::shared_ptr<T> Interpret(const std::string& uri, const std::regex& re) {
+	template <class T, class F>
+	std::shared_ptr<T> _Match(F&& func) {
 		std::smatch m;
-		if(std::regex_match(uri, m, re)) {
+		if(func(m))
 			return std::make_shared<T>(m);
-		}
 		return nullptr;
+	}
+	template <class T>
+	auto Match(const std::string& uri, const std::regex& re) {
+		return _Match<T>([&](auto& m){
+			return std::regex_match(uri, m, re);
+		});
+	}
+	template <class T>
+	auto Search(const std::string& uri, const std::regex& re) {
+		return _Match<T>([&](auto& m){
+			return std::regex_search(uri, m, re);
+		});
 	}
 }
 namespace rev {
@@ -81,9 +92,9 @@ namespace rev {
 	// ----------------- UserURI -----------------
 	namespace {
 		const std::string s_user("user://");
-		#define REP_USER_SEGMENT	"[a-zA-Z0-9+.-_]+"
+		#define REP_USER_SEGMENT	"[a-zA-Z0-9+._-]+"
 		// user://(REP_USER_SEGMENT)
-		const std::regex re_user(s_user + "(" REP_USER_SEGMENT ")");
+		const std::regex re_user(std::string("^") + s_user + "(" REP_USER_SEGMENT ")");
 	}
 	UserURI::UserURI(const std::smatch& s):
 		UserURI(s[1].str())
@@ -95,7 +106,7 @@ namespace rev {
 		return _name;
 	}
 	UserURI_SP UserURI::Interpret(const std::string& uri) {
-		return ::Interpret<UserURI>(uri, re_user);
+		return ::Match<UserURI>(uri, re_user);
 	}
 	bool UserURI::operator == (const UserURI& u) const noexcept {
 		return _name == u._name;
@@ -126,7 +137,7 @@ namespace rev {
 		// file://((?:/)?(?:REP_SEGMENT)(?:/REP_SEGMENT)*)?
 		// ex.	file:///first/second/third/file.ext
 		// 1: /first/second/third/file.ext
-		const std::string r_file = s_file + "((?:/)?(?:" REP_SEGMENT ")(?:/" REP_SEGMENT ")*)?";
+		const std::string r_file = std::string("^") + s_file + "((?:/)?(?:" REP_SEGMENT ")(?:/" REP_SEGMENT ")*)?";
 		const std::regex re_file(r_file);
 	}
 	FileURI::FileURI(To8Str p):
@@ -136,7 +147,7 @@ namespace rev {
 		FileURI(s[1].str())
 	{}
 	FileURI_SP FileURI::Interpret(const std::string& uri) {
-		return ::Interpret<FileURI>(uri, re_file);
+		return ::Match<FileURI>(uri, re_file);
 	}
 	PathBlock& FileURI::pathblock() noexcept {
 		return _path;
@@ -168,28 +179,30 @@ namespace rev {
 
 	// ----------------- DataURI -----------------
 	namespace {
-		#define REP_MEDIAENT0	"(?:[a-zA-Z0-9+.-]+)"
+		#define REP_MEDIAENT0	"(?:[a-zA-Z0-9+./-]+)"
 		#define REP_MEDIAPAIR0	"(?:" REP_MEDIAENT0 "(?:=" REP_MEDIAENT0 ")?)"
 		#define BASE64			"base64"
-		// data:(REP_MEDIAPAIR0(?:;REP_MEDIAPAIR0)*)?((?:;)base64)?,(.*)
+		// data:(REP_MEDIAPAIR0(?:;REP_MEDIAPAIR0)*)?((?:;)base64)?,
 		// ex. data:text/vnd-example+xyz;foo=bar;base64,R0lGODdh
 		//		1: text/vnd-example+xyz;foo=bar
 		//		2: base64
-		//		3: R0lGODdh
+		//		suffix: R0lGODdh
 		const std::string s_data("data:");
-		const std::regex re_data(s_data + "(" REP_MEDIAPAIR0 "(?:;" REP_MEDIAPAIR0 ")*)?((?:;)" BASE64 ")?,(.*)");
-		#define REP_MEDIAENT	"([a-zA-Z0-9+.-]+)"
+		const std::regex re_data(std::string("^") + s_data + "(" REP_MEDIAPAIR0 "(?:;" REP_MEDIAPAIR0 ")*)?((?:;)" BASE64 ")?,");
+		#define REP_MEDIAENT	"([a-zA-Z0-9+./-]+)"
 		#define REP_MEDIAPAIR	"(?:(" REP_MEDIAENT ")(?:=(" REP_MEDIAENT "))?)"
 		const std::regex re_media(";?" REP_MEDIAPAIR);
 	}
 	DataURI::DataURI(const std::smatch& s):
 		DataURI(s[1].str(),
 				s[2].length() != 0,
-				s[3].str())
+				s.suffix().str())
 	{}
-	DataURI::DataURI(const std::string& media,
-					const bool base64,
-					const std::string& data):
+	DataURI::DataURI(
+		const std::string& media,
+		const bool base64,
+		const std::string& data
+	):
 		_bBase64(base64)
 	{
 		{
@@ -201,15 +214,10 @@ namespace rev {
 				++itr;
 			}
 		}
-		if(base64) {
-			_data.resize(data.size());
-			const int len = text::base64toNum(&_data[0], _data.size(), data.data(), data.size());
-			_data.resize(len);
-		} else
-			_data = data;
+		_data = base64 ? text::Base64ToBinary(data) : data;
 	}
 	DataURI_SP DataURI::Interpret(const std::string& uri) {
-		return ::Interpret<DataURI>(uri, re_data);
+		return ::Search<DataURI>(uri, re_data);
 	}
 	std::string DataURI::path() const {
 		return std::string();
@@ -237,11 +245,7 @@ namespace rev {
 			ret += BASE64;
 		}
 		ret += ',';
-		std::string tmp;
-		tmp.resize(_data.size()*2);
-		const int nDst = rev::text::base64(&tmp[0], tmp.size(), _data.data(), _data.size());
-		tmp.resize(nDst);
-		ret += tmp;
+		ret += text::BinaryToBase64(_data);
 		return ret;
 	}
 	URI::Type DataURI::getType() const noexcept {
