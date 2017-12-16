@@ -208,7 +208,6 @@ namespace rev {
 			for(auto& tp : b.tpL)
 				tpV.emplace_back(&tp);
 		}
-		auto op = _blockSet.findAttribute("CubeAttr");
 		try {
 			// Tech/Passを順に実行形式へ変換
 			// (一緒にTech/Pass名リストを構築)
