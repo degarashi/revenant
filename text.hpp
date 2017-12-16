@@ -35,8 +35,10 @@ namespace rev {
 		uint32_t StrToHex4(const char* src) noexcept;
 		uint32_t HexToChar(uint32_t hex) noexcept;
 		//! Base64変換
-		int base64(char* dst, std::size_t n_dst, const char* src, int n);
-		int base64toNum(char* dst, std::size_t n_dst, const char* src, int n);
+		int BinaryToBase64(char* dst, std::size_t n_dst, const char* src, int n);
+		std::string BinaryToBase64(const std::string& src);
+		int Base64ToBinary(char* dst, std::size_t n_dst, const char* src, int n);
+		std::string Base64ToBinary(const std::string& src);
 		// URL変換
 		int url_encode_OAUTH(char* dst, std::size_t n_dst, const char* src, int n);
 		int url_encode(char* dst, std::size_t n_dst, const char* src, int n);

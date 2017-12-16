@@ -70,7 +70,14 @@ namespace rev {
 				41,42,43,44,45,46,47,48,49,50,51,0, 0, 0, 0, 0
 			};
 		}
-		int base64(char* dst, const std::size_t n_dst, const char* src, int n) {
+		std::string BinaryToBase64(const std::string& src) {
+			std::string ret;
+			ret.resize(src.size() * 2);
+			const auto nw = BinaryToBase64(&ret[0], ret.size(), src.data(), src.size());
+			ret.resize(nw);
+			return ret;
+		}
+		int BinaryToBase64(char* dst, const std::size_t n_dst, const char* src, int n) {
 			uint32_t buff=0;
 			int nlen=0;
 
@@ -107,7 +114,14 @@ namespace rev {
 			dst[wcur] = 0;
 			return wcur;
 		}
-		int base64toNum(char* dst, const std::size_t n_dst, const char* src, int n) {
+		std::string Base64ToBinary(const std::string& src) {
+			std::string ret;
+			ret.resize(src.size());
+			const auto nw = Base64ToBinary(&ret[0], ret.size(), src.data(), src.size());
+			ret.resize(nw);
+			return ret;
+		}
+		int Base64ToBinary(char* dst, const std::size_t n_dst, const char* src, int n) {
 			uint32_t buff=0;
 			int nlen=0;
 			int wcur=0;
