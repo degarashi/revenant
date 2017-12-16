@@ -17,28 +17,22 @@ namespace rev {
 		return !(this->operator == (v));
 	}
 	// ----------------- VDecl -----------------
-	VDecl::VDecl() {}
 	VDecl::VDecl(const VDInfoV& vl) {
 		_vdInfo = vl;
 		_init();
 	}
-	VDecl::VDecl(std::initializer_list<VDInfo> il) {
-		int n = il.size();
-		_vdInfo.resize(n);
-		// 一旦Vectorに変換
-		auto itr = il.begin();
-		for(int i=0 ; i<n ; i++)
-			_vdInfo[i] = *itr++;
-		_init();
-	}
+	// 一旦Vectorに変換
+	VDecl::VDecl(std::initializer_list<VDInfo> il):
+		VDecl(VDInfoV(il.begin(), il.end()))
+	{}
 	void VDecl::_init() {
 		// StreamId毎に集計
-		std::vector<VDInfo> tmp[VData::MAX_STREAM];
+		std::vector<VDInfo> stream[VData::MaxVStream];
 		for(auto& v : _vdInfo)
-			tmp[v.streamId].push_back(v);
+			stream[v.streamId].push_back(v);
 
 		// 頂点定義のダブり確認
-		for(auto& t : tmp) {
+		for(auto& t : stream) {
 			// オフセットでソート
 			std::sort(t.begin(), t.end(), [](const VDInfo& v0, const VDInfo& v1) { return v0.offset < v1.offset; });
 
@@ -52,9 +46,9 @@ namespace rev {
 
 		_func.resize(_vdInfo.size());
 		int cur = 0;
-		for(int i=0 ; i<static_cast<int>(countof(tmp)) ; i++) {
+		for(int i=0 ; i<static_cast<int>(countof(stream)) ; i++) {
 			_nEnt[i] = cur;
-			for(auto& t2 : tmp[i]) {
+			for(auto& t2 : stream[i]) {
 				_func[cur] = [t2](GLuint stride, const VData::AttrA& attr) {
 					auto attrId = attr[t2.semId];
 					if(attrId < 0)
@@ -72,10 +66,10 @@ namespace rev {
 				++cur;
 			}
 		}
-		_nEnt[VData::MAX_STREAM] = _nEnt[VData::MAX_STREAM-1];
+		_nEnt[VData::MaxVStream] = _nEnt[VData::MaxVStream-1];
 	}
 	void VDecl::apply(const VData& vdata) const {
-		for(int i=0 ; i<VData::MAX_STREAM ; i++) {
+		for(int i=0 ; i<VData::MaxVStream ; i++) {
 			auto& ovb = vdata.buff[i];
 			// VStreamが設定されていればBindする
 			if(ovb) {

@@ -24,7 +24,7 @@ namespace rev {
 				using VAttrId_OP = spi::Optional<TPStructR::VAttrId>;
 				// vertex stream
 				VDecl_SP	spVDecl;
-				Buffer_OP	vbuff[VData::MAX_STREAM];
+				Buffer_OP	vbuff[VData::MaxVStream];
 				VAttrId_OP	vAttrId;
 				// index stream
 				Buffer_OP	ibuff;

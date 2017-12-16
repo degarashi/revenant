@@ -5,14 +5,19 @@
 
 namespace rev {
 	struct VData {
-		const static int MAX_STREAM = 4;
-		using BuffA = const spi::Optional<draw::Buffer> (&)[MAX_STREAM];
+		const static int MaxVStream = 4;
+		using BuffA = const spi::Optional<draw::Buffer> (&)[MaxVStream];
 		using AttrA = GLint[static_cast<int>(VSem::_Num)];
 
-		BuffA	buff;
+		// [StreamIndex] -> Buffer(optional)
+		BuffA			buff;
+		// [VSemanticsIndex] -> AttributeId
 		const AttrA&	attrId;
 
-		VData(BuffA b, const AttrA& at): buff(b), attrId(at) {}
+		VData(BuffA b, const AttrA& at):
+			buff(b),
+			attrId(at)
+		{}
 	};
 	//! 頂点宣言
 	class VDecl {
@@ -38,16 +43,16 @@ namespace rev {
 			using VDInfoV = std::vector<VDInfo>;
 		private:
 			using Func = std::function<void (GLuint, const VData::AttrA&)>;
-			using FuncL = std::vector<Func>;
-			FuncL		_func;						//!< ストリーム毎のサイズを1次元配列で格納 = 0番から並べる
-			int			_nEnt[VData::MAX_STREAM+1];	//!< 各ストリームの先頭インデックス
+			using FuncV = std::vector<Func>;
+			FuncV		_func;						//!< ストリーム毎のサイズを1次元配列で格納 = 0番から並べる
+			int			_nEnt[VData::MaxVStream+1];	//!< 各ストリームの先頭インデックス
 			VDInfoV		_vdInfo;
 
 			static VDInfoV _ToVector(std::initializer_list<VDInfo>& il);
 			void _init();
 
 		public:
-			VDecl();
+			VDecl() = default;
 			VDecl(const VDInfoV& vl);
 			//! 入力: {streamId, offset, GLFlag, bNoramalize, semantics}
 			VDecl(std::initializer_list<VDInfo> il);

@@ -187,7 +187,7 @@ namespace rev {
 				class Vertex {
 					private:
 						VDecl_SP		_spVDecl;
-						HVb				_vbuff[VData::MAX_STREAM];
+						HVb				_vbuff[VData::MaxVStream];
 					public:
 						Vertex();
 						void setVDecl(const VDecl_SP& v);
