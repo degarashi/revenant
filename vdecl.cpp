@@ -33,14 +33,16 @@ namespace rev {
 
 		// 頂点定義のダブり確認
 		for(auto& t : stream) {
-			// オフセットでソート
-			std::sort(t.begin(), t.end(), [](const VDInfo& v0, const VDInfo& v1) { return v0.offset < v1.offset; });
+			if(!t.empty()) {
+				// オフセットでソート
+				std::sort(t.begin(), t.end(), [](const VDInfo& v0, const VDInfo& v1) { return v0.offset < v1.offset; });
 
-			unsigned int ofs = 0;
-			for(auto& t2 : t) {
-				if(ofs > t2.offset)
-					throw GLE_Error("invalid vertex offset");
-				ofs += GLFormat::QuerySize(t2.elemFlag) * t2.elemSize;
+				unsigned int tail = 0;
+				for(auto& t2 : t) {
+					if(tail > t2.offset)
+						throw GLE_Error("invalid vertex offset");
+					tail = t2.offset + GLFormat::QuerySize(t2.elemFlag) * t2.elemSize;
+				}
 			}
 		}
 
