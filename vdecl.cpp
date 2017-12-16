@@ -27,7 +27,7 @@ namespace rev {
 	{}
 	void VDecl::_init() {
 		// StreamId毎に集計
-		std::vector<VDInfo> stream[VData::MaxVStream];
+		VDInfoV stream[MaxVStream];
 		for(auto& v : _vdInfo)
 			stream[v.streamId].push_back(v);
 
@@ -35,7 +35,7 @@ namespace rev {
 		for(auto& t : stream) {
 			if(!t.empty()) {
 				// オフセットでソート
-				std::sort(t.begin(), t.end(), [](const VDInfo& v0, const VDInfo& v1) { return v0.offset < v1.offset; });
+				std::sort(t.begin(), t.end(), [](const auto& v0, const auto& v1) { return v0.offset < v1.offset; });
 
 				unsigned int tail = 0;
 				for(auto& t2 : t) {
@@ -49,36 +49,37 @@ namespace rev {
 		_func.resize(_vdInfo.size());
 		int cur = 0;
 		for(int i=0 ; i<static_cast<int>(countof(stream)) ; i++) {
-			_nEnt[i] = cur;
+			_entIdx[i] = cur;
 			for(auto& t2 : stream[i]) {
-				_func[cur] = [t2](GLuint stride, const VData::AttrA& attr) {
-					auto attrId = attr[t2.semId];
+				_func[cur] = [t2](const GLuint stride, const VData::AttrA& attr) {
+					const auto attrId = attr[t2.semId];
 					if(attrId < 0)
 						return;
 					GL.glEnableVertexAttribArray(attrId);
+					const auto* ptr = reinterpret_cast<const GLvoid*>(t2.offset);
 					#ifndef USE_OPENGLES2
-						auto typ = GLFormat::QueryGLSLInfo(t2.elemFlag)->type;
+						const auto typ = GLFormat::QueryGLSLInfo(t2.elemFlag)->type;
 						if(typ == GLSLType::BoolT || typ == GLSLType::IntT) {
 							// PCにおけるAMDドライバの場合、Int値はIPointerでセットしないと値が化けてしまう為
-							GL.glVertexAttribIPointer(attrId, t2.elemSize, t2.elemFlag, stride, reinterpret_cast<const GLvoid*>(t2.offset));
+							GL.glVertexAttribIPointer(attrId, t2.elemSize, t2.elemFlag, stride, ptr);
 						} else
 					#endif
-							GL.glVertexAttribPointer(attrId, t2.elemSize, t2.elemFlag, t2.bNormalize, stride, reinterpret_cast<const GLvoid*>(t2.offset));
+							GL.glVertexAttribPointer(attrId, t2.elemSize, t2.elemFlag, t2.bNormalize, stride, ptr);
 				};
 				++cur;
 			}
 		}
-		_nEnt[VData::MaxVStream] = _nEnt[VData::MaxVStream-1];
+		_entIdx[MaxVStream] = _entIdx[MaxVStream-1];
 	}
 	void VDecl::apply(const VData& vdata) const {
-		for(int i=0 ; i<VData::MaxVStream ; i++) {
-			auto& ovb = vdata.buff[i];
+		for(int i=0 ; i<MaxVStream ; i++) {
+			const auto& ovb = vdata.buff[i];
 			// VStreamが設定されていればBindする
 			if(ovb) {
 				auto& vb = *ovb;
 				auto u = vb.use();
-				GLuint stride = vb.getStride();
-				for(int j=_nEnt[i] ; j<_nEnt[i+1] ; j++)
+				const GLuint stride = vb.getStride();
+				for(int j=_entIdx[i] ; j<_entIdx[i+1] ; j++)
 					_func[j](stride, vdata.attrId);
 			}
 		}

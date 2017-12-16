@@ -2,12 +2,13 @@
 #include "vertex.hpp"
 #include "spine/optional.hpp"
 #include "gl_buffer.hpp"
+#include "glx_const.hpp"
 
 namespace rev {
+	// 主にGLEffectからVDeclへのデータ受け渡しで使われる
 	struct VData {
-		const static int MaxVStream = 4;
 		using BuffA = const spi::Optional<draw::Buffer> (&)[MaxVStream];
-		using AttrA = GLint[static_cast<int>(VSem::_Num)];
+		using AttrA = GLint[VSem::_Num];
 
 		// [StreamIndex] -> Buffer(optional)
 		BuffA			buff;
@@ -40,12 +41,15 @@ namespace rev {
 				bool operator == (const VDInfo& v) const;
 				bool operator != (const VDInfo& v) const;
 			};
-			using VDInfoV = std::vector<VDInfo>;
 		private:
+			using VDInfoV = std::vector<VDInfo>;
 			using Func = std::function<void (GLuint, const VData::AttrA&)>;
 			using FuncV = std::vector<Func>;
-			FuncV		_func;						//!< ストリーム毎のサイズを1次元配列で格納 = 0番から並べる
-			int			_nEnt[VData::MaxVStream+1];	//!< 各ストリームの先頭インデックス
+			FuncV		_func;
+			// ストリーム毎のサイズを1次元配列で格納 = 0番から並べる
+			// 各ストリームの先頭インデックス
+			int			_entIdx[MaxVStream+1];
+			// 元データ(シリアライズ用)
 			VDInfoV		_vdInfo;
 
 			static VDInfoV _ToVector(std::initializer_list<VDInfo>& il);

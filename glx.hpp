@@ -7,7 +7,7 @@
 #include <unordered_set>
 #include "resmgr_app.hpp"
 #include "drawtoken/viewport.hpp"
-#include "vdecl.hpp"
+#include "glx_const.hpp"
 
 namespace rev {
 	void OutputComment(std::ostream& os, const std::string& msg);
@@ -187,7 +187,7 @@ namespace rev {
 				class Vertex {
 					private:
 						VDecl_SP		_spVDecl;
-						HVb				_vbuff[VData::MaxVStream];
+						HVb				_vbuff[MaxVStream];
 					public:
 						Vertex();
 						void setVDecl(const VDecl_SP& v);
