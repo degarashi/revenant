@@ -1,4 +1,8 @@
 #pragma once
+#include "drawtoken.hpp"
+#include "buffer.hpp"
+#include "../vdecl.hpp"
+#include "../glx_const.hpp"
 
 namespace rev {
 	namespace draw {
@@ -21,7 +25,7 @@ namespace rev {
 				void use_end() const;
 			public:
 				using Buffer_OP = spi::Optional<Buffer>;
-				using VAttrId_OP = spi::Optional<TPStructR::VAttrId>;
+				using VAttrId_OP = spi::Optional<VAttrA_CRef>;
 				// vertex stream
 				VDecl_SP	spVDecl;
 				Buffer_OP	vbuff[MaxVStream];

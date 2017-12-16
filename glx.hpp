@@ -80,7 +80,6 @@ namespace rev {
 			using VaryL = std::vector<const VaryEntry*>;
 			using ConstL = std::vector<const ConstEntry*>;
 			using UnifL = std::vector<const UnifEntry*>;
-			using VAttrId = const GLint (&)[VSem::_Num];
 
 		private:
 			HProg			_prog;
@@ -119,7 +118,7 @@ namespace rev {
 
 			const UniMap& getUniformDefault() const noexcept;
 			const UniIdSet& getUniformEntries() const noexcept;
-			VAttrId getVAttrId() const noexcept;
+			VAttrA_CRef getVAttrId() const noexcept;
 
 			const HProg& getProgram() const noexcept;
 			//! OpenGLに設定を適用
@@ -193,7 +192,7 @@ namespace rev {
 						void setVDecl(const VDecl_SP& v);
 						void setVBuffer(const HVb& hVb, int n);
 						void reset();
-						void extractData(draw::VStream& dst, TPStructR::VAttrId vAttrId) const;
+						void extractData(draw::VStream& dst, VAttrA_CRef vAttrId) const;
 						bool operator != (const Vertex& v) const;
 				} vertex, vertex_prev;
 				class Index {

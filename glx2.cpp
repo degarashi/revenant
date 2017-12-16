@@ -25,7 +25,7 @@ namespace rev {
 		_vbuff[n] = hVb;
 	}
 	void GLEffect::Current::Vertex::extractData(draw::VStream& dst,
-												TPStructR::VAttrId vAttrId) const
+												VAttrA_CRef vAttrId) const
 	{
 		Assert(_spVDecl, "VDecl is not set");
 		dst.spVDecl = _spVDecl;

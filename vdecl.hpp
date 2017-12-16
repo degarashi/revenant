@@ -8,14 +8,13 @@ namespace rev {
 	// 主にGLEffectからVDeclへのデータ受け渡しで使われる
 	struct VData {
 		using BuffA = const spi::Optional<draw::Buffer> (&)[MaxVStream];
-		using AttrA = GLint[VSem::_Num];
 
 		// [StreamIndex] -> Buffer(optional)
 		BuffA			buff;
 		// [VSemanticsIndex] -> AttributeId
-		const AttrA&	attrId;
+		VAttrA_CRef		attrId;
 
-		VData(BuffA b, const AttrA& at):
+		VData(BuffA b, VAttrA_CRef at):
 			buff(b),
 			attrId(at)
 		{}
@@ -43,7 +42,7 @@ namespace rev {
 			};
 		private:
 			using VDInfoV = std::vector<VDInfo>;
-			using Func = std::function<void (GLuint, const VData::AttrA&)>;
+			using Func = std::function<void (GLuint, VAttrA_CRef)>;
 			using FuncV = std::vector<Func>;
 			FuncV		_func;
 			// ストリーム毎のサイズを1次元配列で格納 = 0番から並べる

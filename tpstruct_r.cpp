@@ -361,7 +361,7 @@ namespace rev {
 	const HProg& TPStructR::getProgram() const noexcept {
 		return _prog;
 	}
-	TPStructR::VAttrId TPStructR::getVAttrId() const noexcept {
+	VAttrA_CRef TPStructR::getVAttrId() const noexcept {
 		return _vAttrId;
 	}
 }

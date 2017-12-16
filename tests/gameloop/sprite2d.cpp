@@ -3,6 +3,7 @@
 #include "../../gl_buffer.hpp"
 #include "lubee/meta/countof.hpp"
 #include "../../util/sys_unif.hpp"
+#include "../../vdecl.hpp"
 
 using GlxId = rev::IEffect::GlxId;
 const rev::IdValue Sprite2D::T_Sprite2D = GlxId::GenTechId("Sprite", "Default");

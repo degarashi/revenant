@@ -1,6 +1,8 @@
-#include "glx.hpp"
+#include "vdecl.hpp"
 #include "gl_error.hpp"
 #include "gl_format.hpp"
+#include "gl_if.hpp"
+#include "lubee/meta/countof.hpp"
 #include "drawtoken/buffer.hpp"
 
 namespace rev {
@@ -51,7 +53,7 @@ namespace rev {
 		for(int i=0 ; i<static_cast<int>(countof(stream)) ; i++) {
 			_entIdx[i] = cur;
 			for(auto& t2 : stream[i]) {
-				_func[cur] = [t2](const GLuint stride, const VData::AttrA& attr) {
+				_func[cur] = [t2](const GLuint stride, VAttrA_CRef attr) {
 					const auto attrId = attr[t2.semId];
 					if(attrId < 0)
 						return;
