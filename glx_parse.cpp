@@ -183,11 +183,37 @@ namespace rev {
 
 		// BoolSet: GLBoolsetting = Bool;
 		const auto BoolSet_def = no_case[GLBoolsetting] > '=' > no_case[bool_] > ';';
-		// ValueSet: GLSetting = (0xUint|GLFunc|GLStencilop|GLEq|GLBlend|GLFace|GLFacedir|GLColormask){1,4} | Float | Bool;
+		// ValueSet: GLSetting =	GLSetting=
+		//							(
+		//								(0xUint)|
+		//								Int|
+		//								Float|
+		//								Bool|
+		//								GLFunc|
+		//								GLStencilop|
+		//								GLEq|
+		//								GLBlend|
+		//								GLFace|
+		//								GLFacedir|
+		//								GLColormask
+		//							){1,4};
+		const auto VS_Range = repeat(1,4);
 		const auto ValueSet_def = no_case[GLSetting] > '=' >
-			repeat(1,4)[(lit("0x") > uint_) |
-			no_case[GLFunc | GLStencilop | GLEq | GLBlend | GLFace | GLFacedir | GLColormask | GLFillMode]
-			| float_ | bool_] > ';';
+			repeat(1,4)[
+				(lit("0x") > uint_) |
+				no_case[
+					GLFunc |
+					GLStencilop |
+					GLEq |
+					GLBlend |
+					GLFace |
+					GLFacedir |
+					GLColormask |
+					GLFillMode
+				] |
+				float_ |
+				bool_
+			] > ';';
 		// BlockUse: GLBlocktype (= | +=) NameToken (, NameToken)*;
 		DEF_SETVAL(Bu_fnSetName, name)
 		const auto Bu_fnSetFalse = [](auto& ctx){ _val(ctx).bAdd = false; };
