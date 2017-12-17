@@ -10,7 +10,7 @@
 #include "glx_const.hpp"
 
 namespace rev {
-	void OutputComment(std::ostream& os, const std::string& msg);
+	void OutputCommentBlock(std::ostream& os, const std::string& msg);
 	//! OpenGLの値設定関数代理クラス
 	struct ValueSettingR {
 		using VSFunc = void (*)(const ValueSettingR&);

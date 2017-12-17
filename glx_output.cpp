@@ -11,7 +11,7 @@ namespace rev {
 		};
 	}
 
-	void OutputComment(std::ostream& os, const std::string& msg) {
+	void OutputCommentBlock(std::ostream& os, const std::string& msg) {
 		const char* c_separate = "-------------";
 		os << "// " << c_separate << ' ' << msg << ' ' << c_separate << std::endl;
 	}
@@ -73,7 +73,7 @@ namespace rev {
 	}
 
 	std::ostream& operator << (std::ostream& os, const CodeStruct& s) {
-		OutputComment(os, (boost::format("code block \"%1%\"") % s.name).str());
+		OutputCommentBlock(os, (boost::format("code block \"%1%\"") % s.name).str());
 		os << s.info << std::endl;
 		return os;
 	}

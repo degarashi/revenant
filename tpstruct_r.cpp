@@ -242,7 +242,7 @@ namespace rev {
 				boost::apply_visitor(acheck, a);
 			acheck.finalizeCheck();
 
-			OutputComment(ss, s->name);
+			OutputCommentBlock(ss, s->name);
 			// 関数名はmain()に書き換え
 			ss << "void main() " << s->getShaderString() << std::endl;
 	#ifdef DEBUG
