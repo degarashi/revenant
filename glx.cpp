@@ -6,7 +6,7 @@
 #include <boost/format.hpp>
 
 namespace rev {
-	const VSFunc ValueSettingR::cs_func[] = {
+	const ValueSettingR::VSFunc ValueSettingR::cs_func[] = {
 		BOOST_PP_SEQ_FOR_EACH(PPFUNC_GLSET_FUNC, EMPTY, SEQ_GLSETTING)
 	};
 	const int ValueSettingR::cs_funcNArg[] = {
@@ -44,7 +44,7 @@ namespace rev {
 	}
 
 	// -------------- BoolSettingR --------------
-	const VBFunc BoolSettingR::cs_func[] = {
+	const BoolSettingR::VBFunc BoolSettingR::cs_func[] = {
 		&IGL::glEnable, &IGL::glDisable
 	};
 	BoolSettingR::BoolSettingR(const BoolSetting& s) {

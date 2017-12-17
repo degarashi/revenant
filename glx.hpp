@@ -12,10 +12,8 @@
 namespace rev {
 	void OutputComment(std::ostream& os, const std::string& msg);
 	//! OpenGLの値設定関数代理クラス
-	struct ValueSettingR;
-	using VSFunc = void (*)(const ValueSettingR&);
-	using VBFunc = decltype(&IGL::glEnable);
 	struct ValueSettingR {
+		using VSFunc = void (*)(const ValueSettingR&);
 		ValueSetting::ValueT 	value[4];
 		VSFunc					func;
 
@@ -42,6 +40,7 @@ namespace rev {
 	};
 	//! OpenGLのBool値設定クラス
 	struct BoolSettingR {
+		using VBFunc = decltype(&IGL::glEnable);
 		GLenum		flag;
 		VBFunc		func;
 
