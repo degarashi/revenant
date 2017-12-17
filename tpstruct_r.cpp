@@ -97,7 +97,7 @@ namespace rev {
 					}
 					return mm;
 				}
-				SettingList exportSetting() const {
+				TPStructR::SettingList exportSetting() const {
 					std::vector<ValueSettingR> vsL;
 					std::vector<BoolSettingR> bsL;
 					for(auto itr=_tpList.rbegin() ; itr!=_tpList.rend() ; itr++) {
@@ -126,7 +126,7 @@ namespace rev {
 								*itr = vsr;
 						}
 					}
-					SettingList ret;
+					TPStructR::SettingList ret;
 					for(auto& b : bsL)
 						ret.push_back(b);
 					for(auto& v : vsL)
@@ -157,7 +157,7 @@ namespace rev {
 		auto itr = std::find(_setting.begin(), _setting.end(), s);
 		return itr!=_setting.end();
 	}
-	SettingList TPStructR::CalcDiff(const TPStructR& from, const TPStructR& to) {
+	TPStructR::SettingList TPStructR::CalcDiff(const TPStructR& from, const TPStructR& to) {
 		// toと同じ設定がfrom側にあればスキップ
 		// fromに無かったり、異なっていればエントリに加える
 		SettingList ret;
@@ -355,7 +355,7 @@ namespace rev {
 	const UniMap& TPStructR::getUniformDefault() const noexcept {
 		return _defaultValue;
 	}
-	const UniIdSet& TPStructR::getUniformEntries() const noexcept {
+	const TPStructR::UniIdSet& TPStructR::getUniformEntries() const noexcept {
 		return _noDefValue;
 	}
 	const HProg& TPStructR::getProgram() const noexcept {

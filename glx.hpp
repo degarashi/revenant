@@ -51,7 +51,6 @@ namespace rev {
 		bool operator == (const BoolSettingR& s) const;
 	};
 
-	using UniIdSet = std::unordered_set<GLint>;
 	//! [UniformId -> Token]
 	using UniMap = std::unordered_map<GLint, draw::TokenBuffer*>;
 	using UnifPool = spi::ObjectPool<draw::TokenBuffer>;
@@ -68,12 +67,13 @@ namespace rev {
 			spi::Optional<const CodeStruct&> findCode(const std::string& s) const;
 	};
 	extern const int DefaultUnifPoolSize;
-	// OpenGLのレンダリング設定
-	using Setting = boost::variant<BoolSettingR, ValueSettingR>;
-	using SettingList = std::vector<Setting>;
 	//! Tech | Pass の分だけ作成
 	class TPStructR {
 		public:
+			// OpenGLのレンダリング設定
+			using Setting = boost::variant<BoolSettingR, ValueSettingR>;
+			using SettingList = std::vector<Setting>;
+			using UniIdSet = std::unordered_set<GLint>;
 			using MacroMap = std::unordered_map<std::string, std::string>;
 			using AttrL = std::vector<const AttrEntry*>;
 			using VaryL = std::vector<const VaryEntry*>;
