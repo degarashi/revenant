@@ -23,7 +23,7 @@ namespace rev {
 	// -------------- ValueSettingR --------------
 	ValueSettingR::ValueSettingR(const ValueSetting& s) {
 		func = cs_func[s.type];
-		int nV = std::min(s.value.size(), countof(value));
+		const int nV = std::min(s.value.size(), countof(value));
 		// 引数の数が合わなかったらエラー
 		const int ArgLength = cs_funcNArg[s.type];
 		if(ArgLength != nV)
