@@ -2,6 +2,7 @@
 #include "gl_error.hpp"
 #include "gl_resource.hpp"
 #include "gl_program.hpp"
+#include "argchecker.hpp"
 #include <boost/format.hpp>
 
 namespace rev {
