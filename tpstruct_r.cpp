@@ -321,7 +321,7 @@ namespace rev {
 			auto& atId = _vAttrId[p->sem];
 			if(atId != -2)
 				throw GLE_LogicalError((boost::format("duplication of vertex semantics \"%1% : %2%\"") % p->name % GLSem_::cs_typeStr[p->sem]).str());
-			auto at = prog.getAttribId(p->name.c_str());
+			const auto at = prog.getAttribId(p->name.c_str());
 			atId = (at) ? *at : -1;
 			// -1の場合は警告を出す(もしかしたらシェーダー内で使ってないだけかもしれない)
 		}
