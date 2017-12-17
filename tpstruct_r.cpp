@@ -150,7 +150,7 @@ namespace rev {
 		swap(tp);
 	}
 	#define TPR_SWAP(z,data,elem) boost::swap(elem, data.elem);
-	#define SEQ_TPR_SWAP (_prog)(_vAttrId)(_setting)(_noDefValue)(_defaultValue)(_bInit)(_attrL)(_varyL)(_constL)(_unifL)
+	#define SEQ_TPR_SWAP (_prog)(_vattr)(_setting)(_noDefValue)(_defaultValue)(_bInit)(_attrL)(_varyL)(_constL)(_unifL)
 	void TPStructR::swap(TPStructR& t) noexcept {
 		BOOST_PP_SEQ_FOR_EACH(TPR_SWAP, t, SEQ_TPR_SWAP)
 	}
@@ -264,7 +264,7 @@ namespace rev {
 		D_Assert0(_bInit);
 		_bInit = false;
 		// OpenGLのリソースが絡んでる変数を消去
-		std::memset(_vAttrId, 0xff, sizeof(_vAttrId));
+		_vattr.clear();
 		_noDefValue.clear();
 
 		for(auto& p : _defaultValue)
@@ -312,18 +312,49 @@ namespace rev {
 		auto& prog = *_prog;
 		prog.onDeviceReset();
 
-		// 頂点AttribIdを無効な値で初期化
-		for(auto& v : _vAttrId)
-			v = -2;	// 初期値=-2, クエリの無効値=-1
+		struct UniqueChk {
+			GLint		id;
+			VSem::e		sem;
+			const char*	name;
+			bool operator == (const UniqueChk& u) const noexcept {
+				return id == u.id;
+			}
+			bool operator < (const UniqueChk& u) const noexcept {
+				return id < u.id;
+			}
+		};
+		std::vector<UniqueChk> uc;
+		// 頂点セマンティクス対応リストを生成
 		for(auto& p : _attrL) {
-			// 頂点セマンティクス対応リストを生成
-			// セマンティクスの重複はエラー
-			auto& atId = _vAttrId[p->sem];
-			if(atId != -2)
-				throw GLE_LogicalError((boost::format("duplication of vertex semantics \"%1% : %2%\"") % p->name % GLSem_::cs_typeStr[p->sem]).str());
-			const auto at = prog.getAttribId(p->name.c_str());
-			atId = (at) ? *at : -1;
-			// -1の場合は警告を出す(もしかしたらシェーダー内で使ってないだけかもしれない)
+			const char* name = p->name.c_str();
+			if(const auto at = prog.getAttribId(name)) {
+				const auto sem = static_cast<VSem::e>(p->sem);
+				VSemAttr a;
+				a.sem = VSemantic {
+					sem,
+					(p->index) ? *p->index : 0
+				};
+				a.attrId = *at;
+				_vattr.emplace_back(a);
+				uc.emplace_back(UniqueChk{a.attrId, sem, name});
+			} else {
+				// 該当する変数が見付からない旨の警告を出す(もしかしたらシェーダー内で使ってないだけかもしれない)
+				D_Expect(false, R"(vertex attribute "%s[%s]" not found)", name, GLSem_::cs_typeStr[p->sem]);
+			}
+		}
+		{
+			// セマンティクスの重複チェック
+			std::sort(uc.begin(), uc.end());
+			const auto itr = std::unique(uc.begin(), uc.end());
+			if(itr != uc.end()) {
+				throw GLE_LogicalError(
+					(
+						 boost::format("duplication of vertex semantics \"%1% : %2%\"")
+						 % itr->name
+						 % GLSem_::cs_typeStr[itr->sem]
+					).str()
+				);
+			}
 		}
 
 		// Uniform変数にデフォルト値がセットしてある物をリストアップ
@@ -362,7 +393,7 @@ namespace rev {
 	const HProg& TPStructR::getProgram() const noexcept {
 		return _prog;
 	}
-	VAttrA_CRef TPStructR::getVAttrId() const noexcept {
-		return _vAttrId;
+	const VSemAttrV& TPStructR::getVAttr() const noexcept {
+		return _vattr;
 	}
 }

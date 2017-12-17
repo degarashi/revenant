@@ -4,6 +4,4 @@
 
 namespace rev {
 	constexpr static int MaxVStream = 4;
-	using VAttrA = GLint[VSem::_Num];
-	using VAttrA_CRef = const VAttrA&;
 }

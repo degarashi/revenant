@@ -92,8 +92,8 @@ namespace rev {
 	// --------------------------- VDecl for text ---------------------------
 	const VDecl_SP& DrawDecl<drawtag::text>::GetVDecl() {
 		static VDecl_SP vd(new VDecl({
-			{0, 0, GL_FLOAT, GL_FALSE, 2, (GLuint)VSem::POSITION},
-			{0, 8, GL_FLOAT, GL_FALSE, 3, (GLuint)VSem::TEXCOORD0}
+			{0, 0, GL_FLOAT, GL_FALSE, 2, {VSem::POSITION, 0}},
+			{0, 8, GL_FLOAT, GL_FALSE, 3, {VSem::TEXCOORD, 0}}
 		}));
 		return vd;
 	}

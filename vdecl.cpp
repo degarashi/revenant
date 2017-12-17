@@ -8,12 +8,15 @@
 namespace rev {
 	// ----------------- VDecl::VDInfo -----------------
 	bool VDecl::VDInfo::operator == (const VDInfo& v) const {
-		return ((streamId ^ v.streamId)
-				| (offset ^ v.offset)
-				| (elemFlag ^ v.elemFlag)
-				| (bNormalize ^ v.bNormalize)
-				| (elemSize ^ v.elemSize)
-				| (semId ^ v.semId)) == 0;
+		if( ((streamId ^ v.streamId)
+			| (offset ^ v.offset)
+			| (elemFlag ^ v.elemFlag)
+			| (bNormalize ^ v.bNormalize)
+			| (elemSize ^ v.elemSize)) == 0)
+		{
+			return sem == v.sem;
+		}
+		return false;
 	}
 	bool VDecl::VDInfo::operator != (const VDInfo& v) const {
 		return !(this->operator == (v));
@@ -53,10 +56,15 @@ namespace rev {
 		for(int i=0 ; i<static_cast<int>(countof(stream)) ; i++) {
 			_entIdx[i] = cur;
 			for(auto& t2 : stream[i]) {
-				_func[cur] = [t2](const GLuint stride, VAttrA_CRef attr) {
-					const auto attrId = attr[t2.semId];
-					if(attrId < 0)
+				_func[cur] = [t2](const GLuint stride, const VSemAttrV& attr) {
+					const auto itr = std::find_if(attr.cbegin(), attr.cend(),
+						[s=t2.sem](const auto& a){
+							return a.sem == s;
+						}
+					);
+					if(itr == attr.cend())
 						return;
+					const auto attrId = itr->attrId;
 					GL.glEnableVertexAttribArray(attrId);
 					const auto* ptr = reinterpret_cast<const GLvoid*>(t2.offset);
 					#ifndef USE_OPENGLES2
@@ -75,14 +83,13 @@ namespace rev {
 	}
 	void VDecl::apply(const VData& vdata) const {
 		for(int i=0 ; i<MaxVStream ; i++) {
-			const auto& ovb = vdata.buff[i];
 			// VStreamが設定されていればBindする
-			if(ovb) {
-				auto& vb = *ovb;
-				auto u = vb.use();
+			if(const auto& ovb = vdata.buff[i]) {
+				const auto& vb = *ovb;
+				const auto u = vb.use();
 				const GLuint stride = vb.getStride();
 				for(int j=_entIdx[i] ; j<_entIdx[i+1] ; j++)
-					_func[j](stride, vdata.attrId);
+					_func[j](stride, vdata.attr);
 			}
 		}
 	}

@@ -25,7 +25,7 @@ namespace rev {
 		_vbuff[n] = hVb;
 	}
 	void GLEffect::Current::Vertex::extractData(draw::VStream& dst,
-												VAttrA_CRef vAttrId) const
+												const VSemAttrV& vAttrId) const
 	{
 		Assert(_spVDecl, "VDecl is not set");
 		dst.spVDecl = _spVDecl;
@@ -168,7 +168,7 @@ namespace rev {
 			uniMap.clear();
 		}
 		// set VBuffer(VDecl)
-		vertex.extractData(vs, tps->getVAttrId());
+		vertex.extractData(vs, tps->getVAttr());
 		// set IBuffer
 		index.extractData(vs);
 	}

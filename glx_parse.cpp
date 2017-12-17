@@ -166,7 +166,7 @@ namespace rev {
 		// NameToken: [:Alnum:_]+;
 		const auto NameToken_def = lexeme[+(alnum | char_('_'))];
 		// AttrEnt: GLPrecision? GLType NameToken : GLSem;
-		const auto AttrEnt_def = (-(GLPrecision) >> GLType >> NameToken >> ':') > GLSem > ';';
+		const auto AttrEnt_def = (-(GLPrecision) >> GLType >> NameToken >> ':') > GLSem > -('_' > int_) > ';';
 		// VaryEnt: GLPrecision? GLType NameToken;
 		const auto VaryEnt_def = -(GLPrecision) >> GLType >> NameToken >> -('[' > int_ > ']') > ';';
 		// UnifEntry: Precision`GLPrecision` ValueName`rlNameToken` [SizeSem`rlNameToken`] = DefaultValue`rlVec|float|bool`

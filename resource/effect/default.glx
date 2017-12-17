@@ -6,7 +6,7 @@ uniform Text2DUnif {
 }
 attribute TextAttr {
 	highp vec2 atPos : POSITION;
-	mediump vec3 atTex : TEXCOORD0;
+	mediump vec3 atTex : TEXCOORD_0;
 }
 varying TextVary {
 	highp vec4 vrTex;
@@ -49,7 +49,7 @@ varying CubeVary {
 }
 attribute SpriteAttr {
 	highp vec3 atPos : POSITION;
-	mediump vec2 atTex : TEXCOORD0;
+	mediump vec2 atTex : TEXCOORD_0;
 }
 uniform SpriteUnif {
 	highp mat3 sys_mTrans2d;

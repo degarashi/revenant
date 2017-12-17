@@ -10,13 +10,13 @@ namespace rev {
 		using BuffA = const spi::Optional<draw::Buffer> (&)[MaxVStream];
 
 		// [StreamIndex] -> Buffer(optional)
-		BuffA			buff;
+		BuffA				buff;
 		// [VSemanticsIndex] -> AttributeId
-		VAttrA_CRef		attrId;
+		const VSemAttrV&	attr;
 
-		VData(BuffA b, VAttrA_CRef at):
+		VData(BuffA b, const VSemAttrV& at):
 			buff(b),
-			attrId(at)
+			attr(at)
 		{}
 	};
 	//! 頂点宣言
@@ -30,19 +30,19 @@ namespace rev {
 			struct VDInfo {
 				template <class Ar>
 				friend void serialize(Ar&, VDInfo&);
-				GLuint	streamId,		//!< 便宜上の)ストリームId
-						offset,			//!< バイトオフセット
-						elemFlag,		//!< OpenGLの要素フラグ
-						bNormalize,		//!< OpenGLが正規化するか(bool)
-						elemSize,		//!< 要素数
-						semId;			//!< 頂点セマンティクスId
+				GLuint		streamId,		//!< 便宜上の)ストリームId
+							offset,			//!< バイトオフセット
+							elemFlag,		//!< OpenGLの要素フラグ
+							bNormalize,		//!< OpenGLが正規化するか(bool)
+							elemSize;		//!< 要素数
+				VSemantic	sem;
 
 				bool operator == (const VDInfo& v) const;
 				bool operator != (const VDInfo& v) const;
 			};
 		private:
 			using VDInfoV = std::vector<VDInfo>;
-			using Func = std::function<void (GLuint, VAttrA_CRef)>;
+			using Func = std::function<void (GLuint, const VSemAttrV&)>;
 			using FuncV = std::vector<Func>;
 			FuncV		_func;
 			// ストリーム毎のサイズを1次元配列で格納 = 0番から並べる

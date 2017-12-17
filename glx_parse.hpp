@@ -159,7 +159,8 @@ namespace rev {
 	std::ostream& operator << (std::ostream& os, const EntryBase& e);
 	//! Attribute宣言エントリ
 	struct AttrEntry : EntryBase {
-		unsigned					sem;
+		unsigned				sem;
+		boost::optional<int>	index;
 	};
 	std::ostream& operator << (std::ostream& os, const AttrEntry& e);
 	//! Varying宣言エントリ
@@ -336,7 +337,7 @@ namespace rev {
 #define TRANSFORM_STRUCT_MEMBER(ign, name, member) (decltype(name::member), member)
 #define FUSION_ADAPT_STRUCT_AUTO(name, members) \
 			BOOST_FUSION_ADAPT_STRUCT(name, BOOST_PP_SEQ_FOR_EACH(TRANSFORM_STRUCT_MEMBER, name, members))
-FUSION_ADAPT_STRUCT_AUTO(rev::AttrEntry, (prec)(type)(name)(sem))
+FUSION_ADAPT_STRUCT_AUTO(rev::AttrEntry, (prec)(type)(name)(sem)(index))
 FUSION_ADAPT_STRUCT_AUTO(rev::VaryEntry, (prec)(type)(name)(arraySize))
 FUSION_ADAPT_STRUCT_AUTO(rev::UnifEntry, (prec)(type)(name)(arraySize)(defStr))
 FUSION_ADAPT_STRUCT_AUTO(rev::ConstEntry, (prec)(type)(name)(defVal))

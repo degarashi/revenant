@@ -5,12 +5,22 @@
 #include <string>
 #include <boost/preprocessor.hpp>
 
-#define NUM_TEXCOORD 8
-#define PPFUNC_ADDNUM(z,n,data) (BOOST_PP_CAT(data,n))
-#define SEQ_VSEM BOOST_PP_REPEAT(NUM_TEXCOORD, PPFUNC_ADDNUM, TEXCOORD)(POSITION)(COLOR)(NORMAL)(BINORMAL)(TANGENT)
+#define SEQ_VSEM (POSITION)(NORMAL)(TEXCOORD)(COLOR)(JOINT)(WEIGHT)(BINORMAL)(TANGENT)
 
 namespace rev {
 	DefineEnum(VSem, SEQ_VSEM);
+	struct VSemantic {
+		VSem	sem;
+		int		index;
+
+		bool operator == (const VSemantic& v) const noexcept;
+		bool operator < (const VSemantic& v) const noexcept;
+	};
+	struct VSemAttr {
+		VSemantic	sem;
+		int			attrId;
+	};
+	using VSemAttrV = std::vector<VSemAttr>;
 
 	class VDecl;
 	using VDecl_SP = std::shared_ptr<VDecl>;

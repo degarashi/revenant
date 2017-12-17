@@ -25,7 +25,7 @@ namespace rev {
 				void use_end() const;
 			public:
 				using Buffer_OP = spi::Optional<Buffer>;
-				using VAttrId_OP = spi::Optional<VAttrA_CRef>;
+				using VAttrId_OP = spi::Optional<const VSemAttrV&>;
 				// vertex stream
 				VDecl_SP	spVDecl;
 				Buffer_OP	vbuff[MaxVStream];

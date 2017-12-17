@@ -84,8 +84,7 @@ namespace rev {
 			HProg			_prog;
 			// --- 関連情報(ゼロから構築する場合の設定項目) ---
 			//! Attribute: 頂点セマンティクスに対する頂点Id
-			/*! 無効なセマンティクスは負数 */
-			GLint			_vAttrId[VSem::_Num];
+			VSemAttrV		_vattr;
 
 			//! Setting: Uniformデフォルト値(texture, vector, float, bool)設定を含む。GLDeviceの設定クラスリスト
 			SettingList		_setting;
@@ -117,7 +116,7 @@ namespace rev {
 
 			const UniMap& getUniformDefault() const noexcept;
 			const UniIdSet& getUniformEntries() const noexcept;
-			VAttrA_CRef getVAttrId() const noexcept;
+			const VSemAttrV& getVAttr() const noexcept;
 
 			const HProg& getProgram() const noexcept;
 			//! OpenGLに設定を適用
@@ -160,7 +159,7 @@ namespace rev {
 						void setVDecl(const VDecl_SP& v);
 						void setVBuffer(const HVb& hVb, int n);
 						void reset();
-						void extractData(draw::VStream& dst, VAttrA_CRef vAttrId) const;
+						void extractData(draw::VStream& dst, const VSemAttrV& vAttr) const;
 						bool operator != (const Vertex& v) const;
 				} vertex, vertex_prev;
 				class Index {
