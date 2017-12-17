@@ -125,14 +125,6 @@ namespace rev {
 			//! 設定差分を求める
 			static SettingList CalcDiff(const TPStructR& from, const TPStructR& to);
 	};
-	namespace Bit {
-		template <class T0, class T1>
-		inline bool ChClear(T0& t, const T1& tbit) {
-			bool bRet = t & tbit;
-			t &= ~tbit;
-			return bRet;
-		}
-	}
 	#define mgr_block (::rev::FxBlock::ref())
 	class FxBlock : public ResMgrApp<GLXStruct>, public spi::Singleton<FxBlock> {
 		public:
