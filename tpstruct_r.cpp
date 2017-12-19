@@ -145,15 +145,6 @@ namespace rev {
 
 	// ----------------- TPStructR -----------------
 	UnifPool TPStructR::s_unifPool(DefaultUnifPoolSize);
-	TPStructR::TPStructR() {}
-	TPStructR::TPStructR(TPStructR&& tp) {
-		swap(tp);
-	}
-	#define TPR_SWAP(z,data,elem) boost::swap(elem, data.elem);
-	#define SEQ_TPR_SWAP (_prog)(_vattr)(_setting)(_noDefValue)(_defaultValue)(_bInit)(_attrL)(_varyL)(_constL)(_unifL)
-	void TPStructR::swap(TPStructR& t) noexcept {
-		BOOST_PP_SEQ_FOR_EACH(TPR_SWAP, t, SEQ_TPR_SWAP)
-	}
 	bool TPStructR::findSetting(const Setting& s) const {
 		auto itr = std::find(_setting.begin(), _setting.end(), s);
 		return itr!=_setting.end();

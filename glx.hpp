@@ -101,8 +101,7 @@ namespace rev {
 			UnifL			_unifL;
 
 		public:
-			TPStructR();
-			TPStructR(TPStructR&& tp);
+			TPStructR() = default;
 			//! エフェクトファイルのパース結果を読み取る
 			TPStructR(const BlockSet& bs, const TPStruct& tech, const TPStruct& pass);
 
