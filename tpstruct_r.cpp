@@ -257,8 +257,7 @@ namespace rev {
 		// シェーダーのリンク処理
 		_prog = mgr_gl.makeProgram(shP[0], shP[1], shP[2]);
 		// OpenGLステート設定リストを形成
-		SettingList sl = dupl.exportSetting();
-		_setting.swap(sl);
+		_setting = dupl.exportSetting();
 	}
 	void TPStructR::ts_onDeviceLost() {
 		D_Assert0(_bInit);
