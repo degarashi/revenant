@@ -11,6 +11,9 @@
 
 namespace rev {
 	using namespace boost::spirit;
+	#define SEQ_BLOCK (attribute)(varying)(uniform)(const)
+	#define PPFUNC_ADD(ign, data, elem) (BOOST_PP_STRINGIZE(elem), BOOST_PP_CAT(elem, data))
+	#define PPFUNC_ENUM(ign, data, elem) BOOST_PP_CAT(elem, data),
 	#define DEF_TYPE(typ, name, seq) struct typ##_ : x3::symbols<unsigned> { \
 			enum TYPE { BOOST_PP_SEQ_FOR_EACH(PPFUNC_ENUM, T, seq) }; \
 			const static char* cs_typeStr[BOOST_PP_SEQ_SIZE(seq)]; \
@@ -21,8 +24,10 @@ namespace rev {
 	// ---------------- GLXシンボルリスト ----------------
 	//! GLSL変数型
 	DEF_TYPE(GLType, "GLSL-ValueType", SEQ_GLTYPE)
+	#define SEQ_INOUT (in)(out)(inout)
 	//! GLSL変数入出力フラグ
 	DEF_TYPE(GLInout, "InOut-Flag", SEQ_INOUT)
+	#undef SEQ_INOUT
 	//! GLSL頂点セマンティクス
 	DEF_TYPE(GLSem, "VertexSemantics", SEQ_VSEM)
 	//! GLSL浮動小数点数精度
@@ -49,6 +54,8 @@ namespace rev {
 				("fill", GL_FILL);
 		}
 	};
+	#define PPFUNC_GLSET_ENUM(ign,data,elem) BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(0,elem), data),
+	#define PPFUNC_GLSET_ADD(ign,data,elem) (BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0,elem)), BOOST_PP_CAT(BOOST_PP_TUPLE_ELEM(0,elem),data))
 	//! 数値指定するタイプの設定項目フラグ
 	struct GLSetting_ : x3::symbols<unsigned> {
 		enum TYPE : unsigned { BOOST_PP_SEQ_FOR_EACH(PPFUNC_GLSET_ENUM, T, SEQ_GLSETTING) };
@@ -58,6 +65,8 @@ namespace rev {
 				BOOST_PP_SEQ_FOR_EACH(PPFUNC_GLSET_ADD, T, SEQ_GLSETTING);
 		}
 	};
+	#undef PPFUNC_GLSET_ENUM
+	#undef PPFUNC_GLSET_ADD
 	//! 設定項目毎に用意したほうがいい？
 	struct GLStencilop_ : x3::symbols<unsigned> {
 		GLStencilop_(): x3::symbols<unsigned>(std::string("StencilOperator")) {
@@ -137,6 +146,9 @@ namespace rev {
 	};
 	//! 変数ブロックタイプ
 	DEF_TYPE(GLBlocktype, "BlockType", SEQ_BLOCK)
+	#undef DEF_TYPE
+	#undef PPFUNC_ADD
+	#undef PPFUNC_ENUM
 
 	extern const GLSetting_ GLSetting;
 	extern const GLBoolsetting_ GLBoolsetting;

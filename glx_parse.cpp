@@ -22,6 +22,7 @@ namespace rev {
 	const GLShadertype_ GLShadertype;
 	const GLBlocktype_ GLBlocktype;
 
+	#define PPFUNC_STR(ign, data, elem) BOOST_PP_STRINGIZE(elem),
 	const char* GLType_::cs_typeStr[] = {
 		BOOST_PP_SEQ_FOR_EACH(PPFUNC_STR, EMPTY, SEQ_GLTYPE)
 	};
@@ -37,6 +38,7 @@ namespace rev {
 	const char* GLBlocktype_::cs_typeStr[] = {
 		BOOST_PP_SEQ_FOR_EACH(PPFUNC_STR, EMPTY, SEQ_BLOCK)
 	};
+	#undef PPFUNC_STR
 
 	// GLX文法のEBNF記述
 	namespace glx_rule {
