@@ -6,70 +6,9 @@
 #include <boost/format.hpp>
 
 namespace rev {
-	// tupleのn番要素以降を列挙
-	#define ENUMTUPLE_FUNC(z,n,data) (BOOST_PP_TUPLE_ELEM(n,data)())
-	#define ENUMTUPLE(n,tup) BOOST_PP_SEQ_ENUM(BOOST_PP_REPEAT_FROM_TO(n, BOOST_PP_TUPLE_SIZE(tup), ENUMTUPLE_FUNC, tup))
-	#define CONCAT_SCOPE(a,b)	a::b
-	#define PPFUNC_GLSET_FUNC(ign,data,elem) [](const ValueSettingR& vs) { vs.action(CONCAT_SCOPE(&IGL, BOOST_PP_TUPLE_ELEM(1,elem)), ENUMTUPLE(2,elem)); },
-	#define PPFUNC_GLSET_NARG(ign,data,elem) BOOST_PP_SUB(BOOST_PP_TUPLE_SIZE(elem), 2),
-	#define PPFUNC_GLSET_NAME(ign,data,elem) BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(0,elem)),
-	const ValueSettingR::VSFunc ValueSettingR::cs_func[] = {
-		BOOST_PP_SEQ_FOR_EACH(PPFUNC_GLSET_FUNC, EMPTY, SEQ_GLSETTING)
-	};
-	const int ValueSettingR::cs_funcNArg[] = {
-		BOOST_PP_SEQ_FOR_EACH(PPFUNC_GLSET_NARG, EMPTY, SEQ_GLSETTING)
-	};
-	const char* ValueSettingR::cs_funcName[] = {
-		BOOST_PP_SEQ_FOR_EACH(PPFUNC_GLSET_NAME, EMPTY, SEQ_GLSETTING)
-	};
-	#undef ENUMTUPLE_FUNC
-	#undef ENUMTUPLE
-	#undef CONCAT_SCOPE
-	#undef PPFUNC_GLSET_FUNC
-	#undef PPFUNC_GLSET_NARG
-	#undef PPFUNC_GLSET_NAME
-
 	GLEffect::EC_FileNotFound::EC_FileNotFound(const std::string& fPath):
 		EC_Base((boost::format("file path: \"%1%\" was not found.") % fPath).str())
 	{}
-
-	// -------------- ValueSettingR --------------
-	ValueSettingR::ValueSettingR(const ValueSetting& s) {
-		func = cs_func[s.type];
-		const int nV = std::min(s.value.size(), countof(value));
-		// 引数の数が合わなかったらエラー
-		const int ArgLength = cs_funcNArg[s.type];
-		if(ArgLength != nV)
-			throw  std::runtime_error((boost::format("amount of argument(s) is not valid(func=%1%, required=%2%, actual=%3%)") % cs_funcName[s.type] % ArgLength % nV).str());
-		for(int i=0 ; i<nV ; i++)
-			value[i] = s.value[i];
-		for(int i=nV ; i<static_cast<int>(countof(value)) ; i++)
-			value[i] = boost::blank();
-	}
-	void ValueSettingR::action() const {
-		func(*this);
-	}
-	bool ValueSettingR::operator == (const ValueSettingR& s) const {
-		for(int i=0 ; i<static_cast<int>(countof(value)) ; i++)
-			if(!(value[i] == s.value[i]))
-				return false;
-		return func == s.func;
-	}
-
-	// -------------- BoolSettingR --------------
-	const BoolSettingR::VBFunc BoolSettingR::cs_func[] = {
-		&IGL::glEnable, &IGL::glDisable
-	};
-	BoolSettingR::BoolSettingR(const BoolSetting& s) {
-		func = cs_func[(s.value) ? 0 : 1];
-		flag = s.type;
-	}
-	void BoolSettingR::action() const {
-		(GL.*func)(flag);
-	}
-	bool BoolSettingR::operator == (const BoolSettingR& s) const {
-		return flag==s.flag && func==s.func;
-	}
 
 	namespace {
 		const std::string cs_rtname[] = {

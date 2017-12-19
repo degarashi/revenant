@@ -8,49 +8,14 @@
 #include "resmgr_app.hpp"
 #include "drawtoken/viewport.hpp"
 #include "glx_const.hpp"
+#include "gl_state.hpp"
 
 namespace rev {
 	void OutputCommentBlock(std::ostream& os, const std::string& msg);
-	//! OpenGLの値設定関数代理クラス
-	struct ValueSettingR {
-		using VSFunc = void (*)(const ValueSettingR&);
-		ValueSetting::ValueT 	value[4];
-		VSFunc					func;
-
-		const static VSFunc cs_func[];
-		const static int cs_funcNArg[];
-		const static char* cs_funcName[];
-
-		explicit ValueSettingR(const ValueSetting& s);
-		void action() const;
-		template <class GF, class T0>
-		void action(GF gf, T0) const {
-			(GL.*gf)(boost::get<T0>(value[0])); }
-		template <class GF, class T0, class T1>
-		void action(GF gf, T0,T1) const {
-			(GL.*gf)(boost::get<T0>(value[0]), boost::get<T1>(value[1])); }
-		template <class GF, class T0, class T1, class T2>
-		void action(GF gf, T0,T1,T2) const {
-			(GL.*gf)(boost::get<T0>(value[0]), boost::get<T1>(value[1]), boost::get<T2>(value[2])); }
-		template <class GF, class T0, class T1, class T2, class T3>
-		void action(GF gf, T0,T1,T2,T3) const {
-			(GL.*gf)(boost::get<T0>(value[0]), boost::get<T1>(value[1]), boost::get<T2>(value[2]), boost::get<T3>(value[3])); }
-
-		bool operator == (const ValueSettingR& s) const;
-	};
-	//! OpenGLのBool値設定クラス
-	struct BoolSettingR {
-		using VBFunc = decltype(&IGL::glEnable);
-		GLenum		flag;
-		VBFunc		func;
-
-		const static VBFunc cs_func[2];
-
-		explicit BoolSettingR(const BoolSetting& s);
-		void action() const;
-		bool operator == (const BoolSettingR& s) const;
-	};
-
+	using GLState_SP = std::shared_ptr<GLState>;
+	using GLState_SPV = std::vector<GLState_SP>;
+	GLState_SP MakeValueSetting(const ValueSetting& s);
+	GLState_SP MakeBoolSetting(const BoolSetting& s);
 	//! [UniformId -> Token]
 	using UniMap = std::unordered_map<GLint, draw::TokenBuffer*>;
 	using UnifPool = spi::ObjectPool<draw::TokenBuffer>;
@@ -71,8 +36,6 @@ namespace rev {
 	class TPStructR {
 		public:
 			// OpenGLのレンダリング設定
-			using Setting = boost::variant<BoolSettingR, ValueSettingR>;
-			using SettingList = std::vector<Setting>;
 			using UniIdSet = std::unordered_set<GLint>;
 			using MacroMap = std::unordered_map<std::string, std::string>;
 			using AttrL = std::vector<const AttrEntry*>;
@@ -87,7 +50,7 @@ namespace rev {
 			VSemAttrV		_vattr;
 
 			//! Setting: Uniformデフォルト値(texture, vector, float, bool)設定を含む。GLDeviceの設定クラスリスト
-			SettingList		_setting;
+			GLState_SPV		_setting;
 
 			UniIdSet		_noDefValue;	//!< Uniform非デフォルト値エントリIdセット (主にユーザーの入力チェック用)
 			UniMap			_defaultValue;	//!< Uniformデフォルト値と対応するId
@@ -110,7 +73,7 @@ namespace rev {
 			void ts_onDeviceLost();
 			void ts_onDeviceReset(const IEffect& e);
 
-			bool findSetting(const Setting& s) const;
+			bool findSetting(const GLState& s) const;
 			void swap(TPStructR& tp) noexcept;
 
 			const UniMap& getUniformDefault() const noexcept;
@@ -121,7 +84,7 @@ namespace rev {
 			//! OpenGLに設定を適用
 			void applySetting() const;
 			//! 設定差分を求める
-			static SettingList CalcDiff(const TPStructR& from, const TPStructR& to);
+			static GLState_SPV CalcDiff(const TPStructR& from, const TPStructR& to);
 	};
 	#define mgr_block (::rev::FxBlock::ref())
 	class FxBlock : public ResMgrApp<GLXStruct>, public spi::Singleton<FxBlock> {

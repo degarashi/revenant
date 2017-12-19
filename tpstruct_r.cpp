@@ -98,40 +98,39 @@ namespace rev {
 					}
 					return mm;
 				}
-				TPStructR::SettingList exportSetting() const {
-					std::vector<ValueSettingR> vsL;
-					std::vector<BoolSettingR> bsL;
+				GLState_SPV exportSetting() const {
+					struct Hash {
+						std::size_t operator()(const GLState_SP& s) const noexcept {
+							return s->getHash();
+						}
+					};
+					struct Equal {
+						bool operator()(const GLState_SP& s0, const GLState_SP& s1) const noexcept {
+							return *s0 == *s1;
+						}
+					};
+					std::unordered_set<GLState_SP, Hash, Equal> set;
+					const auto ovr = [&set](GLState_SP&& sp){
+						const auto itr = set.find(sp);
+						if(itr != set.end())
+							set.erase(itr);
+						set.emplace(std::move(sp));
+					};
+
 					for(auto itr=_tpList.rbegin() ; itr!=_tpList.rend() ; itr++) {
 						const TPStruct* tp = (*itr);
 						// フラグ設定エントリ
 						for(auto& bs : tp->bsL) {
-							// 実行時形式に変換してからリストに追加
-							BoolSettingR bsr(bs);
-							auto itr=std::find(bsL.begin(), bsL.end(), bsr);
-							if(itr == bsL.end()) {
-								// 新規に追加
-								bsL.push_back(bsr);
-							} else {
-								// 既存の項目を上書き
-								*itr = bsr;
-							}
+							ovr(MakeBoolSetting(bs));
 						}
-
 						// 値設定エントリ
 						for(auto& vs : tp->vsL) {
-							ValueSettingR vsr(vs);
-							auto itr=std::find(vsL.begin(), vsL.end(), vsr);
-							if(itr == vsL.end())
-								vsL.push_back(vsr);
-							else
-								*itr = vsr;
+							ovr(MakeValueSetting(vs));
 						}
 					}
-					TPStructR::SettingList ret;
-					for(auto& b : bsL)
-						ret.push_back(b);
-					for(auto& v : vsL)
-						ret.push_back(v);
+					GLState_SPV ret;
+					for(auto& s : set)
+						ret.emplace_back(s);
 					return ret;
 				}
 		};
@@ -145,16 +144,19 @@ namespace rev {
 
 	// ----------------- TPStructR -----------------
 	UnifPool TPStructR::s_unifPool(DefaultUnifPoolSize);
-	bool TPStructR::findSetting(const Setting& s) const {
-		auto itr = std::find(_setting.begin(), _setting.end(), s);
-		return itr!=_setting.end();
+	bool TPStructR::findSetting(const GLState& s) const {
+		return std::find_if(_setting.cbegin(), _setting.cend(),
+			[&s](const auto& s1){
+				return s == *s1;
+			}
+		) != _setting.cend();
 	}
-	TPStructR::SettingList TPStructR::CalcDiff(const TPStructR& from, const TPStructR& to) {
+	GLState_SPV TPStructR::CalcDiff(const TPStructR& from, const TPStructR& to) {
 		// toと同じ設定がfrom側にあればスキップ
 		// fromに無かったり、異なっていればエントリに加える
-		SettingList ret;
+		GLState_SPV ret;
 		for(auto& s : to._setting) {
-			if(!from.findSetting(s)) {
+			if(!from.findSetting(*s)) {
 				ret.push_back(s);
 			}
 		}
@@ -363,16 +365,8 @@ namespace rev {
 	}
 
 	void TPStructR::applySetting() const {
-		struct Visitor : boost::static_visitor<> {
-			void operator()(const BoolSettingR& bs) const {
-				bs.action();
-			}
-			void operator()(const ValueSettingR& vs) const {
-				vs.action();
-			}
-		};
 		for(auto& st : _setting)
-			boost::apply_visitor(Visitor(), st);
+			st->apply();
 	}
 	const UniMap& TPStructR::getUniformDefault() const noexcept {
 		return _defaultValue;
