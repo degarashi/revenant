@@ -77,7 +77,7 @@ namespace rev {
 			void swap(TPStructR& tp) noexcept;
 
 			const UniMap& getUniformDefault() const noexcept;
-			const UniIdSet& getUniformEntries() const noexcept;
+			const UniIdSet& getRequiredUniformEntries() const noexcept;
 			const VSemAttrV& getVAttr() const noexcept;
 
 			const HProg& getProgram() const noexcept;

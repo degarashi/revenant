@@ -371,7 +371,7 @@ namespace rev {
 	const UniMap& TPStructR::getUniformDefault() const noexcept {
 		return _defaultValue;
 	}
-	const TPStructR::UniIdSet& TPStructR::getUniformEntries() const noexcept {
+	const TPStructR::UniIdSet& TPStructR::getRequiredUniformEntries() const noexcept {
 		return _noDefValue;
 	}
 	const HProg& TPStructR::getProgram() const noexcept {
