@@ -85,9 +85,8 @@ namespace rev {
 		return FindBlock<CodeStruct>(*this, [](auto&& str) { return std::cref(str.codeM); }, s);
 	}
 
-	// IEffect::GlxId IEffect::s_myId;
-	draw::TokenBuffer* MakeUniformTokenBuffer(UniMap& um, UnifPool& pool, GLint id) {
-		auto itr = um.find(id);
+	draw::TokenBuffer* MakeUniformTokenBuffer(UniMap& um, UnifPool& pool, const GLint id) {
+		const auto itr = um.find(id);
 		if(itr == um.end()) {
 			return um[id] = pool.allocate();
 		}
