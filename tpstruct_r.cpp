@@ -287,10 +287,19 @@ namespace rev {
 			}
 
 			void operator()(const std::vector<float>& v) {
-				if(v.size() == 3)
-					_addResult(frea::Vec3{v[0],v[1],v[2]});
-				else
-					_addResult(frea::Vec4{v[0],v[1],v[2],v[3]});
+				switch(v.size()) {
+					case 2:
+						_addResult(frea::Vec2{v[0], v[1]});
+						break;
+					case 3:
+						_addResult(frea::Vec3{v[0],v[1],v[2]});
+						break;
+					case 4:
+						_addResult(frea::Vec4{v[0],v[1],v[2],v[3]});
+						break;
+					default:
+						Assert0(false);
+				}
 			}
 			template <class T>
 			void operator()(const T& v) {
