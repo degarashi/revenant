@@ -354,9 +354,10 @@ namespace rev {
 		visitor.pgId = _prog->getProgramId();
 		for(const auto* p : _unifL) {
 			if(visitor.setKey(p->name)) {
-				if(p->defStr) {
+				const auto& defVal = p->defaultValue;
+				if(defVal) {
 					// 変数名をIdに変換
-					boost::apply_visitor(visitor, *p->defStr);
+					boost::apply_visitor(visitor, *defVal);
 				} else
 					_noDefValue.insert(visitor.uniId);
 			}

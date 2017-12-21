@@ -182,8 +182,9 @@ namespace rev {
 	std::ostream& operator << (std::ostream& os, const VaryEntry& e);
 	//! Uniform宣言エントリ
 	struct UnifEntry : EntryBase {
-		boost::optional<int>	arraySize;
-		boost::optional<boost::variant<std::vector<float>, float, bool>>	defStr;
+		boost::optional<int>		arraySize;
+		using UnifValue = boost::variant<std::vector<float>, float, bool>;
+		boost::optional<UnifValue>	defaultValue;
 	};
 	std::ostream& operator << (std::ostream& os, const UnifEntry& e);
 	//! Const宣言エントリ
@@ -351,7 +352,7 @@ namespace rev {
 			BOOST_FUSION_ADAPT_STRUCT(name, BOOST_PP_SEQ_FOR_EACH(TRANSFORM_STRUCT_MEMBER, name, members))
 FUSION_ADAPT_STRUCT_AUTO(rev::AttrEntry, (prec)(type)(name)(sem)(index))
 FUSION_ADAPT_STRUCT_AUTO(rev::VaryEntry, (prec)(type)(name)(arraySize))
-FUSION_ADAPT_STRUCT_AUTO(rev::UnifEntry, (prec)(type)(name)(arraySize)(defStr))
+FUSION_ADAPT_STRUCT_AUTO(rev::UnifEntry, (prec)(type)(name)(arraySize)(defaultValue))
 FUSION_ADAPT_STRUCT_AUTO(rev::ConstEntry, (prec)(type)(name)(defVal))
 FUSION_ADAPT_STRUCT_AUTO(rev::BoolSetting, (type)(value))
 FUSION_ADAPT_STRUCT_AUTO(rev::ValueSetting, (type)(value))
