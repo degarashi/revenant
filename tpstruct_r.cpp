@@ -275,7 +275,7 @@ namespace rev {
 			bool setKey(const std::string& key) {
 				uniId = GL.glGetUniformLocation(pgId, key.c_str());
 				// ここでキーが見つからない = uniformブロックで宣言されているがGLSLコードで使われない場合なのでエラーではない
-				// Expect(uniId>=0, "Uniform argument \"%1%\" not found", key);
+				D_Expect(uniId>=0, "Uniform argument \"%s\" not found", key.c_str());
 				return uniId >= 0;
 			}
 			template <class T>
