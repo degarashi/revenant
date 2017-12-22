@@ -100,7 +100,7 @@ namespace rev {
 			))
 		>
 		void _makeUniformToken(draw::TokenDst& dst, const GLint id, const V* v, const int n, const bool) const {
-			MakeUniformToken<draw::Unif_Vec<float, V::size>>(dst, id, id, v, n);
+			MakeUniformToken<draw::Unif_Vec<typename V::value_t, V::size>>(dst, id, id, v, n);
 		}
 		//! 行列Uniform変数(非正方形)
 		template <
@@ -112,7 +112,7 @@ namespace rev {
 		>
 		void _makeUniformToken(draw::TokenDst& dst, const GLint id, const M* m, const int n, const bool bT) const {
 			constexpr int DIM = lubee::Arithmetic<M::dim_m, M::dim_n>::great;
-			std::vector<frea::Mat_t<float,DIM,DIM,false>> tm(n);
+			std::vector<frea::Mat_t<typename M::value_t,DIM,DIM,false>> tm(n);
 			for(int i=0 ; i<n ; i++)
 				tm[i] = m[i].template convert<DIM,DIM>();
 			_makeUniformToken(dst, id, tm.data(), n, bT);
@@ -126,7 +126,7 @@ namespace rev {
 			))
 		>
 		void _makeUniformToken(draw::TokenDst& dst, const GLint id, const M* m, const int n, const bool bT) const {
-			MakeUniformToken<draw::Unif_Mat<float, M::dim_m>>(dst, id, id, m, n, bT);
+			MakeUniformToken<draw::Unif_Mat<typename M::value_t, M::dim_m>>(dst, id, id, m, n, bT);
 		}
 
 		virtual void _makeUniformToken(draw::TokenDst& dst, GLint id, const bool* b, int n, bool) const = 0;
