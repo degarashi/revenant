@@ -381,5 +381,12 @@ namespace rev {
 				throw;
 			}
 		}
+		// ------------- ShStruct -------------
+		const std::string& ShStruct::getShaderString() const {
+			if(info_str.empty()) {
+				info_str = '{' + info + '}';
+			}
+			return info_str;
+		}
 	}
 }

@@ -431,14 +431,4 @@ namespace rev {
 		return _diffCount;
 	}
 	void GLEffect::_prepareUniforms() {}
-
-	namespace parse {
-		// ------------- ShStruct -------------
-		const std::string& ShStruct::getShaderString() const {
-			if(info_str.empty()) {
-				info_str = '{' + info + '}';
-			}
-			return info_str;
-		}
-	}
 }
