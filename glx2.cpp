@@ -93,9 +93,6 @@ namespace rev {
 		tps = spi::none;
 		pTexIndex = nullptr;
 		// セットされているUniform変数を未セット状態にする
-		auto& pool = unif_pool;
-		for(auto& u : uniMap)
-			pool.destroy(u.second);
 		uniMap.clear();
 	}
 	void GLEffect::Current::setTech(const GLint idTech, const bool bDefault) {
@@ -122,12 +119,7 @@ namespace rev {
 
 			// デフォルト値読み込み
 			if(bDefaultParam) {
-				auto& def = tps->getUniformDefault();
-				auto& pool = unif_pool;
-				for(auto& d : def) {
-					auto* buff = MakeUniformTokenBuffer(uniMap, pool, d.first);
-					d.second->clone(*buff);
-				}
+				uniMap.copyFrom(tps->getUniformDefault());
 			}
 			// 各種セッティングをするTokenをリストに追加
 			tps->getProgram()->getDrawToken(tokenML);
@@ -160,13 +152,8 @@ namespace rev {
 		outputFramebuffer();
 		// set uniform value
 		if(!uniMap.empty()) {
-			// 中身shared_ptrなのでコピーする
-			auto& pool = unif_pool;
-			for(auto& u : uniMap) {
-				u.second->takeout(tokenML);
-				pool.destroy(u.second);
-			}
-			uniMap.clear();
+			// 中身shared_ptrなのでそのまま移動
+			uniMap.moveTo(tokenML);
 		}
 		// set VBuffer(VDecl)
 		vertex.extractData(vs, tps->getVAttr());
@@ -269,7 +256,7 @@ namespace rev {
 		return HProg();
 	}
 	draw::TokenBuffer& GLEffect::_makeUniformTokenBuffer(GLint id) {
-		return *MakeUniformTokenBuffer(_current.uniMap, unif_pool, id);
+		return *_current.uniMap.makeTokenBuffer(id);
 	}
 	void GLEffect::clearFramebuffer(const draw::ClearParam& param) {
 		_current.outputFramebuffer();

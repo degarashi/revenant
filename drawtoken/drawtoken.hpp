@@ -6,9 +6,11 @@
 
 namespace rev {
 	namespace draw {
-		/*	getDrawTokenの役割:
+		/*
+			getDrawTokenの役割:
 			描画時にしか必要ないAPI呼び出しを纏める
-			ただしDrawThreadからはリソースハンドルの参照が出来ないのでOpenGLの番号をそのまま格納 */
+			ただしDrawThreadからはリソースハンドルの参照が出来ないのでOpenGLの番号をそのまま格納
+		*/
 		class TokenMemory {
 			private:
 				using Buffer = std::vector<uint8_t>;
@@ -49,9 +51,11 @@ namespace rev {
 		}
 		template <class T>
 		struct TokenT : Token {
+			// 引数のバッファへ中身をcopyする
 			void clone(TokenDst& dst) const override {
 				new(dst.allocate_memory(getSize(), CalcTokenOffset<T>())) T(static_cast<const T&>(*this));
 			}
+			// 引数のバッファへ中身をmoveする
 			void takeout(TokenDst& dst) override {
 				new(dst.allocate_memory(getSize(), CalcTokenOffset<T>())) T(std::move(static_cast<T&>(*this)));
 			}
@@ -60,9 +64,12 @@ namespace rev {
 			}
 		};
 
+		// (全てのトークンサイズは128byte以下と仮定)
+		constexpr int MaxTokenSize = 128;
+		// トークン1つ分を格納
 		class TokenBuffer : public TokenDst, public Token {
 			private:
-				using Data = std::array<uint8_t, 128>;
+				using Data = std::array<uint8_t, MaxTokenSize>;
 				Data		_data;
 				intptr_t	_offset;
 				bool		_bInit;
@@ -78,7 +85,7 @@ namespace rev {
 				void clone(TokenDst& dst) const override;
 				std::size_t getSize() const override;
 		};
-		//! 複数のTokenMmoryを統合(TokenMultiLane)
+		//! 複数のTokenMemoryを統合(TokenMultiLane)
 		class TokenML : public TokenDst {
 			private:
 				using TokenML_t = std::list<TokenMemory>;

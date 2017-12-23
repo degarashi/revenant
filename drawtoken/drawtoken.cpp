@@ -6,7 +6,7 @@ namespace rev {
 		// ------------------- TokenMemory -------------------
 		namespace {
 			template <class F>
-			void Proc(uint8_t* data, std::size_t used, F&& f) {
+			void Iterate(uint8_t* data, const std::size_t used, F&& f) {
 				std::size_t cur = 0;
 				while(cur < used) {
 					auto ptr = reinterpret_cast<intptr_t>(data + cur);
@@ -24,11 +24,11 @@ namespace rev {
 			_used(0)
 		{}
 		TokenMemory::~TokenMemory() {
-			Proc(_buffer.data(), _used, [](auto* token){
+			Iterate(_buffer.data(), _used, [](auto* token){
 				token->~Token();
 			});
 		}
-		void* TokenMemory::getMemory(std::size_t s, intptr_t ofs) {
+		void* TokenMemory::getMemory(const std::size_t s, const intptr_t ofs) {
 			D_Assert0(ofs >= 0);
 			if(_buffer.size() < s+_used+sizeof(intptr_t))
 				return nullptr;
@@ -39,7 +39,7 @@ namespace rev {
 			return reinterpret_cast<void*>(ptr);
 		}
 		void TokenMemory::exec() {
-			Proc(_buffer.data(), _used, [](auto* token){
+			Iterate(_buffer.data(), _used, [](auto* token){
 				token->exec();
 			});
 		}
@@ -54,12 +54,17 @@ namespace rev {
 		}
 		TokenMemory& TokenMemory::operator = (TokenMemory&& t) noexcept {
 			_buffer = std::move(t._buffer);
+			_used = t._used;
 			t.clear();
 			return *this;
 		}
 		// ------------------- TokenBuffer -------------------
-		TokenBuffer::TokenBuffer(): _bInit(false) {}
-		TokenBuffer::TokenBuffer(TokenBuffer&& t): TokenBuffer() {
+		TokenBuffer::TokenBuffer():
+			_bInit(false)
+		{}
+		TokenBuffer::TokenBuffer(TokenBuffer&& t):
+			TokenBuffer()
+		{
 			if(t._bInit)
 				t.asToken()->takeout(*this);
 			t._bInit = false;
@@ -79,7 +84,7 @@ namespace rev {
 			return const_cast<TokenBuffer*>(this)->asToken();
 		}
 #ifdef DEBUG
-		void* TokenBuffer::allocate_memory(std::size_t s, const intptr_t ofs) {
+		void* TokenBuffer::allocate_memory(const std::size_t s, const intptr_t ofs) {
 #else
 		void* TokenBuffer::allocate_memory(std::size_t /*s*/, const intptr_t ofs) {
 #endif
@@ -105,8 +110,10 @@ namespace rev {
 			return asToken()->getSize();
 		}
 		// ------------------- TokenML -------------------
-		TokenML::TokenML(std::size_t s): _laneSize(s) {}
-		void* TokenML::allocate_memory(std::size_t s, intptr_t ofs) {
+		TokenML::TokenML(const std::size_t s):
+			_laneSize(s)
+		{}
+		void* TokenML::allocate_memory(const std::size_t s, const intptr_t ofs) {
 			if(_buffer.empty())
 				_buffer.emplace_back(_laneSize);
 			else {
@@ -118,7 +125,7 @@ namespace rev {
 			D_Assert0(ret);
 			return ret;
 		}
-		void TokenML::setLaneSize(std::size_t s) {
+		void TokenML::setLaneSize(const std::size_t s) {
 			_laneSize = s;
 		}
 		void TokenML::exec() {

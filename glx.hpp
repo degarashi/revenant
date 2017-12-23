@@ -24,10 +24,20 @@ namespace rev {
 	using GLState_SPV = std::vector<GLState_SP>;
 	GLState_SP MakeValueSetting(const parse::ValueSetting& s);
 	GLState_SP MakeBoolSetting(const parse::BoolSetting& s);
-	//! [UniformId -> Token]
-	using UniMap = std::unordered_map<GLint, draw::TokenBuffer*>;
-	using UnifPool = spi::ObjectPool<draw::TokenBuffer>;
-	draw::TokenBuffer* MakeUniformTokenBuffer(UniMap& um, UnifPool& pool, GLint id);
+
+	class UniformMap {
+		private:
+			//! [UniformId -> Token]
+			using Map = std::unordered_map<GLint, draw::TokenBuffer*>;
+			Map		_map;
+		public:
+			// umに既にidが登録されてないかチェックし、されていればそれを、無ければpoolからメモリを確保し返す
+			draw::TokenBuffer* makeTokenBuffer(GLint id);
+			void copyFrom(const UniformMap& other);
+			void moveTo(draw::TokenML& ml);
+			void clear();
+			bool empty() const noexcept;
+	};
 
 	//! Tech | Pass の分だけ作成
 	class TPStructR {
@@ -51,7 +61,7 @@ namespace rev {
 			GLState_SPV		_setting;
 
 			UniIdSet		_noDefValue;	//!< Uniform非デフォルト値エントリIdセット (主にユーザーの入力チェック用)
-			UniMap			_defaultValue;	//!< Uniformデフォルト値と対応するId
+			UniformMap		_defaultValue;	//!< Uniformデフォルト値と対応するId
 			bool			_bInit = false;	//!< lost/resetのチェック用 (Debug)
 
 			// ----------- GLXStructから読んだデータ群 -----------
@@ -72,7 +82,7 @@ namespace rev {
 
 			bool hasSetting(const GLState& s) const;
 
-			const UniMap& getUniformDefault() const noexcept;
+			const UniformMap& getUniformDefault() const noexcept;
 			const UniIdSet& getRequiredUniformEntries() const noexcept;
 			const VSemAttrV& getVAttr() const noexcept;
 
@@ -143,7 +153,7 @@ namespace rev {
 				TexIndex*			pTexIndex;
 				bool				bDefaultParam;	//!< Tech切替時、trueならデフォルト値読み込み
 				TPRef				tps;			//!< 現在使用中のTech
-				UniMap				uniMap;			//!< 現在設定中のUniform
+				UniformMap			uniMap;			//!< 現在設定中のUniform
 				draw::TokenML		tokenML;
 
 				void reset();

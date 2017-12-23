@@ -302,20 +302,17 @@ namespace rev {
 		// OpenGLのリソースが絡んでる変数を消去
 		_vattr.clear();
 		_noDefValue.clear();
-
-		auto& pool = unif_pool;
-		for(auto& p : _defaultValue)
-			pool.destroy(p.second);
 		_defaultValue.clear();
 	}
 	namespace {
 		struct Visitor : boost::static_visitor<> {
-			GLuint		pgId;
-			GLint		uniId;
-			UniMap		result;
-			const IEffect&	glx;
-			UnifPool&	pool;
-			Visitor(const IEffect& g, UnifPool& p): glx(g), pool(p) {}
+			GLuint				pgId;
+			GLint				uniId;
+			UniformMap			result;
+			const IEffect&		glx;
+			Visitor(const IEffect& g):
+				glx(g)
+			{}
 
 			bool setKey(const std::string& key) {
 				uniId = GL.glGetUniformLocation(pgId, key.c_str());
@@ -326,7 +323,7 @@ namespace rev {
 			template <class T, ENABLE_IF(frea::is_vector<T>{})>
 			void operator()(const T& t) {
 				if(uniId >= 0) {
-					auto* buff = MakeUniformTokenBuffer(result, pool, uniId);
+					auto* buff = result.makeTokenBuffer(uniId);
 					glx._makeUniformToken(*buff, uniId, &t, 1, false);
 				}
 			}
@@ -384,7 +381,7 @@ namespace rev {
 		}
 
 		// Uniform変数にデフォルト値がセットしてある物をリストアップ
-		Visitor visitor(e, unif_pool);
+		Visitor visitor(e);
 		visitor.pgId = _prog->getProgramId();
 		for(const auto* p : _unifL) {
 			if(visitor.setKey(p->name)) {
@@ -396,14 +393,14 @@ namespace rev {
 					_noDefValue.insert(visitor.uniId);
 			}
 		}
-		_defaultValue.swap(visitor.result);
+		_defaultValue = std::move(visitor.result);
 	}
 
 	void TPStructR::applySetting() const {
 		for(auto& st : _setting)
 			st->apply();
 	}
-	const UniMap& TPStructR::getUniformDefault() const noexcept {
+	const UniformMap& TPStructR::getUniformDefault() const noexcept {
 		return _defaultValue;
 	}
 	const TPStructR::UniIdSet& TPStructR::getRequiredUniformEntries() const noexcept {
