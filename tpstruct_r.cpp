@@ -9,14 +9,14 @@ namespace rev {
 	namespace {
 		class TPSDupl {
 			private:
-				using TPList = std::vector<const TPStruct*>;
-				const BlockSet& _bset;
-				const TPStruct &_tTech, &_tPass;
+				using TPList = std::vector<const parse::TPStruct*>;
+				const parse::BlockSet& _bset;
+				const parse::TPStruct &_tTech, &_tPass;
 				//! 優先度順に並べたTPStructのポインタリスト [Pass][Tech][Tech(Base0)][Tech(Base1)]...
 				TPList _tpList;
 
 				//! Techの継承元Techをリストアップ
-				void _listupBlocks(TPList& dst, const TPStruct* tp) const {
+				void _listupBlocks(TPList& dst, const parse::TPStruct* tp) const {
 					dst.push_back(tp);
 					for(auto& name : tp->derive) {
 						auto op = _bset.findTechPass(name);
@@ -37,7 +37,7 @@ namespace rev {
 						dst.push_back(attr);
 				}
 			public:
-				TPSDupl(const BlockSet& bs, const TPStruct& tech, const TPStruct& pass):
+				TPSDupl(const parse::BlockSet& bs, const parse::TPStruct& tech, const parse::TPStruct& pass):
 					_bset(bs),
 					_tTech(tech),
 					_tPass(pass)
@@ -54,7 +54,7 @@ namespace rev {
 					std::vector<const ST*> tmp, tmp2;
 					// 配列末尾から処理をする = Pass, Tech, TechBase... の順
 					for(auto itr=_tpList.rbegin() ; itr!=_tpList.rend() ; itr++) {
-						const TPStruct* tp = (*itr);
+						const parse::TPStruct* tp = (*itr);
 						// ブロックは順方向で操作 ( Block = A,B,C ならAが優先 )
 						for(auto& blk : tp->blkL) {
 							if(blk.type == blockId) {
@@ -118,7 +118,7 @@ namespace rev {
 					};
 
 					for(auto itr=_tpList.rbegin() ; itr!=_tpList.rend() ; itr++) {
-						const TPStruct* tp = (*itr);
+						const parse::TPStruct* tp = (*itr);
 						// フラグ設定エントリ
 						for(auto& bs : tp->bsL) {
 							ovr(MakeBoolSetting(bs));
@@ -164,22 +164,22 @@ namespace rev {
 	}
 	namespace {
 		struct ArgVisitor : boost::static_visitor<> {
-			std::ostream&	_os;
-			const ArgItem*	_arg;
-			ArgVisitor(std::ostream& os, const ArgItem* arg):
+			std::ostream&			_os;
+			const parse::ArgItem*	_arg;
+			ArgVisitor(std::ostream& os, const parse::ArgItem* arg):
 				_os(os),
 				_arg(arg)
 			{}
 
 			void _outputArgL() const {
-				_os << GLType_::cs_typeStr[_arg->type] << ' ' << _arg->name;
+				_os << parse::GLType_::cs_typeStr[_arg->type] << ' ' << _arg->name;
 			}
 			template <class T, ENABLE_IF(frea::is_vector<T>{})>
 			void _outputArgR(const T& t) const {
 				if(T::size == 1)
 					_outputArgR(t[0]);
 				else {
-					_os << '=' << GLType_::cs_typeStr[_arg->type] << '(';
+					_os << '=' << parse::GLType_::cs_typeStr[_arg->type] << '(';
 					for(int i=0 ; i<T::size-1 ; i++)
 						_os << t[i] << ',';
 					_os << t[T::size-1] << ");" << std::endl;
@@ -196,8 +196,8 @@ namespace rev {
 			}
 		};
 	}
-	TPStructR::TPStructR(const BlockSet& bs, const TPStruct& tech, const TPStruct& pass) {
-		const ShSetting* selectSh[ShType::_Num] = {};
+	TPStructR::TPStructR(const parse::BlockSet& bs, const parse::TPStruct& tech, const parse::TPStruct& pass) {
+		const parse::ShSetting* selectSh[ShType::_Num] = {};
 		// PassかTechからシェーダー名を取ってくる
 		for(auto& a : tech.shL)
 			selectSh[a.type] = &a;
@@ -228,7 +228,8 @@ namespace rev {
 			}
 			if(i==ShType::Vertex) {
 				// Attribute定義は頂点シェーダの時だけ出力
-				_attrL = dupl.exportEntries<AttrStruct,AttrEntry>(GLBlocktype_::attributeT,
+				_attrL = dupl.exportEntries<parse::AttrStruct,parse::AttrEntry>(
+						parse::GLBlocktype_::attributeT,
 						[](auto& bs, auto& name) -> decltype(auto) {
 							return bs.findAttribute(name);
 						});
@@ -236,19 +237,22 @@ namespace rev {
 			}
 			// それぞれ変数ブロックをGLSLソースに出力
 			// :Varying
-			_varyL = dupl.exportEntries<VaryStruct,VaryEntry>(GLBlocktype_::varyingT,
+			_varyL = dupl.exportEntries<parse::VaryStruct,parse::VaryEntry>(
+					parse::GLBlocktype_::varyingT,
 					[](auto& bs, auto& name) -> decltype(auto) {
 						return bs.findVarying(name);
 					});
 			OutputS(ss, _varyL);
 			// :Const
-			_constL = dupl.exportEntries<ConstStruct,ConstEntry>(GLBlocktype_::constT,
+			_constL = dupl.exportEntries<parse::ConstStruct,parse::ConstEntry>(
+					parse::GLBlocktype_::constT,
 					[](auto& bs, auto& name) -> decltype(auto) {
 						return bs.findConst(name);
 					});
 			OutputS(ss, _constL);
 			// :Uniform
-			_unifL = dupl.exportEntries<UnifStruct,UnifEntry>(GLBlocktype_::uniformT,
+			_unifL = dupl.exportEntries<parse::UnifStruct,parse::UnifEntry>(
+					parse::GLBlocktype_::uniformT,
 					[](auto& bs, auto& name) -> decltype(auto) {
 						return bs.findUniform(name);
 					});
@@ -361,7 +365,7 @@ namespace rev {
 				uc.emplace_back(UniqueChk{a.attrId, sem, name});
 			} else {
 				// 該当する変数が見付からない旨の警告を出す(もしかしたらシェーダー内で使ってないだけかもしれない)
-				D_Expect(false, R"(vertex attribute "%s[%s]" not found)", name, GLSem_::cs_typeStr[p->sem]);
+				D_Expect(false, R"(vertex attribute "%s[%s]" not found)", name, parse::GLSem_::cs_typeStr[p->sem]);
 			}
 		}
 		{
@@ -373,7 +377,7 @@ namespace rev {
 					(
 						 boost::format("duplication of vertex semantics \"%1% : %2%\"")
 						 % itr->name
-						 % GLSem_::cs_typeStr[itr->sem]
+						 % parse::GLSem_::cs_typeStr[itr->sem]
 					).str()
 				);
 			}

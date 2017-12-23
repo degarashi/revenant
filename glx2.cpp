@@ -432,11 +432,13 @@ namespace rev {
 	}
 	void GLEffect::_prepareUniforms() {}
 
-	// ------------- ShStruct -------------
-	const std::string& ShStruct::getShaderString() const {
-		if(info_str.empty()) {
-			info_str = '{' + info + '}';
+	namespace parse {
+		// ------------- ShStruct -------------
+		const std::string& ShStruct::getShaderString() const {
+			if(info_str.empty()) {
+				info_str = '{' + info + '}';
+			}
+			return info_str;
 		}
-		return info_str;
 	}
 }

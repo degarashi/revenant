@@ -29,7 +29,9 @@ namespace rev {
 	class SoundMgr;
 	class FontFamily;
 	class FontGen;
-	class FxBlock;
+	namespace parse {
+		class FxBlock;
+	}
 	class ObjMgr;
 	class SceneMgr;
 	//! メインスレッド
@@ -60,7 +62,7 @@ namespace rev {
 				SPtr<RWMgr>					rwm;
 				SPtr<FontFamily>			font;
 				SPtr<FontGen>				fgen;
-				SPtr<FxBlock>				block;
+				SPtr<parse::FxBlock>		block;
 				SPtr<ObjMgr>				obj;
 				SPtr<SceneMgr>				scene;
 			};

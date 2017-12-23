@@ -41,7 +41,7 @@ namespace rev {
 		m.fgen = std::make_shared<FontGen>(lubee::PowSize(512,512));
 		m.snd = std::make_shared<SoundMgr>(44100);
 		m.snd->makeCurrent();
-		m.block = std::make_shared<FxBlock>();
+		m.block = std::make_shared<parse::FxBlock>();
 		m.obj = std::make_shared<ObjMgr>();
 		m.scene = std::make_shared<SceneMgr>();
 	}

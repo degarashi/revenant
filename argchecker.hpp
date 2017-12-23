@@ -6,14 +6,14 @@ namespace rev {
 	//! 引数の型チェック
 	class ArgChecker : public boost::static_visitor<> {
 		private:
-			using ArgItemV = std::vector<ArgItem>;
+			using ArgItemV = std::vector<parse::ArgItem>;
 			const ArgItemV&		_arg;
 			const std::string&	_shName;
 			int					_cursor;
 			static bool _TypeCheck(const int from, const int to);
-			static GLXValue::Type _Detect(float);
-			static GLXValue::Type _Detect(int32_t);
-			static GLXValue::Type _Detect(bool);
+			static parse::Value::Type _Detect(float);
+			static parse::Value::Type _Detect(int32_t);
+			static parse::Value::Type _Detect(bool);
 
 		public:
 			ArgChecker(const std::string& shName, const ArgItemV& arg);
@@ -24,7 +24,7 @@ namespace rev {
 					throw GLE_InvalidArgument(_shName, "too many arguments");
 
 				const auto& arg = _arg[_cursor];
-				const auto& info = GLXValue_info[arg.type];
+				const auto& info = parse::Value_info[arg.type];
 				++_cursor;
 				// 型が違っていたらエラー
 				if(!_TypeCheck(_Detect(v[0]), info.type))

@@ -9,20 +9,20 @@ namespace rev {
 		_shName(shName),
 		_cursor(0)
 	{}
-	GLXValue::Type ArgChecker::_Detect(float) {
-		return GLXValue::Type::Float;
+	parse::Value::Type ArgChecker::_Detect(float) {
+		return parse::Value::Type::Float;
 	}
-	GLXValue::Type ArgChecker::_Detect(int32_t) {
-		return GLXValue::Type::Int;
+	parse::Value::Type ArgChecker::_Detect(int32_t) {
+		return parse::Value::Type::Int;
 	}
-	GLXValue::Type ArgChecker::_Detect(bool) {
-		return GLXValue::Type::Bool;
+	parse::Value::Type ArgChecker::_Detect(bool) {
+		return parse::Value::Type::Bool;
 	}
 	bool ArgChecker::_TypeCheck(const int from, const int to) {
 		if(from == to)
 			return true;
-		if(from == GLXValue::Type::Int &&
-			to == GLXValue::Type::Float)
+		if(from == parse::Value::Type::Int &&
+			to == parse::Value::Type::Float)
 			return true;
 		return false;
 	}

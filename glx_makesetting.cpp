@@ -37,7 +37,7 @@ namespace rev {
 			}
 			return MakeGL_VState(func, Convert<Args>(value[Idx])...);
 		}
-		using Func = std::function<GLState_SP (const std::vector<ValueSetting::ValueT>&)>;
+		using Func = std::function<GLState_SP (const std::vector<parse::ValueSetting::ValueT>&)>;
 		#define CONCAT_SCOPE(a,b)	a::b
 		#define PPFUNC_MAKEFUNC(ign,data,elem) \
 			[](const auto& value){ \
@@ -55,10 +55,10 @@ namespace rev {
 			BOOST_PP_SEQ_FOR_EACH(PPFUNC_MAKEFUNC, EMPTY, SEQ_GLSETTING)
 		};
 	}
-	GLState_SP MakeValueSetting(const ValueSetting& s) {
+	GLState_SP MakeValueSetting(const parse::ValueSetting& s) {
 		return cs_make[s.type](s.value);
 	}
-	GLState_SP MakeBoolSetting(const BoolSetting& s) {
+	GLState_SP MakeBoolSetting(const parse::BoolSetting& s) {
 		return std::make_shared<GL_BState>(s.value, s.type);
 	}
 }

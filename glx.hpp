@@ -4,33 +4,23 @@
 #include "glx_parse.hpp"
 #include "spine/object_pool.hpp"
 #include "gl_buffer.hpp"
-#include <unordered_set>
 #include "resmgr_app.hpp"
 #include "drawtoken/viewport.hpp"
 #include "glx_const.hpp"
 #include "gl_state.hpp"
+#include "glx_block.hpp"
 
 namespace rev {
 	void OutputCommentBlock(std::ostream& os, const std::string& msg);
 	using GLState_SP = std::shared_ptr<GLState>;
 	using GLState_SPV = std::vector<GLState_SP>;
-	GLState_SP MakeValueSetting(const ValueSetting& s);
-	GLState_SP MakeBoolSetting(const BoolSetting& s);
+	GLState_SP MakeValueSetting(const parse::ValueSetting& s);
+	GLState_SP MakeBoolSetting(const parse::BoolSetting& s);
 	//! [UniformId -> Token]
 	using UniMap = std::unordered_map<GLint, draw::TokenBuffer*>;
 	using UnifPool = spi::ObjectPool<draw::TokenBuffer>;
 	draw::TokenBuffer* MakeUniformTokenBuffer(UniMap& um, UnifPool& pool, GLint id);
 
-	class BlockSet : public std::unordered_set<HBlock> {
-		public:
-			spi::Optional<const AttrStruct&> findAttribute(const std::string& s) const;
-			spi::Optional<const ConstStruct&> findConst(const std::string& s) const;
-			spi::Optional<const UnifStruct&> findUniform(const std::string& s) const;
-			spi::Optional<const VaryStruct&> findVarying(const std::string& s) const;
-			spi::Optional<const ShStruct&> findShader(const std::string& s) const;
-			spi::Optional<const TPStruct&> findTechPass(const std::string& s) const;
-			spi::Optional<const CodeStruct&> findCode(const std::string& s) const;
-	};
 	extern const int DefaultUnifPoolSize;
 	//! Tech | Pass の分だけ作成
 	class TPStructR {
@@ -38,10 +28,10 @@ namespace rev {
 			// OpenGLのレンダリング設定
 			using UniIdSet = std::unordered_set<GLint>;
 			using MacroMap = std::unordered_map<std::string, std::string>;
-			using AttrL = std::vector<const AttrEntry*>;
-			using VaryL = std::vector<const VaryEntry*>;
-			using ConstL = std::vector<const ConstEntry*>;
-			using UnifL = std::vector<const UnifEntry*>;
+			using AttrL = std::vector<const parse::AttrEntry*>;
+			using VaryL = std::vector<const parse::VaryEntry*>;
+			using ConstL = std::vector<const parse::ConstEntry*>;
+			using UnifL = std::vector<const parse::UnifEntry*>;
 
 		private:
 			HProg			_prog;
@@ -66,7 +56,7 @@ namespace rev {
 		public:
 			TPStructR() = default;
 			//! エフェクトファイルのパース結果を読み取る
-			TPStructR(const BlockSet& bs, const TPStruct& tech, const TPStruct& pass);
+			TPStructR(const parse::BlockSet& bs, const parse::TPStruct& tech, const parse::TPStruct& pass);
 
 			//! OpenGL関連のリソースを解放
 			/*! GLResourceの物とは別。GLEffectから呼ぶ */
@@ -86,11 +76,6 @@ namespace rev {
 			//! 設定差分を求める
 			static GLState_SPV CalcDiff(const TPStructR& from, const TPStructR& to);
 	};
-	#define mgr_block (::rev::FxBlock::ref())
-	class FxBlock : public ResMgrApp<GLXStruct>, public spi::Singleton<FxBlock> {
-		public:
-			FxBlock();
-	};
 	//! GLXエフェクト管理クラス
 	class GLEffect : public IEffect, public std::enable_shared_from_this<GLEffect> {
 		public:
@@ -104,7 +89,7 @@ namespace rev {
 			using TPRef = spi::Optional<const TPStructR&>;
 
 		private:
-			BlockSet		_blockSet;
+			parse::BlockSet	_blockSet;
 			TechMap			_techMap;			//!< ゼロから設定を構築する場合の情報や頂点セマンティクス
 			TechName		_techName;
 			TexMap			_texMap;

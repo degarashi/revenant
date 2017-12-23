@@ -96,8 +96,9 @@ namespace rev {
 	class IScene;
 	DEF_HANDLE(IScene, Scene)
 
-	struct GLXStruct;
-	DEF_HANDLE(GLXStruct, Block)
-
+	namespace parse {
+		struct GLXStruct;
+	}
+	DEF_HANDLE(parse::GLXStruct, Block)
 	#undef DEF_HANDLE
 }
