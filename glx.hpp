@@ -11,6 +11,14 @@
 #include "glx_block.hpp"
 
 namespace rev {
+	#define unif_pool (::rev::UnifPool::ref())
+	struct UnifPool :
+		spi::ObjectPool<draw::TokenBuffer>,
+		spi::Singleton<UnifPool>
+	{
+		using spi::ObjectPool<draw::TokenBuffer>::ObjectPool;
+	};
+
 	void OutputCommentBlock(std::ostream& os, const std::string& msg);
 	using GLState_SP = std::shared_ptr<GLState>;
 	using GLState_SPV = std::vector<GLState_SP>;
@@ -21,7 +29,6 @@ namespace rev {
 	using UnifPool = spi::ObjectPool<draw::TokenBuffer>;
 	draw::TokenBuffer* MakeUniformTokenBuffer(UniMap& um, UnifPool& pool, GLint id);
 
-	extern const int DefaultUnifPoolSize;
 	//! Tech | Pass の分だけ作成
 	class TPStructR {
 		public:
@@ -45,7 +52,6 @@ namespace rev {
 
 			UniIdSet		_noDefValue;	//!< Uniform非デフォルト値エントリIdセット (主にユーザーの入力チェック用)
 			UniMap			_defaultValue;	//!< Uniformデフォルト値と対応するId
-			static UnifPool	s_unifPool;
 			bool			_bInit = false;	//!< lost/resetのチェック用 (Debug)
 
 			// ----------- GLXStructから読んだデータ群 -----------
@@ -138,7 +144,6 @@ namespace rev {
 				bool				bDefaultParam;	//!< Tech切替時、trueならデフォルト値読み込み
 				TPRef				tps;			//!< 現在使用中のTech
 				UniMap				uniMap;			//!< 現在設定中のUniform
-				static UnifPool		s_unifPool;
 				draw::TokenML		tokenML;
 
 				void reset();

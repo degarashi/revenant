@@ -17,6 +17,9 @@
 #include "scene.hpp"
 
 namespace rev {
+	namespace {
+		const int DefaultUnifPoolSize = 0x100;
+	}
 	void MainThread::_InitManagers(Manager& m, const GameloopParam& param) {
 		m.lsys = std::make_shared<LSysFunc>();
 		m.cam2 = std::make_shared<Camera2DMgr>();
@@ -42,6 +45,7 @@ namespace rev {
 		m.snd = std::make_shared<SoundMgr>(44100);
 		m.snd->makeCurrent();
 		m.block = std::make_shared<parse::FxBlock>();
+		m.unifPool = std::make_shared<UnifPool>(DefaultUnifPoolSize);
 		m.obj = std::make_shared<ObjMgr>();
 		m.scene = std::make_shared<SceneMgr>();
 	}

@@ -143,7 +143,6 @@ namespace rev {
 	}
 
 	// ----------------- TPStructR -----------------
-	UnifPool TPStructR::s_unifPool(DefaultUnifPoolSize);
 	bool TPStructR::hasSetting(const GLState& s) const {
 		return std::find_if(_setting.cbegin(), _setting.cend(),
 			[&s](const auto& s1){
@@ -304,8 +303,9 @@ namespace rev {
 		_vattr.clear();
 		_noDefValue.clear();
 
+		auto& pool = unif_pool;
 		for(auto& p : _defaultValue)
-			s_unifPool.destroy(p.second);
+			pool.destroy(p.second);
 		_defaultValue.clear();
 	}
 	namespace {
@@ -384,7 +384,7 @@ namespace rev {
 		}
 
 		// Uniform変数にデフォルト値がセットしてある物をリストアップ
-		Visitor visitor(e, s_unifPool);
+		Visitor visitor(e, unif_pool);
 		visitor.pgId = _prog->getProgramId();
 		for(const auto* p : _unifL) {
 			if(visitor.setKey(p->name)) {
