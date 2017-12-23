@@ -22,8 +22,6 @@ namespace rev {
 	struct IEffect : IGLResource {
 		struct tagConstant {};
 		using GlxId = rev::IdMgr_Glx<tagConstant>;
-		// //! Uniform & TechPass 定数にIdを割り当てるクラス
-		// static GlxId	s_myId;
 
 		virtual GLint_OP getTechId(const std::string& tech) const = 0;
 		virtual GLint_OP getPassId(const std::string& pass) const = 0;
