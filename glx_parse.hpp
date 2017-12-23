@@ -2,6 +2,7 @@
 #include "glx_macro.hpp"
 #include "gl_types.hpp"
 #include "vertex.hpp"
+#include "frea/vector.hpp"
 #include <boost/spirit/home/x3.hpp>
 #include <boost/fusion/container.hpp>
 #include <boost/fusion/algorithm.hpp>
@@ -10,6 +11,17 @@
 #include <unordered_map>
 
 namespace rev {
+	struct GLXValue {
+		int	dim;
+		enum Type {
+			Bool,
+			Int,
+			Float,
+			Other
+		} type;
+	};
+	extern const GLXValue GLXValue_info[BOOST_PP_SEQ_SIZE(SEQ_GLTYPE)];
+
 	using namespace boost::spirit;
 	#define SEQ_BLOCK (attribute)(varying)(uniform)(const)
 	#define PPFUNC_ADD(ign, data, elem) (BOOST_PP_STRINGIZE(elem), BOOST_PP_CAT(elem, data))
@@ -21,6 +33,27 @@ namespace rev {
 				add \
 				BOOST_PP_SEQ_FOR_EACH(PPFUNC_ADD, T, seq); } }; \
 			extern const typ##_ typ;
+	#define DEF_VEC(typ, n, prefix) \
+		using prefix##Vec##n = frea::Vec_t<typ, n, false>;
+	DEF_VEC(int32_t, 1, I)
+	DEF_VEC(int32_t, 2, I)
+	DEF_VEC(int32_t, 3, I)
+	DEF_VEC(int32_t, 4, I)
+	DEF_VEC(float, 1, F)
+	DEF_VEC(float, 2, F)
+	DEF_VEC(float, 3, F)
+	DEF_VEC(float, 4, F)
+	DEF_VEC(bool, 1, B)
+	DEF_VEC(bool, 2, B)
+	DEF_VEC(bool, 3, B)
+	DEF_VEC(bool, 4, B)
+	#undef DEF_VEC
+
+	using UniformVal = boost::variant<
+		IVec1, IVec2, IVec3, IVec4,
+		FVec1, FVec2, FVec3, FVec4,
+		BVec1, BVec2, BVec3, BVec4
+	>;
 	// ---------------- GLXシンボルリスト ----------------
 	//! GLSL変数型
 	DEF_TYPE(GLType, "GLSL-ValueType", SEQ_GLTYPE)
@@ -183,13 +216,12 @@ namespace rev {
 	//! Uniform宣言エントリ
 	struct UnifEntry : EntryBase {
 		boost::optional<int>		arraySize;
-		using UnifValue = boost::variant<std::vector<float>, float, bool>;
-		boost::optional<UnifValue>	defaultValue;
+		boost::optional<UniformVal>	defaultValue;
 	};
 	std::ostream& operator << (std::ostream& os, const UnifEntry& e);
 	//! Const宣言エントリ
 	struct ConstEntry : EntryBase {
-		boost::variant<bool, float, std::vector<float>>		defVal;
+		UniformVal			defVal;
 	};
 	std::ostream& operator << (std::ostream& os, const ConstEntry& e);
 	//! Bool設定項目エントリ
@@ -219,7 +251,7 @@ namespace rev {
 		int							type;
 		std::string					shName;
 		// 引数指定
-		std::vector<boost::variant<std::vector<float>, float, bool>>	args;
+		std::vector<UniformVal>		args;
 	};
 	std::ostream& operator << (std::ostream& os, const ShSetting& s);
 	//! マクロ宣言エントリ
@@ -367,5 +399,17 @@ FUSION_ADAPT_STRUCT_AUTO(rev::TPStruct, (name)(blkL)(bsL)(mcL)(shL)(tpL)(vsL)(de
 FUSION_ADAPT_STRUCT_AUTO(rev::GLXStruct, (atM)(csM)(shM)(tpL)(uniM)(varM)(incl))
 FUSION_ADAPT_STRUCT_AUTO(rev::ArgItem, (type)(name))
 FUSION_ADAPT_STRUCT_AUTO(rev::BlockUse, (type)(bAdd)(name))
+FUSION_ADAPT_STRUCT_AUTO(rev::FVec1, (x))
+FUSION_ADAPT_STRUCT_AUTO(rev::FVec2, (x)(y))
+FUSION_ADAPT_STRUCT_AUTO(rev::FVec3, (x)(y)(z))
+FUSION_ADAPT_STRUCT_AUTO(rev::FVec4, (x)(y)(z)(w))
+FUSION_ADAPT_STRUCT_AUTO(rev::IVec1, (x))
+FUSION_ADAPT_STRUCT_AUTO(rev::IVec2, (x)(y))
+FUSION_ADAPT_STRUCT_AUTO(rev::IVec3, (x)(y)(z))
+FUSION_ADAPT_STRUCT_AUTO(rev::IVec4, (x)(y)(z)(w))
+FUSION_ADAPT_STRUCT_AUTO(rev::BVec1, (x))
+FUSION_ADAPT_STRUCT_AUTO(rev::BVec2, (x)(y))
+FUSION_ADAPT_STRUCT_AUTO(rev::BVec3, (x)(y)(z))
+FUSION_ADAPT_STRUCT_AUTO(rev::BVec4, (x)(y)(z)(w))
 #undef FUSION_ADAPT_STRUCT_AUTO
 #undef TRANSFORM_STRUCT_MEMBER

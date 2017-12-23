@@ -162,6 +162,40 @@ namespace rev {
 		}
 		return ret;
 	}
+	namespace {
+		struct ArgVisitor : boost::static_visitor<> {
+			std::ostream&	_os;
+			const ArgItem*	_arg;
+			ArgVisitor(std::ostream& os, const ArgItem* arg):
+				_os(os),
+				_arg(arg)
+			{}
+
+			void _outputArgL() const {
+				_os << GLType_::cs_typeStr[_arg->type] << ' ' << _arg->name;
+			}
+			template <class T, ENABLE_IF(frea::is_vector<T>{})>
+			void _outputArgR(const T& t) const {
+				if(T::size == 1)
+					_outputArgR(t[0]);
+				else {
+					_os << '=' << GLType_::cs_typeStr[_arg->type] << '(';
+					for(int i=0 ; i<T::size-1 ; i++)
+						_os << t[i] << ',';
+					_os << t[T::size-1] << ");" << std::endl;
+				}
+			}
+			template <class T, ENABLE_IF(!frea::is_vector<T>{})>
+			void _outputArgR(const T& t) const {
+				_os << '=' << t << std::endl;
+			}
+			template <class T>
+			void operator()(const T& value) const {
+				_outputArgL();
+				_outputArgR(value);
+			}
+		};
+	}
 	TPStructR::TPStructR(const BlockSet& bs, const TPStruct& tech, const TPStruct& pass) {
 		const ShSetting* selectSh[ShType::_Num] = {};
 		// PassかTechからシェーダー名を取ってくる
@@ -227,14 +261,21 @@ namespace rev {
 					throw GLE_LogicalError((boost::format("requested code block %1% not found (in shader %2%)") % cn % s->name).str());
 				ss << *code << std::endl;
 			}
-
-			// シェーダー引数の型チェック
-			// ユーザー引数はグローバル変数として用意
-			ArgChecker acheck(ss, shp->shName, s->args);
-			for(auto& a : shp->args)
-				boost::apply_visitor(acheck, a);
-			acheck.finalizeCheck();
-
+			{
+				// シェーダー引数の型チェック
+				// ユーザー引数はグローバル変数として用意
+				ArgChecker acheck(shp->shName, s->args);
+				for(auto& a : shp->args)
+					boost::apply_visitor(acheck, a);
+				acheck.finalizeCheck();
+			}
+			{
+				// シェーダー引数の出力
+				const auto* p_args = s->args.data();
+				for(auto& a : shp->args) {
+					boost::apply_visitor(ArgVisitor(ss, p_args++), a);
+				}
+			}
 			OutputCommentBlock(ss, s->name);
 			// 関数名はmain()に書き換え
 			ss << "void main() " << s->getShaderString() << std::endl;
@@ -278,32 +319,12 @@ namespace rev {
 				D_Expect(uniId>=0, "Uniform argument \"%s\" not found", key.c_str());
 				return uniId >= 0;
 			}
-			template <class T>
-			void _addResult(const T& t) {
+			template <class T, ENABLE_IF(frea::is_vector<T>{})>
+			void operator()(const T& t) {
 				if(uniId >= 0) {
 					auto* buff = MakeUniformTokenBuffer(result, pool, uniId);
 					glx._makeUniformToken(*buff, uniId, &t, 1, false);
 				}
-			}
-
-			void operator()(const std::vector<float>& v) {
-				switch(v.size()) {
-					case 2:
-						_addResult(frea::Vec2{v[0], v[1]});
-						break;
-					case 3:
-						_addResult(frea::Vec3{v[0],v[1],v[2]});
-						break;
-					case 4:
-						_addResult(frea::Vec4{v[0],v[1],v[2],v[3]});
-						break;
-					default:
-						Assert0(false);
-				}
-			}
-			template <class T>
-			void operator()(const T& v) {
-				_addResult(v);
 			}
 		};
 	}

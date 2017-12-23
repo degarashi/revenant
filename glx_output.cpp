@@ -43,32 +43,20 @@ namespace rev {
 		return os << ';';
 	}
 
-	std::ostream& operator << (std::ostream& os, const ConstEntry& e) {
-		os << "const " << static_cast<const EntryBase&>(e) << '=';
-
-		struct Tmp : boost::static_visitor<> {
+	namespace {
+		struct PrintVisitor : boost::static_visitor<> {
 			std::ostream& _dst;
-			Tmp(std::ostream& dst): _dst(dst) {}
+			PrintVisitor(std::ostream& dst): _dst(dst) {}
 
-			void operator()(bool b) {
-				// bool, floatの時は値だけを出力
-				_dst << b;
-			}
-			void operator()(float v) {
-				_dst << v;
-			}
-			void operator()(const std::vector<float>& v) {
-				// ベクトル値は括弧を付ける
-				int nV = v.size();
-				_dst << nV << '(';
-				for(int i=0 ; i<nV-1 ; i++)
-					_dst << v[i] << ',';
-				_dst << v.back() << ')';
+			template <class T>
+			void operator()(const T& t) const {
+				_dst << t;
 			}
 		};
-
-		Tmp tmp(os);
-		boost::apply_visitor(tmp, e.defVal);
+	}
+	std::ostream& operator << (std::ostream& os, const ConstEntry& e) {
+		os << "const " << static_cast<const EntryBase&>(e) << '=';
+		boost::apply_visitor(PrintVisitor(os), e.defVal);
 		return os << ';';
 	}
 
@@ -146,29 +134,12 @@ namespace rev {
 			PrintIt(os, t);
 			os << "-------------" << std::endl;
 		}
-		struct Visitor : boost::static_visitor<> {
-			std::ostream& _dst;
-			Visitor(std::ostream& os): _dst(os) {}
-			void operator()(float f) const {
-				_dst << "float(" << f << ')'; }
-			void operator()(bool b) const {
-				_dst << "bool(" << b << ')'; }
-
-			template <class T>
-			void operator()(const std::vector<T>& ar) const {
-				_dst << "vector[";
-				for(auto& a : ar) {
-					_dst << a << ' ';
-				}
-				_dst << ']';
-			}
-		};
 	}
 
 	std::ostream& operator << (std::ostream& os, const ShSetting& s) {
 		os << c_shType[s.type] << "= " << s.shName << std::endl << "args: ";
 		for(auto& a : s.args) {
-			boost::apply_visitor(Visitor(os), a);
+			boost::apply_visitor(PrintVisitor(os), a);
 			os << ", ";
 		}
 		return os << std::endl;

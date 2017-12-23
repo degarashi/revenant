@@ -22,6 +22,26 @@ namespace rev {
 	const GLShadertype_ GLShadertype;
 	const GLBlocktype_ GLBlocktype;
 
+	const GLXValue GLXValue_info[BOOST_PP_SEQ_SIZE(SEQ_GLTYPE)] = {
+		{0, GLXValue::Type::Other},
+		{1, GLXValue::Type::Bool},
+		{1, GLXValue::Type::Int},
+		{1, GLXValue::Type::Float},
+		{2, GLXValue::Type::Float},
+		{3, GLXValue::Type::Float},
+		{4, GLXValue::Type::Float},
+		{2, GLXValue::Type::Int},
+		{3, GLXValue::Type::Int},
+		{4, GLXValue::Type::Int},
+		{2, GLXValue::Type::Bool},
+		{3, GLXValue::Type::Bool},
+		{4, GLXValue::Type::Bool},
+		{2, GLXValue::Type::Other},
+		{3, GLXValue::Type::Other},
+		{4, GLXValue::Type::Other},
+		{0, GLXValue::Type::Other},
+		{0, GLXValue::Type::Other},
+	};
 	#define PPFUNC_STR(ign, data, elem) BOOST_PP_STRINGIZE(elem),
 	const char* GLType_::cs_typeStr[] = {
 		BOOST_PP_SEQ_FOR_EACH(PPFUNC_STR, EMPTY, SEQ_GLTYPE)
@@ -74,16 +94,60 @@ namespace rev {
 		const x3::rule<class TechBlock, TPStruct>					TechBlock;
 		const x3::rule<class Import, std::string>					Import;
 
-		// 各種変数定義
-		const x3::rule<class Vec, std::vector<float>>				Vec;
-		const x3::rule<class Arg, ArgItem>							Arg;
-
+		using x3::int_;
+		using x3::float_;
+		using x3::bool_;
+		using x3::uint_;
+		using x3::repeat;
 		using x3::lit;
 		using x3::char_;
 		using x3::lexeme;
 		using x3::no_skip;
 		using x3::no_case;
 		using x3::alnum;
+		const auto fnSetX = [](auto& ctx){ _val(ctx).x = _attr(ctx); };
+		// 各種変数定義
+		const x3::rule<class R_IVec1, frea::Vec_t<int32_t, 1, false>>	R_IVec1;
+		const auto R_IVec1_def = ('[' >> int_[fnSetX] >> ']') | int_[fnSetX];
+		const x3::rule<class R_IVec2, frea::Vec_t<int32_t, 2, false>>	R_IVec2;
+		const auto R_IVec2_def = '[' >> int_ >> int_ >> ']';
+		const x3::rule<class R_IVec3, frea::Vec_t<int32_t, 3, false>>	R_IVec3;
+		const auto R_IVec3_def = '[' >> int_ >> int_ >> int_ >> ']';
+		const x3::rule<class R_IVec4, frea::Vec_t<int32_t, 4, false>>	R_IVec4;
+		const auto R_IVec4_def = '[' >> int_ >> int_ >> int_ >> int_ >> ']';
+
+		const x3::rule<class R_FVec1, frea::Vec_t<float, 1, false>>	R_FVec1;
+		const auto R_FVec1_def = ('[' >> float_[fnSetX] >> ']') | float_[fnSetX];
+		const x3::rule<class R_FVec2, frea::Vec_t<float, 2, false>>	R_FVec2;
+		const auto R_FVec2_def = '[' >> float_ >> float_ >> ']';
+		const x3::rule<class R_FVec3, frea::Vec_t<float, 3, false>>	R_FVec3;
+		const auto R_FVec3_def = '[' >> float_ >> float_ >> float_ >> ']';
+		const x3::rule<class R_FVec4, frea::Vec_t<float, 4, false>>	R_FVec4;
+		const auto R_FVec4_def = '[' >> float_ >> float_ >> float_ >> float_ >> ']';
+
+		const x3::rule<class R_BVec1, frea::Vec_t<bool, 1, false>>	R_BVec1;
+		const auto R_BVec1_def = ('[' >> bool_[fnSetX] >> ']') | bool_[fnSetX];
+		const x3::rule<class R_BVec2, frea::Vec_t<bool, 2, false>>	R_BVec2;
+		const auto R_BVec2_def = '[' >> bool_ >> bool_ >> ']';
+		const x3::rule<class R_BVec3, frea::Vec_t<bool, 3, false>>	R_BVec3;
+		const auto R_BVec3_def = '[' >> bool_ >> bool_ >> bool_ >> ']';
+		const x3::rule<class R_BVec4, frea::Vec_t<bool, 4, false>>	R_BVec4;
+		const auto R_BVec4_def = '[' >> bool_ >> bool_ >> bool_ >> bool_ >> ']';
+
+		#pragma GCC diagnostic push
+		#pragma GCC diagnostic ignored "-Wunused-parameter"
+		BOOST_SPIRIT_DEFINE(
+			R_IVec1, R_IVec2, R_IVec3, R_IVec4,
+			R_FVec1, R_FVec2, R_FVec3, R_FVec4,
+			R_BVec1, R_BVec2, R_BVec3, R_BVec4
+		)
+		#pragma GCC diagnostic pop
+		const auto UniformVal =
+			R_IVec1 | R_IVec2 | R_IVec3 | R_IVec4 |
+			R_FVec1 | R_FVec2 | R_FVec3 | R_FVec4 |
+			R_BVec1 | R_BVec2 | R_BVec3 | R_BVec4;
+
+		const x3::rule<class Arg, ArgItem>							Arg;
 		// Arg: GLType NameToken
 		const auto Arg_def = GLType > NameToken;
 		// FileToken: [:Alnum:_\.]+;
@@ -156,13 +220,6 @@ namespace rev {
 			VaryBlock[fnInsVary] |
 			CodeBlock[fnInsCode]
 		);
-
-		using x3::alnum;
-		using x3::int_;
-		using x3::float_;
-		using x3::bool_;
-		using x3::uint_;
-		using x3::repeat;
 		// String: "[^"]+"
 		const auto String_def = lit('"') > +(char_ - '"') > '"';
 		// NameToken: [:Alnum:_]+;
@@ -171,17 +228,15 @@ namespace rev {
 		const auto AttrEnt_def = (-(GLPrecision) >> GLType >> NameToken >> ':') > GLSem > -('_' > int_) > ';';
 		// VaryEnt: GLPrecision? GLType NameToken;
 		const auto VaryEnt_def = -(GLPrecision) >> GLType >> NameToken >> -('[' > int_ > ']') > ';';
-		// UnifEntry: Precision`GLPrecision` ValueName`rlNameToken` [SizeSem`rlNameToken`] = DefaultValue`rlVec|float|bool`
+		// UnifEntry: Precision GLPrecision? GLType ValueName NameToken ([SizeSem])? = UniformVal?;
 		const auto UnifEnt_def = (-(GLPrecision) >> GLType) > NameToken >
 					-('[' > int_ > ']') >
-					-(lit('=') > (Vec | float_ | bool_)) > ';';
-		// Vector: [Float+]
-		const auto Vec_def = '[' > +float_ > ']';
+					-(lit('=') > UniformVal) > ';';
 		// MacroEntry: NameToken(=NameToken)?;
 		const auto MacroEnt_def = NameToken > -('=' > NameToken) > ';';
-		// ConstEntry: GLPrecision? GLType = NameToken (Vector|Float|Bool);
+		// ConstEntry: GLPrecision? GLType = NameToken UniformVal;
 		const auto ConstEnt_def = (-(GLPrecision) >> GLType >> NameToken >>
-			lit('=')) > (Vec | float_ | bool_) > ';';
+			lit('=')) > UniformVal > ';';
 
 		// BoolSet: GLBoolsetting = Bool;
 		const auto BoolSet_def = no_case[GLBoolsetting] > '=' > no_case[bool_] > ';';
@@ -223,15 +278,14 @@ namespace rev {
 		const auto BlockUse_def = no_case[GLBlocktype][fnSetType]
 									> (lit('=')[Bu_fnSetFalse] | lit("+=")[Bu_fnSetTrue])
 									> (NameToken % ',')[Bu_fnSetName] > ';';
-		// ShSet: GLShadertype = NameToken \((Vector|Bool|Float)? (, Vector|Bool|Float)*\);
+		// ShSet: GLShadertype = NameToken \(UniformVal? (, UniformVal)*\);
 		DEF_SETVAL(Sh_fnSetName, shName)
 		DEF_PUSHVAL(Sh_fnPushArgs, args)
 		const auto ShSet_def = no_case[GLShadertype][fnSetType]
 								> '=' > NameToken[Sh_fnSetName]
 								> lit('(')
-								> (-(Vec|bool_|float_)[Sh_fnPushArgs]
-										> *(lit(',') > (Vec|bool_|float_)[Sh_fnPushArgs]))
-								> lit(");");
+								> (-(UniformVal[Sh_fnPushArgs]) > *(lit(',') > UniformVal[Sh_fnPushArgs]))
+								> lit(')') > lit(';');
 
 		DEF_PUSHVAL(fnPushEntry, entry)
 		// AttrBlock: attribute NameToken (: NameToken)? \{(AttrEnt*)\}
@@ -267,7 +321,6 @@ namespace rev {
 							AttrEnt,
 							VaryEnt,
 							UnifEnt,
-							Vec,
 							MacroEnt,
 							ConstEnt,
 							BoolSet,
