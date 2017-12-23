@@ -65,7 +65,6 @@ namespace rev {
 			void ts_onDeviceReset(const IEffect& e);
 
 			bool hasSetting(const GLState& s) const;
-			void swap(TPStructR& tp) noexcept;
 
 			const UniMap& getUniformDefault() const noexcept;
 			const UniIdSet& getRequiredUniformEntries() const noexcept;
