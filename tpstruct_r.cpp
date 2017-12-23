@@ -144,7 +144,7 @@ namespace rev {
 
 	// ----------------- TPStructR -----------------
 	UnifPool TPStructR::s_unifPool(DefaultUnifPoolSize);
-	bool TPStructR::findSetting(const GLState& s) const {
+	bool TPStructR::hasSetting(const GLState& s) const {
 		return std::find_if(_setting.cbegin(), _setting.cend(),
 			[&s](const auto& s1){
 				return s == *s1;
@@ -156,7 +156,7 @@ namespace rev {
 		// fromに無かったり、異なっていればエントリに加える
 		GLState_SPV ret;
 		for(auto& s : to._setting) {
-			if(!from.findSetting(*s)) {
+			if(!from.hasSetting(*s)) {
 				ret.push_back(s);
 			}
 		}

@@ -64,7 +64,7 @@ namespace rev {
 			void ts_onDeviceLost();
 			void ts_onDeviceReset(const IEffect& e);
 
-			bool findSetting(const GLState& s) const;
+			bool hasSetting(const GLState& s) const;
 			void swap(TPStructR& tp) noexcept;
 
 			const UniMap& getUniformDefault() const noexcept;
