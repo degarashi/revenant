@@ -196,7 +196,7 @@ namespace rev {
 			}
 		};
 	}
-	TPStructR::TPStructR(const parse::BlockSet& bs, const parse::TPStruct& tech, const parse::TPStruct& pass) {
+	TPStructR::TPStructR(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass) {
 		const parse::ShSetting* selectSh[ShType::_Num] = {};
 		// PassかTechからシェーダー名を取ってくる
 		for(auto& a : tech.shL)
@@ -209,13 +209,13 @@ namespace rev {
 			throw GLE_LogicalError("no vertex or fragment shader found");
 
 		std::stringstream ss;
-		TPSDupl dupl(bs, tech, pass);
+		TPSDupl dupl(*bs, tech, pass);
 		HSh shP[ShType::_Num];
 		for(int i=0 ; i<static_cast<int>(countof(selectSh)) ; i++) {
 			auto* shp = selectSh[i];
 			if(!shp)
 				continue;
-			auto s = bs.findShader(shp->shName);
+			auto s = bs->findShader(shp->shName);
 			if(!s)
 				throw GLE_LogicalError((boost::format("requested shader \"%1%\" not found") % shp->shName).str());
 			// シェーダーバージョンを出力
@@ -260,7 +260,7 @@ namespace rev {
 
 			// コードブロック出力
 			for(auto& cn : s->code) {
-				auto code = bs.findCode(cn);
+				auto code = bs->findCode(cn);
 				if(!code)
 					throw GLE_LogicalError((boost::format("requested code block %1% not found (in shader %2%)") % cn % s->name).str());
 				ss << *code << std::endl;

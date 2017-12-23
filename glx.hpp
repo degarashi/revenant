@@ -35,6 +35,7 @@ namespace rev {
 
 		private:
 			HProg			_prog;
+			parse::BlockSet_SP	_block;
 			// --- 関連情報(ゼロから構築する場合の設定項目) ---
 			//! Attribute: 頂点セマンティクスに対する頂点Id
 			VSemAttrV		_vattr;
@@ -56,7 +57,7 @@ namespace rev {
 		public:
 			TPStructR() = default;
 			//! エフェクトファイルのパース結果を読み取る
-			TPStructR(const parse::BlockSet& bs, const parse::TPStruct& tech, const parse::TPStruct& pass);
+			TPStructR(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass);
 
 			//! OpenGL関連のリソースを解放
 			/*! GLResourceの物とは別。GLEffectから呼ぶ */
@@ -89,7 +90,7 @@ namespace rev {
 			using TPRef = spi::Optional<const TPStructR&>;
 
 		private:
-			parse::BlockSet	_blockSet;
+			parse::BlockSet_SP	_blockSet;
 			TechMap			_techMap;			//!< ゼロから設定を構築する場合の情報や頂点セマンティクス
 			TechName		_techName;
 			TexMap			_texMap;

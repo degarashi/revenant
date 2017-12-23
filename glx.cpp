@@ -19,7 +19,7 @@ namespace rev {
 	GLEffect::GLEffect(const std::string& name) {
 		_blockSet = parse::LoadGLXStructSet(name);
 		std::vector<parse::TPStruct*> tpV;
-		for(auto& blk : _blockSet) {
+		for(auto& blk : *_blockSet) {
 			auto& b = *blk;
 			for(auto& tp : b.tpL)
 				tpV.emplace_back(&tp);

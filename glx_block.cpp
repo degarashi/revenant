@@ -9,8 +9,8 @@ namespace rev {
 				"effect"
 			};
 		}
-		BlockSet LoadGLXStructSet(const std::string& name) {
-			BlockSet bs;
+		BlockSet_SP LoadGLXStructSet(const std::string& name) {
+			BlockSet_SP bs = std::make_shared<BlockSet>();
 			std::unordered_set<std::string> loaded,
 											inclset{name};
 			// inclset = まだ読み込んでないファイル名
@@ -32,7 +32,7 @@ namespace rev {
 					if(loaded.count(inc) == 0)
 						inclset.emplace(inc);
 				}
-				bs.emplace(std::move(hdl));
+				bs->emplace(std::move(hdl));
 			}
 			return bs;
 		}
