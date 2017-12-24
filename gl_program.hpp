@@ -2,7 +2,7 @@
 #include "gl_format.hpp"
 #include "gl_types.hpp"
 #include "gl_if.hpp"
-#include "drawtoken/drawtoken.hpp"
+#include "drawtoken/token.hpp"
 
 namespace rev {
 	struct GLParamInfo : GLSLFormatDesc {

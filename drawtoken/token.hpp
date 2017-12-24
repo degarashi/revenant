@@ -1,0 +1,42 @@
+#pragma once
+#include <cstdint>
+#include <utility>
+
+namespace rev {
+	namespace draw {
+		struct TokenDst {
+			virtual ~TokenDst() {}
+			virtual void* allocate_memory(std::size_t s, intptr_t ofs) = 0;
+		};
+		struct Token {
+			virtual ~Token() {}
+			virtual void exec() = 0;
+			virtual void takeout(TokenDst& dst) = 0;
+			virtual void clone(TokenDst& dst) const = 0;
+			virtual std::size_t getSize() const = 0;
+		};
+		template <class From, class To>
+		intptr_t CalcPointerOffset() {
+			return reinterpret_cast<intptr_t>(static_cast<To*>(reinterpret_cast<From*>(1))) - 1;
+		}
+		template <class T>
+		intptr_t CalcTokenOffset() {
+			return CalcPointerOffset<T, Token>();
+		}
+		template <class T>
+		struct TokenT : Token {
+			// 引数のバッファへ中身をcopyする
+			void clone(TokenDst& dst) const override {
+				new(dst.allocate_memory(getSize(), CalcTokenOffset<T>())) T(static_cast<const T&>(*this));
+			}
+			// 引数のバッファへ中身をmoveする
+			void takeout(TokenDst& dst) override {
+				new(dst.allocate_memory(getSize(), CalcTokenOffset<T>())) T(std::move(static_cast<T&>(*this)));
+			}
+			std::size_t getSize() const override {
+				return sizeof(T);
+			}
+		};
+
+	}
+}

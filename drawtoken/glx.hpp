@@ -1,5 +1,5 @@
 #pragma once
-#include "drawtoken.hpp"
+#include "token.hpp"
 #include "buffer.hpp"
 #include "../vdecl.hpp"
 #include "../glx_const.hpp"

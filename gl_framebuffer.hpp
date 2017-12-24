@@ -2,7 +2,7 @@
 #include "gl_types.hpp"
 #include "lubee/size.hpp"
 #include "lubee/wrapper.hpp"
-#include "drawtoken/drawtoken.hpp"
+#include "drawtoken/token.hpp"
 #include "sdl_tls.hpp"
 #include "lubee/rect.hpp"
 #include <boost/variant.hpp>

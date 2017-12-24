@@ -1,6 +1,7 @@
 #pragma once
 #include "gl_types.hpp"
-#include "drawtoken/drawtoken.hpp"
+#include "drawtoken/token.hpp"
+#include <vector>
 
 namespace rev {
 	namespace draw {

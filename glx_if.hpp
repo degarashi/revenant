@@ -3,6 +3,7 @@
 #include "glx_id.hpp"
 #include "differential.hpp"
 #include "drawtoken/matrix.hpp"
+#include "drawtoken/tokenbuffer.hpp"
 
 namespace lubee {
 	template <class T>

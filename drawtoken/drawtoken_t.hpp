@@ -1,5 +1,5 @@
 #pragma once
-#include "drawtoken.hpp"
+#include "token.hpp"
 #include "../gl_header.hpp"
 
 namespace rev {

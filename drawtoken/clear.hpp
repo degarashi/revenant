@@ -1,5 +1,5 @@
 #pragma once
-#include "drawtoken.hpp"
+#include "token.hpp"
 #include "spine/optional.hpp"
 #include "frea/vector.hpp"
 
