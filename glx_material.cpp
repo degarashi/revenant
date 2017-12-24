@@ -1,8 +1,14 @@
-#include "glx.hpp"
+#include "glx_material.hpp"
+#include "glx_makesetting.hpp"
+#include "glx_block.hpp"
 #include "gl_error.hpp"
-#include "argchecker.hpp"
 #include "gl_resource.hpp"
 #include "gl_program.hpp"
+#include "gl_state.hpp"
+#include "argchecker.hpp"
+#include "lubee/meta/countof.hpp"
+#include "glx_if.hpp"
+#include "comment.hpp"
 #include <boost/format.hpp>
 
 namespace rev {

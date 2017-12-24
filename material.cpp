@@ -1,5 +1,7 @@
-#include "glx.hpp"
+#include "vertex.hpp"
+#include "gl_state.hpp"
 #include "gl_program.hpp"
+#include "material.hpp"
 
 namespace rev {
 	void Material::Runtime::clear() {

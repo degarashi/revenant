@@ -1,5 +1,4 @@
 #include "glx_block.hpp"
-#include "glx_parse.hpp"
 #include "sdl_rw.hpp"
 
 namespace rev {

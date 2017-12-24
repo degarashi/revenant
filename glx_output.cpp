@@ -1,12 +1,9 @@
 #include "glx_parse.hpp"
 #include "tuple_seq.hpp"
+#include "comment.hpp"
 #include <boost/format.hpp>
 
 namespace rev {
-	void OutputCommentBlock(std::ostream& os, const std::string& msg) {
-		const char* c_separate = "-------------";
-		os << "// " << c_separate << ' ' << msg << ' ' << c_separate << std::endl;
-	}
 	namespace parse {
 		namespace {
 			const static char* c_shType[] = {

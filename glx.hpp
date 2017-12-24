@@ -1,91 +1,22 @@
 #pragma once
-#include "gl_if.hpp"
 #include "glx_if.hpp"
-#include "glx_parse.hpp"
-#include "gl_buffer.hpp"
 #include "resmgr_app.hpp"
 #include "drawtoken/viewport.hpp"
 #include "drawtoken/tokenml.hpp"
 #include "glx_const.hpp"
-#include "gl_state.hpp"
-#include "glx_block.hpp"
+#include "uniform_map.hpp"
 
 namespace rev {
-	void OutputCommentBlock(std::ostream& os, const std::string& msg);
-	using GLState_SP = std::shared_ptr<GLState>;
-	using GLState_SPV = std::vector<GLState_SP>;
-	GLState_SP MakeValueSetting(const parse::ValueSetting& s);
-	GLState_SP MakeBoolSetting(const parse::BoolSetting& s);
-
-	class UniformMap {
-		private:
-			//! [UniformId -> Token]
-			using Map = std::unordered_map<GLint, draw::TokenBuffer*>;
-			Map		_map;
-		public:
-			// umに既にidが登録されてないかチェックし、されていればそれを、無ければpoolからメモリを確保し返す
-			draw::TokenBuffer* makeTokenBuffer(GLint id);
-			void copyFrom(const UniformMap& other);
-			void moveTo(draw::TokenML& ml);
-			void clear();
-			bool empty() const noexcept;
-	};
-	class Material {
-		protected:
-			struct Runtime {
-				using UniIdSet = std::unordered_set<GLint>;
-				//! Uniform非デフォルト値エントリIdセット (主にユーザーの入力チェック用)
-				UniIdSet		noDefValue;
-				//! Uniformデフォルト値と対応するId
-				UniformMap		defaultValue;
-				//! Attribute: 頂点セマンティクスに対する頂点Id
-				VSemAttrV		vattr;
-
-				void clear();
-			};
-			virtual void _onDeviceReset(const IEffect& e, Runtime&) = 0;
-
-			HProg			_program;
-			//! Setting: Uniformデフォルト値(texture, vector, float, bool)設定を含む
-			//! GLDeviceの設定クラスリスト
-			GLState_SPV		_setting;
-			Runtime			_runtime;
-		private:
-			//! lost/resetのチェック用 (Debug)
-			bool			_bInit = false;	
-
-		public:
-			//! OpenGL関連のリソースを解放
-			/*! GLResourceの物とは別。GLEffectから呼ぶ */
-			void ts_onDeviceLost();
-			void ts_onDeviceReset(const IEffect& e);
-
-			const HProg& getProgram() const noexcept;
-			const Runtime& getRuntime() const noexcept;
-			//! OpenGLに設定を適用
-			void applySetting() const;
-	};
+	namespace parse {
+		class BlockSet;
+		using BlockSet_SP = std::shared_ptr<BlockSet>;
+	}
+	namespace draw {
+		class VStream;
+	}
+	class Material;
 	using Material_SP = std::shared_ptr<Material>;
-	// Tech | Pass の分だけ作成
-	class GLXMaterial : public Material {
-		public:
-			using MacroMap = std::unordered_map<std::string, std::string>;
-			using AttrL = std::vector<const parse::AttrEntry*>;
-			using VaryL = std::vector<const parse::VaryEntry*>;
-			using ConstL = std::vector<const parse::ConstEntry*>;
-			using UnifL = std::vector<const parse::UnifEntry*>;
-		private:
-			parse::BlockSet_SP	_block;
-			AttrL				_attrL;
-			VaryL				_varyL;
-			UnifL				_unifL;
-			ConstL				_constL;
-		protected:
-			void _onDeviceReset(const IEffect& e, Material::Runtime&) override;
-		public:
-			//! エフェクトファイルのパース結果を読み取る
-			GLXMaterial(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass);
-	};
+
 	//! GLXエフェクト管理クラス
 	class GLEffect : public IEffect, public std::enable_shared_from_this<GLEffect> {
 		public:

@@ -23,6 +23,7 @@ namespace rev {
 #include "drawtoken/task.hpp"
 #include "glx.hpp"
 #include "sharedata.hpp"
+#include "glx_block.hpp"
 namespace rev {
 	void MainThread::_checkFxReload(FNotify& ntf, FxReload& rel) {
 		// シェーダーファイルの自動リロード時

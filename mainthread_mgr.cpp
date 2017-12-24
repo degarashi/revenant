@@ -16,6 +16,7 @@
 #include "font.hpp"
 #include "scene.hpp"
 #include "uniform_pool.hpp"
+#include "glx_block.hpp"
 
 namespace rev {
 	namespace {

@@ -1,7 +1,8 @@
 #include "glx.hpp"
 #include "gl_error.hpp"
 #include "gl_program.hpp"
-#include "glx_if.hpp"
+#include "glx_block.hpp"
+#include "glx_material.hpp"
 #include <boost/format.hpp>
 
 namespace rev {

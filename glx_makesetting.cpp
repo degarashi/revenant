@@ -1,6 +1,7 @@
-#include "glx.hpp"
+#include "glx_makesetting.hpp"
 #include "gl_vstate.hpp"
 #include "gl_bstate.hpp"
+#include "glx_parse.hpp"
 #include <boost/format.hpp>
 
 namespace rev {
