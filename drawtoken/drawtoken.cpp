@@ -3,61 +3,6 @@
 
 namespace rev {
 	namespace draw {
-		// ------------------- TokenMemory -------------------
-		namespace {
-			template <class F>
-			void Iterate(uint8_t* data, const std::size_t used, F&& f) {
-				std::size_t cur = 0;
-				while(cur < used) {
-					auto ptr = reinterpret_cast<intptr_t>(data + cur);
-					auto ofs = *reinterpret_cast<intptr_t*>(ptr);
-					ptr += ofs+sizeof(intptr_t);
-					auto* token = reinterpret_cast<Token*>(ptr);
-					auto cur_ofs = token->getSize();
-					std::forward<F>(f)(token);
-					cur += cur_ofs + sizeof(intptr_t);
-				}
-			}
-		}
-		TokenMemory::TokenMemory(const std::size_t s):
-			_buffer(s),
-			_used(0)
-		{}
-		TokenMemory::~TokenMemory() {
-			Iterate(_buffer.data(), _used, [](auto* token){
-				token->~Token();
-			});
-		}
-		void* TokenMemory::getMemory(const std::size_t s, const intptr_t ofs) {
-			D_Assert0(ofs >= 0);
-			if(_buffer.size() < s+_used+sizeof(intptr_t))
-				return nullptr;
-			auto ptr = reinterpret_cast<intptr_t>(_buffer.data() + _used);
-			*reinterpret_cast<intptr_t*>(ptr) = ofs;
-			ptr += sizeof(intptr_t);
-			_used += s+sizeof(intptr_t);
-			return reinterpret_cast<void*>(ptr);
-		}
-		void TokenMemory::exec() {
-			Iterate(_buffer.data(), _used, [](auto* token){
-				token->exec();
-			});
-		}
-		void TokenMemory::clear() noexcept {
-			_used = 0;
-		}
-		TokenMemory::TokenMemory(TokenMemory&& t) noexcept:
-			_buffer(std::move(t._buffer)),
-			_used(t._used)
-		{
-			t.clear();
-		}
-		TokenMemory& TokenMemory::operator = (TokenMemory&& t) noexcept {
-			_buffer = std::move(t._buffer);
-			_used = t._used;
-			t.clear();
-			return *this;
-		}
 		// ------------------- TokenBuffer -------------------
 		TokenBuffer::TokenBuffer():
 			_bInit(false)
@@ -108,6 +53,63 @@ namespace rev {
 		}
 		std::size_t TokenBuffer::getSize() const {
 			return asToken()->getSize();
+		}
+		namespace detail {
+			// ------------------- TokenMemory -------------------
+			namespace {
+				template <class F>
+				void Iterate(uint8_t* data, const std::size_t used, F&& f) {
+					std::size_t cur = 0;
+					while(cur < used) {
+						auto ptr = reinterpret_cast<intptr_t>(data + cur);
+						auto ofs = *reinterpret_cast<intptr_t*>(ptr);
+						ptr += ofs+sizeof(intptr_t);
+						auto* token = reinterpret_cast<Token*>(ptr);
+						auto cur_ofs = token->getSize();
+						std::forward<F>(f)(token);
+						cur += cur_ofs + sizeof(intptr_t);
+					}
+				}
+			}
+			TokenMemory::TokenMemory(const std::size_t s):
+				_buffer(s),
+				_used(0)
+			{}
+			TokenMemory::~TokenMemory() {
+				Iterate(_buffer.data(), _used, [](auto* token){
+					token->~Token();
+				});
+			}
+			void* TokenMemory::getMemory(const std::size_t s, const intptr_t ofs) {
+				D_Assert0(ofs >= 0);
+				if(_buffer.size() < s+_used+sizeof(intptr_t))
+					return nullptr;
+				auto ptr = reinterpret_cast<intptr_t>(_buffer.data() + _used);
+				*reinterpret_cast<intptr_t*>(ptr) = ofs;
+				ptr += sizeof(intptr_t);
+				_used += s+sizeof(intptr_t);
+				return reinterpret_cast<void*>(ptr);
+			}
+			void TokenMemory::exec() {
+				Iterate(_buffer.data(), _used, [](auto* token){
+					token->exec();
+				});
+			}
+			void TokenMemory::clear() noexcept {
+				_used = 0;
+			}
+			TokenMemory::TokenMemory(TokenMemory&& t) noexcept:
+				_buffer(std::move(t._buffer)),
+				_used(t._used)
+			{
+				t.clear();
+			}
+			TokenMemory& TokenMemory::operator = (TokenMemory&& t) noexcept {
+				_buffer = std::move(t._buffer);
+				_used = t._used;
+				t.clear();
+				return *this;
+			}
 		}
 		// ------------------- TokenML -------------------
 		TokenML::TokenML(const std::size_t s):

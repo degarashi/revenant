@@ -6,30 +6,6 @@
 
 namespace rev {
 	namespace draw {
-		/*
-			getDrawTokenの役割:
-			描画時にしか必要ないAPI呼び出しを纏める
-			ただしDrawThreadからはリソースハンドルの参照が出来ないのでOpenGLの番号をそのまま格納
-		*/
-		class TokenMemory {
-			private:
-				using Buffer = std::vector<uint8_t>;
-				Buffer		_buffer;
-				std::size_t	_used;
-
-			public:
-				TokenMemory(TokenMemory&& t) noexcept;
-				TokenMemory(const TokenMemory&) = delete;
-				TokenMemory(std::size_t s);
-				~TokenMemory();
-				void* getMemory(std::size_t s, intptr_t ofs);
-				void exec();
-				void clear() noexcept;
-
-				TokenMemory& operator = (TokenMemory&& t) noexcept;
-				TokenMemory& operator = (const TokenMemory&) = delete;
-		};
-
 		struct TokenDst {
 			virtual ~TokenDst() {}
 			virtual void* allocate_memory(std::size_t s, intptr_t ofs) = 0;
@@ -85,10 +61,35 @@ namespace rev {
 				void clone(TokenDst& dst) const override;
 				std::size_t getSize() const override;
 		};
+		namespace detail {
+			/*
+				getDrawTokenの役割:
+				描画時にしか必要ないAPI呼び出しを纏める
+				ただしDrawThreadからはリソースハンドルの参照が出来ないのでOpenGLの番号をそのまま格納
+			*/
+			class TokenMemory {
+				private:
+					using Buffer = std::vector<uint8_t>;
+					Buffer		_buffer;
+					std::size_t	_used;
+
+				public:
+					TokenMemory(TokenMemory&& t) noexcept;
+					TokenMemory(const TokenMemory&) = delete;
+					TokenMemory(std::size_t s);
+					~TokenMemory();
+					void* getMemory(std::size_t s, intptr_t ofs);
+					void exec();
+					void clear() noexcept;
+
+					TokenMemory& operator = (TokenMemory&& t) noexcept;
+					TokenMemory& operator = (const TokenMemory&) = delete;
+			};
+		}
 		//! 複数のTokenMemoryを統合(TokenMultiLane)
 		class TokenML : public TokenDst {
 			private:
-				using TokenML_t = std::list<TokenMemory>;
+				using TokenML_t = std::list<detail::TokenMemory>;
 				TokenML_t	_buffer;
 				std::size_t	_laneSize;
 
