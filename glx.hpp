@@ -30,71 +30,72 @@ namespace rev {
 			void clear();
 			bool empty() const noexcept;
 	};
+	class Material {
+		protected:
+			struct Runtime {
+				using UniIdSet = std::unordered_set<GLint>;
+				//! Uniform非デフォルト値エントリIdセット (主にユーザーの入力チェック用)
+				UniIdSet		noDefValue;
+				//! Uniformデフォルト値と対応するId
+				UniformMap		defaultValue;
+				//! Attribute: 頂点セマンティクスに対する頂点Id
+				VSemAttrV		vattr;
 
-	//! Tech | Pass の分だけ作成
-	class TPStructR {
-		public:
-			// OpenGLのレンダリング設定
-			using UniIdSet = std::unordered_set<GLint>;
-			using MacroMap = std::unordered_map<std::string, std::string>;
-			using AttrL = std::vector<const parse::AttrEntry*>;
-			using VaryL = std::vector<const parse::VaryEntry*>;
-			using ConstL = std::vector<const parse::ConstEntry*>;
-			using UnifL = std::vector<const parse::UnifEntry*>;
+				void clear();
+			};
+			virtual void _onDeviceReset(const IEffect& e, Runtime&) = 0;
 
-		private:
-			HProg			_prog;
-			parse::BlockSet_SP	_block;
-			// --- 関連情報(ゼロから構築する場合の設定項目) ---
-			//! Attribute: 頂点セマンティクスに対する頂点Id
-			VSemAttrV		_vattr;
-
-			//! Setting: Uniformデフォルト値(texture, vector, float, bool)設定を含む。GLDeviceの設定クラスリスト
+			HProg			_program;
+			//! Setting: Uniformデフォルト値(texture, vector, float, bool)設定を含む
+			//! GLDeviceの設定クラスリスト
 			GLState_SPV		_setting;
-
-			UniIdSet		_noDefValue;	//!< Uniform非デフォルト値エントリIdセット (主にユーザーの入力チェック用)
-			UniformMap		_defaultValue;	//!< Uniformデフォルト値と対応するId
-			bool			_bInit = false;	//!< lost/resetのチェック用 (Debug)
-
-			// ----------- GLXStructから読んだデータ群 -----------
-			AttrL			_attrL;
-			VaryL			_varyL;
-			ConstL			_constL;
-			UnifL			_unifL;
+			Runtime			_runtime;
+		private:
+			//! lost/resetのチェック用 (Debug)
+			bool			_bInit = false;	
 
 		public:
-			TPStructR() = default;
-			//! エフェクトファイルのパース結果を読み取る
-			TPStructR(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass);
-
 			//! OpenGL関連のリソースを解放
 			/*! GLResourceの物とは別。GLEffectから呼ぶ */
 			void ts_onDeviceLost();
 			void ts_onDeviceReset(const IEffect& e);
 
-			bool hasSetting(const GLState& s) const;
-
-			const UniformMap& getUniformDefault() const noexcept;
-			const UniIdSet& getRequiredUniformEntries() const noexcept;
-			const VSemAttrV& getVAttr() const noexcept;
-
 			const HProg& getProgram() const noexcept;
+			const Runtime& getRuntime() const noexcept;
 			//! OpenGLに設定を適用
 			void applySetting() const;
-			//! 設定差分を求める
-			static GLState_SPV CalcDiff(const TPStructR& from, const TPStructR& to);
+	};
+	using Material_SP = std::shared_ptr<Material>;
+	// Tech | Pass の分だけ作成
+	class GLXMaterial : public Material {
+		public:
+			using MacroMap = std::unordered_map<std::string, std::string>;
+			using AttrL = std::vector<const parse::AttrEntry*>;
+			using VaryL = std::vector<const parse::VaryEntry*>;
+			using ConstL = std::vector<const parse::ConstEntry*>;
+			using UnifL = std::vector<const parse::UnifEntry*>;
+		private:
+			parse::BlockSet_SP	_block;
+			AttrL				_attrL;
+			VaryL				_varyL;
+			UnifL				_unifL;
+			ConstL				_constL;
+		protected:
+			void _onDeviceReset(const IEffect& e, Material::Runtime&) override;
+		public:
+			//! エフェクトファイルのパース結果を読み取る
+			GLXMaterial(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass);
 	};
 	//! GLXエフェクト管理クラス
 	class GLEffect : public IEffect, public std::enable_shared_from_this<GLEffect> {
 		public:
 			//! [UniformId -> TextureActiveIndex]
 			using TexIndex = std::unordered_map<GLint, GLint>;
-			//! [(TechId|PassId) -> ProgramClass]
-			using TechMap = std::unordered_map<GL16Id, TPStructR>;
+			//! [(TechId|PassId) -> Material]
+			using TechMap = std::unordered_map<GL16Id, Material_SP>;
 			using TexMap = std::unordered_map<GL16Id, TexIndex>;
 			//! Tech名とPass名のセット
 			using TechName = std::vector<std::vector<std::string>>;
-			using TPRef = spi::Optional<const TPStructR&>;
 
 		private:
 			parse::BlockSet_SP	_blockSet;
@@ -139,12 +140,12 @@ namespace rev {
 
 				// Tech, Pass何れかを変更したらDraw変数をクリア
 				// passをセットしたタイミングでProgramを検索し、tpsにセット
-				GLint_OP				tech,
+				GLint_OP			tech,
 									pass;
 
 				TexIndex*			pTexIndex;
 				bool				bDefaultParam;	//!< Tech切替時、trueならデフォルト値読み込み
-				TPRef				tps;			//!< 現在使用中のTech
+				Material_SP			material;		//!< 現在使用中のMaterial
 				UniformMap			uniMap;			//!< 現在設定中のUniform
 				draw::TokenML		tokenML;
 

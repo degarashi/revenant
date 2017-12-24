@@ -1,8 +1,8 @@
 #include "glx.hpp"
 #include "gl_error.hpp"
+#include "argchecker.hpp"
 #include "gl_resource.hpp"
 #include "gl_program.hpp"
-#include "argchecker.hpp"
 #include <boost/format.hpp>
 
 namespace rev {
@@ -86,7 +86,7 @@ namespace rev {
 					}
 					return ret;
 				}
-				using MacroMap = TPStructR::MacroMap;
+				using MacroMap = GLXMaterial::MacroMap;
 				using MacroPair = MacroMap::value_type;
 				MacroMap exportMacro() const {
 					MacroMap mm;
@@ -142,25 +142,6 @@ namespace rev {
 		}
 	}
 
-	// ----------------- TPStructR -----------------
-	bool TPStructR::hasSetting(const GLState& s) const {
-		return std::find_if(_setting.cbegin(), _setting.cend(),
-			[&s](const auto& s1){
-				return s == *s1;
-			}
-		) != _setting.cend();
-	}
-	GLState_SPV TPStructR::CalcDiff(const TPStructR& from, const TPStructR& to) {
-		// toと同じ設定がfrom側にあればスキップ
-		// fromに無かったり、異なっていればエントリに加える
-		GLState_SPV ret;
-		for(auto& s : to._setting) {
-			if(!from.hasSetting(*s)) {
-				ret.push_back(s);
-			}
-		}
-		return ret;
-	}
 	namespace {
 		struct ArgVisitor : boost::static_visitor<> {
 			std::ostream&			_os;
@@ -195,7 +176,7 @@ namespace rev {
 			}
 		};
 	}
-	TPStructR::TPStructR(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass) {
+	GLXMaterial::GLXMaterial(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass) {
 		const parse::ShSetting* selectSh[ShType::_Num] = {};
 		// PassかTechからシェーダー名を取ってくる
 		for(auto& a : tech.shL)
@@ -292,17 +273,9 @@ namespace rev {
 			ss.clear();
 		}
 		// シェーダーのリンク処理
-		_prog = mgr_gl.makeProgram(shP[0], shP[1], shP[2]);
+		_program = mgr_gl.makeProgram(shP[0], shP[1], shP[2]);
 		// OpenGLステート設定リストを形成
 		_setting = dupl.exportSetting();
-	}
-	void TPStructR::ts_onDeviceLost() {
-		D_Assert0(_bInit);
-		_bInit = false;
-		// OpenGLのリソースが絡んでる変数を消去
-		_vattr.clear();
-		_noDefValue.clear();
-		_defaultValue.clear();
 	}
 	namespace {
 		struct Visitor : boost::static_visitor<> {
@@ -329,12 +302,7 @@ namespace rev {
 			}
 		};
 	}
-	void TPStructR::ts_onDeviceReset(const IEffect& e) {
-		D_Assert0(!_bInit);
-		_bInit = true;
-		auto& prog = *_prog;
-		prog.onDeviceReset();
-
+	void GLXMaterial::_onDeviceReset(const IEffect& e, Material::Runtime& rt) {
 		struct UniqueChk {
 			GLint		id;
 			VSem::e		sem;
@@ -350,7 +318,7 @@ namespace rev {
 		// 頂点セマンティクス対応リストを生成
 		for(auto& p : _attrL) {
 			const char* name = p->name.c_str();
-			if(const auto at = prog.getAttribId(name)) {
+			if(const auto at = _program->getAttribId(name)) {
 				const auto sem = static_cast<VSem::e>(p->sem);
 				VSemAttr a;
 				a.sem = VSemantic {
@@ -358,7 +326,7 @@ namespace rev {
 					(p->index) ? *p->index : 0
 				};
 				a.attrId = *at;
-				_vattr.emplace_back(a);
+				rt.vattr.emplace_back(a);
 				uc.emplace_back(UniqueChk{a.attrId, sem, name});
 			} else {
 				// 該当する変数が見付からない旨の警告を出す(もしかしたらシェーダー内で使ってないだけかもしれない)
@@ -382,7 +350,7 @@ namespace rev {
 
 		// Uniform変数にデフォルト値がセットしてある物をリストアップ
 		Visitor visitor(e);
-		visitor.pgId = _prog->getProgramId();
+		visitor.pgId = _program->getProgramId();
 		for(const auto* p : _unifL) {
 			if(visitor.setKey(p->name)) {
 				const auto& defVal = p->defaultValue;
@@ -390,26 +358,9 @@ namespace rev {
 					// 変数名をIdに変換
 					boost::apply_visitor(visitor, *defVal);
 				} else
-					_noDefValue.insert(visitor.uniId);
+					rt.noDefValue.insert(visitor.uniId);
 			}
 		}
-		_defaultValue = std::move(visitor.result);
-	}
-
-	void TPStructR::applySetting() const {
-		for(auto& st : _setting)
-			st->apply();
-	}
-	const UniformMap& TPStructR::getUniformDefault() const noexcept {
-		return _defaultValue;
-	}
-	const TPStructR::UniIdSet& TPStructR::getRequiredUniformEntries() const noexcept {
-		return _noDefValue;
-	}
-	const HProg& TPStructR::getProgram() const noexcept {
-		return _prog;
-	}
-	const VSemAttrV& TPStructR::getVAttr() const noexcept {
-		return _vattr;
+		rt.defaultValue = std::move(visitor.result);
 	}
 }

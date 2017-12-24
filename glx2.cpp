@@ -90,7 +90,7 @@ namespace rev {
 	}
 	void GLEffect::Current::_clean_drawvalue() {
 		pass = spi::none;
-		tps = spi::none;
+		material.reset();
 		pTexIndex = nullptr;
 		// セットされているUniform変数を未セット状態にする
 		uniMap.clear();
@@ -114,16 +114,16 @@ namespace rev {
 			// TPStructRの参照をTech,Pass Idから検索してセット
 			GL16Id id{uint8_t(*tech), uint8_t(*pass)};
 			Assert0(tmap.count(id)==1);
-			tps = tmap.at(id);
+			material = tmap.at(id);
 			pTexIndex = &texMap.at(id);
 
 			// デフォルト値読み込み
 			if(bDefaultParam) {
-				uniMap.copyFrom(tps->getUniformDefault());
+				uniMap.copyFrom(material->getRuntime().defaultValue);
 			}
 			// 各種セッティングをするTokenをリストに追加
-			tps->getProgram()->getDrawToken(tokenML);
-			tokenML.allocate<draw::UserFunc>([&tp_tmp = *tps](){
+			material->getProgram()->getDrawToken(tokenML);
+			tokenML.allocate<draw::UserFunc>([&tp_tmp = *material](){
 				tp_tmp.applySetting();
 			});
 		}
@@ -156,7 +156,7 @@ namespace rev {
 			uniMap.moveTo(tokenML);
 		}
 		// set VBuffer(VDecl)
-		vertex.extractData(vs, tps->getVAttr());
+		vertex.extractData(vs, material->getRuntime().vattr);
 		// set IBuffer
 		index.extractData(vs);
 	}
@@ -176,7 +176,7 @@ namespace rev {
 		if(_bInit) {
 			_bInit = false;
 			for(auto& p : _techMap)
-				p.second.ts_onDeviceLost();
+				p.second->ts_onDeviceLost();
 
 			_current.reset();
 		}
@@ -185,7 +185,7 @@ namespace rev {
 		if(!_bInit) {
 			_bInit = true;
 			for(auto& p : _techMap)
-				p.second.ts_onDeviceReset(*this);
+				p.second->ts_onDeviceReset(*this);
 		}
 	}
 	void GLEffect::setVDecl(const VDecl_SP& decl) {
@@ -252,7 +252,7 @@ namespace rev {
 		}
 		auto itr = _techMap.find(GL16Id{uint8_t(techId), uint8_t(passId)});
 		if(itr != _techMap.end())
-			return itr->second.getProgram();
+			return itr->second->getProgram();
 		return HProg();
 	}
 	draw::TokenBuffer& GLEffect::_makeUniformTokenBuffer(GLint id) {
@@ -322,9 +322,9 @@ namespace rev {
 		}
 	}
 	GLint_OP GLEffect::getUniformId(const std::string& name) const {
-		D_Assert(_current.tps, "Tech/Pass is not set");
-		auto& tps = *_current.tps;
-		HProg hProg = tps.getProgram();
+		D_Assert(_current.material, "Tech/Pass is not set");
+		auto& mtl = *_current.material;
+		HProg hProg = mtl.getProgram();
 		D_Assert(hProg, "shader program handle is invalid");
 		return hProg->getUniformId(name);
 	}
@@ -354,8 +354,8 @@ namespace rev {
 				if(itr == _techMap.end())
 					break;
 				auto& r2 = r[tpId];
-				auto& tps = itr->second;
-				const GLProgram* p = tps.getProgram().get();
+				auto& mtl = *itr->second;
+				const GLProgram* p = mtl.getProgram().get();
 
 				for(auto& srcstr : *src) {
 					if(auto id = p->getUniformId(srcstr)) {

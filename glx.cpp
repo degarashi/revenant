@@ -2,44 +2,12 @@
 #include "gl_error.hpp"
 #include "gl_program.hpp"
 #include "glx_if.hpp"
-#include "uniform_pool.hpp"
 #include <boost/format.hpp>
 
 namespace rev {
 	GLEffect::EC_FileNotFound::EC_FileNotFound(const std::string& fPath):
 		EC_Base((boost::format("file path: \"%1%\" was not found.") % fPath).str())
 	{}
-	// -------------------------- UniformMap --------------------------
-	draw::TokenBuffer* UniformMap::makeTokenBuffer(const GLint id) {
-		const auto itr = _map.find(id);
-		if(itr == _map.end()) {
-			return _map[id] = unif_pool.allocate();
-		}
-		return itr->second;
-	}
-	void UniformMap::clear() {
-		auto& pool = unif_pool;
-		for(auto& p : _map)
-			pool.destroy(p.second);
-		_map.clear();
-	}
-	void UniformMap::copyFrom(const UniformMap& other) {
-		for(auto& o : other._map) {
-			auto* buff = makeTokenBuffer(o.first);
-			o.second->clone(*buff);
-		}
-	}
-	void UniformMap::moveTo(draw::TokenML& ml) {
-		auto& pool = unif_pool;
-		for(auto& u : _map) {
-			u.second->takeout(ml);
-			pool.destroy(u.second);
-		}
-		_map.clear();
-	}
-	bool UniformMap::empty() const noexcept {
-		return _map.empty();
-	}
 	// ----------------- GLEffect -----------------
 	GLEffect::GLEffect(const std::string& name) {
 		_blockSet = parse::LoadGLXStructSet(name);
@@ -64,10 +32,11 @@ namespace rev {
 				for(int passId=0 ; passId<nJ ; passId++) {
 					nmm[passId+1] = tpTech.tpL.at(passId).get().name;
 					GL16Id tpid{uint8_t(techId), uint8_t(passId)};
-					auto res = _techMap.insert(std::make_pair(tpid, TPStructR(_blockSet, tpTech, tpTech.tpL.at(passId).get())));
+					const Material_SP sp = std::make_shared<GLXMaterial>(_blockSet, tpTech, tpTech.tpL.at(passId).get());
+					auto res = _techMap.insert(std::make_pair(tpid, sp));
 					// テクスチャインデックスリスト作成
-					TPStructR& tpr = res.first->second;
-					GLuint pid = tpr.getProgram()->getProgramId();
+					Material& mtl = *res.first->second;
+					const GLuint pid = mtl.getProgram()->getProgramId();
 					GLint nUnif;
 					GL.glGetProgramiv(pid, GL_ACTIVE_UNIFORMS, &nUnif);
 
