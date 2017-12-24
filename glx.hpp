@@ -2,7 +2,6 @@
 #include "gl_if.hpp"
 #include "glx_if.hpp"
 #include "glx_parse.hpp"
-#include "spine/object_pool.hpp"
 #include "gl_buffer.hpp"
 #include "resmgr_app.hpp"
 #include "drawtoken/viewport.hpp"
@@ -12,14 +11,6 @@
 #include "glx_block.hpp"
 
 namespace rev {
-	#define unif_pool (::rev::UnifPool::ref())
-	struct UnifPool :
-		spi::ObjectPool<draw::TokenBuffer>,
-		spi::Singleton<UnifPool>
-	{
-		using spi::ObjectPool<draw::TokenBuffer>::ObjectPool;
-	};
-
 	void OutputCommentBlock(std::ostream& os, const std::string& msg);
 	using GLState_SP = std::shared_ptr<GLState>;
 	using GLState_SPV = std::vector<GLState_SP>;
