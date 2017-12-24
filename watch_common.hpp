@@ -3,7 +3,7 @@
 #include <memory>
 #include <map>
 #include "spine/enum.hpp"
-#include <iostream>
+#include <ostream>
 
 namespace rev {
 	using String_SP = std::shared_ptr<std::string>;

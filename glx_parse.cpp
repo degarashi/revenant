@@ -339,7 +339,7 @@ namespace rev {
 }
 
 #include <regex>
-#include <iostream>
+#include <ostream>
 #include <boost/format.hpp>
 namespace rev {
 	namespace parse {

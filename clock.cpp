@@ -1,5 +1,5 @@
 #include "clock.hpp"
-#include <iostream>
+#include <ostream>
 
 namespace rev {
 	std::ostream& operator << (std::ostream& os, const Duration& d) {

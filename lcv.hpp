@@ -2,7 +2,7 @@
 #include "lv_common.hpp"
 #include "gl_format.hpp"
 #include "clock.hpp"
-#include <iostream>
+#include <ostream>
 #include <unordered_map>
 #include "lubee/fwd.hpp"
 #include "frea/fwd.hpp"
