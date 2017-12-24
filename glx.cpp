@@ -11,9 +11,9 @@ namespace rev {
 	{}
 	// ----------------- GLEffect -----------------
 	GLEffect::GLEffect(const std::string& name) {
-		_blockSet = parse::LoadGLXStructSet(name);
+		const auto bset = parse::LoadGLXStructSet(name);
 		std::vector<parse::TPStruct*> tpV;
-		for(auto& blk : *_blockSet) {
+		for(auto& blk : *bset) {
 			auto& b = *blk;
 			for(auto& tp : b.tpL)
 				tpV.emplace_back(&tp);
@@ -33,7 +33,7 @@ namespace rev {
 				for(int passId=0 ; passId<nJ ; passId++) {
 					nmm[passId+1] = tpTech.tpL.at(passId).get().name;
 					GL16Id tpid{uint8_t(techId), uint8_t(passId)};
-					const Material_SP sp = std::make_shared<GLXMaterial>(_blockSet, tpTech, tpTech.tpL.at(passId).get());
+					const Material_SP sp = std::make_shared<GLXMaterial>(bset, tpTech, tpTech.tpL.at(passId).get());
 					auto res = _techMap.insert(std::make_pair(tpid, sp));
 					// テクスチャインデックスリスト作成
 					Material& mtl = *res.first->second;

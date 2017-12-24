@@ -29,7 +29,6 @@ namespace rev {
 			using TechName = std::vector<std::vector<std::string>>;
 
 		private:
-			parse::BlockSet_SP	_blockSet;
 			TechMap			_techMap;			//!< ゼロから設定を構築する場合の情報や頂点セマンティクス
 			TechName		_techName;
 			TexMap			_texMap;
