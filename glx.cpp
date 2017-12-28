@@ -36,7 +36,7 @@ namespace rev {
 					const Tech_SP sp = std::make_shared<GLXTech>(bset, tpTech, tpTech.tpL.at(passId).get());
 					auto res = _techMap.insert(std::make_pair(tpid, sp));
 					// テクスチャインデックスリスト作成
-					Tech& tech = *res.first->second;
+					const ITech& tech = *res.first->second;
 					const GLuint pid = tech.getProgram()->getProgramId();
 					GLint nUnif;
 					GL.glGetProgramiv(pid, GL_ACTIVE_UNIFORMS, &nUnif);

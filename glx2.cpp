@@ -9,7 +9,7 @@
 #include "drawtoken/task.hpp"
 #include "drawtoken/texture.hpp"
 #include "unituple/operator.hpp"
-#include "tech.hpp"
+#include "tech_if.hpp"
 
 namespace rev {
 	// -------------- GLEffect::Current::Vertex --------------

@@ -14,8 +14,8 @@ namespace rev {
 	namespace draw {
 		class VStream;
 	}
-	class Tech;
-	using Tech_SP = std::shared_ptr<Tech>;
+	struct ITech;
+	using Tech_SP = std::shared_ptr<ITech>;
 
 	//! GLXエフェクト管理クラス
 	class GLEffect : public IEffect, public std::enable_shared_from_this<GLEffect> {
