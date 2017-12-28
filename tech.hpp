@@ -11,7 +11,7 @@ namespace rev {
 	struct GLState;
 	using GLState_SP = std::shared_ptr<GLState>;
 	using GLState_SPV = std::vector<GLState_SP>;
-	class Material {
+	class Tech {
 		protected:
 			struct Runtime {
 				using UniIdSet = std::unordered_set<GLint>;
@@ -46,5 +46,5 @@ namespace rev {
 			//! OpenGLに設定を適用
 			void applySetting() const;
 	};
-	using Material_SP = std::shared_ptr<Material>;
+	using Tech_SP = std::shared_ptr<Tech>;
 }

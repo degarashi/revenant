@@ -14,16 +14,16 @@ namespace rev {
 	namespace draw {
 		class VStream;
 	}
-	class Material;
-	using Material_SP = std::shared_ptr<Material>;
+	class Tech;
+	using Tech_SP = std::shared_ptr<Tech>;
 
 	//! GLXエフェクト管理クラス
 	class GLEffect : public IEffect, public std::enable_shared_from_this<GLEffect> {
 		public:
 			//! [UniformId -> TextureActiveIndex]
 			using TexIndex = std::unordered_map<GLint, GLint>;
-			//! [(TechId|PassId) -> Material]
-			using TechMap = std::unordered_map<GL16Id, Material_SP>;
+			//! [(TechId|PassId) -> Tech]
+			using TechMap = std::unordered_map<GL16Id, Tech_SP>;
 			using TexMap = std::unordered_map<GL16Id, TexIndex>;
 			//! Tech名とPass名のセット
 			using TechName = std::vector<std::vector<std::string>>;
@@ -75,7 +75,7 @@ namespace rev {
 
 				TexIndex*			pTexIndex;
 				bool				bDefaultParam;	//!< Tech切替時、trueならデフォルト値読み込み
-				Material_SP			material;		//!< 現在使用中のMaterial
+				Tech_SP				tech_sp;		//!< 現在使用中のTech
 				UniformMap			uniMap;			//!< 現在設定中のUniform
 				draw::TokenML		tokenML;
 

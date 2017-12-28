@@ -1,4 +1,4 @@
-#include "glx_material.hpp"
+#include "glx_tech.hpp"
 #include "glx_makesetting.hpp"
 #include "glx_block.hpp"
 #include "gl_error.hpp"
@@ -92,7 +92,7 @@ namespace rev {
 					}
 					return ret;
 				}
-				using MacroMap = GLXMaterial::MacroMap;
+				using MacroMap = GLXTech::MacroMap;
 				using MacroPair = MacroMap::value_type;
 				MacroMap exportMacro() const {
 					MacroMap mm;
@@ -182,7 +182,7 @@ namespace rev {
 			}
 		};
 	}
-	GLXMaterial::GLXMaterial(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass) {
+	GLXTech::GLXTech(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass) {
 		const parse::ShSetting* selectSh[ShType::_Num] = {};
 		// PassかTechからシェーダー名を取ってくる
 		for(auto& a : tech.shL)
@@ -308,7 +308,7 @@ namespace rev {
 			}
 		};
 	}
-	void GLXMaterial::_onDeviceReset(const IEffect& e, Material::Runtime& rt) {
+	void GLXTech::_onDeviceReset(const IEffect& e, Tech::Runtime& rt) {
 		struct UniqueChk {
 			GLint		id;
 			VSem::e		sem;

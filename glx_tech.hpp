@@ -1,5 +1,5 @@
 #include "glx_parse.hpp"
-#include "material.hpp"
+#include "tech.hpp"
 
 namespace rev {
 	namespace parse {
@@ -7,7 +7,7 @@ namespace rev {
 		using BlockSet_SP = std::shared_ptr<BlockSet>;
 	}
 	// Tech | Pass の分だけ作成
-	class GLXMaterial : public Material {
+	class GLXTech : public Tech {
 		public:
 			using MacroMap = std::unordered_map<std::string, std::string>;
 			using AttrL = std::vector<const parse::AttrEntry*>;
@@ -21,9 +21,9 @@ namespace rev {
 			UnifL				_unifL;
 			ConstL				_constL;
 		protected:
-			void _onDeviceReset(const IEffect& e, Material::Runtime&) override;
+			void _onDeviceReset(const IEffect& e, Tech::Runtime&) override;
 		public:
 			//! エフェクトファイルのパース結果を読み取る
-			GLXMaterial(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass);
+			GLXTech(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass);
 	};
 }

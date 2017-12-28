@@ -2,7 +2,7 @@
 #include "gl_error.hpp"
 #include "gl_program.hpp"
 #include "glx_block.hpp"
-#include "glx_material.hpp"
+#include "glx_tech.hpp"
 #include <boost/format.hpp>
 
 namespace rev {
@@ -33,11 +33,11 @@ namespace rev {
 				for(int passId=0 ; passId<nJ ; passId++) {
 					nmm[passId+1] = tpTech.tpL.at(passId).get().name;
 					GL16Id tpid{uint8_t(techId), uint8_t(passId)};
-					const Material_SP sp = std::make_shared<GLXMaterial>(bset, tpTech, tpTech.tpL.at(passId).get());
+					const Tech_SP sp = std::make_shared<GLXTech>(bset, tpTech, tpTech.tpL.at(passId).get());
 					auto res = _techMap.insert(std::make_pair(tpid, sp));
 					// テクスチャインデックスリスト作成
-					Material& mtl = *res.first->second;
-					const GLuint pid = mtl.getProgram()->getProgramId();
+					Tech& tech = *res.first->second;
+					const GLuint pid = tech.getProgram()->getProgramId();
 					GLint nUnif;
 					GL.glGetProgramiv(pid, GL_ACTIVE_UNIFORMS, &nUnif);
 

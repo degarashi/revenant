@@ -9,7 +9,7 @@
 #include "drawtoken/task.hpp"
 #include "drawtoken/texture.hpp"
 #include "unituple/operator.hpp"
-#include "material.hpp"
+#include "tech.hpp"
 
 namespace rev {
 	// -------------- GLEffect::Current::Vertex --------------
@@ -91,7 +91,7 @@ namespace rev {
 	}
 	void GLEffect::Current::_clean_drawvalue() {
 		pass = spi::none;
-		material.reset();
+		tech_sp.reset();
 		pTexIndex = nullptr;
 		// セットされているUniform変数を未セット状態にする
 		uniMap.clear();
@@ -115,16 +115,16 @@ namespace rev {
 			// TPStructRの参照をTech,Pass Idから検索してセット
 			GL16Id id{uint8_t(*tech), uint8_t(*pass)};
 			Assert0(tmap.count(id)==1);
-			material = tmap.at(id);
+			tech_sp = tmap.at(id);
 			pTexIndex = &texMap.at(id);
 
 			// デフォルト値読み込み
 			if(bDefaultParam) {
-				uniMap.copyFrom(material->getRuntime().defaultValue);
+				uniMap.copyFrom(tech_sp->getRuntime().defaultValue);
 			}
 			// 各種セッティングをするTokenをリストに追加
-			material->getProgram()->getDrawToken(tokenML);
-			tokenML.allocate<draw::UserFunc>([&tp_tmp = *material](){
+			tech_sp->getProgram()->getDrawToken(tokenML);
+			tokenML.allocate<draw::UserFunc>([&tp_tmp = *tech_sp](){
 				tp_tmp.applySetting();
 			});
 		}
@@ -157,7 +157,7 @@ namespace rev {
 			uniMap.moveTo(tokenML);
 		}
 		// set VBuffer(VDecl)
-		vertex.extractData(vs, material->getRuntime().vattr);
+		vertex.extractData(vs, tech_sp->getRuntime().vattr);
 		// set IBuffer
 		index.extractData(vs);
 	}
@@ -323,9 +323,9 @@ namespace rev {
 		}
 	}
 	GLint_OP GLEffect::getUniformId(const std::string& name) const {
-		D_Assert(_current.material, "Tech/Pass is not set");
-		auto& mtl = *_current.material;
-		HProg hProg = mtl.getProgram();
+		D_Assert(_current.tech_sp, "Tech/Pass is not set");
+		auto& tech = *_current.tech_sp;
+		HProg hProg = tech.getProgram();
 		D_Assert(hProg, "shader program handle is invalid");
 		return hProg->getUniformId(name);
 	}
@@ -355,8 +355,8 @@ namespace rev {
 				if(itr == _techMap.end())
 					break;
 				auto& r2 = r[tpId];
-				auto& mtl = *itr->second;
-				const GLProgram* p = mtl.getProgram().get();
+				auto& tech = *itr->second;
+				const GLProgram* p = tech.getProgram().get();
 
 				for(auto& srcstr : *src) {
 					if(auto id = p->getUniformId(srcstr)) {
