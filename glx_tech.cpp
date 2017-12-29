@@ -178,14 +178,11 @@ namespace rev {
 				_outputArgR(value);
 			}
 		};
-		PassPairV _MakeGLXMaterial(const parse::BlockSet_SP& bs, const parse::TPStruct& tech) {
-			PassPairV ret;
+		Tech_SPV _MakeGLXMaterial(const parse::BlockSet_SP& bs, const parse::TPStruct& tech) {
+			Tech_SPV ret;
 			for(auto& pass : tech.tpL) {
 				ret.emplace_back(
-					PassPair {
-						pass.get().name,
-						std::make_shared<GLXTech>(bs, tech, pass.get())
-					}
+					std::make_shared<GLXTech>(bs, tech, pass.get())
 				);
 			}
 			return ret;
@@ -208,6 +205,7 @@ namespace rev {
 	GLXTech::GLXTech(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass):
 		_block(bs)
 	{
+		_name = pass.name;
 		const parse::ShSetting* selectSh[ShType::_Num] = {};
 		// PassかTechからシェーダー名を取ってくる
 		for(auto& a : tech.shL)

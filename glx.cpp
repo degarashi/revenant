@@ -109,7 +109,7 @@ namespace rev {
 			_clean_drawvalue();
 			pass = idPass;
 
-			tech_sp = tp[*tech].pass[*pass].pass;
+			tech_sp = tp[*tech].pass[*pass];
 			// デフォルト値読み込み
 			uniValue.copyFrom(tech_sp->getRuntime().defaultValue);
 			// 各種セッティングをするTokenをリストに追加
@@ -168,7 +168,7 @@ namespace rev {
 			_bInit = false;
 			for(auto& t : _tech) {
 				for(auto& p : t.pass) {
-					p.pass->ts_onDeviceLost();
+					p->ts_onDeviceLost();
 				}
 			}
 
@@ -180,7 +180,7 @@ namespace rev {
 			_bInit = true;
 			for(auto& t : _tech) {
 				for(auto& p : t.pass) {
-					p.pass->ts_onDeviceReset(*this);
+					p->ts_onDeviceReset(*this);
 				}
 			}
 		}
@@ -208,7 +208,7 @@ namespace rev {
 		const auto& tech = _tech[techId];
 		const int nP = tech.pass.size();
 		for(int i=0 ; i<nP ; i++) {
-			if(tech.pass[i].name == pass)
+			if(tech.pass[i]->getName() == pass)
 				return i;
 		}
 		return spi::none;
@@ -248,7 +248,7 @@ namespace rev {
 				return HProg();
 			passId = *_current.pass;
 		}
-		return _tech.at(techId).pass.at(passId).pass->getProgram();
+		return _tech.at(techId).pass.at(passId)->getProgram();
 	}
 	draw::TokenBuffer& GLEffect::_makeUniformTokenBuffer(const GLint id) {
 		return *_current.uniValue.makeTokenBuffer(id);
@@ -344,7 +344,7 @@ namespace rev {
 		// 全てのTech&Passの組み合わせについてそれぞれUniform名を検索し、番号(GLint)を登録
 		for(auto& t : _tech) {
 			for(auto& p : t.pass) {
-				auto* ptr = p.pass.get();
+				auto* ptr = p.get();
 				auto& r2 = r[ptr];
 				const GLProgram* prog = ptr->getProgram().get();
 				for(auto& srcstr : *src) {

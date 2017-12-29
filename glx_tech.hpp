@@ -29,14 +29,10 @@ namespace rev {
 			//! エフェクトファイルのパース結果を読み取る
 			GLXTech(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass);
 	};
-	struct PassPair {
-		Name		name;
-		Tech_SP		pass;
-	};
-	using PassPairV = std::vector<PassPair>;
+	using Tech_SPV = std::vector<Tech_SP>;
 	struct TechPair {
 		Name		name;
-		PassPairV	pass;
+		Tech_SPV	pass;
 	};
 	using TechPairV = std::vector<TechPair>;
 	TechPairV MakeGLXMaterial(const parse::BlockSet_SP& bs);
