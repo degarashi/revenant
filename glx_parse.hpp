@@ -346,9 +346,7 @@ namespace rev {
 		};
 		std::ostream& operator << (std::ostream& os, const CodeStruct& t);
 
-		template <typename T>
-		using NameMap = std::unordered_map<std::string, T>;
-		//! Tech,Pass
+		//! Tech,Pass兼用
 		struct TPStruct;
 		struct TPStruct {
 			std::string					name;
@@ -357,13 +355,18 @@ namespace rev {
 			std::vector<BoolSetting> 	bsL;
 			std::vector<MacroEntry>		mcL;
 			std::vector<ShSetting>		shL;
-			std::vector<boost::recursive_wrapper<TPStruct>>		tpL;
 			std::vector<ValueSetting> 	vsL;
 
-			std::vector<std::string>	derive;
+			// -------------- Tech時のみ使用 --------------
+			// 内包するPassのリスト
+			std::vector<boost::recursive_wrapper<TPStruct>>		tpL;
+			// 継承するTechのリスト
+			StrV						derive;
 		};
 		std::ostream& operator << (std::ostream& os, const TPStruct& t);
 
+		template <typename T>
+		using NameMap = std::unordered_map<std::string, T>;
 		//! エフェクト全般
 		struct GLXStruct {
 			NameMap<AttrStruct>			atM;
@@ -373,7 +376,7 @@ namespace rev {
 			NameMap<UnifStruct>			uniM;
 			NameMap<VaryStruct>			varM;
 			NameMap<CodeStruct>			codeM;
-			std::vector<std::string>	incl;		//!< インクルードファイル名
+			StrV						incl;		//!< インクルードファイル名
 		};
 		std::ostream& operator << (std::ostream& os, const GLXStruct& glx);
 
@@ -397,7 +400,7 @@ FUSION_ADAPT_STRUCT_AUTO(rev::parse::VaryStruct, (name)(derive)(entry))
 FUSION_ADAPT_STRUCT_AUTO(rev::parse::UnifStruct, (name)(derive)(entry))
 FUSION_ADAPT_STRUCT_AUTO(rev::parse::ConstStruct, (name)(derive)(entry))
 FUSION_ADAPT_STRUCT_AUTO(rev::parse::ShStruct, (type)(version_str)(bES)(name)(args)(info))
-FUSION_ADAPT_STRUCT_AUTO(rev::parse::TPStruct, (name)(blkL)(bsL)(mcL)(shL)(tpL)(vsL)(derive))
+FUSION_ADAPT_STRUCT_AUTO(rev::parse::TPStruct, (name)(blkL)(bsL)(mcL)(shL)(vsL)(tpL)(derive))
 FUSION_ADAPT_STRUCT_AUTO(rev::parse::GLXStruct, (atM)(csM)(shM)(tpL)(uniM)(varM)(incl))
 FUSION_ADAPT_STRUCT_AUTO(rev::parse::ArgItem, (type)(name))
 FUSION_ADAPT_STRUCT_AUTO(rev::parse::BlockUse, (type)(bAdd)(name))

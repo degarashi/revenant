@@ -192,12 +192,12 @@ namespace rev {
 			DEF_PUSHVAL(fnPushBs, bsL)
 			DEF_SETVAL(fnSetMacro, mcL)
 			DEF_PUSHVAL(fnPushSh, shL)
-			DEF_PUSHVAL(fnPushTp, tpL)
 			DEF_PUSHVAL(fnPushVs, vsL)
 			const auto PassBlock_def = lit("pass") > NameToken[fnSetName] > '{' >
 					*(BlockUse[fnPushBu] | ValueSet[fnPushVs] | BoolSet[fnPushBs] |
 					MacroBlock[fnSetMacro] | ShSet[fnPushSh]) > '}';
 			// TechBlock: technique (: NameToken (, NameToken)*) \{ (PassBlock | BlockUse | BoolSet | MacroBlock | ShSet | ValueSet)* \}
+			DEF_PUSHVAL(fnPushTp, tpL)
 			DEF_SETVAL(fnSetDerive, derive)
 			const auto TechBlock_def = lit("technique")
 									> NameToken[fnSetName] > -(':' > (NameToken % ',')[fnSetDerive]) > '{' >
