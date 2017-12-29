@@ -1,3 +1,4 @@
+#pragma once
 #include "glx_parse.hpp"
 #include "tech.hpp"
 
