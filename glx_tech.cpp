@@ -13,7 +13,7 @@
 
 namespace rev {
 	namespace {
-		class TPSDupl {
+		class DResolver {
 			private:
 				using TPList = std::vector<const parse::TPStruct*>;
 				const parse::BlockSet& _bset;
@@ -43,7 +43,7 @@ namespace rev {
 						dst.push_back(attr);
 				}
 			public:
-				TPSDupl(const parse::BlockSet& bs, const parse::TPStruct& tech, const parse::TPStruct& pass):
+				DResolver(const parse::BlockSet& bs, const parse::TPStruct& tech, const parse::TPStruct& pass):
 					_bset(bs),
 					_tTech(tech),
 					_tPass(pass)
@@ -195,7 +195,7 @@ namespace rev {
 			throw GLE_LogicalError("no vertex or fragment shader found");
 
 		std::stringstream ss;
-		TPSDupl dupl(*bs, tech, pass);
+		DResolver dupl(*bs, tech, pass);
 		HSh shP[ShType::_Num];
 		for(int i=0 ; i<static_cast<int>(countof(selectSh)) ; i++) {
 			auto* shp = selectSh[i];
