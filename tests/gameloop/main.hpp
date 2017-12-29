@@ -6,7 +6,9 @@
 
 namespace rev {
 	namespace test {
-		struct UserShare {};
+		struct UserShare {
+			HTP		technique;
+		};
 		extern SpinLock<UserShare> g_shared;
 
 		struct MyScene : Scene<MyScene> {
@@ -16,6 +18,7 @@ namespace rev {
 
 			struct St_None;
 			MyScene();
+			~MyScene();
 		};
 		struct Param : GameloopParam {
 			lubee::SizeI getScreenSize() const override;
@@ -25,8 +28,7 @@ namespace rev {
 			const std::string& getOrgName() const override;
 			//! パス記述ファイル名
 			const URI_SP& getPathfile() const override;
-			HFx loadEffect(const std::string& name) const override;
-			HFx makeDefaultEffect() const override;
+			HFx makeEffect() const override;
 			::rev::MainProc* makeMainProc() const override;
 			::rev::DrawProc* makeDrawProc() const override;
 			bool getMultiContext() const noexcept override;

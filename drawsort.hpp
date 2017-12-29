@@ -42,7 +42,6 @@ namespace rev {
 	};
 	//! 描画ソート: Tech&Pass Id
 	struct DSort_TechPass : DSort {
-		const static uint32_t cs_invalidValue;
 		bool hasInfo(const DrawTag& d) const override;
 		bool compare(const DrawTag& d0, const DrawTag& d1) const override;
 		void apply(const DrawTag& d, IEffect& e) override;

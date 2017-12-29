@@ -10,9 +10,11 @@ namespace rev {
 		return itr->second;
 	}
 	void UniformMap::clear() {
-		auto& pool = unif_pool;
-		for(auto& p : _map)
-			pool.destroy(p.second);
+		if(UnifPool::Initialized()) {
+			auto& pool = unif_pool;
+			for(auto& p : _map)
+				pool.destroy(p.second);
+		}
 		_map.clear();
 	}
 	void UniformMap::copyFrom(const UniformMap& other) {
@@ -31,5 +33,8 @@ namespace rev {
 	}
 	bool UniformMap::empty() const noexcept {
 		return _map.empty();
+	}
+	UniformMap::~UniformMap() {
+		clear();
 	}
 }

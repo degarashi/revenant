@@ -6,8 +6,6 @@
 
 namespace rev {
 	namespace util {
-		using IdValue = lubee::Wrapper<int>;
-
 		//! テキスト描画クラス (for HUD)
 		class TextHUD : public Text {
 			private:
@@ -23,7 +21,7 @@ namespace rev {
 				frea::Mat3 _makeMatrix() const;
 			public:
 				TextHUD();
-				const static IdValue U_Text;
+				const static Name	U_Text;
 				//! ウィンドウ座標系で範囲指定
 				void setWindowOffset(const frea::Vec2& ofs);
 				//! スクリーン座標系で範囲指定

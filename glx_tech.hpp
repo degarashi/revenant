@@ -1,6 +1,6 @@
 #pragma once
 #include "glx_parse.hpp"
-#include "tech.hpp"
+#include "tech_if.hpp"
 
 namespace rev {
 	namespace parse {
@@ -21,19 +21,9 @@ namespace rev {
 			VaryL				_varyL;
 			UnifL				_unifL;
 			ConstL				_constL;
-			// テクスチャインデックスリスト作成
 			void _makeTexIndex();
-		protected:
-			void _onDeviceReset(const IEffect& e, Tech::Runtime&) override;
 		public:
 			//! エフェクトファイルのパース結果を読み取る
 			GLXTech(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass);
 	};
-	using Tech_SPV = std::vector<Tech_SP>;
-	struct TechPair {
-		Name		name;
-		Tech_SPV	pass;
-	};
-	using TechPairV = std::vector<TechPair>;
-	TechPairV MakeGLXMaterial(const parse::BlockSet_SP& bs);
 }

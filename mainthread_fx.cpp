@@ -52,7 +52,7 @@ namespace rev {
 				// Effectファイルの再構築(読み込みトライ)
 				auto lk = g_system_shared.lock();
 				rel.prevFx = rel.curFx;
-				rel.curFx = lk->param->makeDefaultEffect();
+				rel.curFx = lk->param->makeEffect();
 				lk->fx = rel.curFx;
 				// ユーザー側で何か移動する変数があればそれをする
 				rel.curFx->moveFrom(static_cast<IEffect&>(*rel.prevFx));

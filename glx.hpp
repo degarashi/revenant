@@ -18,94 +18,58 @@ namespace rev {
 
 	//! GLXエフェクト管理クラス
 	class GLEffect : public IEffect, public std::enable_shared_from_this<GLEffect> {
-		private:
-			TechPairV		_tech;
+		public:
 			bool			_bInit = false;		//!< deviceLost/Resetの状態区別
 			diff::Effect	_diffCount;			/*!< バッファのカウントクリアはclearTask()かbeginTask()の呼び出しタイミング */
 
-			struct Current {
-				class Vertex {
-					private:
-						VDecl_SP		_spVDecl;
-						HVb				_vbuff[MaxVStream];
-					public:
-						Vertex();
-						void setVDecl(const VDecl_SP& v);
-						void setVBuffer(const HVb& hVb, int n);
-						void reset();
-						void extractData(draw::VStream& dst, const VSemAttrV& vAttr) const;
-						bool operator != (const Vertex& v) const;
-				} vertex, vertex_prev;
-				class Index {
-					private:
-						HIb				_ibuff;
-					public:
-						Index();
-						void setIBuffer(const HIb& hIb);
-						const HIb& getIBuffer() const;
-						void reset();
-						void extractData(draw::VStream& dst) const;
-						bool operator != (const Index& idx) const;
-				} index, index_prev;
-				using HFb_OP = spi::Optional<HFb>;
-				HFb_OP				hFb;			//!< 描画対象のフレームバッファ (無効ならデフォルトターゲット)
-				HFb					hFbPrev;		//!< 今現在OpenGLで有効になっているフレームバッファ
-				using VP_OP = spi::Optional<draw::Viewport>;
-				VP_OP				viewport;
-				//! 前回とのバッファの差異
-				/*! Vertex, Indexバッファ情報を一時的にバックアップして差異の検出に備える */
-				diff::Buffer getDifference();
-				// Tech, Pass何れかを変更したらDraw変数をクリア
-				GLint_OP			tech,
-									pass;
-				Tech_SP				tech_sp;		//!< 現在使用中のTech
-				UniformMap			uniValue;		//!< 現在設定中のUniform
-				draw::TokenML		tokenML;		//!< 描画スレッドに渡す予定のコマンド
+			class Vertex {
+				private:
+					VDecl_SP		_spVDecl;
+					HVb				_vbuff[MaxVStream];
+				public:
+					Vertex();
+					void setVDecl(const VDecl_SP& v);
+					void setVBuffer(const HVb& hVb, int n);
+					void reset();
+					void extractData(draw::VStream& dst, const VSemAttrV& vAttr) const;
+					bool operator != (const Vertex& v) const;
+			} _vertex, _vertex_prev;
+			class Index {
+				private:
+					HIb				_ibuff;
+				public:
+					Index();
+					void setIBuffer(const HIb& hIb);
+					const HIb& getIBuffer() const;
+					void reset();
+					void extractData(draw::VStream& dst) const;
+					bool operator != (const Index& idx) const;
+			} _index, _index_prev;
+			using HFb_OP = spi::Optional<HFb>;
+			HFb_OP				_hFb;			//!< 描画対象のフレームバッファ (無効ならデフォルトターゲット)
+			HFb					_hFbPrev;		//!< 今現在OpenGLで有効になっているフレームバッファ
+			using VP_OP = spi::Optional<draw::Viewport>;
+			VP_OP				_viewport;
+			Tech_SP				_tech_sp;		//!< 現在使用中のTech
+			draw::TokenML		_tokenML;		//!< 描画スレッドに渡す予定のコマンド
 
-				void reset();
-				//! Tech/Passの切り替えで無効になる変数をリセット
-				void _clean_drawvalue();
-				void setTech(GLint idTech);
-				void setPass(GLint idPass, const TechPairV& tp);
-				void _outputDrawCall(draw::VStream& vs);
-				void outputFramebuffer();
-				//! DrawCallに関連するAPI呼び出しTokenを出力
-				/*! Vertex,Index BufferやUniform変数など */
-				void outputDrawCall(GLenum mode, GLint first, GLsizei count);
-				void outputDrawCallIndexed(GLenum mode, GLsizei count, GLenum sizeF, GLuint offset);
-			} _current;
-
-			struct ConstUnif {
-				using UnifIdV = std::vector<GLint>;
-				using UnifIdM = std::unordered_map<ITech*, UnifIdV>;
-				UnifIdM				result;		// [Tech|Pass pointer] -> vector]
-				const UnifIdV*		resultCur;	// current tech-pass entry
-			};
-			using ConstUnif_OP = spi::Optional<ConstUnif>;
-			ConstUnif_OP _unifId;
-
-			using IdPair = std::pair<int,int>;
-			struct ConstTech {
-				using TechIdV = std::vector<IdPair>;
-				TechIdV				result;
-			};
-			using ConstTech_OP = spi::Optional<ConstTech>;
-			ConstTech_OP _techId;
-
-			GLint_OP _getPassId(int techId, const Name& pass) const;
-			IdPair _getTechPassId(IdValue id) const;
-
-			/*! 引数はコンパイラで静的に確保される定数を想定しているのでポインタで受け取る
-				動的にリストを削除したりはサポートしない */
-			void _setConstantUniformList(const StrV* src);
-			void _setConstantTechPassList(const StrPairV* src);
+			//! 前回とのバッファの差異
+			/*! Vertex, Indexバッファ情報を一時的にバックアップして差異の検出に備える */
+			diff::Buffer _getDifference();
+			void _reset();
+			//! Tech/Passの切り替えで無効になる変数をリセット
+			void _clean_drawvalue();
+			void _outputDrawCall(draw::VStream& vs);
+			void _outputFramebuffer();
+			//! DrawCallに関連するAPI呼び出しTokenを出力
+			/*! Vertex,Index BufferやUniform変数など */
+			void _outputDrawCall(GLenum mode, GLint first, GLsizei count);
+			void _outputDrawCallIndexed(GLenum mode, GLsizei count, GLenum sizeF, GLuint offset);
 			void _clearFramebuffer(draw::TokenML& ml);
 		protected:
 			virtual void _prepareUniforms();
 		public:
-			//! Effectファイル(gfx)を読み込む
-			/*! フォーマットの解析まではするがGLリソースの確保はしない */
-			GLEffect(const std::string& name);
+			void setTechnique(const Tech_SP& tech) override;
 			void onDeviceLost() override;
 			void onDeviceReset() override;
 			//! GLEffectで発生する例外基底
@@ -115,41 +79,10 @@ namespace rev {
 			// ----------------- Exceptions -----------------
 			//! 該当するTechが無い
 			struct EC_TechNotFound : EC_Base { using EC_Base::EC_Base; };
-			//! 範囲外のPass番号を指定
-			struct EC_PassOutOfRange : EC_Base { using EC_Base::EC_Base; };
 			//! 頂点Attributeにデータがセットされてない
 			struct EC_EmptyAttribute : EC_Base { using EC_Base::EC_Base; };
-			//! Uniformにデータがセットされてない
+			//! 必須Uniformにデータがセットされてない
 			struct EC_EmptyUniform : EC_Base { using EC_Base::EC_Base; };
-			//! Macroにデータがセットされてない
-			struct EC_EmptyMacro : EC_Base { using EC_Base::EC_Base; };
-			//! GLXファイルの文法エラー
-			struct EC_GLXGrammar : EC_Base { using EC_Base::EC_Base; };
-			//! 該当するGLXファイルが見つからない
-			struct EC_FileNotFound : EC_Base {
-				EC_FileNotFound(const std::string& fPath);
-			};
-
-			// ----------------- Tech&Pass -----------------
-			//! Technique
-			GLint_OP getTechId(const Name& tech) const override;
-			GLint_OP getPassId(const Name& pass) const override;
-			GLint_OP getPassId(const Name& tech, const Name& pass) const override;
-			GLint_OP getCurTechId() const override;
-			GLint_OP getCurPassId() const override;
-			void setTechPassId(IdValue id) override;
-			//! TechId, PassIdに該当するProgramハンドルを返す
-			/*! \param[in] techId (-1 = currentTechId)
-				\param[in] passId (-1 = currentPassId)
-				\return 該当があればそのハンドル、なければ無効なハンドル */
-			HProg getProgram(int techId=-1, int passId=-1) const override;
-			/*!
-				\param[in]		id		TechniqueId
-			*/
-			void setTechnique(GLint id) override;
-			//! Pass指定
-			void setPass(int id) override;
-
 			// ----------------- Framebuffer -----------------
 			void setFramebuffer(const HFb& fb) override;
 			HFb getFramebuffer() const override;
@@ -163,18 +96,6 @@ namespace rev {
 			void setVDecl(const VDecl_SP& decl) override;
 			void setVStream(const HVb& vb, int n) override;
 			void setIStream(const HIb& ib) override;
-
-			// ----------------- Uniform Value -----------------
-			//! Uniform変数設定 (Tech/Passで指定された名前とセマンティクスのすり合わせを行う)
-			GLint_OP getUniformId(const Name& name) const override;
-			GLint_OP getUnifId(IdValue id) const override;
-			using IEffect::_makeUniformToken;
-			draw::TokenBuffer& _makeUniformTokenBuffer(GLint id) override;
-			void _makeUniformToken(draw::TokenDst& dst, GLint id, const bool* b, int n, bool) const override;
-			void _makeUniformToken(draw::TokenDst& dst, GLint id, const float* fv, int n, bool) const override;
-			void _makeUniformToken(draw::TokenDst& dst, GLint id, const double* fv, int n, bool) const override;
-			void _makeUniformToken(draw::TokenDst& dst, GLint id, const int* iv, int n, bool) const override;
-			void _makeUniformToken(draw::TokenDst& dst, GLint id, const HTex* hTex, int n, bool) const override;
 
 			// ----------------- Buffer Clear -----------------
 			void clearFramebuffer(const draw::ClearParam& param) override;

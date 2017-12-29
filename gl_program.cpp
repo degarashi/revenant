@@ -35,6 +35,7 @@ namespace rev {
 		GL.glGetProgramiv(_idProg, GL_LINK_STATUS, &ib);
 		if(ib != GL_TRUE)
 			throw GLE_ProgramError(_idProg);
+		_makeTexIndex();
 	}
 	GLProgram::~GLProgram() {
 		if(mgr_gl.isInDtor()) {
@@ -54,6 +55,7 @@ namespace rev {
 				D_GLWarn(glDeleteProgram, buffId);
 			});
 			_idProg = 0;
+			_texIndex.clear();
 		}
 	}
 	void GLProgram::onDeviceReset() {
@@ -118,5 +120,22 @@ namespace rev {
 		using UT = draw::Program;
 		new(dst.allocate_memory( sizeof(UT), draw::CalcTokenOffset<UT>()))
 			UT(const_cast<GLProgram*>(this)->shared_from_this());
+	}
+	void GLProgram::_makeTexIndex() {
+		const GLint nUnif = getNActiveUniform();
+		// Sampler2D変数が見つかった順にテクスチャIdを割り振る
+		GLint curI = 0;
+		for(GLint i=0 ; i<nUnif ; i++) {
+			const auto info = getActiveUniform(i);
+			if(info.type == GLSLType::TextureT) {
+				// GetActiveUniformでのインデックスとGetUniformLocationIdは異なる場合があるので・・
+				const GLint id = *getUniformId(info.name);
+				_texIndex.emplace(id, curI++);
+			}
+		}
+		D_GLAssert0();
+	}
+	const GLProgram::TexIndex& GLProgram::getTexIndex() const noexcept {
+		return _texIndex;
 	}
 }

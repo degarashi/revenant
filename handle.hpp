@@ -96,6 +96,8 @@ namespace rev {
 	DEF_HANDLE(DrawGroup, DGroup)
 	class IScene;
 	DEF_HANDLE(IScene, Scene)
+	class TechPass;
+	DEF_HANDLE(TechPass, TP)
 
 	namespace parse {
 		struct GLXStruct;

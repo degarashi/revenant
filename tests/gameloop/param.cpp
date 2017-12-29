@@ -26,11 +26,8 @@ namespace rev {
 			static URI_SP uri = std::make_shared<FileURI>("./resource/pathlist");
 			return uri;
 		}
-		HFx Param::loadEffect(const std::string& name) const {
-			return mgr_gl.template loadEffect<util::GLEffect_2D3D>(name);
-		}
-		HFx Param::makeDefaultEffect() const {
-			return loadEffect("default.glx");
+		HFx Param::makeEffect() const {
+			return mgr_gl.template makeEffect<util::GLEffect_2D3D>();
 		}
 		::rev::MainProc* Param::makeMainProc() const {
 			return new MainProc();

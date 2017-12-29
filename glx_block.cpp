@@ -8,14 +8,15 @@ namespace rev {
 				"effect"
 			};
 		}
-		BlockSet_SP LoadGLXStructSet(const std::string& name) {
+		BlockSet_SP LoadGLXStructSet(const std::string& path) {
 			BlockSet_SP bs = std::make_shared<BlockSet>();
-			std::unordered_set<std::string> loaded,
-											inclset{name};
-			// inclset = まだ読み込んでないファイル名
-			while(!inclset.empty()) {
-				// inclsetから1つ取り出して読み込み
-				auto itr = inclset.begin();
+			std::unordered_set<std::string>		loaded,
+												toLoad{path};
+			// 現状はファイルパスのみ対応
+			// toLoad = まだ読み込んでないファイル名
+			while(!toLoad.empty()) {
+				// toLoadから1つ取り出して読み込み
+				const auto itr = toLoad.begin();
 				auto hdl = mgr_block.loadResourceApp<GLXStruct>(
 								UserURI(*itr),
 								[](auto& uri, auto&& mk){
@@ -25,11 +26,11 @@ namespace rev {
 								}
 							).first;
 				loaded.emplace(*itr);
-				inclset.erase(itr);
-				// まだ読み込んでないファイルをinclsetに加える
+				toLoad.erase(itr);
+				// まだ読み込んでないファイルをtoLoadに加える
 				for(auto& inc : hdl->incl) {
 					if(loaded.count(inc) == 0)
-						inclset.emplace(inc);
+						toLoad.emplace(inc);
 				}
 				bs->emplace(std::move(hdl));
 			}

@@ -34,7 +34,7 @@ class Sprite2D : public beat::g2::Pose {
 
 	public:
 		static std::pair<rev::HVb, rev::HIb> InitBuffer();
-		const static rev::IdValue	T_Sprite2D;
+		const static rev::Name	T_Sprite2D;
 		Sprite2D(const rev::HTex& t, float z);
 		void draw(rev::IEffect& e) const;
 		void setZOffset(float z);

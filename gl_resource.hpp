@@ -81,15 +81,15 @@ namespace rev {
 			//! 複数のシェーダーからプログラムを作成 (vertex, fragment)
 			HProg makeProgram(const HSh& vsh, const HSh& gsh, const HSh& psh);
 
-			// ------------ Buffer ------------
-			//! ファイルからエフェクトの読み込み
 			template <class T>
-			HFx loadEffect(const std::string& name) {
-				_setResourceTypeId(ResourceType::Effect);
-				auto h = base_type::acquireA<T>(name);
+			HFx makeEffect() {
+				auto h = base_type::acquireA<T>();
 				_resourceInit(h.get());
 				return h;
 			}
+			//! ファイルからエフェクトの読み込み
+			HTP loadTechPass(const std::string& path);
+			// ------------ Buffer ------------
 			//! 頂点バッファの確保
 			HVb makeVBuffer(DrawType dtype);
 			//! インデックスバッファの確保

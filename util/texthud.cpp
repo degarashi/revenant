@@ -7,7 +7,7 @@
 namespace rev {
 	namespace util {
 		// ---------------------- TextHUD ----------------------
-		const IdValue TextHUD::U_Text = IEffect::GlxId::GenUnifId("mText");
+		const Name	TextHUD::U_Text("mText");
 		TextHUD::TextHUD():
 			_coordType(Coord::Window),
 			_offset(0),

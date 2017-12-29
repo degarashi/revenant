@@ -9,6 +9,7 @@
 #include "glx.hpp"
 #include "sdl_rw.hpp"
 #include "systeminfo.hpp"
+#include "tech_pass.hpp"
 
 namespace rev {
 	const char* IGLResource::getResourceName() const noexcept {
@@ -67,6 +68,17 @@ namespace rev {
 					uri,
 					[this, miplevel, fmt](auto& uri, auto&& mk){
 						mk(uri.uri, miplevel, fmt);
+						_resourceInit(mk.pointer);
+					}
+				).first;
+	}
+	HTP GLRes::loadTechPass(const std::string& name) {
+		_setResourceTypeId(ResourceType::Effect);
+		return loadResourceApp<TechPass>(
+					UserURI(name),
+					[this](auto& uri, auto&& mk){
+						const auto f_uri = std::dynamic_pointer_cast<FileURI>(uri.uri);
+						mk(f_uri->path());
 						_resourceInit(mk.pointer);
 					}
 				).first;
@@ -191,9 +203,9 @@ namespace rev {
 			// is it Texture?
 			if(ext=="png" || ext=="jpg" || ext=="bmp")
 				ret = loadTexture(uri);
-			// is it Effect(Shader)?
+			// is it TechPass(Effect)?
 			else if(ext == "glx") {
-				ret = loadEffect<GLEffect>(fu.pathblock().plain_utf8());
+				ret = loadTechPass(fu.pathblock().plain_utf8());
 			}
 		}
 		return ret;

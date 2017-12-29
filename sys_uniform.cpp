@@ -3,17 +3,16 @@
 #include "glx_if.hpp"
 
 namespace rev {
-	using GlxId = IEffect::GlxId;
 	namespace unif {
-		const IdValue Alpha = GlxId::GenUnifId("u_alpha"),
-					Color = GlxId::GenUnifId("u_color");
+		const Name	Alpha("u_alpha"),
+					Color("u_color");
 		namespace texture {
-			const IdValue Diffuse = GlxId::GenUnifId("u_texDiffuse");
+			const Name	Diffuse("u_texDiffuse");
 		}
 	}
 	namespace sysunif {
 		namespace screen {
-			const IdValue Size = GlxId::GenUnifId("sys_vScreenSize");
+			const Name	Size("sys_vScreenSize");
 		}
 	}
 
@@ -23,7 +22,7 @@ namespace rev {
 		const SetF c_systagF[] = {
 			[](const SystemUniform& s, IEffect& e) {
 				auto& ss = s.getScreenSize();
-				e.setUniform<false>(
+				e.setUniform_if(
 					sysunif::screen::Size,
 					frea::Vec4(
 						ss.width,

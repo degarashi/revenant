@@ -14,12 +14,17 @@
 #include "../../camera2d.hpp"
 #include "../../sys_uniform_value.hpp"
 #include "../../sys_uniform.hpp"
+#include "../../tech_pass.hpp"
 
 namespace rev {
 	namespace test {
-		const auto Id = IEffect::GlxId::GenTechId("Text", "Default");
+		const Name Id("Text|Default");
 		struct MyScene::St_None: StateT<St_None> {
 			void onEnter(MyScene& self, ObjTypeId_OP) override {
+				{
+					auto lk = g_shared.lock();
+					lk->technique = mgr_gl.loadTechPass("default.glx");
+				}
 				// 終了ボタン定義
 				self._actQ = mgr_input.makeAction("quit");
 				mgr_input.addAction(self._actQ);
@@ -72,7 +77,10 @@ namespace rev {
 				static float a=0;
 				a += 0.02f;
 				e.clearFramebuffer({frea::Vec4{std::sin(a)/2+0.5f,std::sin(a*1.3)/2+0.5,0,0}, 1.f, 0});
-				e.setTechPassId(::rev::test::Id);
+				{
+					auto lk = g_shared.lock();
+					e.setTechnique(lk->technique->getTechnique(::rev::test::Id));
+				}
 				// FPSを左上に表示
 				auto& fps = const_cast<decltype(self._fps)&>(self._fps);
 				fps.setText((boost::format("FPS: %1%") % mgr_info.getFPS()).str().c_str());
@@ -83,6 +91,10 @@ namespace rev {
 		};
 		MyScene::MyScene() {
 			setStateNew<St_None>();
+		}
+		MyScene::~MyScene() {
+			auto lk = g_shared.lock();
+			lk->technique.reset();
 		}
 	}
 }

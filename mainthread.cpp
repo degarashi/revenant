@@ -126,7 +126,7 @@ namespace rev {
 						auto& param = lk->param;
 						mp.reset(param->makeMainProc());
 						// デフォルトエフェクトファイルを読み込み
-						rel.curFx = param->makeDefaultEffect();
+						rel.curFx = param->makeEffect();
 						lk->fx = rel.curFx;
 						// 最初のシーンを作成
 						mgr_scene.setPushScene(param->makeFirstScene(), false);

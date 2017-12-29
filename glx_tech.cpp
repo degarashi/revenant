@@ -9,6 +9,7 @@
 #include "lubee/meta/countof.hpp"
 #include "glx_if.hpp"
 #include "comment.hpp"
+#include "tech_pair.hpp"
 #include <boost/format.hpp>
 
 namespace rev {
@@ -202,6 +203,30 @@ namespace rev {
 		}
 		return ret;
 	}
+	namespace {
+		struct Visitor : boost::static_visitor<> {
+			GLint				uniId;
+			Prog_Unif&			pu;
+			GLuint				pgId;
+
+			Visitor(Prog_Unif& p):
+				pu(p),
+				pgId(p.program->getProgramId())
+			{}
+			bool setKey(const std::string& key) {
+				uniId = GL.glGetUniformLocation(pgId, key.c_str());
+				// ここでキーが見つからない = uniformブロックで宣言されているがGLSLコードで使われない場合なのでエラーではない
+				D_Expect(uniId>=0, "Uniform argument \"%s\" not found", key.c_str());
+				return uniId >= 0;
+			}
+			template <class T, ENABLE_IF(frea::is_vector<T>{})>
+			void operator()(const T& t) {
+				if(uniId >= 0) {
+					pu.setUniform(uniId, &t, 1, false);
+				}
+			}
+		};
+	}
 	GLXTech::GLXTech(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass):
 		_block(bs)
 	{
@@ -302,51 +327,10 @@ namespace rev {
 			ss.clear();
 		}
 		// シェーダーのリンク処理
-		_program = mgr_gl.makeProgram(shP[0], shP[1], shP[2]);
+		_prog_unif.program = mgr_gl.makeProgram(shP[0], shP[1], shP[2]);
 		// OpenGLステート設定リストを形成
 		_setting = dupl.exportSetting();
-	}
-	void GLXTech::_makeTexIndex() {
-		const auto& prog = *getProgram();
-		const GLint nUnif = prog.getNActiveUniform();
-		// Sampler2D変数が見つかった順にテクスチャIdを割り振る
-		GLint curI = 0;
-		for(GLint i=0 ; i<nUnif ; i++) {
-			const auto info = prog.getActiveUniform(i);
-			if(info.type == GLSLType::TextureT) {
-				// GetActiveUniformでのインデックスとGetUniformLocationIdは異なる場合があるので・・
-				const GLint id = *prog.getUniformId(info.name);
-				_runtime.texIndex.emplace(id, curI++);
-			}
-		}
-		D_GLAssert0();
-	}
-	namespace {
-		struct Visitor : boost::static_visitor<> {
-			GLuint				pgId;
-			GLint				uniId;
-			UniformMap			result;
-			const IEffect&		glx;
-			Visitor(const IEffect& g):
-				glx(g)
-			{}
 
-			bool setKey(const std::string& key) {
-				uniId = GL.glGetUniformLocation(pgId, key.c_str());
-				// ここでキーが見つからない = uniformブロックで宣言されているがGLSLコードで使われない場合なのでエラーではない
-				D_Expect(uniId>=0, "Uniform argument \"%s\" not found", key.c_str());
-				return uniId >= 0;
-			}
-			template <class T, ENABLE_IF(frea::is_vector<T>{})>
-			void operator()(const T& t) {
-				if(uniId >= 0) {
-					auto* buff = result.makeTokenBuffer(uniId);
-					glx._makeUniformToken(*buff, uniId, &t, 1, false);
-				}
-			}
-		};
-	}
-	void GLXTech::_onDeviceReset(const IEffect& e, Tech::Runtime& rt) {
 		struct UniqueChk {
 			GLint		id;
 			VSem::e		sem;
@@ -358,11 +342,12 @@ namespace rev {
 				return id < u.id;
 			}
 		};
+		_vattr.clear();
 		std::vector<UniqueChk> uc;
 		// 頂点セマンティクス対応リストを生成
 		for(auto& p : _attrL) {
 			const char* name = p->name.c_str();
-			if(const auto at = _program->getAttribId(name)) {
+			if(const auto at = _prog_unif.program->getAttribId(name)) {
 				const auto sem = static_cast<VSem::e>(p->sem);
 				VSemAttr a;
 				a.sem = VSemantic {
@@ -370,7 +355,7 @@ namespace rev {
 					(p->index) ? *p->index : 0
 				};
 				a.attrId = *at;
-				rt.vattr.emplace_back(a);
+				_vattr.emplace_back(a);
 				uc.emplace_back(UniqueChk{a.attrId, sem, name});
 			} else {
 				// 該当する変数が見付からない旨の警告を出す(もしかしたらシェーダー内で使ってないだけかもしれない)
@@ -392,9 +377,9 @@ namespace rev {
 			}
 		}
 
+		_noDefValue.clear();
 		// Uniform変数にデフォルト値がセットしてある物をリストアップ
-		Visitor visitor(e);
-		visitor.pgId = _program->getProgramId();
+		Visitor visitor(_prog_unif);
 		for(const auto* p : _unifL) {
 			if(visitor.setKey(p->name)) {
 				const auto& defVal = p->defaultValue;
@@ -402,10 +387,8 @@ namespace rev {
 					// 変数名をIdに変換
 					boost::apply_visitor(visitor, *defVal);
 				} else
-					rt.noDefValue.insert(visitor.uniId);
+					_noDefValue.insert(visitor.uniId);
 			}
 		}
-		rt.defaultValue = std::move(visitor.result);
-		_makeTexIndex();
 	}
 }

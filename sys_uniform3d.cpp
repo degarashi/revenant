@@ -10,28 +10,27 @@ namespace rev {
 		return 0;
 	}
 
-	using GlxId = IEffect::GlxId;
 	namespace sysunif3d {
 		namespace matrix {
-			const IdValue	Transform = GlxId::GenUnifId("sys_mTrans"),
-							TransformInv = GlxId::GenUnifId("sys_mTransInv"),
-							Proj = GlxId::GenUnifId("sys_mProj"),
-							ProjInv = GlxId::GenUnifId("sys_mProjInv"),
-							View = GlxId::GenUnifId("sys_mView"),
-							ViewInv = GlxId::GenUnifId("sys_mViewInv"),
-							ViewProj = GlxId::GenUnifId("sys_mViewProj"),
-							ViewProjInv = GlxId::GenUnifId("sys_mViewProjInv"),
-							World = GlxId::GenUnifId("sys_mWorld"),
-							WorldInv = GlxId::GenUnifId("sys_mWorldInv"),
-							EyePos = GlxId::GenUnifId("sys_vEyePos"),
-							EyeDir = GlxId::GenUnifId("sys_vEyeDir");
+			const Name		Transform("sys_mTrans"),
+							TransformInv("sys_mTransInv"),
+							Proj("sys_mProj"),
+							ProjInv("sys_mProjInv"),
+							View("sys_mView"),
+							ViewInv("sys_mViewInv"),
+							ViewProj("sys_mViewProj"),
+							ViewProjInv("sys_mViewProjInv"),
+							World("sys_mWorld"),
+							WorldInv("sys_mWorldInv"),
+							EyePos("sys_vEyePos"),
+							EyeDir("sys_vEyeDir");
 		}
 	}
 	namespace unif3d {
 		namespace texture {
-			const IdValue	Specular = GlxId::GenUnifId("u_texSpecular"),
-							Normal = GlxId::GenUnifId("u_texNormal"),
-							Emissive = GlxId::GenUnifId("u_texEmissive");
+			const Name		Specular("u_texSpecular"),
+							Normal("u_texNormal"),
+							Emissive("u_texEmissive");
 		}
 	}
 
@@ -85,7 +84,7 @@ namespace rev {
 	}
 	void SystemUniform3D::outputUniforms(IEffect& e) const {
 		#define DEF_SETUNIF(name, func) \
-			if(auto idv = e.getUnifId(sysunif3d::matrix::name)) \
+			if(auto idv = e.getUniformId(sysunif3d::matrix::name)) \
 				e.setUniform(*idv, spi::AcWrapperValue(func##name()), true);
 		DEF_SETUNIF(World, get)
 		DEF_SETUNIF(WorldInv, get)
@@ -99,9 +98,9 @@ namespace rev {
 			DEF_SETUNIF(ViewProjInv, cd.get)
 
 			auto& ps = cd.getPose();
-			if(auto idv = e.getUnifId(sysunif3d::matrix::EyePos))
+			if(auto idv = e.getUniformId(sysunif3d::matrix::EyePos))
 				e.setUniform(*idv, ps.getOffset(), true);
-			if(auto idv = e.getUnifId(sysunif3d::matrix::EyeDir))
+			if(auto idv = e.getUniformId(sysunif3d::matrix::EyeDir))
 				e.setUniform(*idv, ps.getRotation().getZAxis(), true);
 		}
 		DEF_SETUNIF(Transform, get)

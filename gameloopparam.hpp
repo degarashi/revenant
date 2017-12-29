@@ -19,8 +19,7 @@ namespace rev {
 		virtual const std::string& getOrgName() const = 0;
 		//! パス記述ファイル名
 		virtual const URI_SP& getPathfile() const = 0;
-		virtual HFx loadEffect(const std::string& name) const = 0;
-		virtual HFx makeDefaultEffect() const = 0;
+		virtual HFx makeEffect() const = 0;
 		virtual MainProc* makeMainProc() const = 0;
 		virtual DrawProc* makeDrawProc() const = 0;
 		virtual bool getMultiContext() const noexcept = 0;

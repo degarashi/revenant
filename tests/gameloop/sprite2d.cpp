@@ -5,8 +5,7 @@
 #include "../../util/sys_unif.hpp"
 #include "../../vdecl.hpp"
 
-using GlxId = rev::IEffect::GlxId;
-const rev::IdValue Sprite2D::T_Sprite2D = GlxId::GenTechId("Sprite", "Default");
+const rev::Name Sprite2D::T_Sprite2D("Sprite|Default");
 // ----------------------- Sprite -----------------------
 rev::WVb Sprite2D::s_wVb;
 rev::WIb Sprite2D::s_wIb;
@@ -52,8 +51,13 @@ void Sprite2D::setZRange(const lubee::RangeF& r) {
 }
 #include "../../sys_uniform_value.hpp"
 #include "../../output.hpp"
+#include "../../tech_pass.hpp"
+#include "main.hpp"
 void Sprite2D::draw(rev::IEffect& e) const {
-	e.setTechPassId(T_Sprite2D);
+	{
+		auto lk = rev::test::g_shared.lock();
+		e.setTechnique(lk->technique->getTechnique(T_Sprite2D));
+	}
 	e.setVDecl(rev::DrawDecl<vdecl::sprite>::GetVDecl());
 	e.setUniform(rev::unif2d::texture::Diffuse, _hTex);
 	e.setUniform(rev::unif::Alpha, _alpha);

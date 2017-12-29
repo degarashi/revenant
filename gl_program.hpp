@@ -13,6 +13,8 @@ namespace rev {
 	};
 	//! GLSLプログラムクラス
 	class GLProgram : public IGLResource, public std::enable_shared_from_this<GLProgram> {
+		public:
+			using TexIndex = std::unordered_map<GLint, GLint>;
 		private:
 			HSh			_shader[ShType::_Num];
 			GLuint		_idProg;
@@ -31,6 +33,9 @@ namespace rev {
 				_setShader(t);
 				_init(ts...);
 			}
+			//! [UniformId -> TextureActiveIndex]
+			TexIndex		_texIndex;
+			void _makeTexIndex();
 
 		public:
 			template <class... Ts>
@@ -50,5 +55,6 @@ namespace rev {
 			GLParamInfo getActiveAttribute(int n) const;
 			GLParamInfo getActiveUniform(int n) const;
 			void use() const;
+			const TexIndex& getTexIndex() const noexcept;
 	};
 }

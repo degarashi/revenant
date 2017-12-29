@@ -10,22 +10,21 @@ namespace rev {
 		return 0;
 	}
 
-	using GlxId = IEffect::GlxId;
 	namespace unif2d {
-		const IdValue	Depth = GlxId::GenUnifId("u_depth");
+		const Name	Depth("u_depth");
 	}
 	namespace sysunif2d {
 		namespace matrix {
-			const IdValue	World =	GlxId::GenUnifId("sys_mWorld2d"),
-							WorldInv = GlxId::GenUnifId("sys_mWorld2dInv"),
-							View = GlxId::GenUnifId("sys_mView2d"),
-							ViewInv = GlxId::GenUnifId("sys_mView2dInv"),
-							Proj = GlxId::GenUnifId("sys_mProj2d"),
-							ProjInv = GlxId::GenUnifId("sys_mProj2dInv"),
-							ViewProj = GlxId::GenUnifId("sys_mViewProj2d"),
-							ViewProjInv = GlxId::GenUnifId("sys_mViewProj2dInv"),
-							Transform = GlxId::GenUnifId("sys_mTrans2d"),
-							TransformInv = GlxId::GenUnifId("sys_mTrans2dInv");
+			const Name		World("sys_mWorld2d"),
+							WorldInv("sys_mWorld2dInv"),
+							View("sys_mView2d"),
+							ViewInv("sys_mView2dInv"),
+							Proj("sys_mProj2d"),
+							ProjInv("sys_mProj2dInv"),
+							ViewProj("sys_mViewProj2d"),
+							ViewProjInv("sys_mViewProj2dInv"),
+							Transform("sys_mTrans2d"),
+							TransformInv("sys_mTrans2dInv");
 		}
 	}
 	bool SystemUniform2D::_refresh(frea::Mat3& m, WorldInv*) const {
@@ -58,7 +57,7 @@ namespace rev {
 	}
 	void SystemUniform2D::outputUniforms(IEffect& e) const {
 		#define DEF_SETUNIF(name, func) \
-			if(auto idv = e.getUnifId(sysunif2d::matrix::name)) \
+			if(auto idv = e.getUniformId(sysunif2d::matrix::name)) \
 				e.setUniform(*idv, spi::AcWrapperValue(func##name()), true);
 		DEF_SETUNIF(World, get)
 		DEF_SETUNIF(WorldInv, get)

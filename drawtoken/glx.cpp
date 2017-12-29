@@ -10,7 +10,7 @@ namespace rev {
 		}
 		void VStream::use_begin() const {
 			if(spVDecl)
-				spVDecl->apply(VData{vbuff, *vAttrId});
+				spVDecl->apply(VData{vbuff, vAttrId});
 			if(ibuff)
 				ibuff->use_begin();
 		}

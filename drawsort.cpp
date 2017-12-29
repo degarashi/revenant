@@ -57,21 +57,15 @@ namespace rev {
 		return d0.priority > d1.priority;
 	}
 	// ------------------- DSort_TechPass -------------------
-	const uint32_t DSort_TechPass::cs_invalidValue(~0);
 	bool DSort_TechPass::hasInfo(const DrawTag& d) const {
-		return d.idTechPass.value != cs_invalidValue;
+		return static_cast<bool>(d.technique);
 	}
 	bool DSort_TechPass::compare(const DrawTag& d0, const DrawTag& d1) const {
-		return d0.idTechPass.value < d1.idTechPass.value;
+		return d0.technique.get() < d1.technique.get();
 	}
 	void DSort_TechPass::apply(const DrawTag& d, IEffect& e) {
 		if(hasInfo(d)) {
-			if(d.idTechPass.bId16) {
-				e.setTechnique(d.idTechPass.tpId.tech);
-				e.setPass(d.idTechPass.tpId.pass);
-			} else {
-				e.setTechPassId(d.idTechPass.preId);
-			}
+			e.setTechnique(d.technique);
 		}
 	}
 

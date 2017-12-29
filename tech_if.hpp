@@ -1,38 +1,40 @@
 #pragma once
-#include "gl_header.hpp"
-#include "uniform_map.hpp"
-#include "handle.hpp"
-#include <vector>
-#include <unordered_set>
+#include "vertex.hpp"
+#include "prog_unif.hpp"
 
 namespace rev {
 	struct IEffect;
 	struct VSemAttr;
 	using VSemAttrV = std::vector<VSemAttr>;
 	using UniIdSet = std::unordered_set<GLint>;
-	struct ITech {
-		struct Runtime {
+	struct GLState;
+	using GLState_SP = std::shared_ptr<GLState>;
+	using GLState_SPV = std::vector<GLState_SP>;
+	class Tech {
+		private:
+			HFx				_fx;
+		protected:
+			//! Uniformデフォルト値(と対応するId)
+			Prog_Unif		_prog_unif;
+			//! Setting: Uniformデフォルト値(texture, vector, float, bool)設定を含む
+			//! GLDeviceの設定クラスリスト
+			GLState_SPV		_setting;
 			//! Uniform非デフォルト値エントリIdセット (主にユーザーの入力チェック用)
-			UniIdSet		noDefValue;
-			//! Uniformデフォルト値と対応するId
-			UniformMap		defaultValue;
+			UniIdSet		_noDefValue;
 			//! Attribute: 頂点セマンティクスに対する頂点Id
-			VSemAttrV		vattr;
-			//! [UniformId -> TextureActiveIndex]
-			using TexIndex = std::unordered_map<GLint, GLint>;
-			TexIndex		texIndex;
+			VSemAttrV		_vattr;
 
-			void clear();
-		};
-		//! OpenGL関連のリソースを解放
-		/*! GLResourceの物とは別。GLEffectから呼ぶ */
-		virtual void ts_onDeviceLost() = 0;
-		virtual void ts_onDeviceReset(const IEffect& e) = 0;
-		//! OpenGLに設定を適用
-		virtual void applySetting() const = 0;
-		virtual const HProg& getProgram() const noexcept = 0;
-		virtual const Runtime& getRuntime() const noexcept = 0;
-		virtual const Name& getName() const noexcept;
+			Name			_name;
+		public:
+			virtual ~Tech() {}
+
+			//! OpenGLに設定を適用
+			void applySetting() const;
+			const UniIdSet& getNoDefaultValue() const noexcept;
+			const VSemAttrV& getVAttr() const noexcept;
+			const HProg& getProgram() const noexcept;
+			const UniformMap& getDefaultValue() const noexcept;
+			const Name& getName() const noexcept;
 	};
-	using Tech_SP = std::shared_ptr<ITech>;
+	using Tech_SP = std::shared_ptr<Tech>;
 }
