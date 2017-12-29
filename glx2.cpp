@@ -83,7 +83,6 @@ namespace rev {
 		index.reset();
 		index_prev.reset();
 
-		bDefaultParam = false;
 		tech = spi::none;
 		_clean_drawvalue();
 		hFb = HFb();
@@ -92,19 +91,17 @@ namespace rev {
 	void GLEffect::Current::_clean_drawvalue() {
 		pass = spi::none;
 		tech_sp.reset();
-		pTexIndex = nullptr;
 		// セットされているUniform変数を未セット状態にする
-		uniMap.clear();
+		uniValue.clear();
 	}
-	void GLEffect::Current::setTech(const GLint idTech, const bool bDefault) {
+	void GLEffect::Current::setTech(const GLint idTech) {
 		if(!tech || *tech != idTech) {
 			// TechIdをセットしたらPassIdは無効になる
 			tech = idTech;
-			bDefaultParam = bDefault;
 			_clean_drawvalue();
 		}
 	}
-	void GLEffect::Current::setPass(const GLint idPass, TechMap& tmap, TexMap& texMap) {
+	void GLEffect::Current::setPass(const GLint idPass, const TechPairV& tp) {
 		// TechIdをセットせずにPassIdをセットするのは禁止
 		if(!tech)
 			throw GLE_Error( "tech is not selected");
@@ -112,16 +109,9 @@ namespace rev {
 			_clean_drawvalue();
 			pass = idPass;
 
-			// TPStructRの参照をTech,Pass Idから検索してセット
-			GL16Id id{uint8_t(*tech), uint8_t(*pass)};
-			Assert0(tmap.count(id)==1);
-			tech_sp = tmap.at(id);
-			pTexIndex = &texMap.at(id);
-
+			tech_sp = tp[*tech].pass[*pass].pass;
 			// デフォルト値読み込み
-			if(bDefaultParam) {
-				uniMap.copyFrom(tech_sp->getRuntime().defaultValue);
-			}
+			uniValue.copyFrom(tech_sp->getRuntime().defaultValue);
 			// 各種セッティングをするTokenをリストに追加
 			tech_sp->getProgram()->getDrawToken(tokenML);
 			tokenML.allocate<draw::UserFunc>([&tp_tmp = *tech_sp](){
@@ -152,9 +142,9 @@ namespace rev {
 	void GLEffect::Current::_outputDrawCall(draw::VStream& vs) {
 		outputFramebuffer();
 		// set uniform value
-		if(!uniMap.empty()) {
+		if(!uniValue.empty()) {
 			// 中身shared_ptrなのでそのまま移動
-			uniMap.moveTo(tokenML);
+			uniValue.moveTo(tokenML);
 		}
 		// set VBuffer(VDecl)
 		vertex.extractData(vs, tech_sp->getRuntime().vattr);
@@ -176,8 +166,11 @@ namespace rev {
 	void GLEffect::onDeviceLost() {
 		if(_bInit) {
 			_bInit = false;
-			for(auto& p : _techMap)
-				p.second->ts_onDeviceLost();
+			for(auto& t : _tech) {
+				for(auto& p : t.pass) {
+					p.pass->ts_onDeviceLost();
+				}
+			}
 
 			_current.reset();
 		}
@@ -185,8 +178,11 @@ namespace rev {
 	void GLEffect::onDeviceReset() {
 		if(!_bInit) {
 			_bInit = true;
-			for(auto& p : _techMap)
-				p.second->ts_onDeviceReset(*this);
+			for(auto& t : _tech) {
+				for(auto& p : t.pass) {
+					p.pass->ts_onDeviceReset(*this);
+				}
+			}
 		}
 	}
 	void GLEffect::setVDecl(const VDecl_SP& decl) {
@@ -198,38 +194,39 @@ namespace rev {
 	void GLEffect::setIStream(const HIb& ib) {
 		_current.index.setIBuffer(ib);
 	}
-	void GLEffect::setTechnique(const int techId, const bool bDefault) {
-		_current.setTech(techId, bDefault);
-		_unifId.resultCur = nullptr;
+	void GLEffect::setTechnique(const int techId) {
+		_current.setTech(techId);
+		if(_unifId)
+			_unifId->resultCur = nullptr;
 	}
 	void GLEffect::setPass(const int passId) {
-		_current.setPass(passId, _techMap, _texMap);
-		if(_unifId.src)
-			_unifId.resultCur = &_unifId.result.at(GL16Id{uint8_t(*_current.tech), uint8_t(passId)});
+		_current.setPass(passId, _tech);
+		if(_unifId)
+			_unifId->resultCur = &_unifId->result.at(_current.tech_sp.get());
 	}
-	GLint_OP GLEffect::_getPassId(int techId, const std::string& pass) const {
-		auto& tech = _techName[techId];
-		int nP = tech.size();
-		for(int i=1 ; i<nP ; i++) {
-			if(tech[i] == pass)
-				return i-1;
-		}
-		return spi::none;
-	}
-	GLint_OP GLEffect::getPassId(const std::string& tech, const std::string& pass) const {
-		if(auto idTech = getTechId(tech))
-			return _getPassId(*idTech, pass);
-		return spi::none;
-	}
-	GLint_OP GLEffect::getTechId(const std::string& tech) const {
-		int nT = _techName.size();
-		for(int i=0 ; i<nT ; i++) {
-			if(_techName[i][0] == tech)
+	GLint_OP GLEffect::_getPassId(const int techId, const Name& pass) const {
+		const auto& tech = _tech[techId];
+		const int nP = tech.pass.size();
+		for(int i=0 ; i<nP ; i++) {
+			if(tech.pass[i].name == pass)
 				return i;
 		}
 		return spi::none;
 	}
-	GLint_OP GLEffect::getPassId(const std::string& pass) const {
+	GLint_OP GLEffect::getPassId(const Name& tech, const Name& pass) const {
+		if(const auto idTech = getTechId(tech))
+			return _getPassId(*idTech, pass);
+		return spi::none;
+	}
+	GLint_OP GLEffect::getTechId(const Name& tech) const {
+		const int nT = _tech.size();
+		for(int i=0 ; i<nT ; i++) {
+			if(_tech[i].name == tech)
+				return i;
+		}
+		return spi::none;
+	}
+	GLint_OP GLEffect::getPassId(const Name& pass) const {
 		if(!_current.tech)
 			throw GLE_Error("tech is not selected");
 		return _getPassId(*_current.tech, pass);
@@ -251,13 +248,10 @@ namespace rev {
 				return HProg();
 			passId = *_current.pass;
 		}
-		auto itr = _techMap.find(GL16Id{uint8_t(techId), uint8_t(passId)});
-		if(itr != _techMap.end())
-			return itr->second->getProgram();
-		return HProg();
+		return _tech.at(techId).pass.at(passId).pass->getProgram();
 	}
-	draw::TokenBuffer& GLEffect::_makeUniformTokenBuffer(GLint id) {
-		return *_current.uniMap.makeTokenBuffer(id);
+	draw::TokenBuffer& GLEffect::_makeUniformTokenBuffer(const GLint id) {
+		return *_current.uniValue.makeTokenBuffer(id);
 	}
 	void GLEffect::clearFramebuffer(const draw::ClearParam& param) {
 		_current.outputFramebuffer();
@@ -274,9 +268,9 @@ namespace rev {
 	}
 	void GLEffect::drawIndexed(const GLenum mode, const GLsizei count, const GLuint offsetElem) {
 		_prepareUniforms();
-		HIb hIb = _current.index.getIBuffer();
-		auto str = hIb->getStride();
-		auto szF = GLIBuffer::GetSizeFlag(str);
+		const HIb hIb = _current.index.getIBuffer();
+		const auto str = hIb->getStride();
+		const auto szF = GLIBuffer::GetSizeFlag(str);
 		_current.outputDrawCallIndexed(mode, count, szF, offsetElem*str);
 		mgr_drawtask.refWriteEnt().append(std::move(_current.tokenML));
 
@@ -304,10 +298,11 @@ namespace rev {
 	}
 	void GLEffect::_makeUniformToken(draw::TokenDst& dst, const GLint id, const HTex* hTex, const int n, bool /*bT*/) const {
 		// テクスチャユニット番号を検索
-		auto itr = _current.pTexIndex->find(id);
-		Expect(itr != _current.pTexIndex->end(), "texture index not found");
-		if(itr != _current.pTexIndex->end()) {
-			auto aId = itr->second;
+		const auto& tIdx = _current.tech_sp->getRuntime().texIndex;
+		const auto itr = tIdx.find(id);
+		Expect(itr != tIdx.end(), "texture index not found");
+		if(itr != tIdx.end()) {
+			const auto aId = itr->second;
 			if(n > 1) {
 				std::vector<const IGLTexture*> pTexA(n);
 				for(int i=0 ; i<n ; i++)
@@ -318,14 +313,14 @@ namespace rev {
 				return;
 			}
 			D_Assert0(n==1);
-			HTex hTex2(*hTex);
+			const HTex hTex2(*hTex);
 			hTex2->getDrawToken(dst, id, 0, aId);
 		}
 	}
-	GLint_OP GLEffect::getUniformId(const std::string& name) const {
+	GLint_OP GLEffect::getUniformId(const Name& name) const {
 		D_Assert(_current.tech_sp, "Tech/Pass is not set");
-		auto& tech = *_current.tech_sp;
-		HProg hProg = tech.getProgram();
+		const auto& tech = *_current.tech_sp;
+		const HProg hProg = tech.getProgram();
 		D_Assert(hProg, "shader program handle is invalid");
 		return hProg->getUniformId(name);
 	}
@@ -341,41 +336,33 @@ namespace rev {
 		mgr_drawtask.execTask();
 	}
 	void GLEffect::_setConstantUniformList(const StrV* src) {
-		_unifId.src = src;
-		auto& r = _unifId.result;
+		_unifId = spi::construct();
+		auto& r = _unifId->result;
 		r.clear();
 
-		_unifId.resultCur = nullptr;
+		_unifId->resultCur = nullptr;
 		// 全てのTech&Passの組み合わせについてそれぞれUniform名を検索し、番号(GLint)を登録
-		int nTech = _techName.size();
-		for(int i=0 ; i<nTech ; i++) {
-			GL16Id tpId{uint8_t(i), 0};
-			for(;;) {
-				auto itr = _techMap.find(tpId);
-				if(itr == _techMap.end())
-					break;
-				auto& r2 = r[tpId];
-				auto& tech = *itr->second;
-				const GLProgram* p = tech.getProgram().get();
-
+		for(auto& t : _tech) {
+			for(auto& p : t.pass) {
+				auto* ptr = p.pass.get();
+				auto& r2 = r[ptr];
+				const GLProgram* prog = ptr->getProgram().get();
 				for(auto& srcstr : *src) {
-					if(auto id = p->getUniformId(srcstr)) {
+					if(const auto id = prog->getUniformId(srcstr)) {
 						r2.push_back(*id);
 					} else
 						r2.push_back(-1);
 				}
-
-				++tpId.pass;
 			}
 		}
 	}
 	void GLEffect::_setConstantTechPassList(const StrPairV* src) {
-		_techId.src = src;
-		_techId.result.clear();
+		_techId = spi::construct();
+		_techId->result.clear();
 
 		// TechとPass名のペアについてそれぞれTechId, PassIdを格納
-		auto& r = _techId.result;
-		int n = src->size();
+		auto& r = _techId->result;
+		const int n = src->size();
 		r.resize(n);
 		for(int i=0 ; i<n ; i++) {
 			auto& ip = r[i];
@@ -385,20 +372,20 @@ namespace rev {
 	}
 	GLint_OP GLEffect::getUnifId(const IdValue id) const {
 		// 定数値に対応するUniform変数が見つからない時は警告を出す
-		if(static_cast<int>(_unifId.resultCur->size()) <= id._value)
+		if(static_cast<int>(_unifId->resultCur->size()) <= id._value)
 			return spi::none;
-		auto ret = (*_unifId.resultCur)[id._value];
+		const auto ret = (*_unifId->resultCur)[id._value];
 		if(ret < 0)
 			return spi::none;
 		return ret;
 	}
 	GLEffect::IdPair GLEffect::_getTechPassId(const IdValue id) const {
-		Assert((static_cast<int>(_techId.result.size()) > id._value), "TechPass-ConstantId: Invalid Id (%d)", id._value);
-		return _techId.result[id._value];
+		Assert((static_cast<int>(_techId->result.size()) > id._value), "TechPass-ConstantId: Invalid Id (%d)", id._value);
+		return _techId->result[id._value];
 	}
 	void GLEffect::setTechPassId(const IdValue id) {
 		const auto ip = _getTechPassId(id);
-		setTechnique(ip.first, true);
+		setTechnique(ip.first);
 		setPass(ip.second);
 	}
 	void GLEffect::setFramebuffer(const HFb& fb) {

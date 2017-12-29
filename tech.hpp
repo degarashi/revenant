@@ -9,6 +9,7 @@ namespace rev {
 		protected:
 			virtual void _onDeviceReset(const IEffect& e, Runtime&) = 0;
 
+			Name			_name;
 			HProg			_program;
 			//! Setting: Uniformデフォルト値(texture, vector, float, bool)設定を含む
 			//! GLDeviceの設定クラスリスト
@@ -24,5 +25,6 @@ namespace rev {
 			const HProg& getProgram() const noexcept override;
 			const Runtime& getRuntime() const noexcept override;
 			void applySetting() const override;
+			const Name& getName() const noexcept override;
 	};
 }

@@ -13,6 +13,7 @@
 
 namespace rev {
 	namespace {
+		// 継承関係をリストアップして解決
 		class DResolver {
 			private:
 				using TPList = std::vector<const parse::TPStruct*>;
@@ -48,7 +49,6 @@ namespace rev {
 					_tTech(tech),
 					_tPass(pass)
 				{
-					// 継承関係をリストアップ
 					// Pass, Tech, Tech(Base0) ... Tech(BaseN) の順番
 					_tpList.push_back(&_tPass);
 					_listupBlocks(_tpList, &_tTech);
@@ -146,9 +146,6 @@ namespace rev {
 				dst << *p << std::endl;
 			}
 		}
-	}
-
-	namespace {
 		struct ArgVisitor : boost::static_visitor<> {
 			std::ostream&			_os;
 			const parse::ArgItem*	_arg;
@@ -181,8 +178,36 @@ namespace rev {
 				_outputArgR(value);
 			}
 		};
+		PassPairV _MakeGLXMaterial(const parse::BlockSet_SP& bs, const parse::TPStruct& tech) {
+			PassPairV ret;
+			for(auto& pass : tech.tpL) {
+				ret.emplace_back(
+					PassPair {
+						pass.get().name,
+						std::make_shared<GLXTech>(bs, tech, pass.get())
+					}
+				);
+			}
+			return ret;
+		}
 	}
-	GLXTech::GLXTech(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass) {
+	TechPairV MakeGLXMaterial(const parse::BlockSet_SP& bs) {
+		TechPairV ret;
+		for(auto& blk : *bs) {
+			for(auto& tech : blk->tpL) {
+				ret.emplace_back(
+					TechPair {
+						tech.name,
+						_MakeGLXMaterial(bs, tech)
+					}
+				);
+			}
+		}
+		return ret;
+	}
+	GLXTech::GLXTech(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass):
+		_block(bs)
+	{
 		const parse::ShSetting* selectSh[ShType::_Num] = {};
 		// PassかTechからシェーダー名を取ってくる
 		for(auto& a : tech.shL)
@@ -283,6 +308,21 @@ namespace rev {
 		// OpenGLステート設定リストを形成
 		_setting = dupl.exportSetting();
 	}
+	void GLXTech::_makeTexIndex() {
+		const auto& prog = *getProgram();
+		const GLint nUnif = prog.getNActiveUniform();
+		// Sampler2D変数が見つかった順にテクスチャIdを割り振る
+		GLint curI = 0;
+		for(GLint i=0 ; i<nUnif ; i++) {
+			const auto info = prog.getActiveUniform(i);
+			if(info.type == GLSLType::TextureT) {
+				// GetActiveUniformでのインデックスとGetUniformLocationIdは異なる場合があるので・・
+				const GLint id = *prog.getUniformId(info.name);
+				_runtime.texIndex.emplace(id, curI++);
+			}
+		}
+		D_GLAssert0();
+	}
 	namespace {
 		struct Visitor : boost::static_visitor<> {
 			GLuint				pgId;
@@ -368,5 +408,6 @@ namespace rev {
 			}
 		}
 		rt.defaultValue = std::move(visitor.result);
+		_makeTexIndex();
 	}
 }

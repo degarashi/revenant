@@ -3,6 +3,7 @@
 #include "lubee/deep_cmp.hpp"
 
 namespace rev {
+	using Name = std::string;
 	#define DEF_RESOURCE_EQUAL bool deepCmp(const Resource& r) const noexcept { return _deepCmp(*this, r); }
 	struct Resource {
 		virtual ~Resource() {}

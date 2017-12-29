@@ -1,5 +1,6 @@
 #pragma once
 #include "glx_if.hpp"
+#include "glx_tech.hpp"
 #include "resmgr_app.hpp"
 #include "drawtoken/viewport.hpp"
 #include "drawtoken/tokenml.hpp"
@@ -14,24 +15,11 @@ namespace rev {
 	namespace draw {
 		class VStream;
 	}
-	struct ITech;
-	using Tech_SP = std::shared_ptr<ITech>;
 
 	//! GLXエフェクト管理クラス
 	class GLEffect : public IEffect, public std::enable_shared_from_this<GLEffect> {
-		public:
-			//! [UniformId -> TextureActiveIndex]
-			using TexIndex = std::unordered_map<GLint, GLint>;
-			//! [(TechId|PassId) -> Tech]
-			using TechMap = std::unordered_map<GL16Id, Tech_SP>;
-			using TexMap = std::unordered_map<GL16Id, TexIndex>;
-			//! Tech名とPass名のセット
-			using TechName = std::vector<std::vector<std::string>>;
-
 		private:
-			TechMap			_techMap;			//!< ゼロから設定を構築する場合の情報や頂点セマンティクス
-			TechName		_techName;
-			TexMap			_texMap;
+			TechPairV		_tech;
 			bool			_bInit = false;		//!< deviceLost/Resetの状態区別
 			diff::Effect	_diffCount;			/*!< バッファのカウントクリアはclearTask()かbeginTask()の呼び出しタイミング */
 
@@ -67,23 +55,18 @@ namespace rev {
 				//! 前回とのバッファの差異
 				/*! Vertex, Indexバッファ情報を一時的にバックアップして差異の検出に備える */
 				diff::Buffer getDifference();
-
 				// Tech, Pass何れかを変更したらDraw変数をクリア
-				// passをセットしたタイミングでProgramを検索し、tpsにセット
 				GLint_OP			tech,
 									pass;
-
-				TexIndex*			pTexIndex;
-				bool				bDefaultParam;	//!< Tech切替時、trueならデフォルト値読み込み
 				Tech_SP				tech_sp;		//!< 現在使用中のTech
-				UniformMap			uniMap;			//!< 現在設定中のUniform
-				draw::TokenML		tokenML;
+				UniformMap			uniValue;		//!< 現在設定中のUniform
+				draw::TokenML		tokenML;		//!< 描画スレッドに渡す予定のコマンド
 
 				void reset();
 				//! Tech/Passの切り替えで無効になる変数をリセット
 				void _clean_drawvalue();
-				void setTech(GLint idTech, bool bDefault);
-				void setPass(GLint idPass, TechMap& tmap, TexMap& texMap);
+				void setTech(GLint idTech);
+				void setPass(GLint idPass, const TechPairV& tp);
 				void _outputDrawCall(draw::VStream& vs);
 				void outputFramebuffer();
 				//! DrawCallに関連するAPI呼び出しTokenを出力
@@ -92,23 +75,24 @@ namespace rev {
 				void outputDrawCallIndexed(GLenum mode, GLsizei count, GLenum sizeF, GLuint offset);
 			} _current;
 
-			using UnifIdV = std::vector<GLint>;
-			using UnifIdM = std::unordered_map<GL16Id, UnifIdV>;
-			using IdPair = std::pair<int,int>;
-			using TechIdV = std::vector<IdPair>;
-
-			struct {
-				const StrV*			src = nullptr;
-				UnifIdM				result;		// [Tech|Pass]->[size(src)]
+			struct ConstUnif {
+				using UnifIdV = std::vector<GLint>;
+				using UnifIdM = std::unordered_map<ITech*, UnifIdV>;
+				UnifIdM				result;		// [Tech|Pass pointer] -> vector]
 				const UnifIdV*		resultCur;	// current tech-pass entry
-			} _unifId;
+			};
+			using ConstUnif_OP = spi::Optional<ConstUnif>;
+			ConstUnif_OP _unifId;
 
-			struct {
-				const StrPairV*		src = nullptr;
+			using IdPair = std::pair<int,int>;
+			struct ConstTech {
+				using TechIdV = std::vector<IdPair>;
 				TechIdV				result;
-			} _techId;
+			};
+			using ConstTech_OP = spi::Optional<ConstTech>;
+			ConstTech_OP _techId;
 
-			GLint_OP _getPassId(int techId, const std::string& pass) const;
+			GLint_OP _getPassId(int techId, const Name& pass) const;
 			IdPair _getTechPassId(IdValue id) const;
 
 			/*! 引数はコンパイラで静的に確保される定数を想定しているのでポインタで受け取る
@@ -148,9 +132,9 @@ namespace rev {
 
 			// ----------------- Tech&Pass -----------------
 			//! Technique
-			GLint_OP getTechId(const std::string& tech) const override;
-			GLint_OP getPassId(const std::string& pass) const override;
-			GLint_OP getPassId(const std::string& tech, const std::string& pass) const override;
+			GLint_OP getTechId(const Name& tech) const override;
+			GLint_OP getPassId(const Name& pass) const override;
+			GLint_OP getPassId(const Name& tech, const Name& pass) const override;
 			GLint_OP getCurTechId() const override;
 			GLint_OP getCurPassId() const override;
 			void setTechPassId(IdValue id) override;
@@ -161,9 +145,8 @@ namespace rev {
 			HProg getProgram(int techId=-1, int passId=-1) const override;
 			/*!
 				\param[in]		id		TechniqueId
-				\param[in]		bReset	Tech切替時に初期値をセットするか
 			*/
-			void setTechnique(GLint id, bool bReset) override;
+			void setTechnique(GLint id) override;
 			//! Pass指定
 			void setPass(int id) override;
 
@@ -183,7 +166,7 @@ namespace rev {
 
 			// ----------------- Uniform Value -----------------
 			//! Uniform変数設定 (Tech/Passで指定された名前とセマンティクスのすり合わせを行う)
-			GLint_OP getUniformId(const std::string& name) const override;
+			GLint_OP getUniformId(const Name& name) const override;
 			GLint_OP getUnifId(IdValue id) const override;
 			using IEffect::_makeUniformToken;
 			draw::TokenBuffer& _makeUniformTokenBuffer(GLint id) override;

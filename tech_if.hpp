@@ -18,6 +18,9 @@ namespace rev {
 			UniformMap		defaultValue;
 			//! Attribute: 頂点セマンティクスに対する頂点Id
 			VSemAttrV		vattr;
+			//! [UniformId -> TextureActiveIndex]
+			using TexIndex = std::unordered_map<GLint, GLint>;
+			TexIndex		texIndex;
 
 			void clear();
 		};
@@ -29,6 +32,7 @@ namespace rev {
 		virtual void applySetting() const = 0;
 		virtual const HProg& getProgram() const noexcept = 0;
 		virtual const Runtime& getRuntime() const noexcept = 0;
+		virtual const Name& getName() const noexcept;
 	};
 	using Tech_SP = std::shared_ptr<ITech>;
 }

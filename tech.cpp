@@ -4,11 +4,19 @@
 #include "tech.hpp"
 
 namespace rev {
-	void Tech::Runtime::clear() {
+	// ------------------ ITech::Runtime ------------------
+	void ITech::Runtime::clear() {
 		noDefValue.clear();
 		defaultValue.clear();
 		vattr.clear();
+		texIndex.clear();
 	}
+	const Name& ITech::getName() const noexcept {
+		static const Name s_default("");
+		return s_default;
+	}
+
+	// ------------------ Tech ------------------
 	void Tech::ts_onDeviceLost() {
 		D_Assert0(_bInit);
 		_bInit = false;
@@ -31,5 +39,8 @@ namespace rev {
 	void Tech::applySetting() const {
 		for(auto& st : _setting)
 			st->apply();
+	}
+	const Name& Tech::getName() const noexcept {
+		return _name;
 	}
 }

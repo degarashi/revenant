@@ -67,7 +67,7 @@ namespace rev {
 	void DSort_TechPass::apply(const DrawTag& d, IEffect& e) {
 		if(hasInfo(d)) {
 			if(d.idTechPass.bId16) {
-				e.setTechnique(d.idTechPass.tpId.tech, true);
+				e.setTechnique(d.idTechPass.tpId.tech);
 				e.setPass(d.idTechPass.tpId.pass);
 			} else {
 				e.setTechPassId(d.idTechPass.preId);

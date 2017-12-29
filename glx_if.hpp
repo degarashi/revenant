@@ -31,7 +31,7 @@ namespace rev {
 		virtual GLint_OP getCurPassId() const = 0;
 		virtual void setTechPassId(IdValue id) = 0;
 		virtual HProg getProgram(int techId=-1, int passId=-1) const = 0;
-		virtual void setTechnique(int id, bool bReset) = 0;
+		virtual void setTechnique(int id) = 0;
 		virtual void setPass(int id) = 0;
 		virtual void setFramebuffer(const HFb& fb) = 0;
 		virtual HFb getFramebuffer() const = 0;

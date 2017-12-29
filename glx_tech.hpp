@@ -21,10 +21,23 @@ namespace rev {
 			VaryL				_varyL;
 			UnifL				_unifL;
 			ConstL				_constL;
+			// テクスチャインデックスリスト作成
+			void _makeTexIndex();
 		protected:
 			void _onDeviceReset(const IEffect& e, Tech::Runtime&) override;
 		public:
 			//! エフェクトファイルのパース結果を読み取る
 			GLXTech(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass);
 	};
+	struct PassPair {
+		Name		name;
+		Tech_SP		pass;
+	};
+	using PassPairV = std::vector<PassPair>;
+	struct TechPair {
+		Name		name;
+		PassPairV	pass;
+	};
+	using TechPairV = std::vector<TechPair>;
+	TechPairV MakeGLXMaterial(const parse::BlockSet_SP& bs);
 }
