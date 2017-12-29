@@ -91,8 +91,12 @@ namespace rev {
 	int GLProgram::getNActiveUniform() const {
 		return _getNumParam(GL_ACTIVE_UNIFORMS);
 	}
+	namespace {
+		// GLSL変数名の最大がよくわからない (ので、数は適当)
+		constexpr int MaxGLSLName = 0x100;
+	}
 	GLParamInfo GLProgram::_getActiveParam(const int n, const InfoF infoF) const {
-		GLchar buff[128];
+		GLchar buff[MaxGLSLName];
 		GLsizei len;
 		GLint sz;
 		GLenum typ;
