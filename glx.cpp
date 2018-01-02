@@ -102,14 +102,11 @@ namespace rev {
 			_bInit = true;
 		}
 	}
-	void GLEffect::setVDecl(const VDecl_SP& decl) {
-		_primitive.vdecl = decl;
+	void GLEffect::setPrimitive(const Primitive& p) noexcept {
+		_primitive = p;
 	}
-	void GLEffect::setVStream(const HVb& vb, const int n) {
-		_primitive.vb[n] = vb;
-	}
-	void GLEffect::setIStream(const HIb& ib) {
-		_primitive.ib = ib;
+	Primitive& GLEffect::refPrimitive() noexcept {
+		return _primitive;
 	}
 	void GLEffect::clearFramebuffer(const draw::ClearParam& param) {
 		_outputFramebuffer();

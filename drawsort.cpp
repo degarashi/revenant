@@ -1,6 +1,7 @@
 #include "drawsort.hpp"
 #include "lubee/sort.hpp"
 #include "glx_if.hpp"
+#include "primitive.hpp"
 
 namespace rev {
 	const DSort_SP cs_dsort_z_asc = std::make_shared<DSort_Z_Asc>(),
@@ -115,11 +116,12 @@ namespace rev {
 		return d0.idVBuffer < d1.idVBuffer;
 	}
 	void DSort_Buffer::apply(const DrawTag& d, IEffect& e) {
+		Primitive p;
 		for(int i=0 ; i<length ; i++) {
-			auto& hdl = d.idVBuffer[i];
-			if(hdl)
-				e.setVStream(hdl, i);
+			if(auto& hdl = d.idVBuffer[i])
+				p.vb[i] = hdl;
 		}
-		e.setIStream(d.idIBuffer);
+		p.ib = d.idIBuffer;
+		e.setPrimitive(p);
 	}
 }

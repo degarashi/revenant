@@ -63,12 +63,9 @@ namespace rev {
 			void resetFramebuffer() override;
 			void setViewport(bool bPixel, const lubee::RectF& r) override;
 
-			// ----------------- Vertex&Index Stream -----------------
-			//! 頂点宣言
-			/*! \param[in] decl 頂点定義クラスのポインタ(定数を前提) */
-			void setVDecl(const VDecl_SP& decl) override;
-			void setVStream(const HVb& vb, int n) override;
-			void setIStream(const HIb& ib) override;
+			// ----------------- Primitive -----------------
+			Primitive& refPrimitive() noexcept override;
+			void setPrimitive(const Primitive& p) noexcept override;
 
 			// ----------------- Buffer Clear -----------------
 			void clearFramebuffer(const draw::ClearParam& param) override;

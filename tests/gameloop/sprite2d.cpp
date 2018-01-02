@@ -58,12 +58,14 @@ void Sprite2D::draw(rev::IEffect& e) const {
 		auto lk = rev::test::g_shared.lock();
 		e.setTechnique(lk->technique->getTechnique(T_Sprite2D));
 	}
-	e.setVDecl(rev::DrawDecl<vdecl::sprite>::GetVDecl());
 	e.setUniform(rev::unif2d::texture::Diffuse, _hTex);
 	e.setUniform(rev::unif::Alpha, _alpha);
 	e.ref2D().setWorld(getToWorld().convert<3,3>());
-	e.setVStream(_hVb, 0);
-	e.setIStream(_hIb);
+	rev::Primitive p;
+	p.vdecl = rev::DrawDecl<vdecl::sprite>::GetVDecl();
+	p.vb[0] = _hVb;
+	p.ib = _hIb;
+	e.setPrimitive(p);
 	e.drawIndexed(GL_TRIANGLES, 6);
 }
 void Sprite2D::outputDrawTag(rev::DrawTag& d) const {

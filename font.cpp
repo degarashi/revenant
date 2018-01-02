@@ -9,6 +9,7 @@
 #include "glx_if.hpp"
 #include "vdecl.hpp"
 #include "sys_uniform_value.hpp"
+#include "primitive.hpp"
 
 namespace rev {
 	namespace {
@@ -215,11 +216,13 @@ namespace rev {
 		return _faceName;
 	}
 	void TextObj::draw(IEffect& e) const {
-		e.setVDecl(DrawDecl<drawtag::text>::GetVDecl());
+		auto& prim = e.refPrimitive();
+		prim.reset();
+		prim.vdecl = DrawDecl<drawtag::text>::GetVDecl();
 		for(auto& ds : _drawSet) {
 			e.setUniform(unif::texture::Diffuse, ds.hTex);
-			e.setVStream(ds.hVb, 0);
-			e.setIStream(ds.hIb);
+			prim.vb[0] = ds.hVb;
+			prim.ib = ds.hIb;
 			e.drawIndexed(GL_TRIANGLES, ds.nChar*6, 0);
 		}
 	}
