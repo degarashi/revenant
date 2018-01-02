@@ -12,76 +12,60 @@
 #include "tech_if.hpp"
 
 namespace rev {
-	// -------------- GLEffect::Vertex --------------
-	GLEffect::Vertex::Vertex() {}
-	void GLEffect::Vertex::reset() {
-		_spVDecl.reset();
-		for(auto& v : _vbuff)
-			v.reset();
+	// -------------- Primitive --------------
+	bool Primitive::operator != (const Primitive& p) const noexcept {
+		return !vertexCmp(p) || !indexCmp(p);
 	}
-	void GLEffect::Vertex::setVDecl(const VDecl_SP& v) {
-		_spVDecl = v;
-	}
-	void GLEffect::Vertex::setVBuffer(const HVb& hVb, const int n) {
-		_vbuff[n] = hVb;
-	}
-	void GLEffect::Vertex::extractData(draw::VStream& dst,
-												const VSemAttrV& vAttrId) const
-	{
-		Assert(_spVDecl, "VDecl is not set");
-		dst.spVDecl = _spVDecl;
-		for(int i=0 ; i<static_cast<int>(countof(_vbuff)) ; i++) {
-			if(_vbuff[i])
-				dst.vbuff[i] = _vbuff[i]->getDrawToken();
-		}
-		dst.vAttrId = vAttrId;
-	}
-	bool GLEffect::Vertex::operator != (const Vertex& v) const {
-		if(_spVDecl != v._spVDecl)
+	bool Primitive::vertexCmp(const Primitive& p) const noexcept {
+		if(vdecl != p.vdecl)
 			return true;
-		for(int i=0 ; i<static_cast<int>(countof(_vbuff)) ; i++) {
-			if(_vbuff[i] != v._vbuff[i])
+		for(int i=0 ; i<static_cast<int>(countof(vb)) ; i++) {
+			if(vb[i] != p.vb[i])
 				return true;
 		}
 		return false;
 	}
-
-	// -------------- GLEffect::Index --------------
-	GLEffect::Index::Index() {}
-	void GLEffect::Index::reset() {
-		_ibuff.reset();
+	bool Primitive::indexCmp(const Primitive& p) const noexcept {
+		return ib != p.ib;
 	}
-	void GLEffect::Index::setIBuffer(const HIb& hIb) {
-		_ibuff = hIb;
+	void Primitive::extractData(draw::VStream& dst, const VSemAttrV& vAttrId) const {
+		// vertex
+		Assert(vdecl, "VDecl is not set");
+		dst.spVDecl = vdecl;
+		for(int i=0 ; i<static_cast<int>(countof(vb)) ; i++) {
+			if(vb[i])
+				dst.vbuff[i] = vb[i]->getDrawToken();
+		}
+		dst.vAttrId = vAttrId;
+		if(ib)
+			dst.ibuff = draw::Buffer(ib->getDrawToken());
 	}
-	const HIb& GLEffect::Index::getIBuffer() const {
-		return _ibuff;
+	std::pair<int,int> Primitive::getDifference(const Primitive& p) const noexcept {
+		return std::make_pair(
+			vertexCmp(p),
+			indexCmp(p)
+		);
 	}
-	void GLEffect::Index::extractData(draw::VStream& dst) const {
-		if(_ibuff)
-			dst.ibuff = draw::Buffer(_ibuff->getDrawToken());
-	}
-	bool GLEffect::Index::operator != (const Index& idx) const {
-		return _ibuff != idx._ibuff;
+	void Primitive::reset() {
+		vdecl.reset();
+		for(auto& v : vb)
+			v.reset();
+		ib.reset();
 	}
 
 	// -------------- GLEffect --------------
 	diff::Buffer GLEffect::_getDifference() {
 		diff::Buffer diff = {};
-		if(_vertex != _vertex_prev)
-			++diff.vertex;
-		if(_index != _index_prev)
-			++diff.index;
+		const auto d = _primitive.getDifference(_primitive_prev);
+		diff.vertex += d.first;
+		diff.index += d.second;
 
-		_vertex_prev = _vertex;
-		_index_prev = _index;
+		_primitive = _primitive_prev;
 		return diff;
 	}
 	void GLEffect::_reset() {
-		_vertex.reset();
-		_vertex_prev.reset();
-		_index.reset();
-		_index_prev.reset();
+		_primitive.reset();
+		_primitive_prev.reset();
 
 		_clean_drawvalue();
 		_hFb = HFb();
@@ -134,10 +118,8 @@ namespace rev {
 			// 中身shared_ptrなのでそのまま移動
 			u.moveTo(_tokenML);
 		}
-		// set VBuffer(VDecl)
-		_vertex.extractData(vs, _tech_sp->getVAttr());
-		// set IBuffer
-		_index.extractData(vs);
+		// set V/IBuffer(VDecl)
+		_primitive.extractData(vs, _tech_sp->getVAttr());
 	}
 	void GLEffect::_outputDrawCallIndexed(const GLenum mode, const GLsizei count, const GLenum sizeF, const GLuint offset) {
 		draw::VStream vs;
@@ -163,13 +145,13 @@ namespace rev {
 		}
 	}
 	void GLEffect::setVDecl(const VDecl_SP& decl) {
-		_vertex.setVDecl(decl);
+		_primitive.vdecl = decl;
 	}
 	void GLEffect::setVStream(const HVb& vb, const int n) {
-		_vertex.setVBuffer(vb, n);
+		_primitive.vb[n] = vb;
 	}
 	void GLEffect::setIStream(const HIb& ib) {
-		_index.setIBuffer(ib);
+		_primitive.ib = ib;
 	}
 	void GLEffect::clearFramebuffer(const draw::ClearParam& param) {
 		_outputFramebuffer();
@@ -186,7 +168,7 @@ namespace rev {
 	}
 	void GLEffect::drawIndexed(const GLenum mode, const GLsizei count, const GLuint offsetElem) {
 		_prepareUniforms();
-		const HIb hIb = _index.getIBuffer();
+		const HIb hIb = _primitive.ib;
 		const auto str = hIb->getStride();
 		const auto szF = GLIBuffer::GetSizeFlag(str);
 		_outputDrawCallIndexed(mode, count, szF, offsetElem*str);
