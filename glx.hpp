@@ -7,10 +7,6 @@
 #include "primitive.hpp"
 
 namespace rev {
-	namespace parse {
-		class BlockSet;
-		using BlockSet_SP = std::shared_ptr<BlockSet>;
-	}
 	namespace draw {
 		class VStream;
 	}
