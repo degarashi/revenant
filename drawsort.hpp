@@ -95,10 +95,8 @@ namespace rev {
 			bool compare(const DrawTag& d0, const DrawTag& d1) const override;
 			void apply(const DrawTag& d, IEffect& e) override;
 	};
-	//! 描画ソート: Vertex&Index Buffer
-	struct DSort_Buffer : DSort {
-		constexpr static int length = std::tuple_size<DrawTag::VBuffAr>::value;
-
+	//! 描画ソート: Primitive
+	struct DSort_Primitive : DSort {
 		bool hasInfo(const DrawTag& d) const override;
 		bool compare(const DrawTag& d0, const DrawTag& d1) const override;
 		void apply(const DrawTag& d, IEffect& e) override;
@@ -109,7 +107,7 @@ namespace rev {
 							cs_dsort_priority_desc,
 							cs_dsort_techpass,
 							cs_dsort_texture,
-							cs_dsort_buffer;
+							cs_dsort_primitive;
 	DefineEnum(
 		SortAlg,
 		(Z_Asc)
@@ -118,7 +116,7 @@ namespace rev {
 		(Priority_Desc)
 		(TechPass)
 		(Texture)
-		(Buffer)
+		(Primitive)
 	);
 	using SortAlgList = std::vector<SortAlg>;
 }

@@ -185,20 +185,19 @@ namespace rev {
 		}
 	}
 	void TextObj::exportDrawTag(DrawTag& d) const {
-		constexpr int maxVb = sizeof(d.idVBuffer)/sizeof(d.idVBuffer[0]),
+		if(_drawSet.empty())
+			return;
+		constexpr int maxVb = MaxVStream,
 					maxTex = sizeof(d.idTex)/sizeof(d.idTex[0]);
 		int curVb = 0,
 			curTex = 0;
-		bool bFirst = true;
+		auto& p = d.primitive;
+		p.ib = _drawSet.front().hIb;;
 		for(auto& ds : _drawSet) {
 			if(curVb != maxVb)
-				d.idVBuffer[curVb++] = ds.hVb;
+				p.vb[curVb++] = ds.hVb;
 			if(curTex != maxTex)
 				d.idTex[curTex++] = ds.hTex;
-			if(bFirst) {
-				d.idIBuffer = ds.hIb;
-				bFirst = false;
-			}
 		}
 	}
 	void TextObj::onCacheLost() {

@@ -20,7 +20,7 @@ namespace rev {
 			cs_dsort_priority_desc,
 			cs_dsort_techpass,
 			cs_dsort_texture,
-			cs_dsort_buffer
+			cs_dsort_primitive
 		};
 		const std::string cs_drawgroupname("DrawGroup");
 	}

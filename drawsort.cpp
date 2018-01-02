@@ -10,7 +10,7 @@ namespace rev {
 					cs_dsort_priority_desc = std::make_shared<DSort_Priority_Desc>(),
 					cs_dsort_techpass = std::make_shared<DSort_TechPass>(),
 					cs_dsort_texture = std::make_shared<DSort_Texture>(),
-					cs_dsort_buffer = std::make_shared<DSort_Buffer>();
+					cs_dsort_primitive = std::make_shared<DSort_Primitive>();
 
 	void DSort::apply(const DrawTag& /*d*/, IEffect& /*e*/) {}
 	void DSort::DoSort(const DSort_V& alg, int cursor, typename DLObj_V::iterator itr0, typename DLObj_V::iterator itr1) {
@@ -102,26 +102,14 @@ namespace rev {
 		}
 	}
 
-	// ------------------- DSort_Buffer -------------------
-	bool DSort_Buffer::hasInfo(const DrawTag& d) const {
-		return d.idVBuffer[0] || d.idIBuffer;
+	// ------------------- DSort_Primitive -------------------
+	bool DSort_Primitive::hasInfo(const DrawTag& d) const {
+		return d.primitive.hasInfo();
 	}
-	bool DSort_Buffer::compare(const DrawTag& d0, const DrawTag& d1) const {
-		auto val0 = reinterpret_cast<uintptr_t>(d0.idIBuffer.get()),
-			 val1 = reinterpret_cast<uintptr_t>(d1.idIBuffer.get());
-		if(val0 < val1)
-			return true;
-		if(val0 > val1)
-			return false;
-		return d0.idVBuffer < d1.idVBuffer;
+	bool DSort_Primitive::compare(const DrawTag& d0, const DrawTag& d1) const {
+		return d0.primitive < d1.primitive;
 	}
-	void DSort_Buffer::apply(const DrawTag& d, IEffect& e) {
-		Primitive p;
-		for(int i=0 ; i<length ; i++) {
-			if(auto& hdl = d.idVBuffer[i])
-				p.vb[i] = hdl;
-		}
-		p.ib = d.idIBuffer;
-		e.setPrimitive(p);
+	void DSort_Primitive::apply(const DrawTag& d, IEffect& e) {
+		e.setPrimitive(d.primitive);
 	}
 }

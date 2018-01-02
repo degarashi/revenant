@@ -70,8 +70,8 @@ void Sprite2D::draw(rev::IEffect& e) const {
 }
 void Sprite2D::outputDrawTag(rev::DrawTag& d) const {
 	d.idTex[0] = _hTex;
-	d.idVBuffer[0] = _hVb;
-	d.idIBuffer = _hIb;
+	d.primitive.vb[0] = _hVb;
+	d.primitive.ib = _hIb;
 	d.zOffset = _zOffset;
 }
 

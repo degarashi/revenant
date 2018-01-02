@@ -1,7 +1,6 @@
 #pragma once
 #include "glx_id.hpp"
-#include "handle.hpp"
-#include <array>
+#include "primitive.hpp"
 
 namespace rev {
 	class Tech;
@@ -9,11 +8,9 @@ namespace rev {
 	using Priority = uint32_t;
 	struct DrawTag {
 		using TexAr = std::array<HTex, 4>;
-		using VBuffAr = std::array<HVb, 4>;
 
 		Tech_SP		technique;
-		VBuffAr		idVBuffer;
-		HIb			idIBuffer;
+		Primitive	primitive;
 		TexAr		idTex;
 		Priority	priority;
 		float		zOffset;
