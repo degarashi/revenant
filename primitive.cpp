@@ -31,6 +31,21 @@ namespace rev {
 		if(ib)
 			dst.ibuff = draw::Buffer(ib->getDrawToken());
 	}
+	void Primitive::getArray(CmpArray& dst) const noexcept {
+		auto add = [p = dst.data()](auto& ptr) mutable {
+			*p++ = reinterpret_cast<uintptr_t>(ptr.get());
+		};
+		for(auto& v : vb)
+			add(v);
+		add(ib);
+		add(vdecl);
+	}
+	bool Primitive::operator < (const Primitive& p) const noexcept {
+		CmpArray a, b;
+		getArray(a);
+		p.getArray(b);
+		return a < b;
+	}
 	std::pair<int,int> Primitive::getDifference(const Primitive& p) const noexcept {
 		return std::make_pair(
 			vertexCmp(p),
@@ -42,5 +57,8 @@ namespace rev {
 		for(auto& v : vb)
 			v.reset();
 		ib.reset();
+	}
+	bool Primitive::hasInfo() const noexcept {
+		return vdecl || vb[0] || ib;
 	}
 }

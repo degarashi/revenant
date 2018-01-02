@@ -10,12 +10,17 @@ namespace rev {
 		VDecl_SP	vdecl;
 		HVb			vb[MaxVStream];
 		HIb			ib;
+		constexpr static int NArray = MaxVStream + 2;
+		using CmpArray = std::array<uintptr_t, NArray>;
 
 		bool vertexCmp(const Primitive& p) const noexcept;
 		bool indexCmp(const Primitive& p) const noexcept;
 		std::pair<int,int> getDifference(const Primitive& p) const noexcept;
 		void extractData(draw::VStream& dst, const VSemAttrV& vAttr) const;
+		void getArray(CmpArray& dst) const noexcept;
 		bool operator != (const Primitive& p) const noexcept;
+		bool operator < (const Primitive& p) const noexcept;
 		void reset();
+		bool hasInfo() const noexcept;
 	};
 }
