@@ -4,8 +4,7 @@
 #include "resmgr_app.hpp"
 #include "drawtoken/viewport.hpp"
 #include "drawtoken/tokenml.hpp"
-#include "glx_const.hpp"
-#include "uniform_map.hpp"
+#include "primitive.hpp"
 
 namespace rev {
 	namespace parse {
@@ -15,19 +14,6 @@ namespace rev {
 	namespace draw {
 		class VStream;
 	}
-
-	struct Primitive {
-		VDecl_SP	vdecl;
-		HVb			vb[MaxVStream];
-		HIb			ib;
-
-		bool vertexCmp(const Primitive& p) const noexcept;
-		bool indexCmp(const Primitive& p) const noexcept;
-		std::pair<int,int> getDifference(const Primitive& p) const noexcept;
-		void extractData(draw::VStream& dst, const VSemAttrV& vAttr) const;
-		bool operator != (const Primitive& p) const noexcept;
-		void reset();
-	};
 	//! GLXエフェクト管理クラス
 	class GLEffect : public IEffect, public std::enable_shared_from_this<GLEffect> {
 		public:
