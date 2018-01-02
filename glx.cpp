@@ -90,18 +90,18 @@ namespace rev {
 	void GLEffect::_clean_drawvalue() {
 		_tech_sp.reset();
 		// セットされているUniform変数を未セット状態にする
-		uniValue.clear();
+		clearUniformValue();
 		_tokenML.clear();
 	}
 	void GLEffect::setTechnique(const Tech_SP& tech) {
 		_clean_drawvalue();
 
 		_tech_sp = tech;
-		program = tech->getProgram();
+		setProgram(tech->getProgram());
 		// デフォルト値読み込み
-		uniValue.copyFrom(_tech_sp->getDefaultValue());
+		_refUniformValue().copyFrom(_tech_sp->getDefaultValue());
 		// 各種セッティングをするTokenをリストに追加
-		program->getDrawToken(_tokenML);
+		getProgram()->getDrawToken(_tokenML);
 		_tokenML.allocate<draw::UserFunc>([tp_tmp = _tech_sp.get()](){
 			tp_tmp->applySetting();
 		});
@@ -129,9 +129,10 @@ namespace rev {
 	void GLEffect::_outputDrawCall(draw::VStream& vs) {
 		_outputFramebuffer();
 		// set uniform value
-		if(!uniValue.empty()) {
+		auto& u = _refUniformValue();
+		if(!u.empty()) {
 			// 中身shared_ptrなのでそのまま移動
-			uniValue.moveTo(_tokenML);
+			u.moveTo(_tokenML);
 		}
 		// set VBuffer(VDecl)
 		_vertex.extractData(vs, _tech_sp->getVAttr());

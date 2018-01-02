@@ -211,7 +211,7 @@ namespace rev {
 
 			Visitor(Prog_Unif& p):
 				pu(p),
-				pgId(p.program->getProgramId())
+				pgId(p.getProgram()->getProgramId())
 			{}
 			bool setKey(const std::string& key) {
 				uniId = GL.glGetUniformLocation(pgId, key.c_str());
@@ -327,7 +327,7 @@ namespace rev {
 			ss.clear();
 		}
 		// シェーダーのリンク処理
-		_prog_unif.program = mgr_gl.makeProgram(shP[0], shP[1], shP[2]);
+		_prog_unif.setProgram(mgr_gl.makeProgram(shP[0], shP[1], shP[2]));
 		// OpenGLステート設定リストを形成
 		_setting = dupl.exportSetting();
 
@@ -347,7 +347,7 @@ namespace rev {
 		// 頂点セマンティクス対応リストを生成
 		for(auto& p : _attrL) {
 			const char* name = p->name.c_str();
-			if(const auto at = _prog_unif.program->getAttribId(name)) {
+			if(const auto at = _prog_unif.getProgram()->getAttribId(name)) {
 				const auto sem = static_cast<VSem::e>(p->sem);
 				VSemAttr a;
 				a.sem = VSemantic {

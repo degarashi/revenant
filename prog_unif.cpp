@@ -3,12 +3,29 @@
 #include "drawtoken/texture.hpp"
 
 namespace rev {
+	void Prog_Unif::setProgram(const HProg& p) {
+		_program = p;
+		clearUniformValue();
+	}
+	const HProg& Prog_Unif::getProgram() const noexcept {
+		return _program;
+	}
+	void Prog_Unif::clearUniformValue() {
+		_uniValue.clear();
+	}
+	UniformMap& Prog_Unif::_refUniformValue() noexcept {
+		return _uniValue;
+	}
+	const UniformMap& Prog_Unif::getUniformValue() const noexcept {
+		return _uniValue;
+	}
+
 	draw::TokenBuffer& Prog_Unif::_makeUniformTokenBuffer(const GLint id) {
-		return *uniValue.makeTokenBuffer(id);
+		return *_uniValue.makeTokenBuffer(id);
 	}
 	GLint_OP Prog_Unif::getUniformId(const Name& name) const {
-		D_Assert(program, "shader program handle is invalid");
-		return program->getUniformId(name);
+		D_Assert(_program, "shader program handle is invalid");
+		return _program->getUniformId(name);
 	}
 	// Uniform設定は一旦_unifMapに蓄積した後、出力
 	void Prog_Unif::_makeUniformToken(draw::TokenDst& dst, const GLint id, const bool* b, const int n, const bool bT) const {
@@ -31,7 +48,7 @@ namespace rev {
 	}
 	void Prog_Unif::_makeUniformToken(draw::TokenDst& dst, const GLint id, const HTex* hTex, const int n, bool /*bT*/) const {
 		// テクスチャユニット番号を検索
-		const auto& tIdx = program->getTexIndex();
+		const auto& tIdx = _program->getTexIndex();
 		const auto itr = tIdx.find(id);
 		Expect(itr != tIdx.end(), "texture index not found");
 		if(itr != tIdx.end()) {
