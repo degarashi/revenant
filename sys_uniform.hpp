@@ -6,7 +6,7 @@
 #include "frea/matrix.hpp"
 
 namespace rev {
-	struct IEffect;
+	class IEffect;
 	//! (3D/2D共通)
 	/*!
 		予め変数名がsys_*** の形で決められていて, 存在すれば計算&設定される

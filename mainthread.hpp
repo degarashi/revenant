@@ -11,7 +11,7 @@ namespace rev {
 	class URI;
 
 	class DrawThread;
-	struct IEffect;
+	class IEffect;
 	using HFx = std::shared_ptr<IEffect>;
 	class FNotify;
 	class Camera2DMgr;

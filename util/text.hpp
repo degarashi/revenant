@@ -7,7 +7,7 @@
 
 namespace rev {
 	struct DrawTag;
-	struct IEffect;
+	class IEffect;
 	namespace util {
 		enum class Align {
 			Negative,

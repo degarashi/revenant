@@ -11,7 +11,7 @@ namespace rev {
 	using DLObj_P = std::pair<const DrawTag*, HDObj>;
 	using DLObj_V = std::vector<DLObj_P>;
 
-	struct IEffect;
+	class IEffect;
 	// ---- Draw sort algorithms ----
 	struct DSort {
 		//! ソートに必要な情報が記録されているか(デバッグ用)

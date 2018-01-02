@@ -3,7 +3,7 @@
 #include "prog_unif.hpp"
 
 namespace rev {
-	struct IEffect;
+	class IEffect;
 	struct VSemAttr;
 	using VSemAttrV = std::vector<VSemAttr>;
 	using UniIdSet = std::unordered_set<GLint>;

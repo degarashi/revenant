@@ -74,7 +74,7 @@ namespace rev {
 	DEF_HANDLE(GLProgram, Prog)
 	class GLShader;
 	DEF_HANDLE(GLShader, Sh)
-	struct IEffect;
+	class IEffect;
 	DEF_HANDLE(IEffect, Fx)
 	class GLFBuffer;
 	DEF_HANDLE(GLFBuffer, Fb)
