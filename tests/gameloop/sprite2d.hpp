@@ -20,20 +20,20 @@ namespace rev {
 	class GLEffect_2D;
 	struct DrawTag;
 }
+using Primitive_SP = std::shared_ptr<rev::Primitive>;
+using Primitive_WP = std::weak_ptr<rev::Primitive>;
 //! 表示テスト用のスプライト
 class Sprite2D : public beat::g2::Pose {
 	private:
-		static rev::WVb		s_wVb;
-		static rev::WIb		s_wIb;
-		rev::HVb			_hVb;
-		rev::HIb			_hIb;
+		static Primitive_WP	s_primitive;
+		Primitive_SP		_primitive;
 		rev::HTex			_hTex;
 		lubee::RangeF		_zRange;
 		float				_zOffset,
 							_alpha;
 
 	public:
-		static std::pair<rev::HVb, rev::HIb> InitBuffer();
+		static Primitive_SP InitBuffer();
 		const static rev::Name	T_Sprite2D;
 		Sprite2D(const rev::HTex& t, float z);
 		void draw(rev::IEffect& e) const;
