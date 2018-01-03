@@ -188,15 +188,11 @@ namespace rev {
 	void TextObj::exportDrawTag(DrawTag& d) const {
 		if(_drawSet.empty())
 			return;
-		constexpr int maxVb = MaxVStream,
-					maxTex = sizeof(d.idTex)/sizeof(d.idTex[0]);
-		int curVb = 0,
-			curTex = 0;
+		constexpr int maxTex = sizeof(d.idTex)/sizeof(d.idTex[0]);
+		int curTex = 0;
 		auto& p = d.primitive;
-		p.ib = _drawSet.front().primitive->ib;
+		p = _drawSet.front().primitive;
 		for(auto& ds : _drawSet) {
-			if(curVb != maxVb)
-				p.vb[curVb++] = ds.primitive->vb[0];
 			if(curTex != maxTex)
 				d.idTex[curTex++] = ds.hTex;
 		}
@@ -218,7 +214,7 @@ namespace rev {
 	void TextObj::draw(IEffect& e) const {
 		for(auto& ds : _drawSet) {
 			e.setUniform(unif::texture::Diffuse, ds.hTex);
-			e.setPrimitive(*ds.primitive);
+			e.setPrimitive(ds.primitive);
 			e.drawIndexed(GL_TRIANGLES, ds.nChar*6, 0);
 		}
 	}

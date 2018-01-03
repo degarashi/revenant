@@ -58,13 +58,12 @@ void Sprite2D::draw(rev::IEffect& e) const {
 	e.setUniform(rev::unif2d::texture::Diffuse, _hTex);
 	e.setUniform(rev::unif::Alpha, _alpha);
 	e.ref2D().setWorld(getToWorld().convert<3,3>());
-	e.setPrimitive(*_primitive);
+	e.setPrimitive(_primitive);
 	e.drawIndexed(GL_TRIANGLES, 6);
 }
 void Sprite2D::outputDrawTag(rev::DrawTag& d) const {
 	d.idTex[0] = _hTex;
-	d.primitive.vb[0] = _primitive->vb[0];
-	d.primitive.ib = _primitive->ib;
+	d.primitive = _primitive;
 	d.zOffset = _zOffset;
 }
 

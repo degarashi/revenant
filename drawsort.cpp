@@ -104,10 +104,10 @@ namespace rev {
 
 	// ------------------- DSort_Primitive -------------------
 	bool DSort_Primitive::hasInfo(const DrawTag& d) const {
-		return d.primitive.hasInfo();
+		return static_cast<bool>(d.primitive);
 	}
 	bool DSort_Primitive::compare(const DrawTag& d0, const DrawTag& d1) const {
-		return d0.primitive < d1.primitive;
+		return *d0.primitive < *d1.primitive;
 	}
 	void DSort_Primitive::apply(const DrawTag& d, IEffect& e) {
 		e.setPrimitive(d.primitive);

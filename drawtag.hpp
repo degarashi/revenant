@@ -10,7 +10,7 @@ namespace rev {
 		using TexAr = std::array<HTex, 4>;
 
 		Tech_SP		technique;
-		Primitive	primitive;
+		Primitive_SP	primitive;
 		TexAr		idTex;
 		Priority	priority;
 		float		zOffset;

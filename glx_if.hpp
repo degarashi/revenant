@@ -17,6 +17,7 @@ namespace rev {
 		struct ClearParam;
 	}
 	struct Primitive;
+	using Primitive_SP = std::shared_ptr<Primitive>;
 	class SystemUniform2D;
 	class SystemUniform3D;
 	class IEffect :
@@ -29,8 +30,7 @@ namespace rev {
 			virtual HFb getFramebuffer() const = 0;
 			virtual void setViewport(bool bPixel, const lubee::RectF& r) = 0;
 			virtual void resetFramebuffer() = 0;
-			virtual Primitive& refPrimitive() noexcept = 0;
-			virtual void setPrimitive(const Primitive& p) noexcept = 0;
+			virtual void setPrimitive(const Primitive_SP& p) noexcept = 0;
 			virtual void clearFramebuffer(const draw::ClearParam& param) = 0;
 			virtual void drawIndexed(GLenum mode, GLsizei count, GLuint offsetElem=0) = 0;
 			virtual void draw(GLenum mode, GLint first, GLsizei count) = 0;

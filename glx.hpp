@@ -4,20 +4,21 @@
 #include "resmgr_app.hpp"
 #include "drawtoken/viewport.hpp"
 #include "drawtoken/tokenml.hpp"
-#include "primitive.hpp"
 
 namespace rev {
 	namespace draw {
 		class VStream;
 	}
+	struct Primitive;
+	using Primitive_SP = std::shared_ptr<Primitive>;
 	//! GLXエフェクト管理クラス
 	class GLEffect : public IEffect, public std::enable_shared_from_this<GLEffect> {
 		public:
 			bool			_bInit = false;		//!< deviceLost/Resetの状態区別
 			diff::Effect	_diffCount;			/*!< バッファのカウントクリアはclearTask()かbeginTask()の呼び出しタイミング */
 
-			Primitive	_primitive,
-						_primitive_prev;
+			Primitive_SP	_primitive,
+							_primitive_prev;
 			using HFb_OP = spi::Optional<HFb>;
 			HFb_OP				_hFb;			//!< 描画対象のフレームバッファ (無効ならデフォルトターゲット)
 			HFb					_hFbPrev;		//!< 今現在OpenGLで有効になっているフレームバッファ
@@ -42,6 +43,7 @@ namespace rev {
 		protected:
 			virtual void _prepareUniforms();
 		public:
+			GLEffect();
 			void setTechnique(const Tech_SP& tech) override;
 			void onDeviceLost() override;
 			void onDeviceReset() override;
@@ -64,8 +66,7 @@ namespace rev {
 			void setViewport(bool bPixel, const lubee::RectF& r) override;
 
 			// ----------------- Primitive -----------------
-			Primitive& refPrimitive() noexcept override;
-			void setPrimitive(const Primitive& p) noexcept override;
+			void setPrimitive(const Primitive_SP& p) noexcept override;
 
 			// ----------------- Buffer Clear -----------------
 			void clearFramebuffer(const draw::ClearParam& param) override;

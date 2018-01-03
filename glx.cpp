@@ -10,20 +10,26 @@
 #include "drawtoken/texture.hpp"
 #include "unituple/operator.hpp"
 #include "tech_if.hpp"
+#include "primitive.hpp"
 
 namespace rev {
+	GLEffect::GLEffect():
+		_primitive(std::make_shared<Primitive>()),
+		_primitive_prev(std::make_shared<Primitive>())
+	{}
 	diff::Buffer GLEffect::_getDifference() {
 		diff::Buffer diff = {};
-		const auto d = _primitive.getDifference(_primitive_prev);
-		diff.vertex += d.first;
-		diff.index += d.second;
-
-		_primitive = _primitive_prev;
+		if(_primitive != _primitive_prev) {
+			const auto d = _primitive->getDifference(*_primitive_prev);
+			diff.vertex += d.first;
+			diff.index += d.second;
+			_primitive = _primitive_prev;
+		}
 		return diff;
 	}
 	void GLEffect::_reset() {
-		_primitive.reset();
-		_primitive_prev.reset();
+		_primitive->reset();
+		_primitive_prev->reset();
 
 		_clean_drawvalue();
 		_hFb = HFb();
@@ -77,7 +83,7 @@ namespace rev {
 			u.moveTo(_tokenML);
 		}
 		// set V/IBuffer(VDecl)
-		_primitive.extractData(vs, _tech_sp->getVAttr());
+		_primitive->extractData(vs, _tech_sp->getVAttr());
 	}
 	void GLEffect::_outputDrawCallIndexed(const GLenum mode, const GLsizei count, const GLenum sizeF, const GLuint offset) {
 		draw::VStream vs;
@@ -102,11 +108,8 @@ namespace rev {
 			_bInit = true;
 		}
 	}
-	void GLEffect::setPrimitive(const Primitive& p) noexcept {
+	void GLEffect::setPrimitive(const Primitive_SP& p) noexcept {
 		_primitive = p;
-	}
-	Primitive& GLEffect::refPrimitive() noexcept {
-		return _primitive;
 	}
 	void GLEffect::clearFramebuffer(const draw::ClearParam& param) {
 		_outputFramebuffer();
@@ -123,7 +126,7 @@ namespace rev {
 	}
 	void GLEffect::drawIndexed(const GLenum mode, const GLsizei count, const GLuint offsetElem) {
 		_prepareUniforms();
-		const HIb hIb = _primitive.ib;
+		const HIb hIb = _primitive->ib;
 		const auto str = hIb->getStride();
 		const auto szF = GLIBuffer::GetSizeFlag(str);
 		_outputDrawCallIndexed(mode, count, szF, offsetElem*str);
