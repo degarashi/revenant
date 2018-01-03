@@ -50,6 +50,8 @@ namespace rev {
 DefineVDecl(::rev::drawtag::text)
 
 namespace rev {
+	struct Primitive;
+	using Primitive_SP = std::shared_ptr<Primitive>;
 	//! 文章の描画に必要なフォントや頂点を用意
 	/*!
 		TriangleList形式。とりあえず改行だけ対応
@@ -62,9 +64,8 @@ namespace rev {
 	class TextObj {
 		using CPosL = std::vector<const CharPos*>;
 		struct DrawSet {
+			Primitive_SP	primitive;
 			HTex	hTex;
-			HVb		hVb;	//!< フォント頂点
-			HIb		hIb;
 			int		nChar;	//!< スペースなど制御文字を除いた文字数
 		};
 		using DrawSetL = std::vector<DrawSet>;

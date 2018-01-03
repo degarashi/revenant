@@ -149,7 +149,6 @@ namespace rev {
 		_rectSize = lubee::SizeF{0,0};
 		auto itr = tpM.cbegin();
 		for(int i=0 ; i<nplane ; i++, ++itr) {
-			auto& ds = _drawSet[i];
 			const std::vector<CPair>& cpl = itr->second;
 			const int nC = cpl.size();
 			int vbase = 0;
@@ -175,13 +174,15 @@ namespace rev {
 				vbase += 4;
 			}
 
+			auto& ds = _drawSet[i];
 			ds.hTex = itr->first;
 			ds.nChar = nC;
-			// GLバッファにセット
-			ds.hVb = mgr_gl.makeVBuffer(DrawType::Static);
-			ds.hVb->initData(std::move(vbuff), sizeof(vertex::text));
-			ds.hIb = mgr_gl.makeIBuffer(DrawType::Static);
-			ds.hIb->initData(std::move(ibuff));
+			const auto p = ds.primitive = std::make_shared<Primitive>();
+			p->vb[0] = mgr_gl.makeVBuffer(DrawType::Static);
+			p->vb[0]->initData(std::move(vbuff), sizeof(vertex::text));
+			p->ib = mgr_gl.makeIBuffer(DrawType::Static);
+			p->ib->initData(std::move(ibuff));
+			p->vdecl = DrawDecl<drawtag::text>::GetVDecl();
 		}
 	}
 	void TextObj::exportDrawTag(DrawTag& d) const {
@@ -192,10 +193,10 @@ namespace rev {
 		int curVb = 0,
 			curTex = 0;
 		auto& p = d.primitive;
-		p.ib = _drawSet.front().hIb;;
+		p.ib = _drawSet.front().primitive->ib;
 		for(auto& ds : _drawSet) {
 			if(curVb != maxVb)
-				p.vb[curVb++] = ds.hVb;
+				p.vb[curVb++] = ds.primitive->vb[0];
 			if(curTex != maxTex)
 				d.idTex[curTex++] = ds.hTex;
 		}
@@ -215,13 +216,9 @@ namespace rev {
 		return _faceName;
 	}
 	void TextObj::draw(IEffect& e) const {
-		auto& prim = e.refPrimitive();
-		prim.reset();
-		prim.vdecl = DrawDecl<drawtag::text>::GetVDecl();
 		for(auto& ds : _drawSet) {
 			e.setUniform(unif::texture::Diffuse, ds.hTex);
-			prim.vb[0] = ds.hVb;
-			prim.ib = ds.hIb;
+			e.setPrimitive(*ds.primitive);
 			e.drawIndexed(GL_TRIANGLES, ds.nChar*6, 0);
 		}
 	}
