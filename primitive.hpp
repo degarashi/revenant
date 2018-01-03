@@ -23,4 +23,6 @@ namespace rev {
 		void reset();
 		bool hasInfo() const noexcept;
 	};
+	using Primitive_SP = std::shared_ptr<Primitive>;
+	using Primitive_WP = std::weak_ptr<Primitive>;
 }
