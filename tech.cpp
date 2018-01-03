@@ -1,7 +1,6 @@
-#include "vertex.hpp"
+#include "tech.hpp"
 #include "gl_state.hpp"
-#include "gl_program.hpp"
-#include "tech_if.hpp"
+#include "vertex.hpp"
 
 namespace rev {
 	void Tech::applySetting() const {
@@ -24,3 +23,4 @@ namespace rev {
 		return _name;
 	}
 }
+

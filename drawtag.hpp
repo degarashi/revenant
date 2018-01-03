@@ -3,8 +3,8 @@
 #include "primitive.hpp"
 
 namespace rev {
-	class Tech;
-	using Tech_SP = std::shared_ptr<Tech>;
+	struct ITech;
+	using Tech_SP = std::shared_ptr<ITech>;
 	using Priority = uint32_t;
 	struct DrawTag {
 		using TexAr = std::array<HTex, 4>;

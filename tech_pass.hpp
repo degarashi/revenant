@@ -1,6 +1,7 @@
 #pragma once
 #include "tech_pair.hpp"
 #include "gl_types.hpp"
+#include <unordered_map>
 
 namespace rev {
 	class URI;

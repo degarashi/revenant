@@ -1,6 +1,6 @@
 #pragma once
 #include "glx_parse.hpp"
-#include "tech_if.hpp"
+#include "tech.hpp"
 
 namespace rev {
 	namespace parse {

@@ -9,8 +9,8 @@ namespace lubee {
 	using RectF = Rect<float>;
 }
 namespace rev {
-	class Tech;
-	using Tech_SP = std::shared_ptr<Tech>;
+	struct ITech;
+	using Tech_SP = std::shared_ptr<ITech>;
 	class VDecl;
 	using VDecl_SP = std::shared_ptr<VDecl>;
 	namespace draw {
