@@ -35,10 +35,10 @@ namespace rev {
 		_makeUniformToken(dst, id, static_cast<const int*>(tmp), 1, bT);
 	}
 	void Prog_Unif::_makeUniformToken(draw::TokenDst& dst, const GLint id, const int* iv, const int n, bool /*bT*/) const {
-		MakeUniformToken<draw::Unif_Vec<int, 1>>(dst, id, id, iv, 1, n);
+		_MakeUniformToken<draw::Unif_Vec<int, 1>>(dst, id, id, iv, 1, n);
 	}
 	void Prog_Unif::_makeUniformToken(draw::TokenDst& dst, const GLint id, const float* fv, const int n, bool /*bT*/) const {
-		MakeUniformToken<draw::Unif_Vec<float, 1>>(dst, id, id, fv, 1, n);
+		_MakeUniformToken<draw::Unif_Vec<float, 1>>(dst, id, id, fv, 1, n);
 	}
 	void Prog_Unif::_makeUniformToken(draw::TokenDst& dst, const GLint id, const double* dv, const int n, const bool bT) const {
 		float tmp[n];
@@ -57,7 +57,7 @@ namespace rev {
 				std::vector<const IGLTexture*> pTexA(n);
 				for(int i=0 ; i<n ; i++)
 					pTexA[i] = hTex[i].get();
-				MakeUniformToken<draw::TextureA>(dst, id,
+				_MakeUniformToken<draw::TextureA>(dst, id,
 								id, hTex,
 								pTexA.data(), aId, n);
 				return;
