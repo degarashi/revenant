@@ -11,6 +11,7 @@
 #include "unituple/operator.hpp"
 #include "tech_if.hpp"
 #include "primitive.hpp"
+#include "gl_state.hpp"
 
 namespace rev {
 	GLEffect::GLEffect():
@@ -51,7 +52,9 @@ namespace rev {
 		// 各種セッティングをするTokenをリストに追加
 		getProgram()->getDrawToken(_tokenML);
 		_tokenML.allocate<draw::UserFunc>([tp_tmp = _tech_sp.get()](){
-			tp_tmp->applySetting();
+			auto& sv = tp_tmp->getSetting();
+			for(auto& s : sv)
+				s->apply();
 		});
 	}
 	void GLEffect::_outputFramebuffer() {

@@ -3,9 +3,8 @@
 #include "vertex.hpp"
 
 namespace rev {
-	void Tech::applySetting() const {
-		for(auto& st : _setting)
-			st->apply();
+	const GLState_SPV& Tech::getSetting() const {
+		return _setting;
 	}
 	const UniIdSet& Tech::getNoDefaultValue() const noexcept {
 		return _noDefValue;
@@ -16,7 +15,7 @@ namespace rev {
 	const HProg& Tech::getProgram() const noexcept {
 		return _prog_unif.getProgram();
 	}
-	const UniformMap& Tech::getDefaultValue() const noexcept {
+	const UniformMap& Tech::getDefaultValue() const {
 		return _prog_unif.getUniformValue();
 	}
 	const Name& Tech::getName() const noexcept {
