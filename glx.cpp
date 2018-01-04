@@ -12,6 +12,7 @@
 #include "tech_if.hpp"
 #include "primitive.hpp"
 #include "gl_state.hpp"
+#include "uniform.hpp"
 
 namespace rev {
 	GLEffect::GLEffect():
@@ -48,7 +49,11 @@ namespace rev {
 		_tech_sp = tech;
 		setProgram(tech->getProgram());
 		// デフォルト値読み込み
-		_refUniformValue().copyFrom(_tech_sp->getDefaultValue());
+		{
+			auto& def = _tech_sp->getDefaultValue();
+			for(auto& d : def)
+				d.second->apply(*this, d.first);
+		}
 		// 各種セッティングをするTokenをリストに追加
 		getProgram()->getDrawToken(_tokenML);
 		_tokenML.allocate<draw::UserFunc>([tp_tmp = _tech_sp.get()](){

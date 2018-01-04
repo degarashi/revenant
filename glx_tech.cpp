@@ -11,6 +11,7 @@
 #include "comment.hpp"
 #include "tech_pair.hpp"
 #include <boost/format.hpp>
+#include "uniform.hpp"
 
 namespace rev {
 	namespace {
@@ -206,12 +207,12 @@ namespace rev {
 	namespace {
 		struct Visitor : boost::static_visitor<> {
 			GLint				uniId;
-			Prog_Unif&			pu;
+			UniformEnt&			uniform;
 			GLuint				pgId;
 
-			Visitor(Prog_Unif& p):
-				pu(p),
-				pgId(p.getProgram()->getProgramId())
+			Visitor(UniformEnt& u, const GLuint pg):
+				uniform(u),
+				pgId(pg)
 			{}
 			bool setKey(const std::string& key) {
 				uniId = GL.glGetUniformLocation(pgId, key.c_str());
@@ -222,7 +223,9 @@ namespace rev {
 			template <class T, ENABLE_IF(frea::is_vector<T>{})>
 			void operator()(const T& t) {
 				if(uniId >= 0) {
-					pu.setUniform(uniId, &t, 1, false);
+					auto val = std::make_unique<UniformArray<T,1>>();
+					val->value[0] = t;
+					uniform[uniId] = std::move(val);
 				}
 			}
 		};
@@ -327,7 +330,7 @@ namespace rev {
 			ss.clear();
 		}
 		// シェーダーのリンク処理
-		_prog_unif.setProgram(mgr_gl.makeProgram(shP[0], shP[1], shP[2]));
+		_program = mgr_gl.makeProgram(shP[0], shP[1], shP[2]);
 		// OpenGLステート設定リストを形成
 		_setting = dupl.exportSetting();
 
@@ -347,7 +350,7 @@ namespace rev {
 		// 頂点セマンティクス対応リストを生成
 		for(auto& p : _attrL) {
 			const char* name = p->name.c_str();
-			if(const auto at = _prog_unif.getProgram()->getAttribId(name)) {
+			if(const auto at = _program->getAttribId(name)) {
 				const auto sem = static_cast<VSem::e>(p->sem);
 				VSemAttr a;
 				a.sem = VSemantic {
@@ -379,7 +382,7 @@ namespace rev {
 
 		_noDefValue.clear();
 		// Uniform変数にデフォルト値がセットしてある物をリストアップ
-		Visitor visitor(_prog_unif);
+		Visitor visitor(_uniform, _program->getProgramId());
 		for(const auto* p : _unifL) {
 			if(visitor.setKey(p->name)) {
 				const auto& defVal = p->defaultValue;

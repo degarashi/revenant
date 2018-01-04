@@ -1,6 +1,7 @@
 #include "tech.hpp"
 #include "gl_state.hpp"
 #include "vertex.hpp"
+#include "uniform.hpp"
 
 namespace rev {
 	const GLState_SPV& Tech::getSetting() const {
@@ -13,10 +14,10 @@ namespace rev {
 		return _vattr;
 	}
 	const HProg& Tech::getProgram() const noexcept {
-		return _prog_unif.getProgram();
+		return _program;
 	}
-	const UniformMap& Tech::getDefaultValue() const {
-		return _prog_unif.getUniformValue();
+	const UniformEnt& Tech::getDefaultValue() const noexcept {
+		return _uniform;
 	}
 	const Name& Tech::getName() const noexcept {
 		return _name;

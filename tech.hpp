@@ -7,8 +7,9 @@ namespace rev {
 		private:
 			HFx				_fx;
 		protected:
+			HProg			_program;
 			//! Uniformデフォルト値(と対応するId)
-			Prog_Unif		_prog_unif;
+			UniformEnt		_uniform;
 			//! Setting: Uniformデフォルト値(texture, vector, float, bool)設定を含む
 			//! GLDeviceの設定クラスリスト
 			GLState_SPV		_setting;
@@ -23,7 +24,7 @@ namespace rev {
 			const UniIdSet& getNoDefaultValue() const noexcept override;
 			const VSemAttrV& getVAttr() const noexcept override;
 			const HProg& getProgram() const noexcept override;
-			const UniformMap& getDefaultValue() const override;
+			const UniformEnt& getDefaultValue() const noexcept override;
 			const Name& getName() const noexcept override;
 	};
 }

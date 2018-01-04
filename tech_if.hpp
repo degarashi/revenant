@@ -3,9 +3,12 @@
 #include "gl_header.hpp"
 #include <vector>
 #include <unordered_set>
+#include <unordered_map>
 
 namespace rev {
-	class UniformMap;
+	struct IUniform;
+	using Uniform_UP = std::unique_ptr<IUniform>;
+	using UniformEnt = std::unordered_map<GLint, Uniform_UP>;
 	struct VSemAttr;
 	using VSemAttrV = std::vector<VSemAttr>;
 	using UniIdSet = std::unordered_set<GLint>;
@@ -18,7 +21,7 @@ namespace rev {
 		virtual const UniIdSet& getNoDefaultValue() const noexcept = 0;
 		virtual const VSemAttrV& getVAttr() const noexcept = 0;
 		virtual const HProg& getProgram() const noexcept = 0;
-		virtual const UniformMap& getDefaultValue() const = 0;
+		virtual const UniformEnt& getDefaultValue() const = 0;
 		virtual const Name& getName() const noexcept = 0;
 	};
 	using Tech_SP = std::shared_ptr<ITech>;
