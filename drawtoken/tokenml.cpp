@@ -14,6 +14,9 @@ namespace rev {
 					token->~Token();
 				});
 			}
+			void TokenMemory::iterateC(const IterCBC& f) const {
+				const_cast<TokenMemory&>(*this).iterate(f);
+			}
 			void TokenMemory::iterate(const IterCB& f) {
 				uint8_t* data = _buffer.data();
 				const auto used = _used;
@@ -81,6 +84,10 @@ namespace rev {
 		void TokenML::iterate(const detail::TokenMemory::IterCB& cb) {
 			for(auto& b : _buffer)
 				b.iterate(cb);
+		}
+		void TokenML::iterateC(const detail::TokenMemory::IterCBC& cb) const {
+			for(auto& b : _buffer)
+				b.iterateC(cb);
 		}
 		void TokenML::exec() {
 			for(auto& b : _buffer)

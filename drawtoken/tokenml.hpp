@@ -20,6 +20,7 @@ namespace rev {
 
 				public:
 					using IterCB = std::function<void (Token*)>;
+					using IterCBC = std::function<void (const Token*)>;
 					TokenMemory(TokenMemory&& t) noexcept;
 					TokenMemory(const TokenMemory&) = delete;
 					TokenMemory(std::size_t s);
@@ -28,6 +29,7 @@ namespace rev {
 					void exec();
 					void clear() noexcept;
 					void iterate(const IterCB& f);
+					void iterateC(const IterCBC& f) const;
 
 					TokenMemory& operator = (TokenMemory&& t) noexcept;
 					TokenMemory& operator = (const TokenMemory&) = delete;
@@ -48,6 +50,7 @@ namespace rev {
 					return new(allocate_memory(sizeof(T), CalcTokenOffset<T>())) T(std::forward<Ts>(ts)...);
 				}
 				void iterate(const detail::TokenMemory::IterCB& cb);
+				void iterateC(const detail::TokenMemory::IterCBC& cb) const;
 				void* allocate_memory(std::size_t s, intptr_t ofs) override;
 				void exec();
 				void clear();
