@@ -4,6 +4,7 @@
 #include "lubee/compare.hpp"
 #include "../sys_uniform_value.hpp"
 #include "sys_unif.hpp"
+#include "drawtoken/make_uniform.hpp"
 
 namespace rev {
 	namespace util {
@@ -28,11 +29,15 @@ namespace rev {
 			m *= getToWorld().convert<3,3>();
 			return Text::draw(
 					e,
-					[d, &e, &su2d, &m, bR=bRefresh](auto&){
-						e.setUniform(unif2d::Depth, d);
+					[d, &e, &u=e.refUniformMap(), &su2d, &m, bR=bRefresh](auto&){
+						u[unif2d::Depth] = draw::MakeUniform(d);
 						su2d.setWorld(m);
-						if(bR)
-							su2d.outputUniforms(e);
+						if(bR) {
+							su2d.outputUniforms(
+								e.refUniformIdMap(),
+								*e.getTechnique()->getProgram()
+							);
+						}
 					}
 			);
 		}

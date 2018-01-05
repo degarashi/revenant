@@ -1,6 +1,7 @@
 #pragma once
-#include "prog_unif.hpp"
 #include "differential.hpp"
+#include "gl_types.hpp"
+#include <unordered_map>
 
 namespace lubee {
 	template <class T>
@@ -15,17 +16,23 @@ namespace rev {
 	using VDecl_SP = std::shared_ptr<VDecl>;
 	namespace draw {
 		struct ClearParam;
+		struct Token;
+		using Token_SP = std::shared_ptr<Token>;
 	}
+	using UniformMap_t = std::unordered_map<Name, draw::Token_SP>;
+	using UniformIdMap_t = std::unordered_map<int, draw::Token_SP>;
 	struct Primitive;
 	using Primitive_SP = std::shared_ptr<Primitive>;
 	class SystemUniform2D;
 	class SystemUniform3D;
 	class IEffect :
-		public Prog_Unif,
 		public IGLResource
 	{
 		public:
+			virtual UniformMap_t& refUniformMap() noexcept = 0;
+			virtual UniformIdMap_t& refUniformIdMap() noexcept = 0;
 			virtual void setTechnique(const Tech_SP& tech) = 0;
+			virtual const Tech_SP& getTechnique() const noexcept = 0;
 			virtual void setFramebuffer(const HFb& fb) = 0;
 			virtual HFb getFramebuffer() const = 0;
 			virtual void setViewport(bool bPixel, const lubee::RectF& r) = 0;

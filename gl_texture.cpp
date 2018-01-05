@@ -167,10 +167,10 @@ namespace rev {
 	bool IGLTexture::operator == (const IGLTexture& t) const {
 		return getTextureId() == t.getTextureId();
 	}
-	void IGLTexture::getDrawToken(draw::TokenDst& dst, GLint id, int index, int actId) {
+	void IGLTexture::getDrawToken(draw::TokenDst& dst) {
 		using UT = draw::Texture;
 		auto* ptr = dst.allocate_memory(sizeof(UT), draw::CalcTokenOffset<UT>());
-		new(ptr) UT(const_cast<IGLTexture*>(this)->shared_from_this(), id, index, actId, *this);
+		new(ptr) UT(const_cast<IGLTexture*>(this)->shared_from_this());
 	}
 	const char* IGLTexture::getResourceName() const noexcept {
 		return "IGLTexture";

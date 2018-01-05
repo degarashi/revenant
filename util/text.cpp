@@ -2,6 +2,7 @@
 #include "../font.hpp"
 #include "../glx_if.hpp"
 #include "../sys_uniform_value.hpp"
+#include "../drawtoken/make_uniform.hpp"
 
 namespace rev {
 	namespace util {
@@ -61,7 +62,7 @@ namespace rev {
 			getText();
 
 			cbPre(e);
-			e.setUniform(unif::Color, _color.asVec4());
+			e.refUniformMap()[unif::Color] = draw::MakeUniform(_color.asVec4());
 			_hText->draw(e);
 			return _hText->getSize().width;
 		}

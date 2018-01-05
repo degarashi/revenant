@@ -25,6 +25,7 @@ namespace rev {
 			using VP_OP = spi::Optional<draw::Viewport>;
 			VP_OP				_viewport;
 			Tech_SP				_tech_sp;		//!< 現在使用中のTech
+			UniformEnt			_uniformEnt;
 			draw::TokenML		_tokenML;		//!< 描画スレッドに渡す予定のコマンド
 
 			//! 前回とのバッファの差異
@@ -45,8 +46,11 @@ namespace rev {
 		public:
 			GLEffect();
 			void setTechnique(const Tech_SP& tech) override;
+			const Tech_SP& getTechnique() const noexcept override;
 			void onDeviceLost() override;
 			void onDeviceReset() override;
+			UniformMap_t& refUniformMap() noexcept override;
+			UniformIdMap_t& refUniformIdMap() noexcept override;
 			//! GLEffectで発生する例外基底
 			struct EC_Base : std::runtime_error {
 				using std::runtime_error::runtime_error;

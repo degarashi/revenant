@@ -11,12 +11,15 @@ namespace rev {
 				std::tuple<Ts...>	_ts;
 			protected:
 				void _prepareUniforms() override {
+					auto& u = refUniformIdMap();
+					auto& p = *getTechnique()->getProgram();
 					TupleForEach(
-						[this](auto& t){
-							t.outputUniforms(*this);
+						[&u, &p](auto& t){
+							t.outputUniforms(u, p);
 						},
 						_ts
 					);
+					GLEffect::_prepareUniforms();
 				}
 			public:
 				using GLEffect::GLEffect;

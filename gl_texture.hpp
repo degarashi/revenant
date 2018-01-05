@@ -78,10 +78,7 @@ namespace rev {
 			bool operator == (const IGLTexture& t) const;
 			ByteBuff readData(GLInFmt internalFmt, GLTypeFmt elem, int level=0, CubeFace face=CubeFace::PositiveX) const;
 			ByteBuff readRect(GLInFmt internalFmt, GLTypeFmt elem, const lubee::RectI& rect, CubeFace face=CubeFace::PositiveX) const;
-			/*! \param[in] uniform変数の番号
-				\param[in] index idで示されるuniform変数配列のインデックス(デフォルト=0)
-				\param[in] hRes 自身のリソースハンドル */
-			void getDrawToken(draw::TokenDst& dst, GLint id, int index, int actId);
+			void getDrawToken(draw::TokenDst& dst);
 	};
 	//! ユーザー定義の空テクスチャ
 	/*!

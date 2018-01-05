@@ -2,6 +2,8 @@
 #include "sys_uniform_value.hpp"
 #include "camera3d.hpp"
 #include "glx_if.hpp"
+#include "gl_program.hpp"
+#include "drawtoken/make_uniform.hpp"
 
 namespace rev {
 	SystemUniform3D::Getter::counter_t SystemUniform3D::Getter::operator()(const HCam3& c, Camera*, const SystemUniform3D&) const {
@@ -82,10 +84,10 @@ namespace rev {
 	void SystemUniform3D::moveFrom(SystemUniform3D& prev) {
 		_rflag = prev._rflag;
 	}
-	void SystemUniform3D::outputUniforms(IEffect& e) const {
+	void SystemUniform3D::outputUniforms(UniformIdMap_t& u, const GLProgram& p) const {
 		#define DEF_SETUNIF(name, func) \
-			if(auto idv = e.getUniformId(sysunif3d::matrix::name)) \
-				e.setUniform(*idv, spi::AcWrapperValue(func##name()), true);
+			if(const auto idv = p.getUniformId(sysunif3d::matrix::name)) \
+				u[*idv] = draw::MakeUniform(spi::AcWrapperValue(func##name()));
 		DEF_SETUNIF(World, get)
 		DEF_SETUNIF(WorldInv, get)
 		if(auto& hc = getCamera()) {
@@ -98,10 +100,10 @@ namespace rev {
 			DEF_SETUNIF(ViewProjInv, cd.get)
 
 			auto& ps = cd.getPose();
-			if(auto idv = e.getUniformId(sysunif3d::matrix::EyePos))
-				e.setUniform(*idv, ps.getOffset(), true);
-			if(auto idv = e.getUniformId(sysunif3d::matrix::EyeDir))
-				e.setUniform(*idv, ps.getRotation().getZAxis(), true);
+			if(const auto idv = p.getUniformId(sysunif3d::matrix::EyePos))
+				u[*idv] = draw::MakeUniform(ps.getOffset());
+			if(const auto idv = p.getUniformId(sysunif3d::matrix::EyeDir))
+				u[*idv] = draw::MakeUniform(ps.getRotation().getZAxis());
 		}
 		DEF_SETUNIF(Transform, get)
 		DEF_SETUNIF(TransformInv, get)

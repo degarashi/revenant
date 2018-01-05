@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <utility>
+#include "../gl_header.hpp"
 
 namespace rev {
 	namespace draw {
@@ -13,6 +14,7 @@ namespace rev {
 			virtual void exec() = 0;
 			virtual void takeout(TokenDst& dst) = 0;
 			virtual void clone(TokenDst& dst) const = 0;
+			virtual void exportToken(TokenDst& dst, const GLint id=-1, const int activeTexId=-1) const = 0;
 			virtual std::size_t getSize() const = 0;
 		};
 		template <class From, class To>
@@ -28,6 +30,9 @@ namespace rev {
 			// 引数のバッファへ中身をcopyする
 			void clone(TokenDst& dst) const override {
 				new(dst.allocate_memory(getSize(), CalcTokenOffset<T>())) T(static_cast<const T&>(*this));
+			}
+			void exportToken(TokenDst& dst, const GLint /*id*/ = -1, const int /*activeTexId*/ = -1) const override {
+				clone(dst);
 			}
 			// 引数のバッファへ中身をmoveする
 			void takeout(TokenDst& dst) override {

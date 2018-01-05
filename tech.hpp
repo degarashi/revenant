@@ -1,13 +1,12 @@
 #pragma once
 #include "tech_if.hpp"
-#include "prog_unif.hpp"
+#include "uniform_ent.hpp"
 
 namespace rev {
 	class Tech : public ITech {
 		private:
 			HFx				_fx;
 		protected:
-			HProg			_program;
 			//! Uniformデフォルト値(と対応するId)
 			UniformEnt		_uniform;
 			//! Setting: Uniformデフォルト値(texture, vector, float, bool)設定を含む

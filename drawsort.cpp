@@ -2,6 +2,9 @@
 #include "lubee/sort.hpp"
 #include "glx_if.hpp"
 #include "primitive.hpp"
+#include "tech_if.hpp"
+#include "gl_program.hpp"
+#include "drawtoken/make_uniform.hpp"
 
 namespace rev {
 	const DSort_SP cs_dsort_z_asc = std::make_shared<DSort_Z_Asc>(),
@@ -74,9 +77,10 @@ namespace rev {
 		void DSort_UniformPairBase::_refreshUniformId(IEffect& e, const std::string* name, GLint* id, size_t length) {
 			if(_pFx != &e) {
 				_pFx = &e;
+				auto& p = *e.getTechnique()->getProgram();
 				for(int i=0 ; i<static_cast<int>(length) ; i++) {
 					auto& s = name[i];
-					id[i] = (!s.empty()) ? *e.getUniformId(s) : -1;
+					id[i] = (!s.empty()) ? *p.getUniformId(s) : -1;
 				}
 			}
 		}
@@ -96,9 +100,10 @@ namespace rev {
 	}
 	void DSort_Texture::apply(const DrawTag& d, IEffect& e) {
 		auto& id = _getUniformId(e);
+		auto& u = e.refUniformIdMap();
 		for(int i=0 ; i<length ; i++) {
 			if(id[i] >= 0)
-				e.setUniform(id[i], d.idTex[i]);
+				u[id[i]] = draw::MakeUniform(d.idTex[i]);
 		}
 	}
 

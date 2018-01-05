@@ -15,18 +15,25 @@ namespace rev {
 	}
 	namespace draw {
 		// --------------- Texture ---------------
-		Texture::Texture(const HTex& hTex, const GLint uid, const int index, const int baseActId, const IGLTexture& t):
-			IGLTexture(t),
-			Uniform(uid + index),
-			_hTex(hTex)
-		{
-			setActiveId(baseActId);
-		}
+		Texture::Texture(const HTex& hTex):
+			IGLTexture(*hTex),
+			_hTex(hTex),
+			_actId(-1)
+		{}
 		Texture::~Texture() {
 			// IGLTextureのdtorでリソースを開放されないように0にセットしておく
 			_idTex = 0;
 		}
+		void Texture::setIds(const GLint id, const int activeTexId) const {
+			idUnif = id;
+			_actId = activeTexId;
+		}
+		void Texture::exportToken(TokenDst& dst, const GLint id, const int activeTexId) const {
+			_actId = activeTexId;
+			Uniform::exportToken(dst, id);
+		}
 		void Texture::exec() {
+			setActiveId(_actId);
 			// 最後にBindは解除しない
 			use_begin();
 			{
@@ -47,11 +54,16 @@ namespace rev {
 		}
 
 		// --------------- TextureA ---------------
-		TextureA::TextureA(GLint id, const HTex* hTex, const IGLTexture** tp, int baseActId, int nTex):
-			Uniform(-1)
-		{
+		TextureA::TextureA(const HTex* hTex, int nTex) {
 			for(int i=0 ; i<nTex ; i++)
-				_texA.emplace_back(hTex[i], id, i, baseActId+i, *tp[i]);
+				_texA.emplace_back(hTex[i]);
+		}
+		void TextureA::exportToken(TokenDst& dst, const GLint id, const int activeTexId) const {
+			const int nT = _texA.size();
+			for(int i=0 ; i<nT ; i++) {
+				_texA[i].setIds(id+i, activeTexId+i);
+			}
+			Uniform::exportToken(dst, id);
 		}
 		void TextureA::exec() {
 			for(auto& p : _texA)

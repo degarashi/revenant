@@ -39,7 +39,7 @@ namespace rev {
 							m = mScale * getToWorld().convert<4,4>();
 						su3d.setWorld(m);
 						if(bRefresh)
-							su3d.outputUniforms(e);
+							su3d.outputUniforms(e.refUniformIdMap(), *e.getTechnique()->getProgram());
 					}
 			);
 		}

@@ -18,8 +18,8 @@ namespace rev {
 						frea::is_matrix<M>{}
 					)
 				>
-				Unif_Mat(const GLint id, const M& m, const bool bT):
-					Unif_Mat(id, &m, 1, bT)
+				Unif_Mat(const M& m, const bool bT):
+					Unif_Mat(&m, 1, bT)
 				{}
 				// 正方行列のみ対応
 				template <
@@ -29,8 +29,8 @@ namespace rev {
 						(M::dim_m==M::dim_n)
 					))
 				>
-				Unif_Mat(const GLint id, const M* mp, const int n, const bool bT):
-					base_t(id, reinterpret_cast<const T*>(mp->m), M::dim_m*M::dim_m, n),
+				Unif_Mat(const M* mp, const int n, const bool bT):
+					base_t(reinterpret_cast<const T*>(mp->m), M::dim_m*M::dim_m, n),
 					_bT(bT)
 				{}
 				void exec() override {

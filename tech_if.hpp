@@ -6,9 +6,7 @@
 #include <unordered_map>
 
 namespace rev {
-	struct IUniform;
-	using Uniform_UP = std::unique_ptr<IUniform>;
-	using UniformEnt = std::unordered_map<GLint, Uniform_UP>;
+	class UniformEnt;
 	struct VSemAttr;
 	using VSemAttrV = std::vector<VSemAttr>;
 	using UniIdSet = std::unordered_set<GLint>;

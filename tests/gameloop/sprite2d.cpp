@@ -4,6 +4,7 @@
 #include "lubee/meta/countof.hpp"
 #include "../../util/sys_unif.hpp"
 #include "../../vdecl.hpp"
+#include "../../drawtoken/make_uniform.hpp"
 
 const rev::Name Sprite2D::T_Sprite2D("Sprite|Default");
 // ----------------------- Sprite -----------------------
@@ -55,8 +56,9 @@ void Sprite2D::draw(rev::IEffect& e) const {
 		auto lk = rev::test::g_shared.lock();
 		e.setTechnique(lk->technique->getTechnique(T_Sprite2D));
 	}
-	e.setUniform(rev::unif2d::texture::Diffuse, _hTex);
-	e.setUniform(rev::unif::Alpha, _alpha);
+	auto& u = e.refUniformMap();
+	u[rev::unif2d::texture::Diffuse] = rev::draw::MakeUniform(_hTex);
+	u[rev::unif::Alpha] = rev::draw::MakeUniform(_alpha);
 	e.ref2D().setWorld(getToWorld().convert<3,3>());
 	e.setPrimitive(_primitive);
 	e.drawIndexed(GL_TRIANGLES, 6);

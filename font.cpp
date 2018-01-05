@@ -10,6 +10,7 @@
 #include "vdecl.hpp"
 #include "sys_uniform_value.hpp"
 #include "primitive.hpp"
+#include "drawtoken/make_uniform.hpp"
 
 namespace rev {
 	namespace {
@@ -213,7 +214,7 @@ namespace rev {
 	}
 	void TextObj::draw(IEffect& e) const {
 		for(auto& ds : _drawSet) {
-			e.setUniform(unif::texture::Diffuse, ds.hTex);
+			e.refUniformMap()[unif::texture::Diffuse] = draw::MakeUniform(ds.hTex);
 			e.setPrimitive(ds.primitive);
 			e.drawIndexed(GL_TRIANGLES, ds.nChar*6, 0);
 		}

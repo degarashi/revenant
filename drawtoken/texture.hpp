@@ -7,9 +7,12 @@ namespace rev {
 		// 連番テクスチャはUniformId + Indexとして設定
 		class Texture : public IGLTexture, public Uniform<Texture> {
 			private:
-				HTex	_hTex;
+				HTex			_hTex;
+				mutable int		_actId;
 			public:
-				Texture(const HTex& hTex, GLint id, int index, int baseActId,  const IGLTexture& t);
+				Texture(const HTex& hTex);
+				void exportToken(TokenDst& dst, GLint id, int activeTexId) const override;
+				void setIds(GLint id, int activeTexId) const;
 				virtual ~Texture();
 				void exec() override;
 		};
@@ -18,7 +21,8 @@ namespace rev {
 				using TexA = std::vector<Texture>;
 				TexA	_texA;
 			public:
-				TextureA(GLint id, const HTex* hTex, const IGLTexture** tp, int baseActId, int nTex);
+				TextureA(const HTex* hTex, int nTex);
+				void exportToken(TokenDst& dst, GLint id, int activeTexId) const override;
 				void exec() override;
 		};
 	}

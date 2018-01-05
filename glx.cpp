@@ -12,7 +12,6 @@
 #include "tech_if.hpp"
 #include "primitive.hpp"
 #include "gl_state.hpp"
-#include "uniform.hpp"
 
 namespace rev {
 	GLEffect::GLEffect():
@@ -40,27 +39,32 @@ namespace rev {
 	void GLEffect::_clean_drawvalue() {
 		_tech_sp.reset();
 		// セットされているUniform変数を未セット状態にする
-		clearUniformValue();
 		_tokenML.clear();
+		_uniformEnt.clearValue();
+	}
+	UniformMap_t& GLEffect::refUniformMap() noexcept {
+		return _uniformEnt.refEntry();
+	}
+	UniformIdMap_t& GLEffect::refUniformIdMap() noexcept {
+		return _uniformEnt.refIdEntry();
 	}
 	void GLEffect::setTechnique(const Tech_SP& tech) {
 		_clean_drawvalue();
 
 		_tech_sp = tech;
-		setProgram(tech->getProgram());
-		// デフォルト値読み込み
-		{
-			auto& def = _tech_sp->getDefaultValue();
-			for(auto& d : def)
-				d.second->apply(*this, d.first);
-		}
+		_uniformEnt.setProgram(tech->getProgram());
 		// 各種セッティングをするTokenをリストに追加
-		getProgram()->getDrawToken(_tokenML);
+		_tech_sp->getProgram()->getDrawToken(_tokenML);
 		_tokenML.allocate<draw::UserFunc>([tp_tmp = _tech_sp.get()](){
 			auto& sv = tp_tmp->getSetting();
 			for(auto& s : sv)
 				s->apply();
 		});
+		// Uniformデフォルト値読み込み
+		_uniformEnt.copyFrom(_tech_sp->getDefaultValue());
+	}
+	const Tech_SP& GLEffect::getTechnique() const noexcept {
+		return _tech_sp;
 	}
 	void GLEffect::_outputFramebuffer() {
 		if(_hFb) {
@@ -84,12 +88,6 @@ namespace rev {
 	}
 	void GLEffect::_outputDrawCall(draw::VStream& vs) {
 		_outputFramebuffer();
-		// set uniform value
-		auto& u = _refUniformValue();
-		if(!u.empty()) {
-			// 中身shared_ptrなのでそのまま移動
-			u.moveTo(_tokenML);
-		}
 		// set V/IBuffer(VDecl)
 		_primitive->extractData(vs, _tech_sp->getVAttr());
 	}
@@ -172,5 +170,11 @@ namespace rev {
 	diff::Effect GLEffect::getDifference() const {
 		return _diffCount;
 	}
-	void GLEffect::_prepareUniforms() {}
+	void GLEffect::_prepareUniforms() {
+		auto& res = _uniformEnt.getResult().token;
+		res.iterateC([&dst = _tokenML](const auto* t){
+			t->clone(dst);
+		});
+		_uniformEnt.clearValue();
+	}
 }

@@ -2,6 +2,8 @@
 #include "sys_uniform_value.hpp"
 #include "glx_if.hpp"
 #include "camera2d.hpp"
+#include "gl_program.hpp"
+#include "drawtoken/make_uniform.hpp"
 
 namespace rev {
 	SystemUniform2D::Getter::counter_t SystemUniform2D::Getter::operator()(const HCam2& c, Camera*, const SystemUniform2D&) const {
@@ -55,10 +57,10 @@ namespace rev {
 	void SystemUniform2D::moveFrom(SystemUniform2D& prev) {
 		_rflag = prev._rflag;
 	}
-	void SystemUniform2D::outputUniforms(IEffect& e) const {
+	void SystemUniform2D::outputUniforms(UniformIdMap_t& u, const GLProgram& p) const {
 		#define DEF_SETUNIF(name, func) \
-			if(auto idv = e.getUniformId(sysunif2d::matrix::name)) \
-				e.setUniform(*idv, spi::AcWrapperValue(func##name()), true);
+			if(const auto idv = p.getUniformId(sysunif2d::matrix::name)) \
+				u[*idv] = draw::MakeUniform(spi::AcWrapperValue(func##name()));
 		DEF_SETUNIF(World, get)
 		DEF_SETUNIF(WorldInv, get)
 		if(auto& hc = getCamera()) {

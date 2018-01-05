@@ -20,8 +20,8 @@ namespace rev {
 					class V,
 					ENABLE_IF(frea::is_vector<V>{})
 				>
-				Unif_Vec(const GLint id, const V& v):
-					Unif_Vec(id, v.m, V::size, 1)
+				Unif_Vec(const V& v):
+					Unif_Vec(v.m, V::size, 1)
 				{}
 				// unalignedならそのままTのメモリ配列として扱う
 				template <
@@ -31,8 +31,8 @@ namespace rev {
 						!V::align
 					))
 				>
-				Unif_Vec(const GLint id, const V* vp, const int n):
-					Unif_Vec(id, vp->m, V::size, n)
+				Unif_Vec(const V* vp, const int n):
+					Unif_Vec(vp->m, V::size, n)
 				{}
 				// alignedの場合、メモリの詰め直しを行う
 				template <
@@ -42,8 +42,7 @@ namespace rev {
 						V::align
 					))
 				>
-				Unif_Vec(const GLint id, const V* vp, const int n):
-					base_t(id),
+				Unif_Vec(const V* vp, const int n):
 					_nAr(n)
 				{
 					_data.reset(new T[V::size*n]);
@@ -54,8 +53,7 @@ namespace rev {
 						++vp;
 					}
 				}
-				Unif_Vec(const GLint id, const T* v, const int dim, const int n):
-					base_t(id),
+				Unif_Vec(const T* v, const int dim, const int n):
 					_data(new T[dim * n]),
 					_nAr(n)
 				{

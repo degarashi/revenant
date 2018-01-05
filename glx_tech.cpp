@@ -10,8 +10,8 @@
 #include "glx_if.hpp"
 #include "comment.hpp"
 #include "tech_pair.hpp"
+#include "drawtoken/make_uniform.hpp"
 #include <boost/format.hpp>
-#include "uniform.hpp"
 
 namespace rev {
 	namespace {
@@ -206,26 +206,26 @@ namespace rev {
 	}
 	namespace {
 		struct Visitor : boost::static_visitor<> {
+			const Name*			key_p;
+			const HProg&		prog;
 			GLint				uniId;
-			UniformEnt&			uniform;
-			GLuint				pgId;
+			using Ent = decltype(std::declval<UniformEnt>().refEntry());
+			Ent&				ent;
 
-			Visitor(UniformEnt& u, const GLuint pg):
-				uniform(u),
-				pgId(pg)
+			Visitor(UniformEnt& u):
+				prog(u.getProgram()),
+				ent(u.refEntry())
 			{}
-			bool setKey(const std::string& key) {
-				uniId = GL.glGetUniformLocation(pgId, key.c_str());
+			bool setKey(const Name& key) {
 				// ここでキーが見つからない = uniformブロックで宣言されているがGLSLコードで使われない場合なのでエラーではない
-				D_Expect(uniId>=0, "Uniform argument \"%s\" not found", key.c_str());
-				return uniId >= 0;
+				const bool ret = static_cast<bool>(prog->getUniformId(key.c_str()));
+				key_p = ret ? &key : nullptr;
+				return ret;
 			}
 			template <class T, ENABLE_IF(frea::is_vector<T>{})>
 			void operator()(const T& t) {
-				if(uniId >= 0) {
-					auto val = std::make_unique<UniformArray<T,1>>();
-					val->value[0] = t;
-					uniform[uniId] = std::move(val);
+				if(key_p) {
+					ent[*key_p] = draw::MakeUniform(t);
 				}
 			}
 		};
@@ -330,7 +330,8 @@ namespace rev {
 			ss.clear();
 		}
 		// シェーダーのリンク処理
-		_program = mgr_gl.makeProgram(shP[0], shP[1], shP[2]);
+		const auto prog = mgr_gl.makeProgram(shP[0], shP[1], shP[2]);
+		_uniform.setProgram(prog);
 		// OpenGLステート設定リストを形成
 		_setting = dupl.exportSetting();
 
@@ -350,7 +351,7 @@ namespace rev {
 		// 頂点セマンティクス対応リストを生成
 		for(auto& p : _attrL) {
 			const char* name = p->name.c_str();
-			if(const auto at = _program->getAttribId(name)) {
+			if(const auto at = prog->getAttribId(name)) {
 				const auto sem = static_cast<VSem::e>(p->sem);
 				VSemAttr a;
 				a.sem = VSemantic {
@@ -382,7 +383,7 @@ namespace rev {
 
 		_noDefValue.clear();
 		// Uniform変数にデフォルト値がセットしてある物をリストアップ
-		Visitor visitor(_uniform, _program->getProgramId());
+		Visitor visitor(_uniform);
 		for(const auto* p : _unifL) {
 			if(visitor.setKey(p->name)) {
 				const auto& defVal = p->defaultValue;

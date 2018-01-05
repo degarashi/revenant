@@ -3,6 +3,7 @@
 #include "../sys_uniform_value.hpp"
 #include "../systeminfo.hpp"
 #include "lubee/compare.hpp"
+#include "../drawtoken/make_uniform.hpp"
 
 namespace rev {
 	namespace util {
@@ -56,8 +57,9 @@ namespace rev {
 			return Text::draw(
 						e,
 						[d, this](auto& e){
-							e.setUniform(unif2d::Depth, d);
-							e.setUniform(U_Text, _makeMatrix(), true);
+							auto& u = e.refUniformMap();
+							u[unif2d::Depth] = draw::MakeUniform(d);
+							u[U_Text] = draw::MakeUniform(_makeMatrix());
 						}
 					);
 		}
