@@ -5,29 +5,28 @@ namespace rev {
 	namespace draw {
 		namespace detail {
 			// ------------------- TokenMemory -------------------
-			namespace {
-				template <class F>
-				void Iterate(uint8_t* data, const std::size_t used, F&& f) {
-					std::size_t cur = 0;
-					while(cur < used) {
-						auto ptr = reinterpret_cast<intptr_t>(data + cur);
-						auto ofs = *reinterpret_cast<intptr_t*>(ptr);
-						ptr += ofs+sizeof(intptr_t);
-						auto* token = reinterpret_cast<Token*>(ptr);
-						auto cur_ofs = token->getSize();
-						std::forward<F>(f)(token);
-						cur += cur_ofs + sizeof(intptr_t);
-					}
-				}
-			}
 			TokenMemory::TokenMemory(const std::size_t s):
 				_buffer(s),
 				_used(0)
 			{}
 			TokenMemory::~TokenMemory() {
-				Iterate(_buffer.data(), _used, [](auto* token){
+				iterate([](auto* token){
 					token->~Token();
 				});
+			}
+			void TokenMemory::iterate(const IterCB& f) {
+				uint8_t* data = _buffer.data();
+				const auto used = _used;
+				std::size_t cur = 0;
+				while(cur < used) {
+					auto ptr = reinterpret_cast<intptr_t>(data + cur);
+					auto ofs = *reinterpret_cast<intptr_t*>(ptr);
+					ptr += ofs+sizeof(intptr_t);
+					auto* token = reinterpret_cast<Token*>(ptr);
+					auto cur_ofs = token->getSize();
+					f(token);
+					cur += cur_ofs + sizeof(intptr_t);
+				}
 			}
 			void* TokenMemory::getMemory(const std::size_t s, const intptr_t ofs) {
 				D_Assert0(ofs >= 0);
@@ -40,7 +39,7 @@ namespace rev {
 				return reinterpret_cast<void*>(ptr);
 			}
 			void TokenMemory::exec() {
-				Iterate(_buffer.data(), _used, [](auto* token){
+				iterate([](auto* token){
 					token->exec();
 				});
 			}
@@ -78,6 +77,10 @@ namespace rev {
 		}
 		void TokenML::setLaneSize(const std::size_t s) {
 			_laneSize = s;
+		}
+		void TokenML::iterate(const detail::TokenMemory::IterCB& cb) {
+			for(auto& b : _buffer)
+				b.iterate(cb);
 		}
 		void TokenML::exec() {
 			for(auto& b : _buffer)

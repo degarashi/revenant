@@ -2,6 +2,7 @@
 #include "token.hpp"
 #include <list>
 #include <vector>
+#include <functional>
 
 namespace rev {
 	namespace draw {
@@ -18,6 +19,7 @@ namespace rev {
 					std::size_t	_used;
 
 				public:
+					using IterCB = std::function<void (Token*)>;
 					TokenMemory(TokenMemory&& t) noexcept;
 					TokenMemory(const TokenMemory&) = delete;
 					TokenMemory(std::size_t s);
@@ -25,6 +27,7 @@ namespace rev {
 					void* getMemory(std::size_t s, intptr_t ofs);
 					void exec();
 					void clear() noexcept;
+					void iterate(const IterCB& f);
 
 					TokenMemory& operator = (TokenMemory&& t) noexcept;
 					TokenMemory& operator = (const TokenMemory&) = delete;
@@ -44,6 +47,7 @@ namespace rev {
 				T* allocate(Ts&&... ts) {
 					return new(allocate_memory(sizeof(T), CalcTokenOffset<T>())) T(std::forward<Ts>(ts)...);
 				}
+				void iterate(const detail::TokenMemory::IterCB& cb);
 				void* allocate_memory(std::size_t s, intptr_t ofs) override;
 				void exec();
 				void clear();
