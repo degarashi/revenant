@@ -7,11 +7,7 @@
 #include <unordered_map>
 
 namespace rev {
-	namespace draw {
-		struct Token;
-		using Token_SP = std::shared_ptr<Token>;
-	}
-	using UniformIdMap_t = std::unordered_map<int, draw::Token_SP>;
+	class UniformEnt;
 	//! (3D/2D共通)
 	/*!
 		予め変数名がsys_*** の形で決められていて, 存在すれば計算&設定される
@@ -24,7 +20,7 @@ namespace rev {
 		public:
 			const lubee::SizeI& getScreenSize() const;
 			void setScreenSize(const lubee::SizeI& s);
-			void outputUniforms(UniformIdMap_t& u, const GLProgram& p) const;
+			void outputUniforms(UniformEnt& u) const;
 			void moveFrom(SystemUniform& prev);
 	};
 	class SystemUniform3D : public lubee::CheckAlign<SystemUniform3D> {
@@ -52,7 +48,7 @@ namespace rev {
 			#undef SEQ_SYSUNI3D
 
 			SystemUniform3D();
-			void outputUniforms(UniformIdMap_t& u, const GLProgram& p) const;
+			void outputUniforms(UniformEnt& u) const;
 			void moveFrom(SystemUniform3D& prev);
 	};
 	//! システムuniform変数をセットする(2D)
@@ -83,7 +79,7 @@ namespace rev {
 			#undef SEQ_SYSUNI2D
 
 			SystemUniform2D();
-			void outputUniforms(UniformIdMap_t& u, const GLProgram& p) const;
+			void outputUniforms(UniformEnt& u) const;
 			void moveFrom(SystemUniform2D& prev);
 	};
 }

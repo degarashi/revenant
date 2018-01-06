@@ -16,11 +16,8 @@ namespace rev {
 	using VDecl_SP = std::shared_ptr<VDecl>;
 	namespace draw {
 		struct ClearParam;
-		struct Token;
-		using Token_SP = std::shared_ptr<Token>;
 	}
-	using UniformMap_t = std::unordered_map<Name, draw::Token_SP>;
-	using UniformIdMap_t = std::unordered_map<int, draw::Token_SP>;
+	class UniformEnt;
 	struct Primitive;
 	using Primitive_SP = std::shared_ptr<Primitive>;
 	class SystemUniform2D;
@@ -29,8 +26,7 @@ namespace rev {
 		public IGLResource
 	{
 		public:
-			virtual UniformMap_t& refUniformMap() noexcept = 0;
-			virtual UniformIdMap_t& refUniformIdMap() noexcept = 0;
+			virtual UniformEnt& refUniformEnt() noexcept = 0;
 			virtual void setTechnique(const Tech_SP& tech) = 0;
 			virtual const Tech_SP& getTechnique() const noexcept = 0;
 			virtual void setFramebuffer(const HFb& fb) = 0;

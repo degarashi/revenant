@@ -49,8 +49,7 @@ namespace rev {
 			const Tech_SP& getTechnique() const noexcept override;
 			void onDeviceLost() override;
 			void onDeviceReset() override;
-			UniformMap_t& refUniformMap() noexcept override;
-			UniformIdMap_t& refUniformIdMap() noexcept override;
+			UniformEnt& refUniformEnt() noexcept override;
 			//! GLEffectで発生する例外基底
 			struct EC_Base : std::runtime_error {
 				using std::runtime_error::runtime_error;

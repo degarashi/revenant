@@ -4,6 +4,7 @@
 #include "../systeminfo.hpp"
 #include "lubee/compare.hpp"
 #include "../drawtoken/make_uniform.hpp"
+#include "../uniform_ent.hpp"
 
 namespace rev {
 	namespace util {
@@ -57,9 +58,9 @@ namespace rev {
 			return Text::draw(
 						e,
 						[d, this](auto& e){
-							auto& u = e.refUniformMap();
-							u[unif2d::Depth] = draw::MakeUniform(d);
-							u[U_Text] = draw::MakeUniform(_makeMatrix());
+							auto& u = e.refUniformEnt();
+							u.setUniform(unif2d::Depth, [d](){ return draw::MakeUniform(d); });
+							u.setUniform(U_Text, [this](){ return draw::MakeUniform(_makeMatrix()); });
 						}
 					);
 		}

@@ -206,26 +206,22 @@ namespace rev {
 	}
 	namespace {
 		struct Visitor : boost::static_visitor<> {
-			const Name*			key_p;
+			UniformEnt&			ent;
 			const HProg&		prog;
-			GLint				uniId;
-			using Ent = decltype(std::declval<UniformEnt>().refEntry());
-			Ent&				ent;
+			spi::Optional<int>	id;
 
 			Visitor(UniformEnt& u):
-				prog(u.getProgram()),
-				ent(u.refEntry())
+				ent(u),
+				prog(u.getProgram())
 			{}
 			bool setKey(const Name& key) {
 				// ここでキーが見つからない = uniformブロックで宣言されているがGLSLコードで使われない場合なのでエラーではない
-				const bool ret = static_cast<bool>(prog->getUniformId(key.c_str()));
-				key_p = ret ? &key : nullptr;
-				return ret;
+				return static_cast<bool>(id = prog->getUniformId(key));
 			}
 			template <class T, ENABLE_IF(frea::is_vector<T>{})>
 			void operator()(const T& t) {
-				if(key_p) {
-					ent[*key_p] = draw::MakeUniform(t);
+				if(id) {
+					ent.setUniform(*id, draw::MakeUniform(t));
 				}
 			}
 		};
@@ -390,8 +386,8 @@ namespace rev {
 				if(defVal) {
 					// 変数名をIdに変換
 					boost::apply_visitor(visitor, *defVal);
-				} else
-					_noDefValue.insert(visitor.uniId);
+				} else if(visitor.id)
+					_noDefValue.insert(*visitor.id);
 			}
 		}
 	}

@@ -29,14 +29,11 @@ namespace rev {
 			m *= getToWorld().convert<3,3>();
 			return Text::draw(
 					e,
-					[d, &e, &u=e.refUniformMap(), &su2d, &m, bR=bRefresh](auto&){
-						u[unif2d::Depth] = draw::MakeUniform(d);
+					[d, &u=e.refUniformEnt(), &su2d, &m, bR=bRefresh](auto&){
+						u.setUniform(unif2d::Depth, [d](){ return draw::MakeUniform(d); });
 						su2d.setWorld(m);
 						if(bR) {
-							su2d.outputUniforms(
-								e.refUniformIdMap(),
-								*e.getTechnique()->getProgram()
-							);
+							su2d.outputUniforms(u);
 						}
 					}
 			);

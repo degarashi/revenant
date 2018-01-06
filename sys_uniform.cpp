@@ -3,6 +3,7 @@
 #include "glx_if.hpp"
 #include "gl_program.hpp"
 #include "drawtoken/make_uniform.hpp"
+#include "uniform_ent.hpp"
 
 namespace rev {
 	namespace unif {
@@ -20,20 +21,20 @@ namespace rev {
 
 	// --------------------- SystemUniform ---------------------
 	namespace {
-		using SetF = std::function<void (const SystemUniform&, UniformIdMap_t&, const GLProgram&)>;
+		using SetF = std::function<void (const SystemUniform&, UniformEnt&)>;
 		const SetF c_systagF[] = {
-			[](const SystemUniform& s, UniformIdMap_t& u, const GLProgram& p) {
+			[](const SystemUniform& s, UniformEnt& u) {
 				auto& ss = s.getScreenSize();
-				if(const auto idv = p.getUniformId(sysunif::screen::Size)) {
-					u[*idv] = draw::MakeUniform(
-						frea::Vec4(
-							ss.width,
-							ss.height,
-							1.f/ss.width,
-							1.f/ss.height
-						)
-					);
-				}
+				u.setUniform(sysunif::screen::Size, [&ss](){
+					return draw::MakeUniform(
+								frea::Vec4(
+									ss.width,
+									ss.height,
+									1.f/ss.width,
+									1.f/ss.height
+								)
+							);
+				});
 			}
 		};
 	}
@@ -46,8 +47,8 @@ namespace rev {
 	void SystemUniform::setScreenSize(const lubee::SizeI& s) {
 		_screenSize = s;
 	}
-	void SystemUniform::outputUniforms(UniformIdMap_t& u, const GLProgram& p) const {
+	void SystemUniform::outputUniforms(UniformEnt& u) const {
 		for(auto& f : c_systagF)
-			f(*this, u, p);
+			f(*this, u);
 	}
 }

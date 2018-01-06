@@ -11,6 +11,7 @@
 #include "sys_uniform_value.hpp"
 #include "primitive.hpp"
 #include "drawtoken/make_uniform.hpp"
+#include "uniform_ent.hpp"
 
 namespace rev {
 	namespace {
@@ -214,7 +215,7 @@ namespace rev {
 	}
 	void TextObj::draw(IEffect& e) const {
 		for(auto& ds : _drawSet) {
-			e.refUniformMap()[unif::texture::Diffuse] = draw::MakeUniform(ds.hTex);
+			e.refUniformEnt().setUniform(unif::texture::Diffuse, [&ds](){ return draw::MakeUniform(ds.hTex); });
 			e.setPrimitive(ds.primitive);
 			e.drawIndexed(GL_TRIANGLES, ds.nChar*6, 0);
 		}

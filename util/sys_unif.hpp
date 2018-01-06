@@ -11,11 +11,10 @@ namespace rev {
 				std::tuple<Ts...>	_ts;
 			protected:
 				void _prepareUniforms() override {
-					auto& u = refUniformIdMap();
-					auto& p = *getTechnique()->getProgram();
+					auto& u = refUniformEnt();
 					TupleForEach(
-						[&u, &p](auto& t){
-							t.outputUniforms(u, p);
+						[&u](auto& t){
+							t.outputUniforms(u);
 						},
 						_ts
 					);

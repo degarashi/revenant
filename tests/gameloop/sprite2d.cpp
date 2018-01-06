@@ -56,9 +56,9 @@ void Sprite2D::draw(rev::IEffect& e) const {
 		auto lk = rev::test::g_shared.lock();
 		e.setTechnique(lk->technique->getTechnique(T_Sprite2D));
 	}
-	auto& u = e.refUniformMap();
-	u[rev::unif2d::texture::Diffuse] = rev::draw::MakeUniform(_hTex);
-	u[rev::unif::Alpha] = rev::draw::MakeUniform(_alpha);
+	auto& u = e.refUniformEnt();
+	u.setUniform(rev::unif2d::texture::Diffuse, [this](){ return rev::draw::MakeUniform(_hTex); });
+	u.setUniform(rev::unif::Alpha, [this](){ return rev::draw::MakeUniform(_alpha); });
 	e.ref2D().setWorld(getToWorld().convert<3,3>());
 	e.setPrimitive(_primitive);
 	e.drawIndexed(GL_TRIANGLES, 6);

@@ -42,11 +42,8 @@ namespace rev {
 		_tokenML.clear();
 		_uniformEnt.clearValue();
 	}
-	UniformMap_t& GLEffect::refUniformMap() noexcept {
-		return _uniformEnt.refEntry();
-	}
-	UniformIdMap_t& GLEffect::refUniformIdMap() noexcept {
-		return _uniformEnt.refIdEntry();
+	UniformEnt& GLEffect::refUniformEnt() noexcept {
+		return _uniformEnt;
 	}
 	void GLEffect::setTechnique(const Tech_SP& tech) {
 		_clean_drawvalue();

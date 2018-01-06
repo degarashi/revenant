@@ -5,6 +5,7 @@
 #include "tech_if.hpp"
 #include "gl_program.hpp"
 #include "drawtoken/make_uniform.hpp"
+#include "uniform_ent.hpp"
 
 namespace rev {
 	const DSort_SP cs_dsort_z_asc = std::make_shared<DSort_Z_Asc>(),
@@ -100,10 +101,10 @@ namespace rev {
 	}
 	void DSort_Texture::apply(const DrawTag& d, IEffect& e) {
 		auto& id = _getUniformId(e);
-		auto& u = e.refUniformIdMap();
+		auto& u = e.refUniformEnt();
 		for(int i=0 ; i<length ; i++) {
 			if(id[i] >= 0)
-				u[id[i]] = draw::MakeUniform(d.idTex[i]);
+				u.setUniform(id[i], draw::MakeUniform(d.idTex[i]));
 		}
 	}
 

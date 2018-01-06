@@ -3,6 +3,7 @@
 #include "../glx_if.hpp"
 #include "../sys_uniform_value.hpp"
 #include "../drawtoken/make_uniform.hpp"
+#include "uniform_ent.hpp"
 
 namespace rev {
 	namespace util {
@@ -62,7 +63,9 @@ namespace rev {
 			getText();
 
 			cbPre(e);
-			e.refUniformMap()[unif::Color] = draw::MakeUniform(_color.asVec4());
+			e.refUniformEnt().setUniform(unif::Color, [this](){
+				return draw::MakeUniform(_color.asVec4());
+			});
 			_hText->draw(e);
 			return _hText->getSize().width;
 		}
