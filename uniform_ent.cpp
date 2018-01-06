@@ -4,6 +4,10 @@
 #include "drawtoken/make_uniform.hpp"
 
 namespace rev {
+	bool UniformEnt::_refresh(IdEntry::value_t& dst, IdEntry*) const {
+		dst.clear();
+		return true;
+	}
 	bool UniformEnt::_refresh(Result::value_t& dst, Result*) const {
 		dst.idset.clear();
 		dst.token.clear();
@@ -20,12 +24,14 @@ namespace rev {
 		return true;
 	}
 	void UniformEnt::copyFrom(const UniformEnt& e) {
+		setProgram(e.getProgram());
 		setIdEntry(e.getIdEntry());
 	}
 	void UniformEnt::clearValue() {
 		refIdEntry().clear();
 	}
 	void UniformEnt::setUniform(const int id, const draw::Token_SP& t) {
+		getIdEntry();
 		refIdEntry()[id] = t;
 	}
 }

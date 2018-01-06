@@ -21,9 +21,11 @@ namespace rev {
 			};
 			#define SEQ \
 				((Program)(HProg)) \
-				((IdEntry)(UniformIdMap_t)) \
+				((IdEntry)(UniformIdMap_t)(Program)) \
 				((Result)(Result_t)(Program)(IdEntry))
 			RFLAG_DEFINE(UniformEnt, SEQ)
+			RFLAG_SETMETHOD(IdEntry)
+			RFLAG_REFMETHOD(IdEntry)
 		public:
 			RFLAG_GETMETHOD_DEFINE(SEQ)
 			RFLAG_SETMETHOD_DEFINE(SEQ)
