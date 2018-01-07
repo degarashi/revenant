@@ -14,6 +14,9 @@
 #include "gl_state.hpp"
 
 namespace rev {
+	namespace {
+		const Primitive_SP c_invalidPrimitive = std::make_shared<Primitive>();
+	}
 	GLEffect::GLEffect():
 		_primitive(std::make_shared<Primitive>()),
 		_primitive_prev(std::make_shared<Primitive>())
@@ -29,8 +32,7 @@ namespace rev {
 		return diff;
 	}
 	void GLEffect::_reset() {
-		_primitive->reset();
-		_primitive_prev->reset();
+		_primitive = _primitive_prev = c_invalidPrimitive;
 
 		_clean_drawvalue();
 		_hFb = HFb();
