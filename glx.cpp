@@ -27,7 +27,7 @@ namespace rev {
 			const auto d = _primitive->getDifference(*_primitive_prev);
 			diff.vertex += d.first;
 			diff.index += d.second;
-			_primitive = _primitive_prev;
+			_primitive_prev = _primitive;
 		}
 		return diff;
 	}
