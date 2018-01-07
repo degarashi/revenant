@@ -52,12 +52,6 @@ namespace rev {
 			indexCmp(p)
 		);
 	}
-	void Primitive::reset() {
-		vdecl.reset();
-		for(auto& v : vb)
-			v.reset();
-		ib.reset();
-	}
 	bool Primitive::hasInfo() const noexcept {
 		return vdecl || vb[0] || ib;
 	}

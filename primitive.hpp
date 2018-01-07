@@ -20,7 +20,6 @@ namespace rev {
 		void getArray(CmpArray& dst) const noexcept;
 		bool operator != (const Primitive& p) const noexcept;
 		bool operator < (const Primitive& p) const noexcept;
-		void reset();
 		bool hasInfo() const noexcept;
 	};
 	using Primitive_SP = std::shared_ptr<Primitive>;
