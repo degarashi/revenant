@@ -185,6 +185,10 @@ namespace rev {
 			p->ib = mgr_gl.makeIBuffer(DrawType::Static);
 			p->ib->initData(std::move(ibuff));
 			p->vdecl = DrawDecl<drawtag::text>::GetVDecl();
+			p->drawMode = DrawMode::Triangles;
+			auto& info = p->withIndex;
+			info.count = ds.nChar*6;
+			info.offsetElem = 0;
 		}
 	}
 	void TextObj::exportDrawTag(DrawTag& d) const {
@@ -217,7 +221,7 @@ namespace rev {
 		for(auto& ds : _drawSet) {
 			e.refUniformEnt().setUniform(unif::texture::Diffuse, [&ds](){ return draw::MakeUniform(ds.hTex); });
 			e.setPrimitive(ds.primitive);
-			e.drawIndexed(GL_TRIANGLES, ds.nChar*6, 0);
+			e.draw();
 		}
 	}
 	const lubee::SizeF& TextObj::getSize() const {

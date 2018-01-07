@@ -27,6 +27,10 @@ Primitive_SP Sprite2D::InitBuffer() {
 		ret->ib = mgr_gl.makeIBuffer(rev::DrawType::Static);
 		ret->ib->initData(idx, countof(idx));
 		ret->vdecl = rev::DrawDecl<vdecl::sprite>::GetVDecl();
+		ret->drawMode = rev::DrawMode::Triangles;
+		auto& info = ret->withIndex;
+		info.count = 6;
+		info.offsetElem = 0;
 	}
 	return ret;
 }
@@ -61,7 +65,7 @@ void Sprite2D::draw(rev::IEffect& e) const {
 	u.setUniform(rev::unif::Alpha, [this](){ return rev::draw::MakeUniform(_alpha); });
 	e.ref2D().setWorld(getToWorld().convert<3,3>());
 	e.setPrimitive(_primitive);
-	e.drawIndexed(GL_TRIANGLES, 6);
+	e.draw();
 }
 void Sprite2D::outputDrawTag(rev::DrawTag& d) const {
 	d.idTex[0] = _hTex;

@@ -85,23 +85,6 @@ namespace rev {
 			_viewport = spi::none;
 		}
 	}
-	void GLEffect::_outputDrawCall(draw::VStream& vs) {
-		_outputFramebuffer();
-		// set V/IBuffer(VDecl)
-		_primitive->extractData(vs, _tech_sp->getVAttr());
-	}
-	void GLEffect::_outputDrawCallIndexed(const GLenum mode, const GLsizei count, const GLenum sizeF, const GLuint offset) {
-		draw::VStream vs;
-		_outputDrawCall(vs);
-
-		_tokenML.allocate<draw::DrawIndexed>(std::move(vs), mode, count, sizeF, offset);
-	}
-	void GLEffect::_outputDrawCall(const GLenum mode, const GLint first, const GLsizei count) {
-		draw::VStream vs;
-		_outputDrawCall(vs);
-
-		_tokenML.allocate<draw::Draw>(std::move(vs), mode, first, count);
-	}
 	void GLEffect::onDeviceLost() {
 		if(_bInit) {
 			_bInit = false;
@@ -121,24 +104,35 @@ namespace rev {
 		_tokenML.allocate<draw::Clear>(param);
 		mgr_drawtask.refWriteEnt().append(std::move(_tokenML));
 	}
-	void GLEffect::draw(const GLenum mode, const GLint first, const GLsizei count) {
+	void GLEffect::draw() {
 		_prepareUniforms();
-		_outputDrawCall(mode, first, count);
-		mgr_drawtask.refWriteEnt().append(std::move(_tokenML));
-
+		_outputFramebuffer();
 		_diffCount.buffer += _getDifference();
-		++_diffCount.drawNoIndexed;
-	}
-	void GLEffect::drawIndexed(const GLenum mode, const GLsizei count, const GLuint offsetElem) {
-		_prepareUniforms();
-		const HIb hIb = _primitive->ib;
-		const auto str = hIb->getStride();
-		const auto szF = GLIBuffer::GetSizeFlag(str);
-		_outputDrawCallIndexed(mode, count, szF, offsetElem*str);
+		// set V/IBuffer(VDecl)
+		draw::VStream vs;
+		_primitive->extractData(vs, _tech_sp->getVAttr());
+		const auto& p = _primitive;
+		if(!p->ib) {
+			_tokenML.allocate<draw::Draw>(
+				std::move(vs),
+				p->drawMode,
+				p->withoutIndex.first,
+				p->withoutIndex.count
+			);
+			++_diffCount.drawNoIndexed;
+		} else {
+			const auto str = p->ib->getStride();
+			const auto szF = GLIBuffer::GetSizeFlag(str);
+			_tokenML.allocate<draw::DrawIndexed>(
+				std::move(vs),
+				p->drawMode,
+				p->withIndex.count,
+				szF,
+				p->withIndex.offsetElem*str
+			);
+			++_diffCount.drawIndexed;
+		}
 		mgr_drawtask.refWriteEnt().append(std::move(_tokenML));
-
-		_diffCount.buffer += _getDifference();
-		++_diffCount.drawIndexed;
 	}
 	void GLEffect::beginTask() {
 		mgr_drawtask.beginTask(shared_from_this());

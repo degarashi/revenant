@@ -35,8 +35,7 @@ namespace rev {
 			virtual void resetFramebuffer() = 0;
 			virtual void setPrimitive(const Primitive_SP& p) noexcept = 0;
 			virtual void clearFramebuffer(const draw::ClearParam& param) = 0;
-			virtual void drawIndexed(GLenum mode, GLsizei count, GLuint offsetElem=0) = 0;
-			virtual void draw(GLenum mode, GLint first, GLsizei count) = 0;
+			virtual void draw() = 0;
 			virtual void beginTask() = 0;
 			virtual void endTask() = 0;
 			virtual void execTask() = 0;

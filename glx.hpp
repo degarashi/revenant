@@ -34,12 +34,7 @@ namespace rev {
 			void _reset();
 			//! Tech/Passの切り替えで無効になる変数をリセット
 			void _clean_drawvalue();
-			void _outputDrawCall(draw::VStream& vs);
 			void _outputFramebuffer();
-			//! DrawCallに関連するAPI呼び出しTokenを出力
-			/*! Vertex,Index BufferやUniform変数など */
-			void _outputDrawCall(GLenum mode, GLint first, GLsizei count);
-			void _outputDrawCallIndexed(GLenum mode, GLsizei count, GLenum sizeF, GLuint offset);
 			void _clearFramebuffer(draw::TokenML& ml);
 		protected:
 			virtual void _prepareUniforms();
@@ -74,16 +69,7 @@ namespace rev {
 			// ----------------- Buffer Clear -----------------
 			void clearFramebuffer(const draw::ClearParam& param) override;
 			// ----------------- Draw call -----------------
-			//! IStreamを使用して描画
-			/*! \param[in] mode 描画モードフラグ(OpenGL)
-				\param[in] count 描画に使用される要素数
-				\param[in] offsetElem オフセット要素数 */
-			void drawIndexed(GLenum mode, GLsizei count, GLuint offsetElem=0) override;
-			//! IStreamを使わず描画
-			/*! \param[in] mode 描画モードフラグ(OpenGL)
-				\param[in] first 描画を開始する要素オフセット
-				\param[in] count 描画に使用される要素数 */
-			void draw(GLenum mode, GLint first, GLsizei count) override;
+			void draw() override;
 
 			// ----------------- Task switching -----------------
 			// ---- from MainThread ----
