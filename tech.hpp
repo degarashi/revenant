@@ -16,6 +16,8 @@ namespace rev {
 			VSemAttrV		_vattr;
 
 			Name			_name;
+			// 必ず継承して使う
+			Tech() {}
 		public:
 			const GLState_SPV& getSetting() const override;
 			const UniIdSet& getNoDefaultValue() const noexcept override;
