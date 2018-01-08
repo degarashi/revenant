@@ -9,18 +9,8 @@ namespace rev {
 	}
 	// Tech | Pass の分だけ作成
 	class GLXTech : public Tech {
-		public:
-			using MacroMap = std::unordered_map<std::string, std::string>;
-			using AttrL = std::vector<const parse::AttrEntry*>;
-			using VaryL = std::vector<const parse::VaryEntry*>;
-			using ConstL = std::vector<const parse::ConstEntry*>;
-			using UnifL = std::vector<const parse::UnifEntry*>;
 		private:
 			parse::BlockSet_SP	_block;
-			AttrL				_attrL;
-			VaryL				_varyL;
-			UnifL				_unifL;
-			ConstL				_constL;
 			void _makeTexIndex();
 		public:
 			//! エフェクトファイルのパース結果を読み取る

@@ -94,7 +94,7 @@ namespace rev {
 					}
 					return ret;
 				}
-				using MacroMap = GLXTech::MacroMap;
+				using MacroMap = std::unordered_map<std::string, std::string>;
 				using MacroPair = MacroMap::value_type;
 				MacroMap exportMacro() const {
 					MacroMap mm;
@@ -244,6 +244,11 @@ namespace rev {
 		std::stringstream ss;
 		DResolver dupl(*bs, tech, pass);
 		HSh shP[ShType::_Num];
+		using AttrL = std::vector<const parse::AttrEntry*>;
+		AttrL attrL;
+		using UnifL = std::vector<const parse::UnifEntry*>;
+		UnifL unifL;
+		using ConstL = std::vector<const parse::ConstEntry*>;
 		for(int i=0 ; i<static_cast<int>(countof(selectSh)) ; i++) {
 			auto* shp = selectSh[i];
 			if(!shp)
@@ -261,35 +266,38 @@ namespace rev {
 			}
 			if(i==ShType::Vertex) {
 				// Attribute定義は頂点シェーダの時だけ出力
-				_attrL = dupl.exportEntries<parse::AttrStruct,parse::AttrEntry>(
+				D_Assert0(attrL.empty());
+				attrL = dupl.exportEntries<parse::AttrStruct,parse::AttrEntry>(
 						parse::GLBlocktype_::attributeT,
 						[](auto& bs, auto& name) -> decltype(auto) {
 							return bs.findAttribute(name);
 						});
-				OutputS(ss, _attrL);
+				OutputS(ss, attrL);
 			}
 			// それぞれ変数ブロックをGLSLソースに出力
 			// :Varying
-			_varyL = dupl.exportEntries<parse::VaryStruct,parse::VaryEntry>(
+			using VaryL = std::vector<const parse::VaryEntry*>;
+			VaryL varyL = dupl.exportEntries<parse::VaryStruct,parse::VaryEntry>(
 					parse::GLBlocktype_::varyingT,
 					[](auto& bs, auto& name) -> decltype(auto) {
 						return bs.findVarying(name);
 					});
-			OutputS(ss, _varyL);
+			OutputS(ss, varyL);
 			// :Const
-			_constL = dupl.exportEntries<parse::ConstStruct,parse::ConstEntry>(
+			ConstL constL = dupl.exportEntries<parse::ConstStruct,parse::ConstEntry>(
 					parse::GLBlocktype_::constT,
 					[](auto& bs, auto& name) -> decltype(auto) {
 						return bs.findConst(name);
 					});
-			OutputS(ss, _constL);
+			OutputS(ss, constL);
 			// :Uniform
-			_unifL = dupl.exportEntries<parse::UnifStruct,parse::UnifEntry>(
+			UnifL t_unifL = dupl.exportEntries<parse::UnifStruct,parse::UnifEntry>(
 					parse::GLBlocktype_::uniformT,
 					[](auto& bs, auto& name) -> decltype(auto) {
 						return bs.findUniform(name);
 					});
-			OutputS(ss, _unifL);
+			OutputS(ss, t_unifL);
+			std::copy(t_unifL.cbegin(), t_unifL.cend(), std::back_inserter(unifL));
 
 			// コードブロック出力
 			for(auto& cn : s->code) {
@@ -345,7 +353,7 @@ namespace rev {
 		_vattr.clear();
 		std::vector<UniqueChk> uc;
 		// 頂点セマンティクス対応リストを生成
-		for(auto& p : _attrL) {
+		for(auto& p : attrL) {
 			const char* name = p->name.c_str();
 			if(const auto at = prog->getAttribId(name)) {
 				const auto sem = static_cast<VSem::e>(p->sem);
@@ -377,10 +385,12 @@ namespace rev {
 			}
 		}
 
+		std::sort(unifL.begin(), unifL.end());
+		unifL.erase(std::unique(unifL.begin(), unifL.end()), unifL.end());
 		_noDefValue.clear();
 		// Uniform変数にデフォルト値がセットしてある物をリストアップ
 		Visitor visitor(_uniform);
-		for(const auto* p : _unifL) {
+		for(const auto* p : unifL) {
 			if(visitor.setKey(p->name)) {
 				const auto& defVal = p->defaultValue;
 				if(defVal) {
