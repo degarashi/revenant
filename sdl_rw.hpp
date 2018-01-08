@@ -30,6 +30,7 @@ namespace rev {
 		return buff;
 	}
 	class URI;
+	using URIRef_OP = spi::Optional<const URI&>;
 	class RWMgr;
 
 	class RWops : public Resource {
@@ -76,7 +77,7 @@ namespace rev {
 
 					virtual bool isMemory() const noexcept = 0;
 					virtual Type::e getType() const noexcept = 0;
-					virtual spi::Optional<const URI&> getUri() const noexcept = 0;
+					virtual URIRef_OP getUri() const noexcept = 0;
 					virtual std::size_t size() const noexcept = 0;
 					virtual DataPtr getMemory() = 0;
 					virtual DataPtrC getMemoryC() const = 0;
@@ -85,7 +86,7 @@ namespace rev {
 			#define DEF_METHODS \
 				bool isMemory() const noexcept override; \
 				Type::e getType() const noexcept override; \
-				spi::Optional<const URI&> getUri() const noexcept override; \
+				URIRef_OP getUri() const noexcept override; \
 				std::size_t size() const noexcept override; \
 				DataPtr getMemory() override; \
 				DataPtrC getMemoryC() const override;
@@ -250,6 +251,7 @@ namespace rev {
 			DataPtr getMemory();
 			//! isMemory()==trueの時だけ有効
 			DataPtrC getMemoryC() const;
+			URIRef_OP getUri() const noexcept;
 
 			const char* getResourceName() const noexcept override;
 	};

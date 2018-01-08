@@ -384,6 +384,7 @@ namespace rev {
 	int64_t RWops::tell() const noexcept { return _data->tell(); }
 	typename RWops::DataPtr RWops::getMemory() { return _data->getMemory(); }
 	typename RWops::DataPtrC RWops::getMemoryC() const { return _data->getMemoryC(); }
+	URIRef_OP RWops::getUri() const noexcept { return _data->getUri(); }
 	const char* RWops::getResourceName() const noexcept {
 		return ::rev::resource_name::RWops;
 	}
