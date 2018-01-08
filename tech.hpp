@@ -4,8 +4,6 @@
 
 namespace rev {
 	class Tech : public ITech {
-		private:
-			HFx				_fx;
 		protected:
 			//! Uniformデフォルト値(と対応するId)
 			UniformEnt		_uniform;
