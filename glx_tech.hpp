@@ -11,7 +11,6 @@ namespace rev {
 	class GLXTech : public Tech {
 		private:
 			parse::BlockSet_SP	_block;
-			void _makeTexIndex();
 		public:
 			//! エフェクトファイルのパース結果を読み取る
 			GLXTech(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass);
