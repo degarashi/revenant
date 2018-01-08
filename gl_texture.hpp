@@ -17,6 +17,7 @@ namespace rev {
 		class Texture;
 		class TextureA;
 	}
+	using Size_Fmt = std::pair<lubee::SizeI, GLInCompressedFmt>;
 	//! OpenGLテクスチャインタフェース
 	/*!	フィルターはNEARESTとLINEARしか無いからboolで管理 */
 	class IGLTexture : public IGLResource, public std::enable_shared_from_this<IGLTexture> {
@@ -115,8 +116,7 @@ namespace rev {
 				\param[in] face Cubemapにおける面 */
 			void writeRect(AB_Byte buff, const lubee::RectI& rect, GLTypeFmt srcFmt, CubeFace face=CubeFace::PositiveX);
 	};
-	std::pair<lubee::SizeI,GLInCompressedFmt> MakeTex(GLenum tflag, const Surface_SP& sfc, InCompressedFmt_OP fmt, bool bP2, bool bMip);
-	std::pair<lubee::SizeI,GLInCompressedFmt> MakeMip(GLenum tflag, GLenum format, const lubee::SizeI& size, const ByteBuff& buff, bool bP2, bool bMip);
+	Size_Fmt LoadTextureFromBuffer(const IGLTexture& tex, GLenum tflag, GLenum format, const lubee::SizeI& size, const ByteBuff& buff, bool bP2, bool bMip);
 
 	//! URIから2Dテクスチャを読む
 	/*!
@@ -128,7 +128,6 @@ namespace rev {
 			URI_SP				_uri;
 			InCompressedFmt_OP	_opFmt;
 		public:
-			static std::pair<lubee::SizeI, GLInCompressedFmt> LoadTexture(IGLTexture& tex, const HRW& hRW, CubeFace face);
 			Texture_URI(const URI_SP& uri, MipState miplevel, InCompressedFmt_OP fmt);
 			void onDeviceReset() override;
 	};

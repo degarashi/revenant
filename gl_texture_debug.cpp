@@ -11,17 +11,41 @@ namespace rev {
 		if(_onDeviceReset()) {
 			const GLenum fmt = GLFormat::QuerySDLtoGL(this->_gen->getFormat())->format;
 			const auto size = getSize();
-			auto u = use();
+			const auto loadTex = [this, fmt, size, bMip=isMipmap()](const GLenum tflag, const ByteBuff& buff){
+				LoadTextureFromBuffer(
+					*this,
+					tflag,
+					fmt,
+					size,
+					buff,
+					true,
+					bMip
+				);
+			};
 			if(isCubemap()) {
+				constexpr int NCube = 6;
 				if(_gen->isSingle()) {
 					auto buff = _gen->generate(getSize());
-					for(int i=0 ; i<6 ; i++)
-						MakeMip(getFaceFlag(static_cast<CubeFace::e>(i)), fmt, size, buff, true, isMipmap());
+					for(int i=0 ; i<NCube ; i++) {
+						loadTex(
+							getFaceFlag(static_cast<CubeFace::e>(i)),
+							buff
+						);
+					}
+				} else {
+					for(int i=0 ; i<NCube ; i++) {
+						loadTex(
+							getFaceFlag(static_cast<CubeFace::e>(i)),
+							_gen->generate(getSize(), static_cast<CubeFace::e>(i))
+						);
+					}
 				}
-				for(int i=0 ; i<6 ; i++)
-					MakeMip(getFaceFlag(static_cast<CubeFace::e>(i)), fmt, size, _gen->generate(getSize(), static_cast<CubeFace::e>(i)), true, isMipmap());
-			} else
-				MakeMip(getFaceFlag(), fmt, size, _gen->generate(getSize(), CubeFace::PositiveX), true, isMipmap());
+			} else {
+				loadTex(
+					getFaceFlag(),
+					_gen->generate(getSize(), CubeFace::PositiveX)
+				);
+			}
 		}
 	}
 
