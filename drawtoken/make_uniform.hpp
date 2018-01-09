@@ -54,6 +54,10 @@ namespace rev {
 		Token_SP MakeUniform(const std::vector<T>& ar) {
 			return MakeUniform(ar.data(), ar.size());
 		}
+		template <class T, std::size_t N>
+		Token_SP MakeUniform(const std::array<T,N>& ar) {
+			return MakeUniform(ar.data(), ar.size());
+		}
 		template <class T>
 		Token_SP MakeUniform(const T& t) {
 			return MakeUniform(&t, 1);
