@@ -13,7 +13,7 @@ namespace rev {
 	};
 	class URI;
 	struct URIHandler {
-		virtual HRW openURI(const URI& uri, int access) = 0;
+		virtual HRW openURI(const URI& uri, int access) const = 0;
 		virtual ~URIHandler() {}
 	};
 	using UriHandler_SP = std::shared_ptr<URIHandler>;

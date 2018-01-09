@@ -11,7 +11,7 @@ namespace rev {
 	class URI_File : public URIHandler {
 		private:
 			PathBlock		_basePath;
-			HRW _openURI(const PathBlock& pb, int access);
+			HRW _openURI(const PathBlock& pb, int access) const;
 
 			template <class Ar>
 			friend void serialize(Ar&, URI_File&);
@@ -20,6 +20,6 @@ namespace rev {
 		public:
 			URI_File(To32Str path);
 			static bool Capable(const URI& uri, int access);
-			HRW openURI(const URI& uri, int access) override;
+			HRW openURI(const URI& uri, int access) const override;
 	};
 }
