@@ -4,6 +4,7 @@
 #include "systeminfo.hpp"
 #include "sdl_rw.hpp"
 #include "uri_file.hpp"
+#include "uri_data.hpp"
 #include "apppath.hpp"
 #include "sound.hpp"
 #include "camera2d.hpp"
@@ -35,6 +36,8 @@ namespace rev {
 		m.rwm = std::make_shared<RWMgr>(param.getOrgName(), param.getAppName());
 		// デフォルトでルートディレクトリからの探索パスを追加
 		m.rwm->addHandler(0x00, std::make_shared<URI_File>(u8"/"));
+		// データURIのローダーも追加
+		m.rwm->addHandler(0x01, std::make_shared<URI_Data>());
 		m.appPath = std::make_shared<AppPath>(PathBlock(Dir::GetProgramDir()));
 		// pathfile文字列が有効ならここでロードする
 		if(const auto& p = param.getPathfile())
