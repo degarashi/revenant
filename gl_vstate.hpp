@@ -38,7 +38,8 @@ namespace rev {
 				return _Compare(*this, s);
 			}
 			bool operator == (const GL_VState& s) const noexcept {
-				return _compare(s, std::make_index_sequence<NArgs>{});
+				return _func == s._func &&
+					_compare(s, std::make_index_sequence<NArgs>{});
 			}
 	};
 	template <class... Args, class... Args2>
