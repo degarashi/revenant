@@ -182,13 +182,13 @@ namespace rev {
 		#define REP_MEDIAENT0	"(?:[a-zA-Z0-9+./-]+)"
 		#define REP_MEDIAPAIR0	"(?:" REP_MEDIAENT0 "(?:=" REP_MEDIAENT0 ")?)"
 		#define BASE64			"base64"
-		// data:(REP_MEDIAPAIR0(?:;REP_MEDIAPAIR0)*)?((?:;)base64)?,
+		// data:(REP_MEDIAPAIR0(?:;REP_MEDIAPAIR0)*?)?((?:;)base64)?,
 		// ex. data:text/vnd-example+xyz;foo=bar;base64,R0lGODdh
 		//		1: text/vnd-example+xyz;foo=bar
 		//		2: base64
 		//		suffix: R0lGODdh
 		const std::string s_data("data:");
-		const std::regex re_data(std::string("^") + s_data + "(" REP_MEDIAPAIR0 "(?:;" REP_MEDIAPAIR0 ")*)?((?:;)" BASE64 ")?,");
+		const std::regex re_data(std::string("^") + s_data + "(" REP_MEDIAPAIR0 "(?:;" REP_MEDIAPAIR0 ")*?)?((?:;)" BASE64 ")?,");
 		#define REP_MEDIAENT	"([a-zA-Z0-9+./-]+)"
 		#define REP_MEDIAPAIR	"(?:(" REP_MEDIAENT ")(?:=(" REP_MEDIAENT "))?)"
 		const std::regex re_media(";?" REP_MEDIAPAIR);
