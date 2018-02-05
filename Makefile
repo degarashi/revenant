@@ -30,6 +30,8 @@ Clean = cd $(WORK_DIR); make clean; rm -f Makefile CMakeCache.txt;
 
 all: $(WORK_DIR)/Makefile
 	$(call Make)
+	# リソースディレクトリへのシンボリックリンク
+	ln -sf $(PWD)/resource $(WORK_DIR)/tests/gameloop
 cmake:
 	$(call CMake)
 $(WORK_DIR)/Makefile:
