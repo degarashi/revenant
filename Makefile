@@ -28,6 +28,7 @@ CMake = mkdir -p $(WORK_DIR); cd $(WORK_DIR); cmake $(PWD) $(Options);
 Make = cd $(WORK_DIR); make -j$(JOBS);
 Clean = cd $(WORK_DIR); make clean; rm -f Makefile CMakeCache.txt;
 
+.PHONY: cmake clean tags
 all: $(WORK_DIR)/Makefile
 	$(call Make)
 	# リソースディレクトリへのシンボリックリンク
