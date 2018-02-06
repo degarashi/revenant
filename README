@@ -16,12 +16,12 @@ OggVorbis:
 
 依存ライブラリ:
 	SDL2
+	SDL_image 2.0
 	OpenAL(or SL)
 	Ogg
 	Vorbis
 	Cereal (シリアライズ用)
 	GoogleTest (単体テストをする場合のみ)
-	boost::format
-	boost::preprocessor
-依存ライブラリ(予定):
+	libboost 1.55
 	FreeType 2.0
+	Lua 5.3
