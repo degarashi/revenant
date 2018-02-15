@@ -25,6 +25,7 @@ namespace rev {
 		virtual bool getMultiContext() const noexcept = 0;
 		// ゲーム開始時、最初のSceneを作る
 		virtual HScene makeFirstScene() const = 0;
+		virtual ~GameloopParam() {}
 	};
 	using GameloopParam_UP = std::unique_ptr<GameloopParam>;
 }
