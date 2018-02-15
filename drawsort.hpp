@@ -19,6 +19,7 @@ namespace rev {
 		virtual bool compare(const DrawTag& d0, const DrawTag& d1) const = 0;
 		virtual void apply(const DrawTag& d, IEffect& e);
 		static void DoSort(const DSort_V& alg, int cursor, typename DLObj_V::iterator itr0, typename DLObj_V::iterator itr1);
+		virtual ~DSort() {}
 	};
 	//! 描画ソート: Z距離の昇順
 	struct DSort_Z_Asc : DSort {
