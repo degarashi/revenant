@@ -28,6 +28,7 @@ namespace rev {
 				// SingleContext環境ではctxMainThread = nullptr
 				GLContext_SP	ctxDrawThread,			//!< 描画スレッド用のGLコンテキスト
 								ctxMainThread;			//!< メインスレッド用のGLコンテキスト
+				Timepoint		prevTp = Clock::now();
 				FPSCounter		fps;
 			};
 			SpinLock<Info>		_info;

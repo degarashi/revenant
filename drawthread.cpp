@@ -72,11 +72,16 @@ namespace rev {
 						_info.lock()->state = State::Drawing;
 						// 1フレーム分の描画処理
 						GL.setSwapInterval(0);
-						if(up->runU(p->id)) {
+						const bool draw = up->runU(p->id);
+						{
 							// FPSカウンタを更新
 							auto lk = _info.lock();
-							lk->fps.update();
-							lk->ctxDrawThread->swapWindow();
+							const auto cur = Clock::now();
+							const auto diff = cur - lk->prevTp;
+							lk->prevTp = cur;
+							lk->fps.update(draw, diff);
+							if(draw)
+								lk->ctxDrawThread->swapWindow();
 						}
 						GL.glFlush();
 						{

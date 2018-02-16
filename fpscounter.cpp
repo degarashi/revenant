@@ -7,19 +7,20 @@ namespace rev {
 	}
 	void FPSCounter::reset() noexcept {
 		_counter = _fps = 0;
-		_tmBegin = Clock::now();
+		_remain = 0;
 	}
-	bool FPSCounter::update() noexcept {
-		Timepoint tp = Clock::now();
-		const Duration dur = tp - _tmBegin;
-		if(dur >= Seconds(1)) {
-			_tmBegin = tp;
+	bool FPSCounter::update(const bool drawn, const Duration delta) noexcept {
+		const uint64_t d_ms = std::chrono::duration_cast<Microseconds>(delta).count();
+		constexpr uint64_t sec_ms = std::chrono::duration_cast<Microseconds>(Seconds(1)).count();
+		const bool exceed = _remain <= d_ms;
+		if(exceed) {
+			_remain = sec_ms - ((d_ms - _remain) % sec_ms);
 			_fps = _counter;
 			_counter = 0;
-			return true;
-		}
-		++_counter;
-		return false;
+		} else
+			_remain -= d_ms;
+		_counter += static_cast<int>(drawn);
+		return exceed;
 	}
 	int FPSCounter::getFPS() const noexcept {
 		return _fps;
