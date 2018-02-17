@@ -101,6 +101,7 @@ namespace rev {
 			bool hasInputFocus() const noexcept;
 			bool hasMouseFocus() const noexcept;
 			lubee::SizeI getSize() const noexcept;
+			lubee::SizeI getDrawableSize() const noexcept;
 			lubee::SizeI getMaximumSize() const noexcept;
 			lubee::SizeI getMinimumSize() const noexcept;
 			uint32_t getSDLFlag() const noexcept;

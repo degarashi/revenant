@@ -197,6 +197,9 @@ namespace rev {
 	lubee::SizeI Window::getMinimumSize() const noexcept {
 		return GetSize(SDL_GetWindowMinimumSize, _window);
 	}
+	lubee::SizeI Window::getDrawableSize() const noexcept {
+		return GetSize(SDL_GL_GetDrawableSize, _window);
+	}
 	uint32_t Window::getSDLFlag() const noexcept {
 		return D_SDLWarn(SDL_GetWindowFlags, _window);
 	}
