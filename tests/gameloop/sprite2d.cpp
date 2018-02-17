@@ -8,30 +8,26 @@
 
 const rev::Name Sprite2D::T_Sprite2D("Sprite|Default");
 // ----------------------- Sprite -----------------------
-Primitive_WP Sprite2D::s_primitive;
-Primitive_SP Sprite2D::InitBuffer() {
-	Primitive_SP ret = s_primitive.lock();
-	if(!ret) {
-		s_primitive = ret = std::make_shared<rev::Primitive>();
+Primitive_SP Sprite2D::MakeData() {
+	auto ret = std::make_shared<rev::Primitive>();
 
-		// 大きさ1の矩形を定義して後でスケーリング
-		const vertex::sprite tmpV[] = {
-			{{0,1}, {0,0}},
-			{{1,1}, {1,0}},
-			{{1,0}, {1,1}},
-			{{0,0}, {0,1}}
-		};
-		ret->vb[0] = mgr_gl.makeVBuffer(rev::DrawType::Static);
-		ret->vb[0]->initData(tmpV, countof(tmpV), sizeof(vertex::sprite));
-		const GLushort idx[] = {0,1,2, 2,3,0};
-		ret->ib = mgr_gl.makeIBuffer(rev::DrawType::Static);
-		ret->ib->initData(idx, countof(idx));
-		ret->vdecl = DrawDecl<vdecl::sprite>::GetVDecl();
-		ret->drawMode = rev::DrawMode::Triangles;
-		auto& info = ret->withIndex;
-		info.count = 6;
-		info.offsetElem = 0;
-	}
+	// 大きさ1の矩形を定義して後でスケーリング
+	const vertex::sprite tmpV[] = {
+		{{0,1}, {0,0}},
+		{{1,1}, {1,0}},
+		{{1,0}, {1,1}},
+		{{0,0}, {0,1}}
+	};
+	ret->vb[0] = mgr_gl.makeVBuffer(rev::DrawType::Static);
+	ret->vb[0]->initData(tmpV, countof(tmpV), sizeof(vertex::sprite));
+	const GLushort idx[] = {0,1,2, 2,3,0};
+	ret->ib = mgr_gl.makeIBuffer(rev::DrawType::Static);
+	ret->ib->initData(idx, countof(idx));
+	ret->vdecl = DrawDecl<vdecl::sprite>::GetVDecl();
+	ret->drawMode = rev::DrawMode::Triangles;
+	auto& info = ret->withIndex;
+	info.count = 6;
+	info.offsetElem = 0;
 	return ret;
 }
 Sprite2D::Sprite2D(const rev::HTex& t, const float z) {
@@ -40,7 +36,6 @@ Sprite2D::Sprite2D(const rev::HTex& t, const float z) {
 	_zOffset = z;
 	_zRange = {0.f, 1.f};
 	_alpha = 1.f;
-	_primitive = InitBuffer();
 }
 void Sprite2D::setZOffset(const float z) {
 	_zOffset = z;

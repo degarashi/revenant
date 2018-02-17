@@ -4,6 +4,7 @@
 #include "../../glx_id.hpp"
 #include "../../drawable.hpp"
 #include "../../vertex.hpp"
+#include "../../singleton_data.hpp"
 
 namespace vertex {
 	struct sprite {
@@ -21,19 +22,18 @@ namespace rev {
 	struct DrawTag;
 }
 using Primitive_SP = std::shared_ptr<rev::Primitive>;
-using Primitive_WP = std::weak_ptr<rev::Primitive>;
 //! 表示テスト用のスプライト
 class Sprite2D : public beat::g2::Pose {
 	private:
-		static Primitive_WP	s_primitive;
-		Primitive_SP		_primitive;
+		using Prim = rev::SingletonData<rev::Primitive, Sprite2D>;
+		Prim				_primitive;
 		rev::HTex			_hTex;
 		lubee::RangeF		_zRange;
 		float				_zOffset,
 							_alpha;
 
 	public:
-		static Primitive_SP InitBuffer();
+		static Primitive_SP MakeData();
 		const static rev::Name	T_Sprite2D;
 		Sprite2D(const rev::HTex& t, float z);
 		void draw(rev::IEffect& e) const;
