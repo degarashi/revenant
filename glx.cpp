@@ -54,8 +54,9 @@ namespace rev {
 		_uniformEnt.setProgram(tech->getProgram());
 		// 各種セッティングをするTokenをリストに追加
 		_tech_sp->getProgram()->getDrawToken(_tokenML);
-		_tokenML.allocate<draw::UserFunc>([tp_tmp = _tech_sp.get()](){
-			auto& sv = tp_tmp->getSetting();
+		// MEMO: Techにマルチスレッドでアクセスしてしまってるので要改善
+		_tokenML.allocate<draw::UserFunc>([t = _tech_sp](){
+			auto& sv = t->getSetting();
 			for(auto& s : sv)
 				s->apply();
 		});
