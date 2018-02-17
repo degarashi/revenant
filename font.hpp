@@ -3,6 +3,7 @@
 #include "frea/vector.hpp"
 #include "vertex.hpp"
 #include "spine/resmgr_named.hpp"
+#include "singleton_data_lazy.hpp"
 
 namespace rev {
 	//! CharCodeとフォントテクスチャ対応付け (全Face共通)
@@ -52,6 +53,8 @@ namespace rev {
 namespace rev {
 	struct Primitive;
 	using Primitive_SP = std::shared_ptr<Primitive>;
+	struct ITech;
+	using Tech_SP = std::shared_ptr<ITech>;
 	//! 文章の描画に必要なフォントや頂点を用意
 	/*!
 		TriangleList形式。とりあえず改行だけ対応
@@ -80,6 +83,8 @@ namespace rev {
 
 		//! フォントテクスチャと描画用頂点を用意
 		void _init(Face &face);
+		// デフォルト描画シェーダー
+		const static SingletonDataLazy<ITech, TextObj>	s_defaultTech;
 
 		public:
 			TextObj(TextObj&& t) = default;
@@ -93,10 +98,15 @@ namespace rev {
 			// FontGenから呼び出してFaceIDを再設定する用
 			CCoreID& refCoreID();
 			const String_SP& getFaceName() const;
-			// 上位クラスで位置調整など行列をセットしてからメソッドを呼ぶ
+			/*!
+				上位クラスで位置調整など行列をセットしてからメソッドを呼ぶ
+				\param[in]	customDraw false=デフォルトのシェーダーでテキスト描画
+			*/
 			void draw(IEffect& gle) const;
 			const lubee::SizeF& getSize() const;
 			void exportDrawTag(DrawTag& d) const;
+			static Tech_SP MakeData();
+			static Tech_SP GetDefaultTech();
 	};
 
 	#define mgr_text (::rev::FontGen::ref())

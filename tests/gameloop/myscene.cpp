@@ -18,12 +18,11 @@
 
 namespace rev {
 	namespace test {
-		const Name Id("Text|Default");
 		struct MyScene::St_None: StateT<St_None> {
 			void onEnter(MyScene& self, ObjTypeId_OP) override {
 				{
 					auto lk = g_shared.lock();
-					lk->technique = mgr_gl.loadTechPass("default.glx");
+					lk->technique = mgr_gl.loadTechPass("sprite2d.glx");
 				}
 				// 終了ボタン定義
 				self._actQ = mgr_input.makeAction("quit");
@@ -77,12 +76,9 @@ namespace rev {
 				static float a=0;
 				a += 0.02f;
 				e.clearFramebuffer({frea::Vec4{std::sin(a)/2+0.5f,std::sin(a*1.3)/2+0.5,0,0}, 1.f, 0});
-				{
-					auto lk = g_shared.lock();
-					e.setTechnique(lk->technique->getTechnique(::rev::test::Id));
-				}
 				// FPSを左上に表示
 				auto& fps = const_cast<decltype(self._fps)&>(self._fps);
+				e.setTechnique(rev::TextObj::GetDefaultTech());
 				fps.setText((boost::format("FPS: %1%") % mgr_info.getFPS()).str().c_str());
 				fps.draw(e);
 				auto& e2 = e.ref2D();

@@ -1,0 +1,43 @@
+uniform Text2DUnif {
+	mat3 mText;
+	vec4 u_color;
+	float u_depth;
+	sampler2D u_texDiffuse;
+}
+attribute TextAttr {
+	highp vec2 atPos : POSITION;
+	mediump vec3 atTex : TEXCOORD_0;
+}
+varying TextVary {
+	highp vec4 vrTex;
+}
+vertexshader(130) Text2DVS() {
+	vec3 tmp = vec3(atPos.x, atPos.y, 1) * mText;
+	gl_Position = vec4(tmp.x, tmp.y, u_depth, 1);
+	vrTex = vec4(atTex, 0);
+}
+fragmentshader(130) TextFS() {
+	gl_FragColor = texture2D(u_texDiffuse, vrTex.xy);
+	if(gl_FragColor.w < 0.01)
+		discard;
+	gl_FragColor.xyz = u_color.xyz;
+	gl_FragColor.w *= u_color.w;
+}
+technique Text {
+	PolygonMode = Fill;
+	CullFace = false;
+	FrontFace = cw;
+	Blend = true;
+	DepthTest = false;
+	DepthMask = false;
+	BlendFunc = SrcAlpha InvSrcAlpha;
+	StencilMask = 0x10;
+	Attribute = TextAttr;
+	Varying = TextVary;
+	Uniform = Text2DUnif;
+
+	pass Default {
+		VertexShader = Text2DVS();
+		FragmentShader = TextFS();
+	}
+}

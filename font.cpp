@@ -12,6 +12,7 @@
 #include "primitive.hpp"
 #include "drawtoken/make_uniform.hpp"
 #include "uniform_ent.hpp"
+#include "tech_pass.hpp"
 
 namespace rev {
 	namespace {
@@ -226,6 +227,16 @@ namespace rev {
 	}
 	const lubee::SizeF& TextObj::getSize() const {
 		return _rectSize;
+	}
+	const SingletonDataLazy<ITech, TextObj> TextObj::s_defaultTech;
+	namespace {
+		const Name Tech_Id("Text|Default");
+	}
+	Tech_SP TextObj::MakeData() {
+		return mgr_gl.loadTechPass("text.glx")->getTechnique(Tech_Id);
+	}
+	Tech_SP TextObj::GetDefaultTech() {
+		return MakeData();
 	}
 
 	// --------------------------- FontGen ---------------------------
