@@ -1,28 +1,18 @@
 #pragma once
-#include <memory>
+#include "singleton_data_lazy.hpp"
 
 namespace rev {
 	template <class T, class Maker>
-	class SingletonData : public std::shared_ptr<T> {
+	class SingletonData :
+		public std::shared_ptr<T>,
+		public SingletonDataLazy<T, Maker>
+	{
 		private:
+			using base_t = SingletonDataLazy<T, Maker>;
 			using SP = std::shared_ptr<T>;
-			using WP = std::weak_ptr<T>;
-
-			static WP	s_wp;
-
 		public:
 			SingletonData():
-				SP(GetData())
+				SP(base_t::GetData())
 			{}
-			static SP GetData() {
-				SP ret = s_wp.lock();
-				if(!ret) {
-					ret = Maker::MakeData();
-					s_wp = ret;
-				}
-				return ret;
-			}
 	};
-	template <class T, class Maker>
-	typename SingletonData<T,Maker>::WP SingletonData<T,Maker>::s_wp;
 }
