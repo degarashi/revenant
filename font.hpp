@@ -46,8 +46,8 @@ namespace rev {
 			frea::Vec3	uvt;
 		};
 	}
+	DefineVDecl(::rev::drawtag::text)
 }
-DefineVDecl(::rev::drawtag::text)
 
 namespace rev {
 	struct Primitive;

@@ -26,7 +26,7 @@ Primitive_SP Sprite2D::InitBuffer() {
 		const GLushort idx[] = {0,1,2, 2,3,0};
 		ret->ib = mgr_gl.makeIBuffer(rev::DrawType::Static);
 		ret->ib->initData(idx, countof(idx));
-		ret->vdecl = rev::DrawDecl<vdecl::sprite>::GetVDecl();
+		ret->vdecl = DrawDecl<vdecl::sprite>::GetVDecl();
 		ret->drawMode = rev::DrawMode::Triangles;
 		auto& info = ret->withIndex;
 		info.count = 6;
@@ -74,7 +74,7 @@ void Sprite2D::outputDrawTag(rev::DrawTag& d) const {
 }
 
 // ---------------------- Sprite頂点宣言 ----------------------
-const rev::VDecl_SP& rev::DrawDecl<vdecl::sprite>::GetVDecl() {
+const rev::VDecl_SP& DrawDecl<vdecl::sprite>::GetVDecl() {
 	static rev::VDecl_SP vd(new rev::VDecl{
 		{0,0, GL_FLOAT, GL_FALSE, 3, {rev::VSem::POSITION, 0}},
 		{0,12, GL_FLOAT, GL_FALSE, 2, {rev::VSem::TEXCOORD, 0}}
