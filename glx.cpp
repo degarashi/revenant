@@ -78,7 +78,7 @@ namespace rev {
 
 			// ビューポートはデフォルトでフルスクリーンに初期化
 			if(!_viewport)
-				_viewport = draw::Viewport(false, lubee::RectF{0,1,0,1});
+				_viewport = draw::Viewport({false, lubee::RectF{0,1,0,1}});
 		}
 		if(_viewport) {
 			using T = draw::Viewport;
@@ -159,7 +159,7 @@ namespace rev {
 		setFramebuffer(HFb());
 	}
 	void GLEffect::setViewport(const bool bPixel, const lubee::RectF& r) {
-		_viewport = draw::Viewport(bPixel, r);
+		_viewport = draw::Viewport({bPixel, r});
 	}
 	diff::Effect GLEffect::getDifference() const {
 		return _diffCount;

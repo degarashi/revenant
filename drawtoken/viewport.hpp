@@ -1,15 +1,14 @@
 #pragma once
 #include "drawtoken_t.hpp"
-#include "lubee/rect.hpp"
+#include "../fbrect.hpp"
 
 namespace rev {
 	namespace draw {
 		class Viewport : public TokenT<Viewport> {
 			private:
-				bool			_bPixel;
-				lubee::RectF	_rect;
+				FBRect			_rect;
 			public:
-				Viewport(bool bPixel, const lubee::RectF& r);
+				Viewport(const FBRect& rect);
 				void exec() override;
 		};
 	}

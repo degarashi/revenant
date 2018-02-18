@@ -1,5 +1,5 @@
 #include "fbswitch.hpp"
-#include "viewport.hpp"
+#include "lubee/rect.hpp"
 #include "../glx_if.hpp"
 
 namespace rev {
@@ -23,7 +23,7 @@ namespace rev {
 				e.clearFramebuffer(*_cparam);
 
 			// ビューポートはフルスクリーンで初期化
-			Viewport(0x0000).onDraw(e);
+			e.setViewport(false, lubee::RectF{0,1,0,1});
 		}
 	}
 }

@@ -21,20 +21,9 @@ DEF_LUAIMPLEMENT_SPTR(
 	(rev::Priority)(const HFb&)(const rev::util::ClearParam_OP&)
 )
 
-#include "../util/viewport.hpp"
-DEF_LUAIMPLEMENT_SPTR(
-	rev::ObjMgr, rev::util::Viewport, Viewport,
-	LUAIMPLEMENT_BASE,
-	NOTHING,
-	NOTHING,
-	(setByRatio)(setByPixel),
-	(rev::Priority)
-)
-
 namespace rev {
 	void LuaImport::RegisterUtilsClass(LuaState& lsc) {
 		RegisterClass<util::FBSwitch>(lsc);
 		RegisterClass<util::FBClear>(lsc);
-		RegisterClass<util::Viewport>(lsc);
 	}
 }
