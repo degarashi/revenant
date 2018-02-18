@@ -15,6 +15,7 @@
 #include "../../sys_uniform_value.hpp"
 #include "../../sys_uniform.hpp"
 #include "../../tech_pass.hpp"
+#include "../../output.hpp"
 
 namespace rev {
 	namespace test {
@@ -23,6 +24,7 @@ namespace rev {
 				{
 					auto lk = g_shared.lock();
 					lk->technique = mgr_gl.loadTechPass("sprite2d.glx");
+					lk->textTech = rev::TextObj::GetDefaultTech();
 				}
 				// 終了ボタン定義
 				self._actQ = mgr_input.makeAction("quit");
@@ -78,7 +80,10 @@ namespace rev {
 				e.clearFramebuffer({frea::Vec4{std::sin(a)/2+0.5f,std::sin(a*1.3)/2+0.5,0,0}, 1.f, 0});
 				// FPSを左上に表示
 				auto& fps = const_cast<decltype(self._fps)&>(self._fps);
-				e.setTechnique(rev::TextObj::GetDefaultTech());
+				{
+					auto lc = g_shared.lockC();
+					e.setTechnique(lc->textTech);
+				}
 				fps.setText((boost::format("FPS: %1%") % mgr_info.getFPS()).str().c_str());
 				fps.draw(e);
 				auto& e2 = e.ref2D();
@@ -91,6 +96,7 @@ namespace rev {
 		MyScene::~MyScene() {
 			auto lk = g_shared.lock();
 			lk->technique.reset();
+			lk->textTech.reset();
 		}
 	}
 }
