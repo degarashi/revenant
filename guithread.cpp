@@ -93,7 +93,10 @@ namespace rev {
 						_procWindowEvent(e);
 						break;
 					case SDL_MOUSEWHEEL:
-						_procMouseEvent(e);
+						_procMouseWheel(e);
+						break;
+					case SDL_MOUSEBUTTONDOWN:
+						_procMouseButtonDown(e);
 						break;
 					case SDL_QUIT:
 						// アプリケーション終了コールが来たらループを抜ける
@@ -182,12 +185,25 @@ namespace rev {
 	};
 }
 #include "input_sdlvalue.hpp"
+#include "lubee/meta/countof.hpp"
 namespace rev {
-	void GUIThread::_procMouseEvent(SDL_Event& e) {
+	void GUIThread::_procMouseWheel(SDL_Event& e) {
+		D_Assert0(e.type == SDL_MOUSEWHEEL);
 		if(e.wheel.which != SDL_TOUCH_MOUSEID) {
 			auto lc = g_sdlInputShared.lock();
-			lc->wheel_dx = e.wheel.x;
-			lc->wheel_dy = e.wheel.y;
+			lc->wheel_dx += e.wheel.x;
+			lc->wheel_dy += e.wheel.y;
+		}
+	}
+	void GUIThread::_procMouseButtonDown(SDL_Event& e) {
+		D_Assert0(e.type == SDL_MOUSEBUTTONDOWN);
+		const auto btn = e.button.button;
+		for(std::size_t i=0 ; i<countof(SDLInputShared::c_buttonId) ; i++) {
+			if(btn == SDLInputShared::c_buttonId[i]) {
+				auto lc = g_sdlInputShared.lock();
+				lc->button[i] = true;
+				break;
+			}
 		}
 	}
 }

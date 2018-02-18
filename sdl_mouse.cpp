@@ -6,7 +6,9 @@ namespace rev {
 	SDL_Window* SDLMouse::s_window(nullptr);
 
 	SDLMouse::SDLMouse() noexcept:
-		_state(0),
+		_button{},
+		_wheelDx(0),
+		_wheelDy(0),
 		_mode(MouseMode::Absolute)
 	{}
 	int SDLMouse::NumMouse() noexcept {
@@ -19,23 +21,30 @@ namespace rev {
 		return c_name;
 	}
 	int SDLMouse::dep_numButtons() const noexcept {
-		return 3;
+		return N_SDLMouseButton;
 	}
 	int SDLMouse::dep_numAxes() const noexcept {
 		return 4;
 	}
 	int SDLMouse::dep_getButton(const int num) const noexcept {
-		return (_state & SDL_BUTTON(num+1)) ? InputRange : 0;
+		return _button[num] ? InputRange : 0;
 	}
 	int SDLMouse::dep_getAxis(const int num) const noexcept {
 		if(num < 2)
 			return 0;
-		auto lc = g_sdlInputShared.lock();
-		return (num==2) ? lc->wheel_dx : lc->wheel_dy;
+		return (num==2) ? _wheelDx : _wheelDy;
 	}
 	bool SDLMouse::dep_scan(TPos2D& t) NOEXCEPT_IF_RELEASE {
 		int x, y;
-		_state = D_SDLAssert(SDL_GetMouseState, &x, &y);
+		const auto state = D_SDLAssert(SDL_GetMouseState, &x, &y);
+		{
+			auto lc = g_sdlInputShared.lockC();
+			for(int i=0 ; i<N_SDLMouseButton ; i++) {
+				_button[i] = lc->button[i] | (state & SDL_BUTTON(SDLInputShared::c_buttonId[i]));
+			}
+			_wheelDx = lc->wheel_dx;
+			_wheelDy = lc->wheel_dy;
+		}
 		// ウィンドウからカーソルが出ない様にする
 		if(s_window) {
 			if(_mode == MouseMode::Relative) {

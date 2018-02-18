@@ -1,5 +1,6 @@
 #pragma once
 #include "input_common.hpp"
+#include "input_sdl_const.hpp"
 #include <SDL_mouse.h>
 #include <SDL_keyboard.h>
 #include <SDL_joystick.h>
@@ -33,7 +34,9 @@ namespace rev {
 
 	class SDLMouse {
 		private:
-			uint32_t 	_state;
+			bool		_button[N_SDLMouseButton];
+			int			_wheelDx,
+						_wheelDy;
 			MouseMode	_mode;
 			// SDLのマウスは1つだけを想定
 			// OpenMouseは共通のハンドルを返す

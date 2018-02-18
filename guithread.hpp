@@ -32,7 +32,8 @@ namespace rev {
 			const static LFunc cs_lfunc[Level::_Num][2];
 			void _setLevel(Level level);
 			void _procWindowEvent(SDL_Event& e);
-			void _procMouseEvent(SDL_Event& e);
+			void _procMouseWheel(SDL_Event& e);
+			void _procMouseButtonDown(SDL_Event& e);
 
 			using Handler_OP = spi::Optional<Handler>;
 			Handler_OP			_handler;
