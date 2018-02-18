@@ -1,5 +1,6 @@
 #include "input_dep_sdl.hpp"
 #include <cstring>
+#include "input_sdlvalue.hpp"
 
 namespace rev {
 	HInput SDLKeyboard::s_hInput;
@@ -8,6 +9,13 @@ namespace rev {
 	}
 	bool SDLKeyboard::dep_scan() noexcept {
 		std::memcpy(&_state[0], SDL_GetKeyboardState(nullptr), SDL_NUM_SCANCODES);
+		{
+			auto lc = g_sdlInputShared.lockC();
+			auto& key = lc->key;
+			for(auto k : key) {
+				_state[k] = 1;
+			}
+		}
 		return true;
 	}
 	void SDLKeyboard::Update() noexcept {}

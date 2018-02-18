@@ -98,6 +98,10 @@ namespace rev {
 					case SDL_MOUSEBUTTONDOWN:
 						_procMouseButtonDown(e);
 						break;
+					case SDL_KEYDOWN:
+					case SDL_KEYUP:
+						_procKey(e);
+						break;
 					case SDL_QUIT:
 						// アプリケーション終了コールが来たらループを抜ける
 						bLoop = false;
@@ -204,6 +208,15 @@ namespace rev {
 				lc->button[i] = true;
 				break;
 			}
+		}
+	}
+	void GUIThread::_procKey(SDL_Event& e) {
+		D_Assert0(e.type==SDL_KEYDOWN || e.type==SDL_KEYUP);
+		const bool down = (e.type == SDL_KEYDOWN);
+		if(down) {
+			const int code = e.key.keysym.scancode;
+			auto lc = g_sdlInputShared.lock();
+			lc->key.emplace_back(code);
 		}
 	}
 }

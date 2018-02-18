@@ -12,5 +12,6 @@ namespace rev {
 		for(auto& b : button)
 			b = false;
 		wheel_dx = wheel_dy = 0;
+		key.clear();
 	}
 }

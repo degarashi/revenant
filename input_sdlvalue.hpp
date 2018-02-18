@@ -5,6 +5,7 @@
 #endif
 #include "spinlock.hpp"
 #include "input_sdl_const.hpp"
+#include <vector>
 
 namespace rev {
 	struct SDLInputShared {
@@ -12,6 +13,8 @@ namespace rev {
 		bool button[N_SDLMouseButton];
 		int	wheel_dx,
 			wheel_dy;
+		using KeyV = std::vector<uint16_t>;
+		KeyV	key;
 
 		//! 毎フレーム呼ばれるリセット関数
 		void reset();
