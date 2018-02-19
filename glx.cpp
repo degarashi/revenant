@@ -8,6 +8,7 @@
 #include "drawtoken/clear.hpp"
 #include "drawtoken/task.hpp"
 #include "drawtoken/texture.hpp"
+#include "drawtoken/scissor.hpp"
 #include "unituple/operator.hpp"
 #include "tech_if.hpp"
 #include "primitive.hpp"
@@ -21,7 +22,9 @@ namespace rev {
 		_primitive(std::make_shared<Primitive>()),
 		_primitive_prev(std::make_shared<Primitive>()),
 		_viewrect(false, {0,1,0,1}),
-		_bView(true)
+		_scissorrect(false, {0,1,0,1}),
+		_bView(true),
+		_bScissor(true)
 	{}
 	diff::Buffer GLEffect::_getDifference() {
 		diff::Buffer diff = {};
@@ -76,6 +79,13 @@ namespace rev {
 			new(_tokenML.allocate_memory(sizeof(T), draw::CalcTokenOffset<T>())) T(vp);
 			_bView = false;
 		};
+		const auto set_scissorrect = [this](){
+			using T = draw::Scissor;
+			const T sc(_scissorrect);
+			new(_tokenML.allocate_memory(sizeof(T), draw::CalcTokenOffset<T>())) T(sc);
+			_bScissor = false;
+			std::cout << "AAA" << std::endl;
+		};
 		if(_hFb) {
 			auto& fb = *_hFb;
 			if(fb)
@@ -89,10 +99,17 @@ namespace rev {
 				if(_viewrect.isRatio()) {
 					set_viewrect();
 				}
+				// スケールでScissorを指定していた場合、設定しなおす
+				if(_scissorrect.isRatio()) {
+					set_scissorrect();
+				}
 			}
 		}
 		if(_bView) {
 			set_viewrect();
+		}
+		if(_bScissor) {
+			set_scissorrect();
 		}
 	}
 	void GLEffect::onDeviceLost() {
@@ -170,6 +187,13 @@ namespace rev {
 		const auto prev = _viewrect;
 		_viewrect = r;
 		_bView = true;
+		return prev;
+	}
+	// MEMO: Viewportのコードと重複しているので後でなんとかする
+	FBRect GLEffect::setScissor(const FBRect& r) {
+		const auto prev = _viewrect;
+		_scissorrect = r;
+		_bScissor = true;
 		return prev;
 	}
 	diff::Effect GLEffect::getDifference() const {

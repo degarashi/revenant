@@ -22,8 +22,10 @@ namespace rev {
 			using HFb_OP = spi::Optional<HFb>;
 			HFb_OP				_hFb;			//!< 描画対象のフレームバッファ (無効ならデフォルトターゲット)
 			HFb					_hFbPrev;		//!< 今現在OpenGLで有効になっているフレームバッファ
-			FBRect				_viewrect;
-			bool				_bView;
+			FBRect				_viewrect,
+								_scissorrect;
+			bool				_bView,
+								_bScissor;
 			Tech_SP				_tech_sp;		//!< 現在使用中のTech
 			UniformEnt			_uniformEnt;
 			draw::TokenML		_tokenML;		//!< 描画スレッドに渡す予定のコマンド
@@ -62,6 +64,7 @@ namespace rev {
 			//! アプリケーション初期化時のデフォルトフレームバッファに戻す
 			void resetFramebuffer() override;
 			FBRect setViewport(const FBRect& r) override;
+			FBRect setScissor(const FBRect& r) override;
 
 			// ----------------- Primitive -----------------
 			void setPrimitive(const Primitive_SP& p) noexcept override;

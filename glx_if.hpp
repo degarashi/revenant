@@ -33,6 +33,7 @@ namespace rev {
 			virtual void setFramebuffer(const HFb& fb) = 0;
 			virtual HFb getFramebuffer() const = 0;
 			virtual FBRect setViewport(const FBRect& r) = 0;
+			virtual FBRect setScissor(const FBRect& r) = 0;
 			virtual void resetFramebuffer() = 0;
 			virtual void setPrimitive(const Primitive_SP& p) noexcept = 0;
 			virtual void clearFramebuffer(const draw::ClearParam& param) = 0;
