@@ -19,5 +19,6 @@ namespace rev {
 			void setByRatio(const RectF& r);
 			void setByPixel(const RectF& r);
 			RectI resolve(const CBScr& cb) const;
+			bool isRatio() const noexcept;
 	};
 }

@@ -24,4 +24,7 @@ namespace rev {
 		}
 		return r.toRect<int>();
 	}
+	bool FBRect::isRatio() const noexcept {
+		return !_bPixel;
+	}
 }
