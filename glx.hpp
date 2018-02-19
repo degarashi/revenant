@@ -42,7 +42,7 @@ namespace rev {
 			virtual void _prepareUniforms();
 		public:
 			GLEffect();
-			void setTechnique(const Tech_SP& tech) override;
+			Tech_SP setTechnique(const Tech_SP& tech) override;
 			const Tech_SP& getTechnique() const noexcept override;
 			void onDeviceLost() override;
 			void onDeviceReset() override;

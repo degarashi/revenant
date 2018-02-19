@@ -28,7 +28,7 @@ namespace rev {
 	{
 		public:
 			virtual UniformEnt& refUniformEnt() noexcept = 0;
-			virtual void setTechnique(const Tech_SP& tech) = 0;
+			virtual Tech_SP setTechnique(const Tech_SP& tech) = 0;
 			virtual const Tech_SP& getTechnique() const noexcept = 0;
 			virtual void setFramebuffer(const HFb& fb) = 0;
 			virtual HFb getFramebuffer() const = 0;

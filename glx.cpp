@@ -53,9 +53,10 @@ namespace rev {
 	UniformEnt& GLEffect::refUniformEnt() noexcept {
 		return _uniformEnt;
 	}
-	void GLEffect::setTechnique(const Tech_SP& tech) {
+	Tech_SP GLEffect::setTechnique(const Tech_SP& tech) {
 		_clean_drawvalue();
 
+		const auto prev_tech = _tech_sp;
 		_tech_sp = tech;
 		_uniformEnt.setProgram(tech->getProgram());
 		// 各種セッティングをするTokenをリストに追加
@@ -68,6 +69,7 @@ namespace rev {
 		});
 		// Uniformデフォルト値読み込み
 		_uniformEnt.copyFrom(_tech_sp->getDefaultValue());
+		return prev_tech;
 	}
 	const Tech_SP& GLEffect::getTechnique() const noexcept {
 		return _tech_sp;
