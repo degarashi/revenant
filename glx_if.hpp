@@ -22,6 +22,7 @@ namespace rev {
 	using Primitive_SP = std::shared_ptr<Primitive>;
 	class SystemUniform2D;
 	class SystemUniform3D;
+	class FBRect;
 	class IEffect :
 		public IGLResource
 	{
@@ -31,7 +32,7 @@ namespace rev {
 			virtual const Tech_SP& getTechnique() const noexcept = 0;
 			virtual void setFramebuffer(const HFb& fb) = 0;
 			virtual HFb getFramebuffer() const = 0;
-			virtual void setViewport(bool bPixel, const lubee::RectF& r) = 0;
+			virtual FBRect setViewport(const FBRect& r) = 0;
 			virtual void resetFramebuffer() = 0;
 			virtual void setPrimitive(const Primitive_SP& p) noexcept = 0;
 			virtual void clearFramebuffer(const draw::ClearParam& param) = 0;

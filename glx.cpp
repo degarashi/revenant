@@ -19,7 +19,9 @@ namespace rev {
 	}
 	GLEffect::GLEffect():
 		_primitive(std::make_shared<Primitive>()),
-		_primitive_prev(std::make_shared<Primitive>())
+		_primitive_prev(std::make_shared<Primitive>()),
+		_viewrect(false, {0,1,0,1}),
+		_bView(true)
 	{}
 	diff::Buffer GLEffect::_getDifference() {
 		diff::Buffer diff = {};
@@ -36,7 +38,8 @@ namespace rev {
 
 		_clean_drawvalue();
 		_hFb = HFb();
-		_viewport = spi::none;
+		// ビューポートはデフォルトでフルスクリーンに初期化
+		setViewport({false, {0,1,0,1}});
 	}
 	void GLEffect::_clean_drawvalue() {
 		_tech_sp.reset();
@@ -75,15 +78,12 @@ namespace rev {
 				GLFBufferTmp(0, mgr_info.getScreenSize()).getDrawToken(_tokenML);
 			_hFbPrev = fb;
 			_hFb = spi::none;
-
-			// ビューポートはデフォルトでフルスクリーンに初期化
-			if(!_viewport)
-				_viewport = draw::Viewport({false, lubee::RectF{0,1,0,1}});
 		}
-		if(_viewport) {
+		if(_bView) {
 			using T = draw::Viewport;
-			new(_tokenML.allocate_memory(sizeof(T), draw::CalcTokenOffset<T>())) T(*_viewport);
-			_viewport = spi::none;
+			const draw::Viewport vp(_viewrect);
+			new(_tokenML.allocate_memory(sizeof(T), draw::CalcTokenOffset<T>())) T(vp);
+			_bView = false;
 		}
 	}
 	void GLEffect::onDeviceLost() {
@@ -148,7 +148,6 @@ namespace rev {
 	}
 	void GLEffect::setFramebuffer(const HFb& fb) {
 		_hFb = fb;
-		_viewport = spi::none;
 	}
 	HFb GLEffect::getFramebuffer() const {
 		if(_hFb)
@@ -158,8 +157,11 @@ namespace rev {
 	void GLEffect::resetFramebuffer() {
 		setFramebuffer(HFb());
 	}
-	void GLEffect::setViewport(const bool bPixel, const lubee::RectF& r) {
-		_viewport = draw::Viewport({bPixel, r});
+	FBRect GLEffect::setViewport(const FBRect& r) {
+		const auto prev = _viewrect;
+		_viewrect = r;
+		_bView = true;
+		return prev;
 	}
 	diff::Effect GLEffect::getDifference() const {
 		return _diffCount;
