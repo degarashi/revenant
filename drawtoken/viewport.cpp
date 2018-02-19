@@ -1,5 +1,4 @@
 #include "viewport.hpp"
-#include "../gl_texture.hpp"
 #include "../gl_framebuffer.hpp"
 #include "../gl_if.hpp"
 
