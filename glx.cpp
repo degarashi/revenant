@@ -70,6 +70,12 @@ namespace rev {
 		return _tech_sp;
 	}
 	void GLEffect::_outputFramebuffer() {
+		const auto set_viewrect = [this](){
+			using T = draw::Viewport;
+			const draw::Viewport vp(_viewrect);
+			new(_tokenML.allocate_memory(sizeof(T), draw::CalcTokenOffset<T>())) T(vp);
+			_bView = false;
+		};
 		if(_hFb) {
 			auto& fb = *_hFb;
 			if(fb)
@@ -78,12 +84,15 @@ namespace rev {
 				GLFBufferTmp(0, mgr_info.getScreenSize()).getDrawToken(_tokenML);
 			_hFbPrev = fb;
 			_hFb = spi::none;
+			if(!_bView) {
+				// スケールでViewportを指定していた場合、設定しなおす
+				if(_viewrect.isRatio()) {
+					set_viewrect();
+				}
+			}
 		}
 		if(_bView) {
-			using T = draw::Viewport;
-			const draw::Viewport vp(_viewrect);
-			new(_tokenML.allocate_memory(sizeof(T), draw::CalcTokenOffset<T>())) T(vp);
-			_bView = false;
+			set_viewrect();
 		}
 	}
 	void GLEffect::onDeviceLost() {
