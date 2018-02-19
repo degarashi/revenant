@@ -19,7 +19,7 @@ namespace rev {
 	bool Primitive::indexCmp(const Primitive& p) const noexcept {
 		return ib != p.ib;
 	}
-	void Primitive::extractData(draw::VStream& dst, const VSemAttrV& vAttrId) const {
+	void Primitive::extractVertexData(draw::VStream& dst, const VSemAttrV& vAttrId) const {
 		// vertex
 		Assert(vdecl, "VDecl is not set");
 		dst.spVDecl = vdecl;

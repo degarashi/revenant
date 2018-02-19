@@ -32,7 +32,7 @@ namespace rev {
 		bool vertexCmp(const Primitive& p) const noexcept;
 		bool indexCmp(const Primitive& p) const noexcept;
 		std::pair<int,int> getDifference(const Primitive& p) const noexcept;
-		void extractData(draw::VStream& dst, const VSemAttrV& vAttr) const;
+		void extractVertexData(draw::VStream& dst, const VSemAttrV& vAttr) const;
 		void getArray(CmpArray& dst) const noexcept;
 		bool operator != (const Primitive& p) const noexcept;
 		bool operator < (const Primitive& p) const noexcept;
