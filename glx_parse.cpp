@@ -256,7 +256,7 @@ namespace rev {
 			//								GLColormask
 			//							){1,4};
 			const auto VS_Range = repeat(1,4);
-			const auto ValueSet_def = no_case[GLSetting] > '=' >
+			const auto ValueSet_def = no_case[GLSetting] >> '=' >
 				repeat(1,4)[
 					(lit("0x") > uint_) |
 					no_case[
