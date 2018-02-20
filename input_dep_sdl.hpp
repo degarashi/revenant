@@ -127,4 +127,13 @@ namespace rev {
 			static int ProcessEvent(void*, SDL_Event* e);
 	};
 	using TouchDep = SDLTouchpad;
+
+	class SDLTextInput {
+		private:
+			static std::string	s_text;
+		public:
+			static void Update();
+			static const std::string& GetText() noexcept;
+	};
+	using TextInputDep = SDLTextInput;
 }

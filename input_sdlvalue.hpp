@@ -16,6 +16,8 @@ namespace rev {
 		using KeyV = std::vector<uint16_t>;
 		KeyV	key;
 
+		std::string text;
+
 		//! 毎フレーム呼ばれるリセット関数
 		void reset();
 	};

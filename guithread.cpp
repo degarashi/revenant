@@ -102,6 +102,9 @@ namespace rev {
 					case SDL_KEYUP:
 						_procKey(e);
 						break;
+					case SDL_TEXTINPUT:
+						_procTextInput(e);
+						break;
 					case SDL_QUIT:
 						// アプリケーション終了コールが来たらループを抜ける
 						bLoop = false;
@@ -218,5 +221,10 @@ namespace rev {
 			auto lc = g_sdlInputShared.lock();
 			lc->key.emplace_back(code);
 		}
+	}
+	void GUIThread::_procTextInput(SDL_Event& e) {
+		D_Assert0(e.type==SDL_TEXTINPUT);
+		auto lc = g_sdlInputShared.lock();
+		lc->text.append(e.text.text);
 	}
 }

@@ -245,6 +245,7 @@ namespace rev {
 			using ActSet = std::unordered_set<HAct>;
 			ActMgr		_act;
 			ActSet		_aset;
+			std::string	_text;
 			template <class CHK>
 			bool _checkKeyValue(CHK chk, HAct hAct) const;
 			template <std::size_t... N, class Tuple>
@@ -284,6 +285,8 @@ namespace rev {
 			void addCaptureCB(CaptureCB cb);
 			// 次回の更新時に処理
 			void update();
+			// 文字入力処理用
+			const std::string& getTextInput() const noexcept;
 	};
 	template <class T>
 	struct InputMaker {

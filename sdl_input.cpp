@@ -13,5 +13,6 @@ namespace rev {
 			b = false;
 		wheel_dx = wheel_dy = 0;
 		key.clear();
+		text.clear();
 	}
 }

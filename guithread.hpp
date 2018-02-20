@@ -35,6 +35,7 @@ namespace rev {
 			void _procMouseWheel(SDL_Event& e);
 			void _procMouseButtonDown(SDL_Event& e);
 			void _procKey(SDL_Event& e);
+			void _procTextInput(SDL_Event& e);
 
 			using Handler_OP = spi::Optional<Handler>;
 			Handler_OP			_handler;

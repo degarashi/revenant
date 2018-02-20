@@ -349,12 +349,16 @@ namespace rev {
 		}
 	}
 	void InputMgr::update() {
-		CallFunction<Keyboard, Mouse, Joypad, Touchpad>(CallUpdate());
+		CallFunction<Keyboard, Mouse, Joypad, Touchpad, TextInputDep>(CallUpdate());
 		for(auto h : *this)
 			h->scan();
 		for(auto& h : _aset) {
 			h->update();
 		}
+		_text = TextInputDep::GetText();
+	}
+	const std::string& InputMgr::getTextInput() const noexcept {
+		return _text;
 	}
 	InputMgr::InputMgr() {
 		CallFunction<Keyboard, Mouse, Joypad, Touchpad>(CallInitialize());
