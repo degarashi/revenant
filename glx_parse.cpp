@@ -240,7 +240,7 @@ namespace rev {
 				lit('=')) > UniformVal > ';';
 
 			// BoolSet: GLBoolsetting = Bool;
-			const auto BoolSet_def = no_case[GLBoolsetting] > '=' > no_case[bool_] > ';';
+			const auto BoolSet_def = no_case[GLBoolsetting] >> '=' > no_case[bool_] > ';';
 			// ValueSet: GLSetting =	GLSetting=
 			//							(
 			//								(0xUint)|
