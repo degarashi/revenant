@@ -86,7 +86,6 @@ namespace rev {
 			const T sc(_scissorrect);
 			new(_tokenML.allocate_memory(sizeof(T), draw::CalcTokenOffset<T>())) T(sc);
 			_bScissor = false;
-			std::cout << "AAA" << std::endl;
 		};
 		if(_hFb) {
 			auto& fb = *_hFb;
