@@ -12,6 +12,9 @@ namespace rev {
 		switch(e.window.event) {
 			case SDL_WINDOWEVENT_HIDDEN:
 				LogR(Verbose, "Window %1% hidden", e.window.windowID); break;
+			case SDL_WINDOWEVENT_SHOWN:
+				LogR(Verbose, "Window %1% shown", e.window.windowID); break;
+				break;
 			case SDL_WINDOWEVENT_EXPOSED:
 				LogR(Verbose, "Window %1% exposed", e.window.windowID); break;
 			case SDL_WINDOWEVENT_MOVED:
@@ -22,6 +25,13 @@ namespace rev {
 				LogR(Verbose, "Window %1% resized to %2%x%3%",
                     e.window.windowID, e.window.data1,
                     e.window.data2); break;
+			case SDL_WINDOWEVENT_SIZE_CHANGED:
+				LogR(Verbose, "Window %1% size changed to %2%,%3%",
+					e.window.windowID,
+					e.window.data1,
+					e.window.data2
+				);
+				break;
 			case SDL_WINDOWEVENT_MINIMIZED:
 				LogR(Verbose, "Window %1% minimized", e.window.windowID); break;
 			case SDL_WINDOWEVENT_MAXIMIZED:
@@ -40,6 +50,16 @@ namespace rev {
                     e.window.windowID); break;
 			case SDL_WINDOWEVENT_CLOSE:
 				LogR(Verbose, "Window %1% shown", e.window.windowID); break;
+			case SDL_WINDOWEVENT_TAKE_FOCUS:
+				LogR(Verbose, "Window %1% takes focus", e.window.windowID);
+				break;
+			case SDL_WINDOWEVENT_HIT_TEST:
+				LogR(Verbose, "Window %1% hit tested (%2%, %3%)",
+					e.window.windowID,
+					e.window.data1,
+					e.window.data2
+				);
+				break;
 			default:
 				LogR(Verbose, "Window %1% got unknown event %2%",
                     e.window.windowID, e.window.event);
