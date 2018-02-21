@@ -3,7 +3,6 @@
 #include "spine/singleton.hpp"
 #include "clock.hpp"
 #include "gl_header.hpp"
-#include "singleton_data.hpp"
 
 struct ImDrawData;
 namespace rev {
