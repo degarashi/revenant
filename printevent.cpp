@@ -8,64 +8,55 @@ namespace rev {
 		{[](const uint32_t id) { return id>=SDL_FINGERDOWN && id<= SDL_FINGERMOTION; }, Touch}
 	};
 
+	namespace {
+		template <class... Ts>
+		bool PrintLog(const SDL_WindowEvent& w, const std::string& msg, Ts&&... ts) {
+			std::string str("Window %1% ");
+			str.append(msg);
+			LogR(Verbose, str.c_str(), w.windowID, std::forward<Ts>(ts)...);
+			return true;
+		}
+	}
 	bool PrintEvent::Window(const SDL_Event& e) {
+		const SDL_WindowEvent& w = e.window;
 		switch(e.window.event) {
 			case SDL_WINDOWEVENT_HIDDEN:
-				LogR(Verbose, "Window %1% hidden", e.window.windowID); break;
+				return PrintLog(w, "hidden");
 			case SDL_WINDOWEVENT_SHOWN:
-				LogR(Verbose, "Window %1% shown", e.window.windowID); break;
-				break;
+				return PrintLog(w, "shown");
 			case SDL_WINDOWEVENT_EXPOSED:
-				LogR(Verbose, "Window %1% exposed", e.window.windowID); break;
+				return PrintLog(w, "exposed");
 			case SDL_WINDOWEVENT_MOVED:
-				LogR(Verbose, "Window %1% moved to %2%,%3%",
-					e.window.windowID, e.window.data1,
-					e.window.data2); break;
+				return PrintLog(w, "moved to %2%,%3%", w.data1, w.data2);
 			case SDL_WINDOWEVENT_RESIZED:
-				LogR(Verbose, "Window %1% resized to %2%x%3%",
-                    e.window.windowID, e.window.data1,
-                    e.window.data2); break;
+				return PrintLog(w, "resized to %2%,%3%", w.data1, w.data2);
 			case SDL_WINDOWEVENT_SIZE_CHANGED:
-				LogR(Verbose, "Window %1% size changed to %2%,%3%",
-					e.window.windowID,
-					e.window.data1,
-					e.window.data2
-				);
-				break;
+				return PrintLog(w, "size changed to %2%,%3%", w.data1, w.data2);
 			case SDL_WINDOWEVENT_MINIMIZED:
-				LogR(Verbose, "Window %1% minimized", e.window.windowID); break;
+				return PrintLog(w, "minimized");
 			case SDL_WINDOWEVENT_MAXIMIZED:
-				LogR(Verbose, "Window %1% maximized", e.window.windowID); break;
+				return PrintLog(w, "maximized");
 			case SDL_WINDOWEVENT_RESTORED:
-				LogR(Verbose, "Window %1% restored", e.window.windowID); break;
+				return PrintLog(w, "restored");
 			case SDL_WINDOWEVENT_ENTER:
-				LogR(Verbose, "Mouse entered window %1%", e.window.windowID); break;
+				return PrintLog(w, "mouse entered");
 			case SDL_WINDOWEVENT_LEAVE:
-				LogR(Verbose, "Mouse left window %1%", e.window.windowID); break;
+				return PrintLog(w, "mouse left");
 			case SDL_WINDOWEVENT_FOCUS_GAINED:
-				LogR(Verbose, "Window %1% gained keyboard focus",
-                    e.window.windowID); break;
+				return PrintLog(w, "gained keyboard focus");
 			case SDL_WINDOWEVENT_FOCUS_LOST:
-				LogR(Verbose, "Window %1% lost keyboard focus",
-                    e.window.windowID); break;
+				return PrintLog(w, "lost keyboard focus");
 			case SDL_WINDOWEVENT_CLOSE:
-				LogR(Verbose, "Window %1% shown", e.window.windowID); break;
+				return PrintLog(w, "closed");
 			case SDL_WINDOWEVENT_TAKE_FOCUS:
-				LogR(Verbose, "Window %1% takes focus", e.window.windowID);
-				break;
+				return PrintLog(w, "takes focus");
 			case SDL_WINDOWEVENT_HIT_TEST:
-				LogR(Verbose, "Window %1% hit tested (%2%, %3%)",
-					e.window.windowID,
-					e.window.data1,
-					e.window.data2
-				);
-				break;
+				return PrintLog(w, "hit tested (%2%, %3%)", w.data1, w.data2);
 			default:
-				LogR(Verbose, "Window %1% got unknown event %2%",
-                    e.window.windowID, e.window.event);
+				PrintLog(w, "got unknown event data1=%2%, data2=%3%", w.data1, w.data2);
 				return false;
 		}
-		return true;
+		return false;
 	}
 	bool PrintEvent::Touch(const SDL_Event& e) {
 		const auto printCoord = [](const SDL_Event& e, const char* act) {
