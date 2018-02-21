@@ -25,7 +25,7 @@ using Primitive_SP = std::shared_ptr<rev::Primitive>;
 //! 表示テスト用のスプライト
 class Sprite2D : public beat::g2::Pose {
 	private:
-		using Prim = rev::SingletonData<rev::Primitive, Sprite2D>;
+		using Prim = rev::SingletonData<rev::Primitive, Sprite2D, 0>;
 		Prim				_primitive;
 		rev::HTex			_hTex;
 		lubee::RangeF		_zRange;
@@ -33,7 +33,7 @@ class Sprite2D : public beat::g2::Pose {
 							_alpha;
 
 	public:
-		static Primitive_SP MakeData();
+		static Primitive_SP MakeData(lubee::IConst<0>);
 		const static rev::Name	T_Sprite2D;
 		Sprite2D(const rev::HTex& t, float z);
 		void draw(rev::IEffect& e) const;

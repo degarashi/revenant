@@ -8,7 +8,7 @@
 
 const rev::Name Sprite2D::T_Sprite2D("Sprite|Default");
 // ----------------------- Sprite -----------------------
-Primitive_SP Sprite2D::MakeData() {
+Primitive_SP Sprite2D::MakeData(lubee::IConst<0>) {
 	auto ret = std::make_shared<rev::Primitive>();
 
 	// 大きさ1の矩形を定義して後でスケーリング

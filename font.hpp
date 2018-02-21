@@ -84,7 +84,7 @@ namespace rev {
 		//! フォントテクスチャと描画用頂点を用意
 		void _init(Face &face);
 		// デフォルト描画シェーダー
-		const static SingletonDataLazy<ITech, TextObj>	s_defaultTech;
+		const static SingletonDataLazy<ITech, TextObj, 0>	s_defaultTech;
 
 		public:
 			TextObj(TextObj&& t) = default;
@@ -105,7 +105,7 @@ namespace rev {
 			void draw(IEffect& gle) const;
 			const lubee::SizeF& getSize() const;
 			void exportDrawTag(DrawTag& d) const;
-			static Tech_SP MakeData();
+			static Tech_SP MakeData(lubee::IConst<0>);
 			static Tech_SP GetDefaultTech();
 	};
 
