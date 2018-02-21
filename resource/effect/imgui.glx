@@ -1,0 +1,38 @@
+attribute ImGuiAttr {
+	highp vec2 Position : POSITION;
+	mediump vec2 UV : TEXCOORD_0;
+	mediump vec4 Color : COLOR_0;
+}
+uniform ImGuiUnif {
+	mat4 ProjMtx;
+	sampler2D Texture;
+}
+varying ImGuiVary {
+	vec2 Frag_UV;
+	vec4 Frag_Color;
+}
+vertexshader(130) ImGuiVS() {
+	Frag_UV = UV;
+	Frag_Color = Color;
+	gl_Position = vec4(Position.xy,0,1) * ProjMtx;
+}
+fragmentshader(130) ImGuiFS() {
+	gl_FragColor = Frag_Color * texture(Texture, Frag_UV.st);
+}
+technique ImGui {
+	Blend = true;
+	BlendEq = Add;
+	BlendFunc = SrcAlpha InvSrcAlpha;
+	CullFace = false;
+	DepthTest = false;
+	ScissorTest = true;
+	PolygonMode = Fill;
+	Attribute = ImGuiAttr;
+	Varying = ImGuiVary;
+	Uniform = ImGuiUnif;
+
+	pass Default {
+		VertexShader = ImGuiVS();
+		FragmentShader = ImGuiFS();
+	}
+}

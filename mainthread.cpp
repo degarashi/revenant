@@ -112,7 +112,9 @@ namespace rev {
 				FxReload rel;
 				try {
 					auto lk = g_system_shared.lock();
-					_InitManagers(mgr, *lk->param);
+					const auto w = lk->window.lock();
+					D_Assert0(w);
+					_InitManagers(mgr, *lk->param, *w);
 				} catch (...) {
 					// リソースマネージャの初期化に失敗した際は速やかにループを抜ける
 					LogR(Error, "Exception thrown when initializing resource managers");
@@ -209,10 +211,11 @@ namespace rev {
 								} while(bLoop);
 							}
 						}
+						const auto prev2 = prevtime;
 						// 次のフレーム開始時刻を待つ
 						prevtime = _WaitForNextInterval(prevtime, Microseconds(16666));
 						// 1フレーム分の処理を行う
-						if(_updateFrame(mp.get(), dth, drawHandler))
+						if(_updateFrame(mp.get(), dth, drawHandler, Clock::now() - prev2))
 							break;
 					} while(bLoop);
 					// シーンマネージャに積んであるシーンを全て終了させる
@@ -221,7 +224,7 @@ namespace rev {
 						auto lk = g_system_shared.lock();
 						const auto w = lk->window.lock();
 						mgr_info.setInfo(w->getSize(), dth.getInfo()->fps.getFPS());
-						mp->runU();
+						mp->runU(Seconds(0));
 					}
 				}
 				GL.glFlush();

@@ -33,6 +33,7 @@ aux_source_directory(. LIBSRC_FILE)
 aux_source_directory(drawtoken LIBSRC_FILE)
 aux_source_directory(util LIBSRC_FILE)
 aux_source_directory(lua_define LIBSRC_FILE)
+aux_source_directory(imgui LIBSRC_FILE)
 list(REMOVE_ITEM LIBSRC_FILE ${OS_DEPENDANT_SRC} ${SOUND_DEPENDANT_SRC})
 
 # サウンド依存ファイルの設定

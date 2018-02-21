@@ -25,3 +25,4 @@ OggVorbis:
 	libboost 1.55
 	FreeType 2.0
 	Lua 5.3
+	ImGui (rev: 41ecebff5a63b1fa71ad0d1ef6f1e6d3d39ef07d)

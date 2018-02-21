@@ -12,7 +12,7 @@
 #include "sound.hpp"
 
 namespace rev {
-	bool MainThread::_updateFrame(MainProc* mp, DrawThread& dth, Handler& drawHandler) {
+	bool MainThread::_updateFrame(MainProc* mp, DrawThread& dth, Handler& drawHandler, const Duration delta) {
 		// プロファイラのフレーム切り替え
 		// spn::profiler.onFrame();
 		try {
@@ -22,11 +22,15 @@ namespace rev {
 			mgr_sound.update();
 			g_sdlInputShared.lock()->reset();
 			{
-				mgr_info.setInfo(
-					g_system_shared.lock()->window.lock()->getSize(),
-					dth.getInfo()->fps.getFPS()
-				);
-				if(!mp->runU()) {
+				{
+					auto lc = g_system_shared.lockC();
+					const auto w = lc->window.lock();
+					mgr_info.setInfo(
+						w->getSize(),
+						dth.getInfo()->fps.getFPS()
+					);
+				}
+				if(!mp->runU(delta)) {
 					LogR(Verbose, "Exiting loop by normally");
 					return true;
 				}

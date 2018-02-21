@@ -10,6 +10,7 @@ namespace rev {
 	struct GameloopParam;
 	class URI;
 
+	class Window;
 	class DrawThread;
 	class IEffect;
 	using HFx = std::shared_ptr<IEffect>;
@@ -35,6 +36,7 @@ namespace rev {
 	}
 	class ObjMgr;
 	class SceneMgr;
+	class ImGui_SDL2;
 	//! メインスレッド
 	class MainThread : public spi::Singleton<MainThread>,
 						public ThreadL<void (const Looper_SP&)>
@@ -67,6 +69,7 @@ namespace rev {
 				SPtr<UnifPool>				unifPool;
 				SPtr<ObjMgr>				obj;
 				SPtr<SceneMgr>				scene;
+				SPtr<ImGui_SDL2>			imgui;
 			};
 			struct FxReload {
 				HFx	curFx, prevFx;
@@ -74,7 +77,7 @@ namespace rev {
 				using PathSet = std::unordered_set<Dir>;
 				PathSet updatePath;
 			};
-			static void _InitManagers(Manager& m, const GameloopParam& param);
+			static void _InitManagers(Manager& m, const GameloopParam& param, const Window& w);
 			//! AppPathの場所に置かれたフォントファイルを列挙し、読み込む
 			static void _LoadFonts();
 			//! AppPathをテキストファイルから設定
@@ -84,7 +87,7 @@ namespace rev {
 			void _setupFxNotify(FNotify& ntf);
 			void _checkFxReload(FNotify& ntf, FxReload& rel);
 			static Timepoint _WaitForNextInterval(Timepoint prevtime, Duration interval);
-			bool _updateFrame(MainProc* mp, DrawThread& dth, Handler& drawHandler);
+			bool _updateFrame(MainProc* mp, DrawThread& dth, Handler& drawHandler, Duration delta);
 		protected:
 			void runL(const Looper_SP& guiLooper) override;
 		public:

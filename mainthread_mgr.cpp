@@ -18,12 +18,13 @@
 #include "scene.hpp"
 #include "uniform_pool.hpp"
 #include "glx_block.hpp"
+#include "imgui_sdl2.hpp"
 
 namespace rev {
 	namespace {
 		const int DefaultUnifPoolSize = 0x100;
 	}
-	void MainThread::_InitManagers(Manager& m, const GameloopParam& param) {
+	void MainThread::_InitManagers(Manager& m, const GameloopParam& param, const Window& w) {
 		m.lsys = std::make_shared<LSysFunc>();
 		m.cam2 = std::make_shared<Camera2DMgr>();
 		m.cam3 = std::make_shared<Camera3DMgr>();
@@ -53,6 +54,11 @@ namespace rev {
 		m.unifPool = std::make_shared<UnifPool>(DefaultUnifPoolSize);
 		m.obj = std::make_shared<ObjMgr>();
 		m.scene = std::make_shared<SceneMgr>();
+		m.imgui = std::make_shared<ImGui_SDL2>(
+			Keyboard::OpenKeyboard(),
+			Mouse::OpenMouse(0),
+			w
+		);
 	}
 	void MainThread::_LoadPathfile(const URI& uri, const bool bAppend) {
 		mgr_path.setFromText(mgr_rw.fromURI(uri, Access::Read), bAppend);
