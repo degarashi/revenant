@@ -7,7 +7,7 @@
 namespace rev {
 	namespace test {
 		struct UserShare {
-			HTP		technique;
+			Tech_SP spriteTech;
 			Tech_SP	textTech;
 		};
 		extern SpinLock<UserShare> g_shared;

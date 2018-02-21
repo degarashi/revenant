@@ -27,6 +27,8 @@ class Sprite2D : public beat::g2::Pose {
 	private:
 		using Prim = rev::SingletonData<rev::Primitive, Sprite2D, 0>;
 		Prim				_primitive;
+		using DefaultTech = rev::SingletonData<rev::ITech, Sprite2D, 1>;
+		static DefaultTech	s_defaultTech;
 		rev::HTex			_hTex;
 		lubee::RangeF		_zRange;
 		float				_zOffset,
@@ -34,7 +36,8 @@ class Sprite2D : public beat::g2::Pose {
 
 	public:
 		static Primitive_SP MakeData(lubee::IConst<0>);
-		const static rev::Name	T_Sprite2D;
+		static rev::Tech_SP MakeData(lubee::IConst<1>);
+		static rev::Tech_SP GetDefaultTech();
 		Sprite2D(const rev::HTex& t, float z);
 		void draw(rev::IEffect& e) const;
 		void setZOffset(float z);

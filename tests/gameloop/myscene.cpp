@@ -23,7 +23,7 @@ namespace rev {
 			void onEnter(MyScene& self, ObjTypeId_OP) override {
 				{
 					auto lk = g_shared.lock();
-					lk->technique = mgr_gl.loadTechPass("sprite2d.glx");
+					lk->spriteTech = Sprite2D::GetDefaultTech();
 					lk->textTech = rev::TextObj::GetDefaultTech();
 				}
 				// 終了ボタン定義
@@ -95,7 +95,7 @@ namespace rev {
 		}
 		MyScene::~MyScene() {
 			auto lk = g_shared.lock();
-			lk->technique.reset();
+			lk->spriteTech.reset();
 			lk->textTech.reset();
 		}
 	}

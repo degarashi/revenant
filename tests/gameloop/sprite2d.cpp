@@ -5,8 +5,8 @@
 #include "../../util/sys_unif.hpp"
 #include "../../vdecl.hpp"
 #include "../../drawtoken/make_uniform.hpp"
+#include "../../tech_pass.hpp"
 
-const rev::Name Sprite2D::T_Sprite2D("Sprite|Default");
 // ----------------------- Sprite -----------------------
 Primitive_SP Sprite2D::MakeData(lubee::IConst<0>) {
 	auto ret = std::make_shared<rev::Primitive>();
@@ -30,6 +30,13 @@ Primitive_SP Sprite2D::MakeData(lubee::IConst<0>) {
 	info.offsetElem = 0;
 	return ret;
 }
+rev::Tech_SP Sprite2D::MakeData(lubee::IConst<1>) {
+	return mgr_gl.loadTechPass("sprite2d.glx")->getTechnique("Sprite|Default");
+}
+rev::Tech_SP Sprite2D::GetDefaultTech() {
+	return s_defaultTech.GetData();
+}
+
 Sprite2D::Sprite2D(const rev::HTex& t, const float z) {
 	beat::g2::Pose::identity();
 	_hTex = t;
@@ -53,7 +60,7 @@ void Sprite2D::setZRange(const lubee::RangeF& r) {
 void Sprite2D::draw(rev::IEffect& e) const {
 	{
 		auto lk = rev::test::g_shared.lock();
-		e.setTechnique(lk->technique->getTechnique(T_Sprite2D));
+		e.setTechnique(lk->spriteTech);
 	}
 	auto& u = e.refUniformEnt();
 	u.setUniform(rev::unif2d::texture::Diffuse, [this](){ return rev::draw::MakeUniform(_hTex); });
