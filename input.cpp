@@ -349,7 +349,7 @@ namespace rev {
 		}
 	}
 	void InputMgr::update() {
-		CallFunction<Keyboard, Mouse, Joypad, Touchpad, TextInputDep>(CallUpdate());
+		CallFunction<Keyboard, Mouse, Joypad, Touchpad, TextInputDep, KeyLogDep>(CallUpdate());
 		for(auto h : *this)
 			h->scan();
 		for(auto& h : _aset) {
@@ -359,6 +359,12 @@ namespace rev {
 	}
 	const std::string& InputMgr::getTextInput() const noexcept {
 		return _text;
+	}
+	const KeyLogV& InputMgr::getKeyLog() const noexcept {
+		return KeyLogDep::GetLog();
+	}
+	const KeyAux& InputMgr::getKeyAux() const noexcept {
+		return KeyLogDep::GetAux();
 	}
 	InputMgr::InputMgr() {
 		CallFunction<Keyboard, Mouse, Joypad, Touchpad>(CallInitialize());

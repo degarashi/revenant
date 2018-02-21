@@ -216,11 +216,15 @@ namespace rev {
 	void GUIThread::_procKey(SDL_Event& e) {
 		D_Assert0(e.type==SDL_KEYDOWN || e.type==SDL_KEYUP);
 		const bool down = (e.type == SDL_KEYDOWN);
-		if(down) {
-			const int code = e.key.keysym.scancode;
-			auto lc = g_sdlInputShared.lock();
-			lc->key.emplace_back(code);
-		}
+		auto lc = g_sdlInputShared.lock();
+		auto& inp = *lc;
+		const int code = e.key.keysym.scancode;
+		const int key = e.key.keysym.sym & ~SDLK_SCANCODE_MASK;
+		inp.key.emplace_back(KeyLog{code, key, down});
+		inp.keyaux.shift = ((SDL_GetModState() & KMOD_SHIFT) != 0);
+		inp.keyaux.ctrl = ((SDL_GetModState() & KMOD_CTRL) != 0);
+		inp.keyaux.alt = ((SDL_GetModState() & KMOD_ALT) != 0);
+		inp.keyaux.super = ((SDL_GetModState() & KMOD_GUI) != 0);
 	}
 	void GUIThread::_procTextInput(SDL_Event& e) {
 		D_Assert0(e.type==SDL_TEXTINPUT);

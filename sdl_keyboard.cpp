@@ -10,11 +10,11 @@ namespace rev {
 	bool SDLKeyboard::dep_scan() noexcept {
 		std::memcpy(&_state[0], SDL_GetKeyboardState(nullptr), SDL_NUM_SCANCODES);
 		{
-			auto lc = g_sdlInputShared.lockC();
-			auto& key = lc->key;
-			for(auto k : key) {
-				_state[k] = 1;
-			}
+			auto lc = g_sdlInputShared.lock();
+			lc->procKey([this](const int len, const KeyLog& k){
+				if(len > 1 || k.down)
+					_state[k.scancode] = 1;
+			});
 		}
 		return true;
 	}

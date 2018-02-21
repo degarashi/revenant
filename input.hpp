@@ -287,6 +287,8 @@ namespace rev {
 			void update();
 			// 文字入力処理用
 			const std::string& getTextInput() const noexcept;
+			const KeyLogV& getKeyLog() const noexcept;
+			const KeyAux& getKeyAux() const noexcept;
 	};
 	template <class T>
 	struct InputMaker {
