@@ -341,11 +341,16 @@ namespace rev {
 #include <regex>
 #include <ostream>
 #include <boost/format.hpp>
+#include "output.hpp"
 namespace rev {
 	namespace parse {
 		namespace {
 			std::regex re_comment(R"(//[^\n$]+)"),		//!< 一行コメント
 						re_comment2(R"(/\*[^\*]*\*/)");		//!< 範囲コメント
+			const char* c_result[2] = {
+				"------- analysis failed! -------",
+				"------- analysis succeeded! -------"
+			};
 		}
 		void ParseGlx(GLXStruct& dst, std::string str) {
 			// コメント部分を除去 -> スペースに置き換える
@@ -354,18 +359,15 @@ namespace rev {
 			auto itr = str.cbegin();
 			try {
 				const bool bS = x3::phrase_parse(itr, str.cend(), glx_rule::Glx, x3::standard::space, dst);
-				#ifdef DEBUG
-					std::cout << ((bS) ? "------- analysis succeeded! -------"
-										: "------- analysis failed! -------");
-					if(itr != str.cend()) {
-						std::cout << (boost::format("<but not reached to end>\nremains: %1%") % std::string(itr, str.cend())).str();
-					} else {
-						// 解析結果の表示
-						std::stringstream ss;
-						ss << dst;
-						std::cout << ss.str();
-					}
-				#endif
+				Log(Verbose, c_result[static_cast<int>(bS)]);
+				if(itr != str.cend()) {
+					LogR(Verbose, "<but not reached to end>\nremains: %1%", std::string(itr, str.cend()));
+				} else {
+					// 解析結果の表示
+					std::stringstream ss;
+					ss << dst;
+					Log(Verbose, ss.str().c_str());
+				}
 				if(!bS || itr!=str.cend()) {
 					std::stringstream ss;
 					ss << "GLEffect parse error:";
@@ -374,10 +376,11 @@ namespace rev {
 					throw std::runtime_error(ss.str());
 				}
 			} catch(const x3::expectation_failure<std::string::const_iterator>& e) {
-				std::cout << ((boost::format("expectation_failure: \nat: %1%\nwhich: %2%\nwhat: %3%")
-							% std::string(e.where(), str.cend())
-							% e.which()
-							% e.what()).str());
+				LogR(Error, "expectation_failure: \nat: %1%\nwhich: %2%\nwhat: %3%",
+					std::string(e.where(), str.cend()),
+					e.which(),
+					e.what()
+				);
 				throw;
 			}
 		}
