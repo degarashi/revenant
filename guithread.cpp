@@ -5,6 +5,7 @@
 #include "sdl_init.hpp"
 #include "sdl_window.hpp"
 #include "input.hpp"
+#include "rev_output.hpp"
 #include "output.hpp"
 #include "sharedata.hpp"
 #include <SDL.h>
