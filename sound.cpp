@@ -241,22 +241,22 @@ namespace rev {
 
 		switch(static_cast<AState>(stateID)) {
 			case AState::Initial:
-				std::cout << "RESTORE Initial" << std::endl;
+				Log(Verbose, "AState: RESTORE Initial");
 				break;
 			case AState::Playing:
-				std::cout << "RESTORE Playing" << std::endl;
+				Log(Verbose, "AState: RESTORE Playing");
 				self.timeSeek(timePos);
 				self.play();
 				break;
 			case AState::Paused:
-				std::cout << "RESTORE Paused" << std::endl;
+				Log(Verbose, "AState: RESTORE Paused");
 				self.timeSeek(timePos);
 				break;
 			case AState::Stopped:
-				std::cout << "RESTORE Stopped" << std::endl;
+				Log(Verbose, "AState: RESTORE Stopped");
 				break;
 			case AState::Empty:
-				std::cout << "RESTORE Empty" << std::endl;
+				Log(Verbose, "AState: RESTORE Empty");
 				break;
 			default:
 				D_Assert0(false);
@@ -436,7 +436,7 @@ namespace rev {
 	// --------------------- ASource::S_Empty ---------------------
 	ASource::S_Empty::S_Empty(ASource& /*s*/) {}
 	void ASource::S_Empty::onEnter(ASource& self, AState /*prev*/) {
-		std::cout << "S_Empty" << std::endl;
+		Log(Verbose, "S_Empty" );
 		self._pcmPos = 0;
 		self._timePos = std::chrono::seconds(0);
 	}
@@ -454,7 +454,7 @@ namespace rev {
 	{}
 	ASource::S_Initial::S_Initial(ASource& /*s*/) {}
 	void ASource::S_Initial::onEnter(ASource& self, AState /*prev*/) {
-		std::cout << "S_Initial" << std::endl;
+		Log(Verbose, "S_Initial" );
 		self._dep.reset();
 		self._dep.clearBlock();
 
@@ -506,7 +506,7 @@ namespace rev {
 		_bSysPause(false)
 	{}
 	void ASource::S_Playing::onEnter(ASource& self, AState /*prev*/) {
-		std::cout << "S_Playing" << std::endl;
+		Log(Verbose, "S_Playing" );
 
 		self._tmUpdate = Clock::now();
 		auto& fd = self._fade[FADE_CHANGE];
@@ -607,7 +607,7 @@ namespace rev {
 	// --------------------- ASource::S_Paused ---------------------
 	ASource::S_Paused::S_Paused(ASource& /*s*/) {}
 	void ASource::S_Paused::onEnter(ASource& self, AState /*prev*/) {
-		std::cout << "S_Paused" << std::endl;
+		Log(Verbose, "S_Paused");
 		self._dep.pause();
 	}
 	void ASource::S_Paused::play(ASource& self, const Duration fadeIn) {
