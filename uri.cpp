@@ -57,6 +57,9 @@ namespace rev {
 		}
 		return false;
 	}
+	std::ostream& operator << (std::ostream& os, const URI& u) {
+		return os << u.plain();
+	}
 	// ----------------- IdURI -----------------
 	namespace {
 		const std::string s_id("id://");

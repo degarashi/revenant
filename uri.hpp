@@ -30,6 +30,7 @@ namespace rev {
 			virtual ~URI();
 	};
 	URI_SP MakeURIFromString(const char* s);
+	std::ostream& operator << (std::ostream& os, const URI& u);
 
 	#define DEF_URIMETHOD \
 		std::string path() const override; \
