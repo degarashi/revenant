@@ -18,7 +18,7 @@ namespace rev {
 					reinterpret_cast<LPWSTR>(&lpMsg),
 					128, nullptr);
 		PathStr pstr(reinterpret_cast<const char16_t*>(lpMsg));
-		std::cout << Text::UTFConvertTo8(pstr) << std::endl;
+		LogHere(Verbose, Text::UTFConvertTo8(pstr).c_str());
 		LocalFree(lpMsg);
 
 		std::stringstream ss;
