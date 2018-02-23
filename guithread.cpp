@@ -5,7 +5,7 @@
 #include "sdl_init.hpp"
 #include "sdl_window.hpp"
 #include "input.hpp"
-#include "rev_output.hpp"
+#include "pooled_output.hpp"
 #include "output.hpp"
 #include "sharedata.hpp"
 #include <SDL.h>
@@ -32,7 +32,7 @@ namespace rev {
 			// egl関数がロードされてないとのエラーが出る為
 			SDL_GL_LoadLibrary("libEGL.so");
 		#endif
-		lubee::log::Log::GetOutput() = std::make_unique<log::RevOutput>();
+		lubee::log::Log::GetOutput() = std::make_unique<log::PooledRevOutput>();
 		LogR(Verbose, "RevOutput initializing done");
 		{
 			Window::GLParam gp;
