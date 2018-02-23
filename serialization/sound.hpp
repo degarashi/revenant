@@ -48,7 +48,7 @@ namespace rev {
 		const_cast<Duration&>(s._timePos) = s._timePos + (Clock::now() - s._tmUpdate);
 		save.pack(s);
 		ar(save);
-		std::cout << "save: " << s._playedCur << std::endl;
+		LogHere(Verbose, "save: %d", s._playedCur);
 		const_cast<Duration&>(s._timePos) = tm;
 	}
 	template <class Ar>
@@ -59,7 +59,7 @@ namespace rev {
 		ASource::Save save;
 		ar(save);
 		save.unpack(s);
-		std::cout << "load: " << s._playedCur << std::endl;
+		LogHere(Verbose, "load: %d", s._playedCur);
 	}
 	template <class Ar>
 	void serialize(Ar& ar, AGroup& a) {
@@ -71,7 +71,7 @@ namespace rev {
 		try {
 			ar(mgr.getRate(), mgr._buffMgr, mgr._srcMgr, mgr._sgMgr);
 		} catch(const std::exception& e) {
-			std::cout << e.what() << std::endl;
+			LogHere(Error, e.what());
 		}
 	}
 	template <class Ar>
@@ -90,7 +90,7 @@ namespace cereal {
 			try {
 				ar(construct->_buffMgr, construct->_srcMgr, construct->_sgMgr);
 			} catch(const std::exception& e) {
-				std::cout << e.what() << std::endl;
+				LogHere(Error, e.what());
 			}
 		}
 	};
