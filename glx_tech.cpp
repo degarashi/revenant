@@ -324,10 +324,9 @@ namespace rev {
 			OutputCommentBlock(ss, s->name);
 			// 関数名はmain()に書き換え
 			ss << "void main() " << s->getShaderString() << std::endl;
-	#ifdef DEBUG
-			std::cout << ss.str();
-			std::cout.flush();
-	#endif
+
+			Log(Verbose, ss.str().c_str());
+
 			shP[i] = mgr_gl.makeShader(static_cast<ShType::e>(i), ss.str());
 
 			ss.str("");
