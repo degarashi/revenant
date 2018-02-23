@@ -60,7 +60,7 @@ namespace rev {
 				rel.prevFxCounter = draw::Task::NUM_TASK;
 			} catch(const std::exception& e) {
 				// 文法エラーが起こったら差し替えない
-				std::cout << e.what() << std::endl;
+				Log(Info, "effect reloading failed.\n%s", e.what());
 			}
 		}
 	}
