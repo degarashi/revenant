@@ -2,11 +2,10 @@
 #include "../../imgui/imgui.h"
 #include "frea/matrix.hpp"
 #include "../id.hpp"
+#include "../constant.hpp"
 
 namespace rev {
 	namespace debug {
-		const std::string& DefaultDisplayFormat(float);
-		const std::string& DefaultDisplayFormat(int);
 		namespace {
 			const ImVec4 c_axisColor[4] = {
 				{1,		0.5f,	0.5f,	1},

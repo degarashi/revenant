@@ -1,13 +1,10 @@
 #pragma once
 #include "../../imgui/imgui.h"
 #include "frea/angle.hpp"
+#include "../constant.hpp"
 
 namespace rev {
 	namespace debug {
-		const std::string& DefaultDisplayFormat(double);
-		const std::string& DefaultDisplayFormat(float);
-		const std::string& DefaultDisplayFormat(int);
-
 		template <class = void>
 		class AngleBase {
 			protected:
