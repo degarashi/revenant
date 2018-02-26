@@ -28,6 +28,11 @@ set(DEPENDANT_OPENSL ./sound_depSL.cpp ./sound_depSL_error.cpp)
 set(DEPENDANT_OPENAL ./sound_depAL.cpp ./sound_depAL_error.cpp)
 set(SOUND_DEPENDANT_SRC ${DEPENDANT_OPENSL} ${DEPENDANT_OPENAL})
 
+if(${WITH_DEBUGGUI})
+	add_definitions(-DDEBUGGUI_ENABLED)
+	aux_source_directory(debug_gui LIBSRC_FILE)
+	aux_source_directory(debug_gui/types LIBSRC_FILE)
+endif()
 # 依存ファイル以外のソースファイルを収集
 aux_source_directory(. LIBSRC_FILE)
 aux_source_directory(drawtoken LIBSRC_FILE)
