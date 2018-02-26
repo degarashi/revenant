@@ -1,6 +1,7 @@
 #include "../../handle.hpp"
 #include "../../camera2d.hpp"
 #include "../../imgui/imgui.h"
+#include "../print.hpp"
 
 namespace rev {
 	namespace debug {
