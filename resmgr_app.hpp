@@ -12,6 +12,9 @@ namespace rev {
 			return *uri == *w.uri;
 		}
 	};
+	inline std::ostream& operator << (std::ostream& os, const URIWrap& w) {
+		return os << *w.uri;
+	}
 }
 namespace spi {
 	rev::URIWrap MakeAnonymous(rev::URIWrap*, uint64_t num);
