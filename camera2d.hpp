@@ -7,6 +7,10 @@
 #include "spine/singleton.hpp"
 
 namespace rev {
+	namespace debug {
+		class Camera2DC;
+		class Camera2D;
+	}
 	//! 2Dカメラ姿勢クラス
 	/*!
 		2Dゲームの他にミニマップ表示などで使用
@@ -36,6 +40,8 @@ namespace rev {
 				((Accum)(Accum_t)(Pose)(AspectRatio))
 			RFLAG_DEFINE(Camera2D, SEQ)
 			RFLAG_SETMETHOD(Accum)
+			friend class debug::Camera2DC;
+			friend class debug::Camera2D;
 		public:
 			RFLAG_GETMETHOD_DEFINE(SEQ)
 			RFLAG_SETMETHOD_DEFINE(SEQ)
