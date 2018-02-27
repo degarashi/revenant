@@ -13,6 +13,9 @@ namespace rev {
 			template void _Show(const frea::AVec2& v);
 			template void _Show(const frea::AVec3& v);
 			template void _Show(const frea::AVec4& v);
+			template void _Show(const frea::IVec2& v);
+			template void _Show(const frea::IVec3& v);
+			template void _Show(const frea::IVec4& v);
 
 			template <class V>
 			bool _Edit_2(V& v, std::true_type) {
@@ -32,6 +35,9 @@ namespace rev {
 			template bool _Edit<frea::AVec2>(frea::AVec2& v);
 			template bool _Edit<frea::AVec3>(frea::AVec3& v);
 			template bool _Edit<frea::AVec4>(frea::AVec4& v);
+			template bool _Edit<frea::IVec2>(frea::IVec2& v);
+			template bool _Edit<frea::IVec3>(frea::IVec3& v);
+			template bool _Edit<frea::IVec4>(frea::IVec4& v);
 
 			template <class V>
 			bool _Slider_2(V& v, const typename V::value_t& v_min, const typename V::value_t& v_max, std::true_type) {
