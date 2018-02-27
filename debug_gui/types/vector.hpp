@@ -23,13 +23,12 @@ namespace rev {
 					_v(v)
 				{}
 				void show(const char* display_format = DefaultDisplayFormat<typename V::value_t>) const {
-					ImGui::Columns(V::size, "", false);
 					for(int i=0 ; i<V::size ; i++) {
 						const IdPush id(i);
+						if(i != 0)
+							ImGui::SameLine(i*100);
 						ImGui::TextColored(c_axisColor[i], display_format, _v.m[i]);
-						ImGui::NextColumn();
 					}
-					ImGui::Columns(1);
 				}
 		};
 		template <
