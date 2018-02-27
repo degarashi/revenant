@@ -54,18 +54,18 @@ namespace rev {
 			template <class V, ENABLE_IF(frea::is_vector<V>{})>
 			bool _Slider(V& v, const typename V::value_t& v_min, const typename V::value_t& v_max);
 		}
-		template <class T>
-		void Show(const char* id, const T& t) {
+		template <class Id, class T>
+		void Show(const Id& id, const T& t) {
 			const IdPush ip(id);
 			inner::_Show(t);
 		}
-		template <class T>
-		bool Edit(const char* id, T& t) {
+		template <class Id, class T>
+		bool Edit(const Id& id, T& t) {
 			const IdPush ip(id);
 			return inner::_Edit(t);
 		}
-		template <class T, class... Ts>
-		bool Slider(const char* id, T& t, const Ts&... ts) {
+		template <class Id, class T, class... Ts>
+		bool Slider(const Id& id, T& t, const Ts&... ts) {
 			const IdPush ip(id);
 			return inner::_Slider(t, ts...);
 		}
