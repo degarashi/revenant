@@ -85,6 +85,13 @@ namespace rev {
 		ImGui::GetIO().Fonts->TexID = 0;
 		ImGui::DestroyContext();
 	}
+	ImTextureID ImGui_SDL2::storeResource(const Void_SPC& r) {
+		_resV.emplace_front(r);
+		return &_resV.front();
+	}
+	void ImGui_SDL2::_clearResource() {
+		_resV.clear();
+	}
 	void ImGui_SDL2::newFrame(const HFx& fx, const Window& window, const Duration delta) {
 		_effect = fx;
 		ImGuiIO& io = ImGui::GetIO();
@@ -153,6 +160,7 @@ namespace rev {
 	}
 	void ImGui_SDL2::endFrame() {
 		ImGui::Render();
+		_clearResource();
 	}
 	void ImGui_SDL2::_initFontsTexture() {
 		// Build texture atlas
