@@ -3,17 +3,14 @@
 namespace rev {
 	namespace debug {
 		const float EntrySpacing = 12.f;
-		const std::string& DefaultDisplayFormat(double) {
-			static std::string ret{"%.6lf"};
-			return ret;
-		}
-		const std::string& DefaultDisplayFormat(float) {
-			static std::string ret{"%.3f"};
-			return ret;
-		}
-		const std::string& DefaultDisplayFormat(int) {
-			static std::string ret{"%d"};
-			return ret;
+		template <>
+		const char* DefaultDisplayFormat<double> = "%.6lf";
+		template <>
+		const char* DefaultDisplayFormat<float> = "%.3f";
+		template <>
+		const char* DefaultDisplayFormat<int> = "%d";
+		template <>
+		const char* DefaultDisplayFormat<unsigned int> = "%u";
 		}
 	}
 }

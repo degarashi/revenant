@@ -49,7 +49,7 @@ namespace rev {
 				AngleC(const A& a):
 					_a(a)
 				{}
-				void show(const char* display_format = DefaultDisplayFormat(typename A::value_t()).c_str()) const {
+				void show(const char* display_format = DefaultDisplayFormat<typename A::value_t>) const {
 					const auto fmt = ModAngleFormat(display_format);
 					if(s_radian)
 						ImGui::Text(fmt.c_str(), frea::RadF(_a).get());
@@ -94,7 +94,7 @@ namespace rev {
 					return false;
 				}
 				bool slider(const char* label, const A& v_min, const A& v_max,
-							const char* display_format = DefaultDisplayFormat(typename A::value_t()).c_str())
+							const char* display_format = DefaultDisplayFormat<typename A::value_t>)
 				{
 					using Deg = frea::DegF;
 					using Rad = frea::RadF;

@@ -11,7 +11,7 @@ namespace rev {
 				MatrixC(const M& m):
 					_m(m)
 				{}
-				void show(const char* display_format = DefaultDisplayFormat(typename M::value_t()).c_str()) const {
+				void show(const char* display_format = DefaultDisplayFormat<typename M::value_t>) const {
 					for(int i=0 ; i<M::dim_m ; i++) {
 						const IdPush id(i);
 						VectorC<typename M::vec_t>(_m.m[i]).show(display_format);

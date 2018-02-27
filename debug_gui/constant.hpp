@@ -1,11 +1,12 @@
 #pragma once
 #include <string>
+#include "lubee/meta/enable_if.hpp"
+#include "lubee/meta/typelist.hpp"
 
 namespace rev {
 	namespace debug {
 		extern const float EntrySpacing;
-		const std::string& DefaultDisplayFormat(double);
-		const std::string& DefaultDisplayFormat(float);
-		const std::string& DefaultDisplayFormat(int);
+		template <class T>
+		const char* DefaultDisplayFormat;
 	}
 }

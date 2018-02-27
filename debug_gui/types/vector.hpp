@@ -22,7 +22,7 @@ namespace rev {
 				VectorC(const V& v):
 					_v(v)
 				{}
-				void show(const char* display_format = DefaultDisplayFormat(typename V::value_t()).c_str()) const {
+				void show(const char* display_format = DefaultDisplayFormat<typename V::value_t>) const {
 					ImGui::Columns(V::size, "", false);
 					for(int i=0 ; i<V::size ; i++) {
 						const IdPush id(i);
@@ -57,7 +57,7 @@ namespace rev {
 					return c_proc[V::size-1](_v.m);
 				}
 				bool slider(const char* label, const float v_min, const float v_max,
-							const char* display_format = DefaultDisplayFormat(float()).c_str(), const float power=1.f)
+							const char* display_format = DefaultDisplayFormat<float>, const float power=1.f)
 				{
 					const std::function<bool (float*)> c_proc[4] = {
 						[=](auto* f){ return  ImGui::SliderFloat(label, f, v_min, v_max, display_format, power); },
@@ -92,7 +92,7 @@ namespace rev {
 					};
 					return c_proc[V::size-1](_v.m);
 				}
-				bool slider(const char* label, const int v_min, const int v_max, const char* display_format = DefaultDisplayFormat(int()).c_str()) {
+				bool slider(const char* label, const int v_min, const int v_max, const char* display_format = DefaultDisplayFormat<int>) {
 					const std::function<bool (int*)> c_proc[4] = {
 						[=](auto* i){ return ImGui::SliderInt(label, i, v_min, v_max, display_format); },
 						[=](auto* i){ return ImGui::SliderInt2(label, i, v_min, v_max, display_format); },
