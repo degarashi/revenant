@@ -26,6 +26,17 @@ namespace rev {
 	class Camera2D;
 	struct Resource;
 	namespace debug {
+		template <class From, class To>
+		struct EditProxy {
+			From&	from;
+			EditProxy(From& f):
+				from(f)
+			{}
+		};
+		template <class To, class From>
+		EditProxy<From, To> MakeEditProxy(From& from) {
+			return EditProxy<From,To>(from);
+		}
 		namespace inner {
 			void _Show(bool b);
 			void _Show(const char* s);
@@ -67,6 +78,15 @@ namespace rev {
 			bool _Edit(spi::ResMgr<T,A>& m);
 			template <class T, class K, class A>
 			bool _Edit(spi::ResMgrName<T,K,A>& m);
+			template <class From, class To>
+			bool _Edit(const EditProxy<From, To>& p) {
+				To to = p.from;
+				if(_Edit(to)) {
+					p.from = to;
+					return true;
+				}
+				return false;
+			}
 
 			bool _Slider(Resource& r, ...);
 			template <class TAG, class V>
