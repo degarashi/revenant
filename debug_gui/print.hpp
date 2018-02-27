@@ -3,7 +3,14 @@
 #include "frea/detect_type.hpp"
 #include "lubee/meta/enable_if.hpp"
 #include "id.hpp"
+#include "constant.hpp"
 
+namespace lubee {
+	template <class T>
+	struct Size;
+	using SizeI = Size<int32_t>;
+	using SizeF = Size<float>;
+}
 namespace beat {
 	namespace g2 {
 		class Pose;
@@ -20,6 +27,12 @@ namespace rev {
 	struct Resource;
 	namespace debug {
 		namespace inner {
+			void _Show(bool b);
+			void _Show(const char* s);
+			template <class T, ENABLE_IF(DefaultDisplayTypes::Has<T>{})>
+			void _Show(const T& t);
+			void _Show(const lubee::SizeI& s);
+			void _Show(const lubee::SizeF& s);
 			void _Show(const Resource& r);
 			void _Show(const ::rev::Camera2D& c);
 			void _Show(const beat::g2::Pose& p);
@@ -34,6 +47,13 @@ namespace rev {
 			template <class T, class K, class A>
 			void _Show(const spi::ResMgrName<T,K,A>& m);
 
+			bool _Edit(bool& b);
+			bool _Edit(float& f);
+			bool _Edit(double& d);
+			bool _Edit(int& i);
+			bool _Edit(unsigned int& u);
+			bool _Edit(lubee::SizeI& s);
+			bool _Edit(lubee::SizeF& s);
 			bool _Edit(Resource& r);
 			bool _Edit(::rev::Camera2D& c);
 			bool _Edit(beat::g2::Pose& p);
