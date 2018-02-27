@@ -30,22 +30,22 @@ namespace rev {
 				return ImGui::Checkbox("", &b);
 			}
 			bool _Edit(float& f) {
-				return ImGui::InputFloat("", &f);
+				return ImGui::InputFloat("", &f, 0.f, 0.f, -1, ImGuiInputTextFlags_EnterReturnsTrue);
 			}
 			bool _Edit(double& d) {
 				float f = d;
-				if(ImGui::InputFloat("", &f)) {
+				if(ImGui::InputFloat("", &f, 0.f, 0.f, -1, ImGuiInputTextFlags_EnterReturnsTrue)) {
 					d = f;
 					return true;
 				}
 				return false;
 			}
 			bool _Edit(int& i) {
-				return ImGui::InputInt("", &i);
+				return ImGui::InputInt("", &i, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue);
 			}
 			bool _Edit(unsigned int& u) {
 				int i = u;
-				if(ImGui::InputInt("", &i)) {
+				if(ImGui::InputInt("", &i, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
 					u = i;
 					return true;
 				}

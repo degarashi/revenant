@@ -48,10 +48,10 @@ namespace rev {
 				{}
 				bool edit(const char* label, const float step=0.f, const float step_fast=0.f, const int decimal_precision=-1) {
 					const std::function<bool (float*)> c_proc[4] = {
-						[=](auto* f){ return ImGui::InputFloat(label, f, step, step_fast, decimal_precision); },
-						[=](auto* f){ return ImGui::InputFloat2(label, f, decimal_precision); },
-						[=](auto* f){ return ImGui::InputFloat3(label, f, decimal_precision); },
-						[=](auto* f){ return ImGui::InputFloat4(label, f, decimal_precision); }
+						[=](auto* f){ return ImGui::InputFloat(label, f, step, step_fast, decimal_precision, ImGuiInputTextFlags_EnterReturnsTrue); },
+						[=](auto* f){ return ImGui::InputFloat2(label, f, decimal_precision, ImGuiInputTextFlags_EnterReturnsTrue); },
+						[=](auto* f){ return ImGui::InputFloat3(label, f, decimal_precision, ImGuiInputTextFlags_EnterReturnsTrue); },
+						[=](auto* f){ return ImGui::InputFloat4(label, f, decimal_precision, ImGuiInputTextFlags_EnterReturnsTrue); }
 					};
 					return c_proc[V::size-1](_v.m);
 				}
@@ -84,10 +84,10 @@ namespace rev {
 				{}
 				bool edit(const char* label, const int step=1, const int step_fast=100) {
 					const std::function<bool (int*)> c_proc[4] = {
-						[=](auto* i){ return ImGui::InputInt(label, i, step, step_fast); },
-						[=](auto* i){ return ImGui::InputInt2(label, i); },
-						[=](auto* i){ return ImGui::InputInt3(label, i); },
-						[=](auto* i){ return ImGui::InputInt4(label, i); }
+						[=](auto* i){ return ImGui::InputInt(label, i, step, step_fast, ImGuiInputTextFlags_EnterReturnsTrue); },
+						[=](auto* i){ return ImGui::InputInt2(label, i, ImGuiInputTextFlags_EnterReturnsTrue); },
+						[=](auto* i){ return ImGui::InputInt3(label, i, ImGuiInputTextFlags_EnterReturnsTrue); },
+						[=](auto* i){ return ImGui::InputInt4(label, i, ImGuiInputTextFlags_EnterReturnsTrue); }
 					};
 					return c_proc[V::size-1](_v.m);
 				}
