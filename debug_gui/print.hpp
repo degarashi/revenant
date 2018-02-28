@@ -6,6 +6,7 @@
 #include "constant.hpp"
 #include "lubee/meta/check_macro.hpp"
 #include "spine/enum_t.hpp"
+#include "spine/detect_type.hpp"
 
 namespace lubee {
 	template <class T>
@@ -64,6 +65,13 @@ namespace rev {
 			template <class T, ENABLE_IF(HasMethod_ToStr_t<T>{})>
 			void _Show(const T& t) {
 				_Show(t.toStr());
+			}
+			template <class T, ENABLE_IF(spi::is_optional<T>{})>
+			void _Show(const T& t) {
+				if(t)
+					_Show(*t);
+				else
+					_Show("(none)");
 			}
 
 			bool _Edit(bool& b);
