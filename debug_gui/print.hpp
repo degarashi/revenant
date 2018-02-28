@@ -43,6 +43,7 @@ namespace rev {
 		namespace inner {
 			void _Show(bool b);
 			void _Show(const char* s);
+			void _Show(const std::string& s);
 			template <class T, ENABLE_IF(DefaultDisplayTypes::Has<T>{})>
 			void _Show(const T& t);
 			void _Show(const lubee::SizeI& s);

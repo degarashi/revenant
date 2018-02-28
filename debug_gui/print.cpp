@@ -11,6 +11,9 @@ namespace rev {
 			void _Show(const char* s) {
 				ImGui::TextUnformatted(s);
 			}
+			void _Show(const std::string& s) {
+				_Show(s.c_str());
+			}
 			template <class T, ENABLE_IF_I(DefaultDisplayTypes::Has<T>{})>
 			void _Show(const T& t) {
 				ImGui::TextUnformatted(ToString(t).c_str());
