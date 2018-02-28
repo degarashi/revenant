@@ -7,6 +7,7 @@
 #include "lubee/meta/check_macro.hpp"
 #include "spine/enum_t.hpp"
 #include "spine/detect_type.hpp"
+#include <memory>
 
 namespace lubee {
 	template <class T>
@@ -72,6 +73,20 @@ namespace rev {
 					_Show(*t);
 				else
 					_Show("(none)");
+			}
+			template <class T, class D>
+			void _Show(const std::unique_ptr<T,D>& p) {
+				if(p)
+					_Show(*p);
+				else
+					_Show("(null)");
+			}
+			template <class T>
+			void _Show(const std::shared_ptr<T>& p) {
+				if(p)
+					_Show(*p);
+				else
+					_Show("(null)");
 			}
 
 			bool _Edit(bool& b);
