@@ -126,7 +126,6 @@ namespace rev {
 	class Texture_URI : public IGLTexture {
 		private:
 			URI_SP				_uri;
-			InCompressedFmt_OP	_opFmt;
 		public:
 			Texture_URI(const URI_SP& uri, MipState miplevel, InCompressedFmt_OP fmt);
 			void onDeviceReset() override;
@@ -135,7 +134,6 @@ namespace rev {
 	class Texture_CubeURI : public IGLTexture {
 		private:
 			URI_SP				_uri[6];
-			InCompressedFmt_OP	_opFmt;
 		public:
 			Texture_CubeURI(
 				const URI_SP& uri0, const URI_SP& uri1, const URI_SP& uri2,
