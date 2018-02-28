@@ -4,6 +4,8 @@
 #include "lubee/meta/enable_if.hpp"
 #include "id.hpp"
 #include "constant.hpp"
+#include "lubee/meta/check_macro.hpp"
+#include "spine/enum_t.hpp"
 
 namespace lubee {
 	template <class T>
@@ -26,6 +28,7 @@ namespace rev {
 	class Camera2D;
 	struct Resource;
 	namespace debug {
+		DEF_HASMETHOD(ToStr)
 		template <class From, class To>
 		struct EditProxy {
 			From&	from;
@@ -57,6 +60,10 @@ namespace rev {
 			void _Show(const spi::ResMgr<T,A>& m);
 			template <class T, class K, class A>
 			void _Show(const spi::ResMgrName<T,K,A>& m);
+			template <class T, ENABLE_IF(HasMethod_ToStr_t<T>{})>
+			void _Show(const T& t) {
+				_Show(t.toStr());
+			}
 
 			bool _Edit(bool& b);
 			bool _Edit(float& f);
@@ -86,6 +93,11 @@ namespace rev {
 					return true;
 				}
 				return false;
+			}
+			bool _EditEnum(spi::Enum_t& value, spi::Enum_t len, const char* (*func)(spi::Enum_t));
+			template <class T, ENABLE_IF(HasMethod_ToStr_t<T>{})>
+			bool _Edit(T& t) {
+				return _EditEnum(reinterpret_cast<spi::Enum_t&>(t.value), T::_Num, &T::ToStr);
 			}
 
 			bool _Slider(Resource& r, ...);
