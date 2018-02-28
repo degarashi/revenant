@@ -28,6 +28,11 @@ namespace spi {
 }
 namespace rev {
 	class Camera2D;
+	class URI;
+	class IdURI;
+	class UserURI;
+	class FileURI;
+	class DataURI;
 	struct Resource;
 	namespace debug {
 		DEF_HASMETHOD(ToStr)
@@ -67,6 +72,11 @@ namespace rev {
 			void _Show(const T& t) {
 				_Show(t.toStr());
 			}
+			void _Show(const URI& u);
+			void _Show(const IdURI& u);
+			void _Show(const UserURI& u);
+			void _Show(const FileURI& u);
+			void _Show(const DataURI& u);
 			template <class T, ENABLE_IF(spi::is_optional<T>{})>
 			void _Show(const T& t) {
 				if(t)
