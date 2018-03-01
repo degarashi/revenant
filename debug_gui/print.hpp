@@ -28,6 +28,8 @@ namespace spi {
 }
 namespace rev {
 	class Camera2D;
+	class IGLTexture;
+	class Texture_URI;
 	class URI;
 	class IdURI;
 	class UserURI;
@@ -107,6 +109,8 @@ namespace rev {
 			bool _Edit(lubee::SizeF& s);
 			bool _Edit(Resource& r);
 			bool _Edit(::rev::Camera2D& c);
+			bool _Edit(::rev::IGLTexture& t);
+			bool _Edit(::rev::Texture_URI& t);
 			bool _Edit(beat::g2::Pose& p);
 			template <class TAG, class V>
 			bool _Edit(frea::Angle<TAG,V>& a);

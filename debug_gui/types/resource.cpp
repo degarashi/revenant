@@ -1,5 +1,6 @@
 #include "../../handle.hpp"
 #include "../../camera2d.hpp"
+#include "../../gl_texture.hpp"
 #include "../../imgui/imgui.h"
 #include "../print.hpp"
 
@@ -14,6 +15,7 @@ namespace rev {
 			void _Show(const Resource& r) {
 				DEF_BEGIN
 				DEF_SHOW(Camera2D)
+				DEF_SHOW(Texture_URI)
 				DEF_END
 			}
 
@@ -21,6 +23,7 @@ namespace rev {
 			bool _Edit(Resource& r) {
 				DEF_BEGIN
 				DEF_EDIT(Camera2D)
+				DEF_EDIT(Texture_URI)
 				DEF_END
 				return false;
 			}

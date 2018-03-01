@@ -17,6 +17,13 @@ namespace rev {
 		class Texture;
 		class TextureA;
 	}
+	class Texture_URI;
+	namespace debug {
+		namespace inner {
+			bool _Edit(IGLTexture&);
+			bool _Edit(Texture_URI&);
+		}
+	}
 	using Size_Fmt = std::pair<lubee::SizeI, GLInCompressedFmt>;
 	//! OpenGLテクスチャインタフェース
 	/*!	フィルターはNEARESTとLINEARしか無いからboolで管理 */
@@ -28,6 +35,7 @@ namespace rev {
 
 			void use_begin() const;
 			void use_end() const;
+			friend bool debug::inner::_Edit(IGLTexture&);
 		protected:
 			GLuint		_idTex;
 			int			_iLinearMag,	//!< Linearの場合は1, Nearestは0
@@ -115,6 +123,7 @@ namespace rev {
 				\param[in] srcFmt 入力フォーマット(Type)
 				\param[in] face Cubemapにおける面 */
 			void writeRect(AB_Byte buff, const lubee::RectI& rect, GLTypeFmt srcFmt, CubeFace face=CubeFace::PositiveX);
+			const char* getDebugName() const noexcept override;
 	};
 	Size_Fmt LoadTextureFromBuffer(const IGLTexture& tex, GLenum tflag, GLenum format, const lubee::SizeI& size, const ByteBuff& buff, bool bP2, bool bMip);
 
@@ -126,9 +135,11 @@ namespace rev {
 	class Texture_URI : public IGLTexture {
 		private:
 			URI_SP				_uri;
+			friend bool debug::inner::_Edit(Texture_URI&);
 		public:
 			Texture_URI(const URI_SP& uri, MipState miplevel, InCompressedFmt_OP fmt);
 			void onDeviceReset() override;
+			const char* getDebugName() const noexcept override;
 	};
 	//! 6つの画像ファイルからCubeテクスチャを構成
 	class Texture_CubeURI : public IGLTexture {
@@ -141,6 +152,7 @@ namespace rev {
 				MipState miplevel, InCompressedFmt_OP fmt
 			);
 			void onDeviceReset() override;
+			const char* getDebugName() const noexcept override;
 	};
 }
 #include "luaimport.hpp"
