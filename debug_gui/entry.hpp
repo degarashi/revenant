@@ -34,29 +34,31 @@ namespace rev {
 				return ret;
 			}
 		}
-		struct Entry {
-			int	id;
-			ColumnPush	cp;
-			bool modify;
+		class Entry {
+			private:
+				int			_id;
+				ColumnPush	_cp;
+				bool		_modify;
 
-			Entry(const int initial, const int columns):
-				id(initial),
-				cp(columns)
-			{}
-			template <class... Ts>
-			void show(const Ts&... ts) {
-				id = inner::ShowEnt(id, ts...);
-			}
-			template <class... Ts>
-			bool edit(Ts&... ts) {
-				const auto ret = inner::EditEnt(id, ts...);
-				modify |= ret.second;
-				id = ret.first;
-				return ret.second;
-			}
-			bool modified() const noexcept {
-				return modify;
-			}
+			public:
+				Entry(const int initial, const int columns):
+					_id(initial),
+					_cp(columns)
+				{}
+				template <class... Ts>
+				void show(const Ts&... ts) {
+					_id = inner::ShowEnt(_id, ts...);
+				}
+				template <class... Ts>
+				bool edit(Ts&... ts) {
+					const auto ret = inner::EditEnt(_id, ts...);
+					_modify |= ret.second;
+					_id = ret.first;
+					return ret.second;
+				}
+				bool modified() const noexcept {
+					return _modify;
+				}
 		};
 
 	}
