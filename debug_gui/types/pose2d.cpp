@@ -5,6 +5,7 @@
 #include "angle.hpp"
 #include "../id.hpp"
 #include "../indent.hpp"
+#include "../child.hpp"
 
 namespace rev {
 	namespace debug {
@@ -19,7 +20,7 @@ namespace rev {
 			_p(p)
 		{}
 		void Pose2DC::show() const {
-			if(ImGui::BeginChild(lb_posewindow, {0, ImGui::GetTextLineHeightWithSpacing()*7}, true, ImGuiWindowFlags_NoScrollbar)) {
+			if(const auto child = ChildPush(lb_posewindow, {0, ImGui::GetTextLineHeightWithSpacing()*7}, true, ImGuiWindowFlags_NoScrollbar)) {
 				ImGui::TextUnformatted(lb_offset);
 				{
 					const IndentPush ind;
@@ -39,7 +40,6 @@ namespace rev {
 					AngleC<frea::DegF>(_p.getRotation()).show();
 				}
 			}
-			ImGui::EndChild();
 		}
 
 		// ----------------- Pose2D -----------------
@@ -49,7 +49,7 @@ namespace rev {
 		{}
 		bool Pose2D::edit() const {
 			bool ret = false;
-			if(ImGui::BeginChild(lb_posewindow, {0, ImGui::GetTextLineHeightWithSpacing()*5}, true, ImGuiWindowFlags_NoScrollbar)) {
+			if(const auto child = ChildPush(lb_posewindow, {0, ImGui::GetTextLineHeightWithSpacing()*5}, true, ImGuiWindowFlags_NoScrollbar)) {
 				{
 					ImGui::TextUnformatted(lb_offset);
 					ImGui::SameLine();
@@ -78,7 +78,6 @@ namespace rev {
 					}
 				}
 			}
-			ImGui::EndChild();
 			return ret;
 		}
 		namespace inner {
