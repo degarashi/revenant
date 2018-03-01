@@ -35,25 +35,10 @@ namespace rev {
 	}
 	URI::~URI() {}
 	bool URI::URI::operator == (const URI& u) const noexcept {
-		const auto t0 = getType(),
-					t1 = u.getType();
-		if(t0 == t1) {
-			switch(getType()) {
-				case Type::User:
-					return static_cast<const UserURI&>(*this)
-						== static_cast<const UserURI&>(u);
-				case Type::File:
-					return static_cast<const FileURI&>(*this)
-						== static_cast<const FileURI&>(u);
-				case Type::Data:
-					return static_cast<const DataURI&>(*this)
-						== static_cast<const DataURI&>(u);
-				case Type::Id:
-					return static_cast<const IdURI&>(*this)
-						== static_cast<const IdURI&>(u);
-				default:
-					Assert0(false);
-			}
+		if(getType() == u.getType()) {
+			return BranchURI(*this, [&u](const auto& self){
+				return self == static_cast<decltype(self)>(u);
+			});
 		}
 		return false;
 	}

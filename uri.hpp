@@ -120,6 +120,24 @@ namespace rev {
 			bool operator == (const DataURI& d) const noexcept;
 	};
 	#undef DEF_URIMETHOD
+
+	template <class CB>
+	auto BranchURI(const URI& u, CB&& cb) {
+		using Type = URI::Type;
+		switch(u.getType()) {
+			case Type::User:
+				return cb(static_cast<const UserURI&>(u));
+			case Type::File:
+				return cb(static_cast<const FileURI&>(u));
+			case Type::Data:
+				return cb(static_cast<const DataURI&>(u));
+			case Type::Id:
+				return cb(static_cast<const IdURI&>(u));
+			default:
+				AssertF0();
+		}
+		AssertF("");
+	}
 }
 #define DEF_HASH(typ)	\
 	template <> \
