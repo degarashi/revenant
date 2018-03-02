@@ -3,6 +3,8 @@
 #include "../print.hpp"
 #include "../../imgui/imgui.h"
 #include "../id.hpp"
+#include "../column.hpp"
+#include "../child.hpp"
 #include "../tree.hpp"
 
 namespace rev {
@@ -28,36 +30,45 @@ namespace rev {
 							const auto* kp = ks.c_str();
 							if(filter.PassFilter(kp)) {
 								const IdPush idp(++id);
-								if(const auto t = TreePush(kp)) {
-									cb(*r);
-								}
+								cb(kp, r);
 							}
 						}
 						clear();
 					}
 				};
-				if(ImGui::CollapsingHeader("Named")) {
-					print(false);
-				}
-				if(ImGui::CollapsingHeader("Anonymous")) {
-					print(true);
+				if(const auto c = ChildPush("ResMgrNamed", {0, 0}, false, ImGuiWindowFlags_HorizontalScrollbar)) {
+					if(const auto t = TreePush("Named")) {
+						print(false);
+					}
+					if(const auto t = TreePush("Anonymous")) {
+						print(true);
+					}
 				}
 			}
-		}
-		namespace inner {
-			template <class T, class K, class A>
-			void _Show(const spi::ResMgrName<T,K,A>& m) {
-				inner::ResMgrNamed_Iter(m, [](auto&& r){
-					Show("", r);
-				});
-			}
+			using SelectPos = std::unordered_map<ImGuiID, std::weak_ptr<void>>;
+			extern SelectPos g_selectPos;
+
 			template <class T, class K, class A>
 			bool _Edit(spi::ResMgrName<T,K,A>& m) {
-				bool ret = false;
-				inner::ResMgrNamed_Iter(m, [&ret](auto&& r){
-					ret |= Edit("", r);
+				const auto c = ColumnPush(2);
+				const auto id = ImGui::GetID("Left");
+				auto itr = g_selectPos.find(id);
+				if(itr == g_selectPos.end()) {
+					itr = g_selectPos.emplace(id, std::weak_ptr<void>()).first;
+				}
+				auto& cur = itr->second;
+				const auto cur_lk = cur.lock();
+				inner::ResMgrNamed_Iter(m, [&cur, &cur_lk](const char* name, auto&& r){
+					if(ImGui::Selectable(name, cur_lk == r))
+						cur = r;
 				});
-				return ret;
+
+				ImGui::NextColumn();
+				if(const auto sp = cur.lock()) {
+					using R = typename std::decay_t<decltype(*m.begin())>::element_type;
+					return Edit("", *reinterpret_cast<R*>(sp.get()));
+				}
+				return false;
 			}
 		}
 	}

@@ -57,8 +57,6 @@ namespace rev {
 			void _Show(const V& v);
 			template <class M, ENABLE_IF(frea::is_matrix<M>{})>
 			void _Show(const M& m);
-			template <class T, class K, class A>
-			void _Show(const spi::ResMgrName<T,K,A>& m);
 			template <class T, ENABLE_IF(HasMethod_ToStr_t<T>{})>
 			void _Show(const T& t) {
 				_Show(t.toStr());
