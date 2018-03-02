@@ -1,0 +1,15 @@
+#pragma once
+
+namespace rev {
+	namespace debug {
+		class TreePush {
+			private:
+				bool _valid;
+			public:
+				TreePush(const char* label);
+				TreePush(TreePush&& t);
+				~TreePush();
+				explicit operator bool () const noexcept;
+		};
+	}
+}
