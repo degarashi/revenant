@@ -21,7 +21,7 @@ namespace rev {
 	bool IGLTexture::guiEditor(bool) {
 		bool ret = false;
 		if(auto field = debug::EntryField("IGLTexture", 12, 0, 2)) {
-			field.edit(lb_openglId, _idTex);
+			field.show(lb_openglId, _idTex);
 			{
 				const auto p0 = debug::MakeEditProxy<bool>(_iLinearMag);
 				const auto p1 = debug::MakeEditProxy<bool>(_iLinearMin);
