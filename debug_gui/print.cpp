@@ -14,14 +14,20 @@ namespace rev {
 			void _Show(const std::string& s) {
 				_Show(s.c_str());
 			}
-			template <class T, ENABLE_IF_I(DefaultDisplayTypes::Has<T>{})>
+			template <class T, ENABLE_IF_I(DefaultDisplayTypes::Has<T>{} || std::is_integral<T>{} || std::is_floating_point<T>{})>
 			void _Show(const T& t) {
 				ImGui::TextUnformatted(ToString(t).c_str());
 			}
 			template void _Show<double>(const double& t);
 			template void _Show<float>(const float& t);
-			template void _Show<int>(const int& t);
-			template void _Show<unsigned int>(const unsigned int& t);
+			template void _Show<int8_t>(const int8_t& t);
+			template void _Show<uint8_t>(const uint8_t& t);
+			template void _Show<int16_t>(const int16_t& t);
+			template void _Show<uint16_t>(const uint16_t& t);
+			template void _Show<int32_t>(const int32_t& t);
+			template void _Show<uint32_t>(const uint32_t& t);
+			template void _Show<int64_t>(const int64_t& t);
+			template void _Show<uint64_t>(const uint64_t& t);
 			void _Show(const lubee::SizeI& s) {
 				_Show(reinterpret_cast<const frea::IVec2&>(s));
 			}
