@@ -2,6 +2,7 @@
 #include "path.hpp"
 #include "lubee/operators.hpp"
 #include "spine/enum.hpp"
+#include "resource.hpp"
 #include <regex>
 
 namespace cereal {
@@ -11,7 +12,10 @@ namespace cereal {
 namespace rev {
 	class URI;
 	using URI_SP = std::shared_ptr<URI>;
-	class URI : lubee::op::Ne<URI> {
+	class URI :
+		public lubee::op::Ne<URI>,
+		public Resource
+	{
 		public:
 			DefineEnum(Type,
 				(Id)
@@ -25,9 +29,9 @@ namespace rev {
 			virtual Type getType() const noexcept = 0;
 			virtual std::size_t getHash() const noexcept = 0;
 			virtual URI_SP clone() const = 0;
+			const char* getResourceName() const noexcept override;
 
 			bool operator == (const URI& u) const noexcept;
-			virtual ~URI();
 	};
 	URI_SP MakeURIFromString(const char* s);
 	std::ostream& operator << (std::ostream& os, const URI& u);
@@ -38,7 +42,8 @@ namespace rev {
 		std::string plain() const override; \
 		Type getType() const noexcept override; \
 		std::size_t getHash() const noexcept override; \
-		URI_SP clone() const override;
+		URI_SP clone() const override; \
+		const char* getDebugName() const noexcept override;
 
 	// 内部管理用
 	class IdURI;

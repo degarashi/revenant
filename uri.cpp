@@ -33,7 +33,9 @@ namespace rev {
 			return ret;
 		return nullptr;
 	}
-	URI::~URI() {}
+	const char* URI::getResourceName() const noexcept {
+		return "URI";
+	}
 	bool URI::URI::operator == (const URI& u) const noexcept {
 		if(getType() == u.getType()) {
 			return BranchURI(*this, [&u](const auto& self){
@@ -76,6 +78,9 @@ namespace rev {
 	URI::Type IdURI::getType() const noexcept {
 		return Type::Id;
 	}
+	const char* IdURI::getDebugName() const noexcept {
+		return "IdURI";
+	}
 
 	// ----------------- UserURI -----------------
 	namespace {
@@ -116,6 +121,9 @@ namespace rev {
 	}
 	URI_SP UserURI::clone() const {
 		return std::make_shared<UserURI>(*this);
+	}
+	const char* UserURI::getDebugName() const noexcept {
+		return "UserURI";
 	}
 
 	// ----------------- FileURI -----------------
@@ -163,6 +171,9 @@ namespace rev {
 	}
 	URI_SP FileURI::clone() const {
 		return std::make_shared<FileURI>(*this);
+	}
+	const char* FileURI::getDebugName() const noexcept {
+		return "FileURI";
 	}
 
 	// ----------------- DataURI -----------------
@@ -258,5 +269,8 @@ namespace rev {
 	}
 	URI_SP DataURI::clone() const {
 		return std::make_shared<DataURI>(*this);
+	}
+	const char* DataURI::getDebugName() const noexcept {
+		return "DataURI";
 	}
 }
