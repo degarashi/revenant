@@ -18,12 +18,6 @@ namespace rev {
 		class TextureA;
 	}
 	class Texture_URI;
-	namespace debug {
-		namespace inner {
-			bool _Edit(IGLTexture&);
-			bool _Edit(Texture_URI&);
-		}
-	}
 	using Size_Fmt = std::pair<lubee::SizeI, GLInCompressedFmt>;
 	//! OpenGLテクスチャインタフェース
 	/*!	フィルターはNEARESTとLINEARしか無いからboolで管理 */
@@ -35,7 +29,6 @@ namespace rev {
 
 			void use_begin() const;
 			void use_end() const;
-			friend bool debug::inner::_Edit(IGLTexture&);
 		protected:
 			GLuint		_idTex;
 			int			_iLinearMag,	//!< Linearの場合は1, Nearestは0
@@ -82,6 +75,9 @@ namespace rev {
 			bool isMipmap() const;
 			//! 内容をファイルに保存 (主にデバッグ用)
 			void save(const PathBlock& path, CubeFace face=CubeFace::PositiveX);
+			#ifdef DEBUGGUI_ENABLED
+				bool guiEditor(bool redirect=false) override;
+			#endif
 
 			bool isCubemap() const;
 			bool operator == (const IGLTexture& t) const;
@@ -135,11 +131,13 @@ namespace rev {
 	class Texture_URI : public IGLTexture {
 		private:
 			URI_SP				_uri;
-			friend bool debug::inner::_Edit(Texture_URI&);
 		public:
 			Texture_URI(const URI_SP& uri, MipState miplevel, InCompressedFmt_OP fmt);
 			void onDeviceReset() override;
 			const char* getDebugName() const noexcept override;
+			#ifdef DEBUGGUI_ENABLED
+				bool guiEditor(bool redirect) override;
+			#endif
 	};
 	//! 6つの画像ファイルからCubeテクスチャを構成
 	class Texture_CubeURI : public IGLTexture {

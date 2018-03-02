@@ -27,9 +27,6 @@ namespace spi {
 	class ResMgrName;
 }
 namespace rev {
-	class Camera2D;
-	class IGLTexture;
-	class Texture_URI;
 	class URI;
 	class IdURI;
 	class UserURI;
@@ -57,7 +54,6 @@ namespace rev {
 			void _Show(const T& t);
 			void _Show(const lubee::SizeI& s);
 			void _Show(const lubee::SizeF& s);
-			void _Show(const Resource& r);
 			void _Show(const beat::g2::Pose& p);
 			template <class TAG, class V>
 			void _Show(const frea::Angle<TAG,V>& a);
@@ -108,9 +104,6 @@ namespace rev {
 			bool _Edit(lubee::SizeI& s);
 			bool _Edit(lubee::SizeF& s);
 			bool _Edit(Resource& r);
-			bool _Edit(::rev::Camera2D& c);
-			bool _Edit(::rev::IGLTexture& t);
-			bool _Edit(::rev::Texture_URI& t);
 			bool _Edit(beat::g2::Pose& p);
 			template <class TAG, class V>
 			bool _Edit(frea::Angle<TAG,V>& a);
@@ -137,7 +130,6 @@ namespace rev {
 				return _EditEnum(reinterpret_cast<spi::Enum_t&>(t.value), T::_Num, &T::ToStr);
 			}
 
-			bool _Slider(Resource& r, ...);
 			template <class TAG, class V>
 			bool _Slider(frea::Angle<TAG,V>& a, const frea::Angle<TAG,V>& v_min, const frea::Angle<TAG,V>& v_max);
 			template <class V, ENABLE_IF(frea::is_vector<V>{})>
