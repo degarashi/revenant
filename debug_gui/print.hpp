@@ -27,11 +27,6 @@ namespace spi {
 	class ResMgrName;
 }
 namespace rev {
-	class URI;
-	class IdURI;
-	class UserURI;
-	class FileURI;
-	class DataURI;
 	struct Resource;
 	namespace debug {
 		DEF_HASMETHOD(ToStr)
@@ -55,6 +50,7 @@ namespace rev {
 			void _Show(const lubee::SizeI& s);
 			void _Show(const lubee::SizeF& s);
 			void _Show(const beat::g2::Pose& p);
+			void _Show(Resource& r);
 			template <class TAG, class V>
 			void _Show(const frea::Angle<TAG,V>& a);
 			template <class V, ENABLE_IF(frea::is_vector<V>{})>
@@ -69,11 +65,6 @@ namespace rev {
 			void _Show(const T& t) {
 				_Show(t.toStr());
 			}
-			void _Show(const URI& u);
-			void _Show(const IdURI& u);
-			void _Show(const UserURI& u);
-			void _Show(const FileURI& u);
-			void _Show(const DataURI& u);
 			template <class T, ENABLE_IF(spi::is_optional<T>{})>
 			void _Show(const T& t) {
 				if(t)

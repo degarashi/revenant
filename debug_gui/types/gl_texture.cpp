@@ -52,8 +52,8 @@ namespace rev {
 		return ret;
 	}
 	bool Texture_URI::guiEditor(bool) {
-		if(auto field = debug::EntryField("Texture_URI", 1, 0, 2)) {
-			field.show(lb_uri, _uri);
+		if(auto field = debug::EntryField(getDebugName(), 1, 0, 2)) {
+			field.edit(lb_uri, _uri);
 		}
 		return IGLTexture::guiEditor();
 	}
