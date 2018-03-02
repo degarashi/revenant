@@ -24,45 +24,20 @@ namespace rev {
 				}
 			}
 		}
-		template <class M>
-		class ResMgrC {
-			private:
-				const M&	_m;
-			public:
-				ResMgrC(const M& m):
-					_m(m)
-				{}
-				void show() const {
-					inner::ResMgr_Iter(_m, [](auto&& r){
-						Show("", r);
-					});
-				}
-		};
-		template <class M>
-		class ResMgr : public ResMgrC<M> {
-			private:
-				M&	_m;
-			public:
-				ResMgr(M& m):
-					ResMgrC<M>(m),
-					_m(m)
-				{}
-				bool edit() const {
-					bool ret = false;
-					inner::ResMgr_Iter(_m, [&ret](auto&& r){
-						ret |= Edit("", r);
-					});
-					return ret;
-				}
-		};
 		namespace inner {
 			template <class T, class A>
 			void _Show(const spi::ResMgr<T,A>& m) {
-				ResMgrC<spi::ResMgr<T,A>>(m).show();
+				inner::ResMgr_Iter(m, [](auto&& r){
+					Show("", r);
+				});
 			}
 			template <class T, class A>
 			bool _Edit(spi::ResMgr<T,A>& m) {
-				return ResMgr<spi::ResMgr<T,A>>(m).edit();
+				bool ret = false;
+				inner::ResMgr_Iter(m, [&ret](auto&& r){
+					ret |= Edit("", r);
+				});
+				return ret;
 			}
 		}
 	}
