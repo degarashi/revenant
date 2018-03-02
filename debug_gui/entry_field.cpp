@@ -13,6 +13,8 @@ namespace rev {
 			ChildPush(label, {0, (ImGui::GetTextLineHeightWithSpacing()+4)*(n+2)}, true, 0),
 			FieldLabel(label),
 			Entry(initial, columns)
-		{}
+		{
+			ImGui::SetColumnWidth(0, 120.f);
+		}
 	}
 }
