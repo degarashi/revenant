@@ -56,7 +56,6 @@ namespace rev {
 			void _Show(const lubee::SizeI& s);
 			void _Show(const lubee::SizeF& s);
 			void _Show(const Resource& r);
-			void _Show(const ::rev::Camera2D& c);
 			void _Show(const beat::g2::Pose& p);
 			template <class TAG, class V>
 			void _Show(const frea::Angle<TAG,V>& a);

@@ -8,8 +8,9 @@
 
 namespace rev {
 	namespace debug {
-		class Camera2DC;
-		class Camera2D;
+		namespace inner {
+			bool _Edit(Camera2D&);
+		}
 	}
 	//! 2Dカメラ姿勢クラス
 	/*!
@@ -40,8 +41,7 @@ namespace rev {
 				((Accum)(Accum_t)(Pose)(AspectRatio))
 			RFLAG_DEFINE(Camera2D, SEQ)
 			RFLAG_SETMETHOD(Accum)
-			friend class debug::Camera2DC;
-			friend class debug::Camera2D;
+			friend bool debug::inner::_Edit(Camera2D&);
 		public:
 			RFLAG_GETMETHOD_DEFINE(SEQ)
 			RFLAG_SETMETHOD_DEFINE(SEQ)
