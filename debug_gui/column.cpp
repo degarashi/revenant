@@ -10,6 +10,11 @@ namespace rev {
 			if(n > 1)
 				ImGui::Columns(n);
 		}
+		ColumnPush::ColumnPush(ColumnPush&& c):
+			_n(c._n)
+		{
+			c._n = -1;
+		}
 		ColumnPush::~ColumnPush() {
 			if(_n > 1)
 				ImGui::Columns(1);
