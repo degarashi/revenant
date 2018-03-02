@@ -16,7 +16,7 @@ namespace rev {
 			public Entry
 		{
 			public:
-				EntryField(const char* label, int n, int initial, int columns);
+				EntryField(const char* label, int n, int initial=0, int columns=2);
 		};
 	}
 }
