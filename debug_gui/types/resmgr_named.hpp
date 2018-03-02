@@ -3,6 +3,7 @@
 #include "../print.hpp"
 #include "../../imgui/imgui.h"
 #include "../id.hpp"
+#include "../tree.hpp"
 
 namespace rev {
 	namespace debug {
@@ -27,9 +28,8 @@ namespace rev {
 							const auto* kp = ks.c_str();
 							if(filter.PassFilter(kp)) {
 								const IdPush idp(++id);
-								if(ImGui::TreeNode(kp)) {
+								if(const auto t = TreePush(kp)) {
 									cb(*r);
-									ImGui::TreePop();
 								}
 							}
 						}

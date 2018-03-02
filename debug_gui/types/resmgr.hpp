@@ -2,6 +2,7 @@
 #include "../print.hpp"
 #include "spine/resmgr.hpp"
 #include "../../imgui/imgui.h"
+#include "../tree.hpp"
 
 namespace rev {
 	namespace debug {
@@ -16,9 +17,8 @@ namespace rev {
 				for(auto&& r : m) {
 					const IdPush id(r.get());
 					ss << "address: 0x" << std::hex << r.get();
-					if(ImGui::TreeNode(ss.str().c_str())) {
+					if(const auto t = TreePush(ss.str().c_str())) {
 						cb(*r);
-						ImGui::TreePop();
 					}
 					clear();
 				}
