@@ -120,6 +120,33 @@ namespace rev {
 			bool _Edit(T& t) {
 				return _EditEnum(reinterpret_cast<spi::Enum_t&>(t.value), T::_Num, &T::ToStr);
 			}
+			template <class T, ENABLE_IF(spi::is_optional<T>{})>
+			bool _Edit(const T& t) {
+				if(t)
+					return _Edit(*t);
+				else {
+					_Show("(none)");
+					return false;
+				}
+			}
+			template <class T, class D>
+			bool _Edit(const std::unique_ptr<T,D>& p) {
+				if(p)
+					return _Edit(*p);
+				else {
+					_Show("(null)");
+					return false;
+				}
+			}
+			template <class T>
+			bool _Edit(const std::shared_ptr<T>& p) {
+				if(p)
+					return _Edit(*p);
+				else {
+					_Show("(null)");
+					return false;
+				}
+			}
 
 			template <class TAG, class V>
 			bool _Slider(frea::Angle<TAG,V>& a, const frea::Angle<TAG,V>& v_min, const frea::Angle<TAG,V>& v_max);
