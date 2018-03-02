@@ -85,12 +85,17 @@ namespace rev {
 			void onDeviceLost() override;
 			void onDeviceReset() override;
 			draw::Buffer getDrawToken() const;
+
+			#ifdef DEBUGGUI_ENABLED
+				bool guiEditor(bool redirect) override;
+			#endif
 	};
 
 	//! 頂点バッファ
 	class GLVBuffer : public GLBuffer {
 		public:
 			GLVBuffer(DrawType dtype);
+			const char* getDebugName() const noexcept override;
 	};
 	//! インデックスバッファ
 	class GLIBuffer : public GLBuffer {
@@ -104,5 +109,6 @@ namespace rev {
 			void updateData(const GLubyte* src, std::size_t nElem, GLuint offset);
 			GLenum getSizeFlag() const;
 			static GLenum GetSizeFlag(int stride);
+			const char* getDebugName() const noexcept override;
 	};
 }

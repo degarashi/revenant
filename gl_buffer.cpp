@@ -103,6 +103,9 @@ namespace rev {
 	GLVBuffer::GLVBuffer(const DrawType dtype):
 		GLBuffer(BufferType::Vertex, dtype)
 	{}
+	const char* GLVBuffer::getDebugName() const noexcept {
+		return "VertexBuffer";
+	}
 
 	// --------------------------- GLIBuffer ---------------------------
 	GLIBuffer::GLIBuffer(const DrawType dtype):
@@ -135,5 +138,8 @@ namespace rev {
 				Assert(false, "unknown ibuffer size type");
 		}
 		return 0;
+	}
+	const char* GLIBuffer::getDebugName() const noexcept {
+		return "IndexBuffer";
 	}
 }
