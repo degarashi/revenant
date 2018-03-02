@@ -20,7 +20,7 @@ namespace rev {
 	}
 	bool IGLTexture::guiEditor(bool) {
 		bool ret = false;
-		if(auto field = debug::EntryField("IGLTexture", 12, 0, 2)) {
+		if(auto field = debug::EntryField("IGLTexture")) {
 			field.show(lb_openglId, _idTex);
 			{
 				const auto p0 = debug::MakeEditProxy<bool>(_iLinearMag);
@@ -44,17 +44,21 @@ namespace rev {
 			else
 				field.show(lb_format, "(none)");
 			ret |= field.modified();
+
+			ImGui::Columns(1);
+			ImGui::Image(
+				mgr_gui.storeResource(shared_from_this()),
+				ImVec2(_size.width, _size.height)
+			);
 		}
-		ImGui::Image(
-			mgr_gui.storeResource(shared_from_this()),
-			ImVec2(_size.width, _size.height)
-		);
 		return ret;
 	}
 	bool Texture_URI::guiEditor(bool) {
-		if(auto field = debug::EntryField(getDebugName(), 1, 0, 2)) {
+		if(auto field = debug::EntryField(getDebugName())) {
 			field.edit(lb_uri, _uri);
+			ImGui::Columns(1);
+			return IGLTexture::guiEditor();
 		}
-		return IGLTexture::guiEditor();
+		return false;
 	}
 }

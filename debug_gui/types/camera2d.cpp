@@ -10,7 +10,7 @@ namespace rev {
 					*lb_accum = "Accum";
 	}
 	bool Camera2D::guiEditor(bool) {
-		if(auto field = debug::EntryField("Camera2D", 6, 0, 2)) {
+		if(auto field = debug::EntryField("Camera2D")) {
 			if(field.edit(lb_pose, _rflag.ref<Pose>())) {
 				refPose();
 			}
