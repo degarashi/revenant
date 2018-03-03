@@ -1,5 +1,6 @@
 #pragma once
 #include "lcv.hpp"
+#include "lctable.hpp"
 
 namespace rev {
 	namespace detail {

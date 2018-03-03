@@ -1,5 +1,6 @@
 #include "gl_resource.hpp"
 #include "lcv.hpp"
+#include "lctable.hpp"
 #include "compiler_macro.hpp"
 
 namespace rev {

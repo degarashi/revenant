@@ -288,6 +288,7 @@ namespace rev {
 	}
 }
 #include "lcv.hpp"
+#include "lctable.hpp"
 namespace rev {
 	void GLFBuffer::LuaExport(LuaState& lsc) {
 		auto tbl = std::make_shared<LCTable>();
