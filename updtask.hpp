@@ -17,7 +17,7 @@ namespace rev {
 			void onConnected(const HGroup& hGroup) override;
 			void onDisconnected(const HGroup& hGroup) override;
 			void enumGroup(const CBFindGroup& cb, GroupTypeId id, int depth) const override;
-			LCValue recvMsg(const GMessageStr& msg, const LCValue& arg) override;
+			bool recvMsg(LCValue& dst, const GMessageStr& msg, const LCValue& arg) override;
 			void proc(const CBUpdProc& p, bool bRecursive, Priority prioBegin, Priority prioEnd) override;
 
 			void onUpdate(bool bFirst) override;

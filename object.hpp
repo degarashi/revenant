@@ -22,8 +22,8 @@ namespace rev {
 					virtual void onUpdate(T& self) {
 						self.Base::onUpdate(false);
 					}
-					virtual LCValue recvMsg(T& self, const GMessageStr& msg, const LCValue& arg) {
-						return self.Base::recvMsg(msg, arg);
+					virtual bool recvMsg(T& self, LCValue& dst, const GMessageStr& msg, const LCValue& arg) {
+						return self.Base::recvMsg(dst, msg, arg);
 					}
 					// onEnterとonExitは継承しない
 					virtual void onEnter(T& /*self*/, ObjTypeId_OP /*prevId*/) {}
@@ -194,8 +194,8 @@ namespace rev {
 				void onUpdate(bool /*bFirst*/) override {
 					_callWithSwitchState([&](){ return _state->onUpdate(getRef()); });
 				}
-				LCValue recvMsg(const GMessageStr& msg, const LCValue& arg) override {
-					return _callWithSwitchState([&](){ return _state->recvMsg(getRef(), msg, arg); });
+				bool recvMsg(LCValue& dst, const GMessageStr& msg, const LCValue& arg) override {
+					return _callWithSwitchState([&](){ return _state->recvMsg(getRef(), dst, msg, arg); });
 				}
 				//! Updaterノードツリーに追加された時に呼ばれる
 				/*! DrawGroupに登録された時は呼ばれない( */

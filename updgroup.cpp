@@ -195,10 +195,11 @@ namespace rev {
 			++itr;
 		} while(itr != itrE);
 	}
-	LCValue UpdGroup::recvMsg(const GMessageStr& msg, const LCValue& arg) {
+	bool UpdGroup::recvMsg(LCValue& dst, const GMessageStr& msg, const LCValue& arg) {
+		bool received = false;
 		for(auto& obj : _objV)
-			obj.second->recvMsg(msg, arg);
-		return LCValue();
+			received |= obj.second->recvMsg(dst, msg, arg);
+		return received;
 	}
 	int UpdGroup::getNMember() const noexcept {
 		return getList().size();

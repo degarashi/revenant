@@ -264,12 +264,12 @@ namespace rev {
 		auto* obj = LI_GetPtr<Object>()(ls, -3);
 		const auto msg = LCV<GMessageStr>()(-2, ls, nullptr);
 		// Noneで無ければ有効な戻り値とする
-		LCValue lcv = obj->recvMsg(msg, LCV<LCValue>()(-1, ls, nullptr));
-		const bool bRecv = lcv.type() != LuaType::Nil;
-		lua_pushboolean(ls, bRecv);
-		if(bRecv) {
+		LCValue ret;
+		const bool recv = obj->recvMsg(ret, msg, LCV<LCValue>()(-1, ls, nullptr));
+		lua_pushboolean(ls, recv);
+		if(recv) {
 			// 受信成功
-			lcv.push(ls);
+			ret.push(ls);
 			return 2;
 		}
 		// 受信失敗

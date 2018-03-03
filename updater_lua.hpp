@@ -6,7 +6,7 @@
 namespace rev {
 	namespace detail {
 		struct ObjectT_LuaBase {
-			static LCValue CallRecvMsg(const Lua_SP& ls, const HObj& hObj, const GMessageStr& msg, const LCValue& arg);
+			static bool CallRecvMsg(const Lua_SP& ls, const HObj& hObj, LCValue& dst, const GMessageStr& msg, const LCValue& arg);
 		};
 		extern const bool c_pauseDefault;
 	}
@@ -66,10 +66,10 @@ namespace rev {
 					base::destroy();
 				}
 			}
-			LCValue recvMsg(const GMessageStr& msg, const LCValue& arg) override {
+			bool recvMsg(LCValue& dst, const GMessageStr& msg, const LCValue& arg) override {
 				if(const auto& sp = rev_mgr_obj.getLua())
-					return detail::ObjectT_LuaBase::CallRecvMsg(sp, this->shared_from_this(), msg, arg);
-				return LCValue();
+					return detail::ObjectT_LuaBase::CallRecvMsg(sp, this->shared_from_this(), dst, msg, arg);
+				return false;
 			}
 	};
 

@@ -1,5 +1,8 @@
 #pragma once
-#include "lcv.hpp"
+#include <limits>
+#include <cstdint>
+#include "spine/optional.hpp"
+#include "handle.hpp"
 
 namespace rev {
 	using Priority = uint32_t;
@@ -12,6 +15,7 @@ namespace rev {
 	using CBFindGroup = std::function<bool (const HGroup&)>;
 	using CBUpdProc = std::function<void (const HObj&)>;
 
+	class LCValue;
 	//! ゲームオブジェクト基底インタフェース
 	class Object : public Resource {
 		private:
@@ -41,7 +45,7 @@ namespace rev {
 								Priority prioBegin=std::numeric_limits<Priority>::lowest(),
 								Priority prioEnd=std::numeric_limits<Priority>::max());
 			// ---- Message用メソッド ----
-			virtual LCValue recvMsg(const GMessageStr& msg, const LCValue& arg=LCValue());
+			virtual bool recvMsg(LCValue& dst, const GMessageStr& msg, const LCValue& arg);
 			// ---------- Object/Scene用メソッド ----------
 			virtual void onDraw(IEffect& e) const;
 			// ---------- Scene用メソッド ----------
@@ -54,4 +58,5 @@ namespace rev {
 			const char* getResourceName() const noexcept override;
 	};
 }
+#include "luaimport.hpp"
 DEF_LUAIMPORT(rev::Object)

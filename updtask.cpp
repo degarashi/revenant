@@ -26,8 +26,8 @@ namespace rev {
 	void UpdTask::proc(const CBUpdProc& p, const bool bRecursive, const Priority prioBegin, const Priority prioEnd) {
 		_hGroup->proc(p, bRecursive, prioBegin, prioEnd);
 	}
-	LCValue UpdTask::recvMsg(const GMessageStr& msg, const LCValue& arg) {
-		return _hGroup->recvMsg(msg, arg);
+	bool UpdTask::recvMsg(LCValue& dst, const GMessageStr& msg, const LCValue& arg) {
+		return _hGroup->recvMsg(dst, msg, arg);
 	}
 	void UpdTask::onUpdate(bool /*bFirst*/) {
 		// アイドル時間チェック

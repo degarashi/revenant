@@ -1,6 +1,7 @@
 #pragma once
 #include "object.hpp"
 #include "sdl_tls.hpp"
+#include <vector>
 
 namespace rev {
 	//! Objectのグループ管理
@@ -55,7 +56,7 @@ namespace rev {
 			void onDraw(IEffect& e) const override;
 			void enumGroup(const CBFindGroup& cb, GroupTypeId id, int depth) const override;
 			//! グループ内のオブジェクト全てに配信
-			LCValue recvMsg(const GMessageStr& msg, const LCValue& arg) override;
+			bool recvMsg(LCValue& dst, const GMessageStr& msg, const LCValue& arg) override;
 			void proc(const CBUpdProc& p, bool bRecursive, Priority prioBegin, Priority prioEnd) override;
 
 			const ObjVP& getList() const noexcept;

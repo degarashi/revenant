@@ -38,8 +38,8 @@ namespace rev {
 	void Object::enumGroup(const CBFindGroup& /*cb*/, GroupTypeId /*id*/, int /*depth*/) const {
 		ExpectF("not supported operation");
 	}
-	LCValue Object::recvMsg(const GMessageStr& /*id*/, const LCValue& /*arg*/) {
-		return LCValue();
+	bool Object::recvMsg(LCValue& /*dst*/, const GMessageStr& /*id*/, const LCValue& /*arg*/) {
+		return false;
 	}
 	void Object::proc(const CBUpdProc& /*p*/, bool /*bRecursive*/, Priority /*prioBegin*/, Priority /*prioEnd*/) {
 		ExpectF("not supported operation");
