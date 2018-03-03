@@ -1,4 +1,4 @@
-#include "object.hpp"
+#include "object_if.hpp"
 
 namespace rev {
 	namespace detail {
@@ -52,12 +52,4 @@ namespace rev {
 	void Object::onStop() {}
 	void Object::onResume() {}
 	void Object::onReStart() {}
-
-	// -------------------- U_Object --------------------
-	bool U_Object::isNode() const noexcept {
-		return false;
-	}
-	ObjTypeId U_Object::getTypeId() const noexcept {
-		return IdT::Id;
-	}
 }

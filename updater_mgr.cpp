@@ -1,5 +1,5 @@
 #include "updater_mgr.hpp"
-#include "object.hpp"
+#include "object_if.hpp"
 
 namespace rev {
 	ObjMgr::~ObjMgr() {

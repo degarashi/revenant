@@ -1,5 +1,6 @@
 #pragma once
 #include "object.hpp"
+#include "sdl_tls.hpp"
 
 namespace rev {
 	//! Objectのグループ管理
