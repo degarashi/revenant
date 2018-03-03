@@ -25,12 +25,3 @@ namespace rev {
 	class VDecl;
 	using VDecl_SP = std::shared_ptr<VDecl>;
 }
-//! VDeclメソッド定義
-#define DefineVDecl(etag) \
-	template <class> \
-	class DrawDecl; \
-	template <> \
-	class DrawDecl<etag> { \
-		public: \
-			static const ::rev::VDecl_SP& GetVDecl(); \
-	};
