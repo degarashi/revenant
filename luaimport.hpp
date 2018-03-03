@@ -1,7 +1,10 @@
 #pragma once
-#include "lv_common.hpp"
+#include <tuple>
 
 namespace rev {
+	namespace luaNS {
+		extern const std::string Void;
+	}
 	class LuaState;
 	namespace lua {
 		template <
