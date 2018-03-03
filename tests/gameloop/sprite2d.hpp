@@ -3,7 +3,6 @@
 #include "../../handle.hpp"
 #include "../../glx_id.hpp"
 #include "../../drawable.hpp"
-#include "../../vertex.hpp"
 #include "../../singleton_data.hpp"
 
 namespace rev {

@@ -1,6 +1,7 @@
 #pragma once
 #include "resmgr_app.hpp"
 #include "glx_parse.hpp"
+#include <unordered_set>
 
 namespace rev {
 	namespace parse {

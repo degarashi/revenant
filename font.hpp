@@ -1,11 +1,12 @@
 #pragma once
 #include "font_ft_dep.hpp"
 #include "frea/vector.hpp"
-#include "vertex.hpp"
 #include "spine/resmgr_named.hpp"
 #include "singleton_data_lazy.hpp"
 
 namespace rev {
+	class VDecl;
+	using VDecl_SP = std::shared_ptr<VDecl>;
 	//! CharCodeとフォントテクスチャ対応付け (全Face共通)
 	using FontChMap = std::unordered_map<CharID, CharPos>;
 	// (FaceNameを複数箇所で共有する都合上)

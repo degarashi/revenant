@@ -2,11 +2,16 @@
 #include "handle.hpp"
 #include "glx_const.hpp"
 #include "gl_types.hpp"
+#include <vector>
 
 namespace rev {
 	namespace draw {
 		class VStream;
 	}
+	struct VSemAttr;
+	using VSemAttrV = std::vector<VSemAttr>;
+	class VDecl;
+	using VDecl_SP = std::shared_ptr<VDecl>;
 	struct Primitive {
 		VDecl_SP	vdecl;
 		HVb			vb[MaxVStream];

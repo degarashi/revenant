@@ -1,9 +1,7 @@
 #pragma once
-#include "spine/resmgr.hpp"
 #include "spine/enum.hpp"
 #include <memory>
-#include <string>
-#include <boost/preprocessor.hpp>
+#include <vector>
 
 #define SEQ_VSEM (POSITION)(NORMAL)(TEXCOORD)(COLOR)(JOINT)(WEIGHT)(BINORMAL)(TANGENT)
 
