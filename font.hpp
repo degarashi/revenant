@@ -45,9 +45,11 @@ namespace rev {
 		struct text {
 			frea::Vec2	pos;
 			frea::Vec3	uvt;
+
+			const static SingletonDataLazy<VDecl, text, 0>	s_decl;
+			static VDecl_SP MakeData(lubee::IConst<0>);
 		};
 	}
-	DefineVDecl(::rev::drawtag::text)
 }
 
 namespace rev {

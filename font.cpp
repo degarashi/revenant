@@ -94,13 +94,16 @@ namespace rev {
 	}
 
 	// --------------------------- VDecl for text ---------------------------
-	const VDecl_SP& DrawDecl<drawtag::text>::GetVDecl() {
-		static VDecl_SP vd(new VDecl({
-			{0, 0, GL_FLOAT, GL_FALSE, 2, {VSem::POSITION, 0}},
-			{0, 8, GL_FLOAT, GL_FALSE, 3, {VSem::TEXCOORD, 0}}
-		}));
-		return vd;
+	const SingletonDataLazy<VDecl, vertex::text, 0> vertex::text::s_decl;
+	VDecl_SP vertex::text::MakeData(lubee::IConst<0>) {
+		return VDecl_SP(
+			new VDecl({
+				{0, 0, GL_FLOAT, GL_FALSE, 2, {VSem::POSITION, 0}},
+				{0, 8, GL_FLOAT, GL_FALSE, 3, {VSem::TEXCOORD, 0}}
+			})
+		);
 	}
+
 	// --------------------------- TextObj ---------------------------
 	TextObj::TextObj(Face& face, CCoreID coreID, std::u32string&& s): _text(std::move(s)), _coreID(coreID), _faceName(face.faceName) {
 		_init(face);
@@ -185,7 +188,7 @@ namespace rev {
 			p->vb[0]->initData(std::move(vbuff), sizeof(vertex::text));
 			p->ib = mgr_gl.makeIBuffer(DrawType::Static);
 			p->ib->initData(std::move(ibuff));
-			p->vdecl = DrawDecl<drawtag::text>::GetVDecl();
+			p->vdecl = vertex::text::s_decl.GetData();
 			p->drawMode = DrawMode::Triangles;
 			auto& info = p->withIndex;
 			info.count = ds.nChar*6;
