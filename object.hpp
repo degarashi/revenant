@@ -10,7 +10,6 @@ namespace rev {
 	constexpr static Priority DefaultPriority = std::numeric_limits<Priority>::max() / 2;
 
 	using GroupTypeId = uint32_t;		//!< Object種別Id
-	using ObjName = std::string;
 	using ObjTypeId = uint32_t;			//!< Object種別Id
 	using ObjTypeId_OP = spi::Optional<ObjTypeId>;
 	using GMessageStr = std::string;
@@ -24,7 +23,6 @@ namespace rev {
 			bool _bDestroy;
 		public:
 			Object();
-			virtual ~Object() {}
 			virtual Priority getPriority() const;
 			bool isDead() const;
 			bool onUpdateBase();
@@ -145,7 +143,7 @@ namespace rev {
 					}
 				};
 				struct tagObjectState {};
-				template <class ST, class D=State>
+				template <class Tag, class D=State>
 				struct StateT : D {
 					StateT() = default;
 					StateT(const D& d):
@@ -154,11 +152,10 @@ namespace rev {
 					StateT(D&& d):
 						D(std::move(d))
 					{}
-					using IdT = ::rev::ObjectIdT<ST, tagObjectState>;
-					const static IdT	s_idt;
 					ObjTypeId getStateId() const override {
 						return GetStateId();
 					}
+					using IdT = ::rev::ObjectIdT<Tag, tagObjectState>;
 					static ObjTypeId GetStateId() {
 						return IdT::Id;
 					}
@@ -262,9 +259,6 @@ namespace rev {
 					return _state.get();
 				}
 			public:
-				Priority getPriority() const override {
-					return 0x0000;
-				}
 				ObjTypeId getStateId() const {
 					return _state->getStateId();
 				}
@@ -304,9 +298,6 @@ namespace rev {
 		typename ObjectT<T, Base>::template StateT<void> ObjectT<T, Base>::_nullState;
 
 	}
-	template <class T, class Base>
-	template <class ST, class D>
-	const ObjectIdT<ST,typename detail::ObjectT<T,Base>::tagObjectState> detail::ObjectT<T,Base>::StateT<ST,D>::s_idt;
 
 	template <class T, class Base=Object>
 	class ObjectT : public detail::ObjectT<T, Base> {

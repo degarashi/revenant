@@ -2,7 +2,6 @@
 #include "object.hpp"
 
 namespace rev {
-	using GroupName = std::string;
 	//! Objectのグループ管理
 	class UpdGroup : public Object, public std::enable_shared_from_this<UpdGroup> {
 		private:
