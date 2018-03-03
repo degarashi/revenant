@@ -16,6 +16,7 @@
 #include "sys_uniform.hpp"
 #include "fbrect.hpp"
 #include "primitive.hpp"
+#include "singleton_data_lazy.hpp"
 
 namespace {
 	const char* GetClipboardText(void*) {
@@ -26,18 +27,21 @@ namespace {
 	}
 }
 namespace rev {
-	namespace vdecl {
-		struct imgui {};
+	namespace {
+		struct VDMaker {
+			static VDecl_SP MakeData(lubee::IConst<0>) {
+				return VDecl_SP(
+					new VDecl{
+						{0,0, GL_FLOAT, GL_FALSE, 2, {VSem::POSITION, 0}},
+						{0,8, GL_FLOAT, GL_FALSE, 2, {VSem::TEXCOORD, 0}},
+						{0,16, GL_UNSIGNED_BYTE, GL_TRUE, 4, {VSem::COLOR, 0}}
+					}
+				);
+			}
+		};
+		const SingletonDataLazy<VDecl, VDMaker, 0> g_vdecl;
 	}
-	DefineVDecl(vdecl::imgui)
-	const VDecl_SP& DrawDecl<vdecl::imgui>::GetVDecl() {
-		static VDecl_SP vd(new VDecl{
-			{0,0, GL_FLOAT, GL_FALSE, 2, {VSem::POSITION, 0}},
-			{0,8, GL_FLOAT, GL_FALSE, 2, {VSem::TEXCOORD, 0}},
-			{0,16, GL_UNSIGNED_BYTE, GL_TRUE, 4, {VSem::COLOR, 0}}
-		});
-		return vd;
-	}
+
 	ImGui_SDL2::ImGui_SDL2(const HInput& keyboard, const HInput& mouse, const Window& window):
 		_keyboard(keyboard),
 		_mouse(mouse)
@@ -235,7 +239,7 @@ namespace rev {
 						(int)(-pcmd->ClipRect.y + fb_height)
 					}});
 					const auto prim = std::make_shared<Primitive>();
-					prim->vdecl = DrawDecl<vdecl::imgui>::GetVDecl();
+					prim->vdecl = g_vdecl.GetData();
 					prim->drawMode = DrawMode::Triangles;
 					prim->ib = ib;
 					prim->vb[0] = vb;
