@@ -66,6 +66,9 @@ namespace rev {
 
 			const char* getResourceName() const noexcept override;
 	};
+	namespace idtag {
+		struct Group {};
+	}
 	template <class T, class Base>
 	class GroupT : public Base, public ObjectIdT<T, idtag::Group> {
 		private:

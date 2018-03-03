@@ -1,41 +1,9 @@
 #pragma once
 #include "object_if.hpp"
+#include "object_id.hpp"
 #include "flagptr.hpp"
 
 namespace rev {
-	// ---- Objectの固有Idを生成 ----
-	namespace detail {
-		template <class Tag>
-		struct ObjectIdT {
-			static ObjTypeId GenerateObjTypeId() {
-				static ObjTypeId s_id(0);
-				return s_id++;
-			}
-		};
-		struct IdDummy;
-	}
-	// 型Tはdetail::ObjectIdTにて新しいIdを生成する為に使用
-	template <class T, class Tag>
-	struct ObjectIdT {
-		const static ObjTypeId Id;
-	};
-	template <class T, class Tag>
-	const ObjTypeId ObjectIdT<T, Tag>::Id(detail::ObjectIdT<Tag>::GenerateObjTypeId());
-
-	namespace idtag {
-		struct Object {};
-		struct Group {};
-		struct DrawGroup {};
-	}
-
-	class U_Object : public Object, public ObjectIdT<detail::IdDummy, idtag::Object> {
-		private:
-			using IdT = ObjectIdT<detail::IdDummy, idtag::Object>;
-		public:
-			bool isNode() const noexcept override;
-			ObjTypeId getTypeId() const noexcept override;
-	};
-
 	namespace detail {
 		//! オブジェクト基底
 		/*!
@@ -250,4 +218,3 @@ namespace rev {
 			using base::base;
 	};
 }
-DEF_LUAIMPORT(rev::U_Object)

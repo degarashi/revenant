@@ -9,6 +9,7 @@ DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	NOTHING,
 	(destroy)(getResourceName)
 )
+#include "../u_object.hpp"
 DEF_LUAIMPLEMENT_SPTR(
 	rev::ObjMgr, rev::U_Object, U_Object,
 	luaNS::FSMachine,
