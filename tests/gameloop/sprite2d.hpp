@@ -6,16 +6,19 @@
 #include "../../vertex.hpp"
 #include "../../singleton_data.hpp"
 
+namespace rev {
+	class VDecl;
+	using VDecl_SP = std::shared_ptr<VDecl>;
+}
 namespace vertex {
 	struct sprite {
 		frea::Vec3	pos;
 		frea::Vec2	uv;
+
+		const static rev::SingletonDataLazy<rev::VDecl, sprite, 0>	s_vdecl;
+		static rev::VDecl_SP MakeData(lubee::IConst<0>);
 	};
 }
-namespace vdecl {
-	struct sprite {};
-}
-DefineVDecl(::vdecl::sprite)
 
 namespace rev {
 	class GLEffect_2D;
