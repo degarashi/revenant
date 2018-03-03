@@ -1,6 +1,6 @@
 #pragma once
 #include "drawtag.hpp"
-#include "updater.hpp"
+#include "object.hpp"
 
 namespace rev {
 	class DrawableObj : public Object {

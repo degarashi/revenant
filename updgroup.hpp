@@ -1,5 +1,5 @@
 #pragma once
-#include "updater.hpp"
+#include "object.hpp"
 
 namespace rev {
 	using GroupName = std::string;
