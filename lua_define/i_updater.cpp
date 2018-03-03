@@ -1,6 +1,6 @@
 #include "../luaimpl.hpp"
 
-#include "../updater.hpp"
+#include "../updgroup.hpp"
 #include "../updater_mgr.hpp"
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	rev::Object, Object,

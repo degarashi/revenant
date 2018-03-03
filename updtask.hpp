@@ -1,5 +1,5 @@
 #pragma once
-#include "updater.hpp"
+#include "updgroup.hpp"
 
 namespace rev {
 	//! UpdGroupにフレームカウンタやアイドル機能をつけたクラス
