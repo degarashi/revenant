@@ -90,24 +90,29 @@ namespace rev {
 		for(auto& obj : _objV)
 			obj.second->onDraw(e);
 	}
-	void UpdGroup::chk() const {
-		for(auto& rt : _remObj) {
-			auto itr = std::find_if(
-				_objV.begin(),
-				_objV.end(),
-				[&rt](const auto& obj){
-					return obj.second == rt;
-				}
-			);
-			Assert0(itr != _objV.end());
-		}
-	}
-	void UpdGroup::_AllChk() {
-		for(auto u : s_ug) {
-			if(auto hdl = u.lock()) {
-				hdl->chk();
+	void UpdGroup::_checkInternalData() const {
+		#ifdef DEBUG
+			// 削除予定のオブジェクトがメンバリスト内に存在しているか
+			for(auto& rt : _remObj) {
+				auto itr = std::find_if(
+					_objV.begin(),
+					_objV.end(),
+					[&rt](const auto& obj){
+						return obj.second == rt;
+					}
+				);
+				Assert0(itr != _objV.end());
 			}
-		}
+		#endif
+	}
+	void UpdGroup::_AllCheck() {
+		#ifdef DEBUG
+			for(auto u : s_ug) {
+				if(auto hdl = u.lock()) {
+					hdl->_checkInternalData();
+				}
+			}
+		#endif
 	}
 	void UpdGroup::onUpdate(bool /*bFirst*/) {
 		{
@@ -133,21 +138,21 @@ namespace rev {
 					remObj(obj.second);
 				}
 			}
-			_AllChk();
+			_AllCheck();
 		}
 		// ルートノードで一括してオブジェクトの追加、削除
 		if(tls_bUpdateRoot)
 			ProcAddRemove();
 	}
 	void UpdGroup::ProcAddRemove() {
-		_AllChk();
+		_AllCheck();
 		while(!s_ug.empty()) {
 			// 削除中、他に追加削除されるオブジェクトが出るかも知れないので一旦リストを退避
 			decltype(s_ug) tmp;
 			tmp.swap(s_ug);
 			for(auto ent : tmp) {
 				if(auto hdl = ent.lock()) {
-					hdl->chk();
+					hdl->_checkInternalData();
 					hdl->_doAddRemove();
 				}
 			}

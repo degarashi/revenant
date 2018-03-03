@@ -28,8 +28,9 @@ namespace rev {
 			/*! onUpdate内で暗黙的に呼ばれる */
 			void _doAddRemove();
 
-			static void _AllChk();
-			void chk() const;
+			//! データの接合性チェックをメンバ変更のある全てのUpdGroupに対して行う
+			static void _AllCheck();
+			void _checkInternalData() const;
 
 			template <class T>
 			friend class Scene;
