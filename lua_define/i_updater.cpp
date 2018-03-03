@@ -52,6 +52,7 @@ DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	NOTHING,
 	(setDrawPriority)
 )
+#include "../drawgroup.hpp"
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	rev::DrawGroup, DrawGroup,
 	"DrawableObj",
@@ -61,6 +62,7 @@ DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	(getResourceName)(getNMember)
 	(clear)
 )
+#include "../drawgroup_proxy.hpp"
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	rev::DrawGroupProxy, DrawGroupProxy,
 	"DrawableObj",

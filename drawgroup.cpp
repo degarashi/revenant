@@ -1,17 +1,7 @@
-#include "drawable.hpp"
+#include "drawgroup.hpp"
 #include "drawsort.hpp"
 
 namespace rev {
-	// -------------------- DrawableObj --------------------
-	DrawableObj::DrawableObj(const Priority prio) {
-		_dtag.priority = prio;
-	}
-	const DrawTag& DrawableObj::getDTag() const noexcept {
-		return _dtag;
-	}
-	void DrawableObj::setDrawPriority(const Priority p) noexcept {
-		_dtag.priority = p;
-	}
 	namespace {
 		const DSort_SP cs_dsort[SortAlg::_Num] = {
 			cs_dsort_z_asc,
@@ -24,7 +14,6 @@ namespace rev {
 		};
 		const std::string cs_drawgroupname("DrawGroup");
 	}
-	// -------------------- DrawGroup --------------------
 	DSort_V DrawGroup::_MakeDSort(const SortAlgList& al) {
 		const auto sz = al.size();
 		DSort_V ret(sz);

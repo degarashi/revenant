@@ -1,7 +1,7 @@
-#include "drawable.hpp"
+#include "drawgroup_proxy.hpp"
+#include "drawgroup.hpp"
 
 namespace rev {
-	// -------------------- DrawGroupProxy --------------------
 	DrawGroupProxy::DrawGroupProxy(const HDGroup& hDg, const Priority prio):
 		_hDGroup(hDg)
 	{
