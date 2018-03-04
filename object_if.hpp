@@ -20,11 +20,12 @@ namespace rev {
 	class Object : public Resource {
 		private:
 			bool _bDestroy;
+			friend class UpdGroup;
+			bool _onUpdate();
 		public:
 			Object();
 			virtual Priority getPriority() const;
 			bool isDead() const;
-			bool onUpdateBase();
 
 			//! UpdGroupに登録された時に呼ばれる
 			virtual void onConnected(const HGroup& hGroup);

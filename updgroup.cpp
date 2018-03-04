@@ -132,7 +132,7 @@ namespace rev {
 
 			for(auto& obj : _objV) {
 				auto* ent = obj.second.get();
-				auto b = ent->onUpdateBase();
+				const auto b = ent->_onUpdate();
 				if(b) {
 					// 次のフレーム直前で消す
 					remObj(obj.second);

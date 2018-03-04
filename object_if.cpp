@@ -20,7 +20,7 @@ namespace rev {
 	bool Object::hasLuaState() const {
 		return false;
 	}
-	bool Object::onUpdateBase() {
+	bool Object::_onUpdate() {
 		if(isDead())
 			return true;
 		onUpdate(true);
