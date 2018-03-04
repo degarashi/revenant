@@ -1,4 +1,4 @@
-#include "updater_mgr.hpp"
+#include "object_mgr.hpp"
 #include "object_if.hpp"
 
 namespace rev {
