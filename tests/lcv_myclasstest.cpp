@@ -61,7 +61,7 @@ namespace rev {
 					return "MyClass";
 				}
 				const char* getBaseName() const noexcept {
-					return BOOST_PP_STRINGIZE(LUAIMPLEMENT_BASE);
+					return (LUAIMPLEMENT_BASE).c_str();
 				}
 				static void LuaExport(LuaState&) {
 					++s_called;
