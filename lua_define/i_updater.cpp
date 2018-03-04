@@ -35,7 +35,7 @@ DEF_LUAIMPLEMENT_SPTR(
 	NOTHING
 )
 
-#include "../updater_lua.hpp"
+#include "../object_lua.hpp"
 DEF_LUAIMPLEMENT_SPTR(
 	rev::ObjMgr, rev::U_ObjectUpd, U_ObjectUpd,
 	luaNS::FSMachine,

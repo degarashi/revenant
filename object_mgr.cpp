@@ -24,7 +24,7 @@ namespace rev {
 		return _lua;
 	}
 }
-#include "updater_lua.hpp"
+#include "object_lua.hpp"
 namespace rev {
 	// -------------------- ObjectT_LuaBase --------------------
 	bool detail::ObjectT_LuaBase::CallRecvMsg(const Lua_SP& ls, const HObj& hObj, LCValue& dst, const GMessageStr& msg, const LCValue& arg) {

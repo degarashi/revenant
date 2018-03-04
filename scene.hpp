@@ -1,5 +1,5 @@
 #pragma once
-#include "updater_lua.hpp"
+#include "object_lua.hpp"
 #include "drawgroup.hpp"
 #include "spine/singleton.hpp"
 
