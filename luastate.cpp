@@ -672,7 +672,7 @@ namespace rev {
 		// スタックの値を表示する
 		const int n = ls.getTop();
 		for(int i=1 ; i<=n ; i++)
-			os << "[" << i << "]: " << ls.toLCValue(i) << std::endl;
+			os << "[" << i << "]: " << ls.toLCValue(i) << " (" << ls.type(i).toStr()  << ")" << std::endl;
 		return os;
 	}
 }
