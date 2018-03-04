@@ -383,12 +383,14 @@ namespace rev {
 		class LuaTestT : public LuaTest {
 			public:
 				using lua_t = T;
+				// テンプレート引数TがLValueSの時はlua_State*を返す
 				template <class T2=lua_t, ENABLE_IF((std::is_same<T2,LValueS>{}))>
 				lua_State* getLSZ(const Lua_SP& lsp = nullptr) const {
 					if(lsp)
 						return lsp->getLS();
 					return _lsp->getLS();
 				}
+				// テンプレート引数TがLValueGの時はLua_SPを返す
 				template <class T2=lua_t, ENABLE_IF((std::is_same<T2,LValueG>{}))>
 				Lua_SP getLSZ(const Lua_SP& lsp = nullptr) const {
 					if(lsp)
