@@ -54,8 +54,9 @@ namespace rev {
 				using RdI = decltype(std::declval<Random>().mt().template getUniformF<int>());
 				RdI				_rdi;
 				int				_maxTableEnt=16;
+				using Str_UP = std::unique_ptr<std::string>;
 				//! 生成するconst char*文字列ストア
-				using StrV = std::vector<std::string>;
+				using StrV = std::vector<Str_UP>;
 				StrV			_stringVec;
 				using LsV = std::vector<Lua_SP>;
 				LsV				_lsVec;

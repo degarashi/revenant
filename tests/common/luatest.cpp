@@ -79,9 +79,8 @@ namespace rev {
 			return self._lsp->newThread();
 		}
 		const char* GenValue<const char*>::operator()(LuaTest& self) const {
-			self._stringVec.resize(self._stringVec.size()+1);
-			self._stringVec.back() = GenValue_t<std::string>()(self);
-			return self._stringVec.back().c_str();
+			self._stringVec.emplace_back(std::make_unique<std::string>(GenValue_t<std::string>()(self)));
+			return self._stringVec.back()->c_str();
 		}
 		lua_State* GenValue<lua_State*>::operator()(LuaTest& self) const {
 			self._lsVec.emplace_back(self._lsp->newThread());
