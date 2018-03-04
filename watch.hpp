@@ -15,6 +15,7 @@ namespace rev {
 
 		bool operator == (const FEv& f) const;
 		FEv(const String_SP& base, const std::string& nm, bool bDir);
+		virtual ~FEv() {}
 		virtual FileEvent getType() const = 0;
 		virtual const char* getName() const = 0;
 		virtual void print(std::ostream& os) const;
