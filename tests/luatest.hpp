@@ -4,6 +4,7 @@
 #include "frea/random/angle.hpp"
 #include "frea/random/quaternion.hpp"
 #include "../lcv.hpp"
+#include "../lctable.hpp"
 
 namespace rev {
 	namespace test {
