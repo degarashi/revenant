@@ -179,7 +179,7 @@ namespace rev {
 			const auto name = genValue<std::string>();
 			const auto key = genValue<std::string>();
 			const auto value = genValue<lua_Number>();
-			const auto fnChk = [&lsp, &name, &key, &value, this](auto&& cb){
+			const auto fnChk = [&lsp, &name, &key, &value](auto&& cb){
 				const RewindTop rt(lsp->getLS());
 				{
 					const CheckTop ct(lsp->getLS());
