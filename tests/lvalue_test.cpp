@@ -281,61 +281,65 @@ namespace rev {
 		}
 
 		template <class T>
-		struct LValue_FTypedTest : LuaTestT<std::tuple_element_t<0,T>> {
-			using src_t = T;
-			using lvalue_t = std::tuple_element_t<0,T>;
-			using tuple_t = std::tuple_element_t<1,T>;
-			constexpr static std::size_t tuple_size = std::tuple_size<tuple_t>::value;
-			template <class CB, std::size_t... Idx>
-			void _check(const CB& cb, lvalue_t&& lvs, std::index_sequence<Idx...>) {
-				cb(lvs, reinterpret_cast<void*>(this), this->template genValue<std::tuple_element_t<Idx, tuple_t>>()...);
-			}
-			template <class CB>
-			void _check(const CB& cb, const LCValue& f) {
-				_check(cb, lvalue_t(this->getLSZ(), f), std::make_index_sequence<tuple_size>());
-			}
-			template <std::size_t... Idx>
-			void pushRandom(LuaState& lsc, std::index_sequence<Idx...>) {
-				auto dummy = [](auto...){};
-				dummy((lsc.push(this->template genValue<std::tuple_element_t<Idx, tuple_t>>()),0)...);
-			}
-			void pushRandom(LuaState& lsc) {
-				pushRandom(lsc, std::make_index_sequence<tuple_size>());
-			}
-			template <std::size_t I>
-			using te_t = std::tuple_element_t<I, tuple_t>;
-			template <std::size_t... Idx>
-			static bool CheckArgs(LuaState& lsc, const int ofs, std::index_sequence<Idx...>) {
-				return lubee::And_L(
-							(
-								lsc.type(Idx+ofs) ==
-								LCV<te_t<Idx>>()(lsc.toValue<te_t<Idx>>(Idx+ofs))
-							)...
-						);
-			}
-			static bool CheckArgs(LuaState& lsc, const int ofs) {
-				return CheckArgs(lsc, ofs, std::make_index_sequence<tuple_size>());
-			}
-			bool checkArgsNRet(const LCTable_SP&, lubee::SZConst<tuple_size>) {
-				return true;
-			}
-			template <std::size_t I>
-			bool checkArgsNRet(const LCTable_SP& tbl, lubee::SZConst<I>) {
-				auto itr = tbl->find(lua_Integer(I+1));
-				if(itr == tbl->end())
-					return false;
-				auto c0 = itr->second.type();
-				auto c1 = LCValue(GenValue_t<te_t<I>>()(*this)).type();
-				if(c0 != c1)
-					return false;
-				return checkArgsNRet(tbl, lubee::SZConst<I+1>());
-			}
-			bool checkArgsNRet(const LCValue& lc) {
-				if(lc.type() != LuaType::Table)
-					return false;
-				auto tbl = boost::get<LCTable_SP>(lc);
-				return checkArgsNRet(tbl, lubee::SZConst<0>());
-			}
+		class LValue_FTypedTest : public LuaTestT<std::tuple_element_t<0,T>> {
+			public:
+				using self_t = LValue_FTypedTest<T>;
+				using lvalue_t = std::tuple_element_t<0,T>;
+				using tuple_t = std::tuple_element_t<1,T>;
+				constexpr static std::size_t tuple_size = std::tuple_size<tuple_t>::value;
+			private:
+				template <class CB, std::size_t... Idx>
+				void _callbackWithArgs(lvalue_t&& lvs, const CB& cb, std::index_sequence<Idx...>) {
+					cb(std::move(lvs), reinterpret_cast<void*>(this), this->template genValue<std::tuple_element_t<Idx, tuple_t>>()...);
+				}
+				template <std::size_t... Idx>
+				void _pushRandomArgs(LuaState& lsc, std::index_sequence<Idx...>) {
+					const auto dummy = [](auto...){};
+					dummy((lsc.push(this->template genValue<std::tuple_element_t<Idx, tuple_t>>()),0)...);
+				}
+				template <std::size_t I>
+				using te_t = std::tuple_element_t<I, tuple_t>;
+				template <std::size_t... Idx>
+				static bool _CheckArgsType(LuaState& lsc, const int ofs, std::index_sequence<Idx...>) {
+					return lubee::And_L(
+								(
+									lsc.type(Idx+ofs) ==
+									LCV<te_t<Idx>>()(lsc.toValue<te_t<Idx>>(Idx+ofs))
+								)...
+							);
+				}
+				bool _checkArgsNRet(const LCTable_SP&, lubee::SZConst<tuple_size>) {
+					return true;
+				}
+				template <std::size_t I>
+				bool _checkArgsNRet(const LCTable_SP& tbl, lubee::SZConst<I>) {
+					auto itr = tbl->find(lua_Integer(I+1));
+					if(itr == tbl->end())
+						return false;
+					auto c0 = itr->second.type();
+					auto c1 = LCValue(GenValue_t<te_t<I>>()(*this)).type();
+					if(c0 != c1)
+						return false;
+					return _checkArgsNRet(tbl, lubee::SZConst<I+1>());
+				}
+			public:
+				template <class CB>
+				void callbackWithArgs(const LCValue& f, const CB& cb) {
+					_callbackWithArgs(lvalue_t(this->getLSZ(), f), cb, std::make_index_sequence<tuple_size>());
+				}
+				// テンプレート引数のtupleに定められた型のランダムな値をLuaStateへPush
+				void pushRandomArgs(LuaState& lsc) {
+					_pushRandomArgs(lsc, std::make_index_sequence<tuple_size>());
+				}
+				static bool CheckArgsType(LuaState& lsc, const int ofs) {
+					return _CheckArgsType(lsc, ofs, std::make_index_sequence<tuple_size>());
+				}
+				bool checkArgsNRet(const LCValue& lc) {
+					if(lc.type() != LuaType::Table)
+						return false;
+					auto tbl = boost::get<LCTable_SP>(lc);
+					return _checkArgsNRet(tbl, lubee::SZConst<0>());
+				}
 		};
 		template <class T>
 		constexpr std::size_t LValue_FTypedTest<T>::tuple_size;
@@ -356,40 +360,45 @@ namespace rev {
 		using TypesF_t = ToTestTypes_t<TypesF>;
 		TYPED_TEST_CASE(LValue_FTypedTest, TypesF_t);
 		namespace {
-			template <class T>
-			int CFunc(lua_State* ls) {
-				using Test = LValue_FTypedTest<T>;
+			template <class Test>
+			int CheckArgsTypeFunc(lua_State* ls) {
 				constexpr int size = Test::tuple_size;
+				// ASSERTマクロの関係でスコープを作成
 				[ls](){
 					// [self][args...]
 					LuaState lsc(ls, false);
+					// 引数の数の確認
 					ASSERT_EQ(size+1, lsc.getTop());
 					auto* self = reinterpret_cast<Test*>(lsc.toUserData(1));
-					// check arguments
-					ASSERT_TRUE(Test::CheckArgs(lsc, 2));
+					// 引数の型だけ合ってるか確認
+					ASSERT_TRUE(Test::CheckArgsType(lsc, 2));
+					// スタックをクリア
 					lsc.setTop(0);
-					self->pushRandom(lsc);
+					// 引数の型と数だけ合わせてランダムに値をPush
+					self->pushRandomArgs(lsc);
 					ASSERT_EQ(size+0, lsc.getTop());
 				}();
 				return size;
 			}
-			template <class T>
-			int MFunc(lua_State* ls) {
-				using Test = LValue_FTypedTest<T>;
+			template <class Test>
+			int CheckMethodCall(lua_State* ls) {
 				constexpr int size = Test::tuple_size;
 				[ls](){
 					// [table][self][args...]
 					LuaState lsc(ls, false);
+					// 引数の数の確認
 					ASSERT_EQ(size+2, lsc.getTop());
 					auto* self = reinterpret_cast<Test*>(lsc.toUserData(2));
-					// check arguments
-					ASSERT_TRUE(Test::CheckArgs(lsc, 3));
+					// 引数の型だけ合ってるか確認
+					ASSERT_TRUE(Test::CheckArgsType(lsc, 3));
 					ASSERT_EQ(LuaType::Table, lsc.type(1));
 					auto tbl = lsc.toValue<LCTable_SP>(1);
 					ASSERT_EQ(1, tbl->size());
-					ASSERT_EQ(&MFunc<T>, boost::get<lua_CFunction>((tbl->begin())->second));
+					ASSERT_EQ(&CheckMethodCall<Test>, boost::get<lua_CFunction>((tbl->begin())->second));
+					// スタックをクリア
 					lsc.setTop(0);
-					self->pushRandom(lsc);
+					// 引数の型と数だけ合わせてランダムに値をPush
+					self->pushRandomArgs(lsc);
 					ASSERT_EQ(size+0, lsc.getTop());
 				}();
 				return size;
@@ -397,48 +406,59 @@ namespace rev {
 		}
 
 		TYPED_TEST(LValue_FTypedTest, Call) {
-			USING(src_t);
+			USING(self_t);
 			USING(tuple_t);
 			// call(args...)
 			ASSERT_NO_FATAL_FAILURE(
-				this->_check([](auto& lvs, auto&&... args){
-					const CheckTop ct(lvs.getLS());
-					lvs.call(std::forward<decltype(args)>(args)...);
-				}, &CFunc<src_t>);
+				this->callbackWithArgs(&CheckArgsTypeFunc<self_t>,
+					[](auto&& lvs, auto&&... args){
+						const CheckTop ct(lvs.getLS());
+						lvs.call(std::forward<decltype(args)>(args)...);
+					}
+				);
 			);
 			// callNRet()
 			ASSERT_NO_FATAL_FAILURE(
-				this->_check([this](auto& lvs, auto&&... args){
-					const CheckTop ct(lvs.getLS());
-					const auto ret = lvs.callNRet(std::forward<decltype(args)>(args)...);
-					ASSERT_TRUE(this->checkArgsNRet(ret));
-				}, &CFunc<src_t>);
+				this->callbackWithArgs(&CheckArgsTypeFunc<self_t>,
+					[this](auto&& lvs, auto&&... args){
+						const CheckTop ct(lvs.getLS());
+						const auto ret = lvs.callNRet(std::forward<decltype(args)>(args)...);
+						ASSERT_TRUE(this->checkArgsNRet(ret));
+					}
+				);
 			);
 			// operator()(ret, args...)
 			ASSERT_NO_FATAL_FAILURE(
-				this->_check([](auto& lvs, auto&&... args){
-					const CheckTop ct(lvs.getLS());
-					tuple_t ret;
-					lvs(ret, std::forward<decltype(args)>(args)...);
-				}, &CFunc<src_t>);
+				this->callbackWithArgs(&CheckArgsTypeFunc<self_t>,
+					[](auto&& lvs, auto&&... args){
+						const CheckTop ct(lvs.getLS());
+						tuple_t ret;
+						lvs(ret, std::forward<decltype(args)>(args)...);
+					}
+				);
 			);
 			const auto methodName = this->template genValue<const char*>();
 			auto tbl = std::make_shared<LCTable>();
-			(*tbl)[methodName] = &MFunc<src_t>;
+			(*tbl)[methodName] = &CheckMethodCall<self_t>;
+
 			// callMethod()
 			ASSERT_NO_FATAL_FAILURE(
-				this->_check([methodName](auto& lvs, auto&&... args){
-					const CheckTop ct(lvs.getLS());
-					lvs.callMethod(methodName, std::forward<decltype(args)>(args)...);
-				}, tbl);
+				this->callbackWithArgs(tbl,
+					[methodName](auto&& lvs, auto&&... args){
+						const CheckTop ct(lvs.getLS());
+						lvs.callMethod(methodName, std::forward<decltype(args)>(args)...);
+					}
+				);
 			);
 			// callMethodNRet()
 			ASSERT_NO_FATAL_FAILURE(
-				this->_check([=](auto& lvs, auto&&... args){
-					const CheckTop ct(lvs.getLS());
-					const auto ret = lvs.callMethodNRet(methodName, std::forward<decltype(args)>(args)...);
-					ASSERT_TRUE(this->checkArgsNRet(ret));
-				}, tbl);
+				this->callbackWithArgs(tbl,
+					[=](auto&& lvs, auto&&... args){
+						const CheckTop ct(lvs.getLS());
+						const auto ret = lvs.callMethodNRet(methodName, std::forward<decltype(args)>(args)...);
+						ASSERT_TRUE(this->checkArgsNRet(ret));
+					}
+				);
 			);
 		}
 	}
