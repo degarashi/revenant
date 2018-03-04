@@ -1,69 +1,9 @@
 #pragma once
 #include "object_lua.hpp"
-#include "drawgroup.hpp"
-#include "spine/singleton.hpp"
+#include "scene_base.hpp"
+#include "scene_if.hpp"
 
 namespace rev {
-	class IScene : public Object {
-		public:
-			virtual HGroup getUpdGroup() const;
-			virtual HDGroup getDrawGroup() const;
-	};
-	#define mgr_scene (::rev::SceneMgr::ref())
-	//! シーンスタックを管理
-	class SceneMgr : public spi::Singleton<SceneMgr> {
-		private:
-			using StStack = std::vector<HScene>;
-			StStack		_scene;
-			//! シーンを切り替えや差し替えオペレーションがあるかのフラグ
-			bool		_scOp = false;
-			int			_scNPop;
-			HScene		_scNext;
-			LCValue		_scArg;
-
-			void _doSceneOp();
-
-		public:
-			bool isEmpty() const noexcept;
-			//! シーンスタック中のSceneBaseを取得
-			IScene& getSceneInterface(int n=0) const;
-			//! ヘルパー関数: シーンスタック中のUpdGroupを取得
-			/*! *getSceneBase(n).update->get() と同等 */
-			UpdGroup& getUpdGroupRef(int n=0) const;
-			//! ヘルパー関数: シーンスタック中のDrawGroupを取得
-			/*! *getSceneBase(n).draw->get() と同等 */
-			DrawGroup& getDrawGroupRef(int n=0) const;
-			//! getScene(0)と同義
-			HScene getTop() const;
-			HScene getScene(int n=0) const;
-			void setPushScene(const HScene& hSc, bool bPop=false);
-			void setPopScene(int nPop, const LCValue& arg=LCValue());
-			//! フレーム更新のタイミングで呼ぶ
-			/*! \return スタックが空の場合はfalseを返す */
-			bool onUpdate();
-			//! 描画のタイミングで呼ぶ
-			void onDraw(IEffect& e);
-			bool onPause();
-			void onStop();
-			void onResume();
-			void onReStart();
-	};
-
-	class SceneBase {
-		private:
-			DefineUpdGroup(Update)
-			DefineDrawGroup(Draw)
-
-			HGroup		_update;
-			HDGroup		_draw;
-
-		public:
-			SceneBase(const HGroup& hUpd, const HDGroup& hDraw);
-			void setUpdate(const HGroup& hGroup);
-			const HGroup& getUpdate() const noexcept;
-			void setDraw(const HDGroup& hDGroup);
-			const HDGroup& getDraw() const noexcept;
-	};
 	//! 1シーンにつきUpdateTreeとDrawTreeを1つずつ用意
 	template <class T>
 	class Scene : public ObjectT_Lua<T, IScene> {
@@ -130,12 +70,4 @@ namespace rev {
 			DEF_ADAPTOR(onReStart)
 			#undef DEF_ADAPTOR
 	};
-	class U_Scene : public Scene<U_Scene> {
-		private:
-			struct St_None;
-		public:
-			U_Scene();
-	};
 }
-DEF_LUAIMPORT(rev::SceneMgr)
-DEF_LUAIMPORT(rev::U_Scene)

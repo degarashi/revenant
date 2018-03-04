@@ -14,7 +14,7 @@
 #include <SDL_timer.h>
 #include <SDL_events.h>
 #include "videoparam.hpp"
-#include "scene.hpp"
+#include "scene_mgr.hpp"
 #include "watch.hpp"
 #include "drawtoken/task.hpp"
 

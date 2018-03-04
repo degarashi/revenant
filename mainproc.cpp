@@ -1,5 +1,5 @@
 #include "mainproc.hpp"
-#include "scene.hpp"
+#include "scene_mgr.hpp"
 #include "output.hpp"
 #include "sharedata.hpp"
 #include "glx_if.hpp"

@@ -1,39 +1,8 @@
-#include "scene.hpp"
+#include "scene_mgr.hpp"
+#include "scene_if.hpp"
+#include "updgroup.hpp"
 
 namespace rev {
-	// -------------------- IScene --------------------
-	HGroup IScene::getUpdGroup() const {
-		D_Expect(false, "invalid function call");
-		return HGroup();
-	}
-	HDGroup IScene::getDrawGroup() const {
-		D_Expect(false, "invalid function call");
-		return HDGroup();
-	}
-	// -------------- SceneBase --------------
-	SceneBase::SceneBase(const HGroup& hUpd, const HDGroup& hDraw) {
-		_update = hUpd ? hUpd : rev_mgr_obj.emplace<Update>();
-		_draw = hDraw ? hDraw : rev_mgr_obj.emplace<Draw>();
-	}
-	void SceneBase::setUpdate(const HGroup& hGroup) {
-		if(_update)
-			_update->onDisconnected(HGroup());
-		_update = hGroup;
-		if(hGroup)
-			hGroup->onConnected(HGroup());
-	}
-	const HGroup& SceneBase::getUpdate() const noexcept {
-		return _update;
-	}
-	void SceneBase::setDraw(const HDGroup& hdGroup) {
-		// DrawGroupはConnected系の通知を行わない
-		_draw = hdGroup;
-	}
-	const HDGroup& SceneBase::getDraw() const noexcept {
-		return _draw;
-	}
-
-	// -------------- SceneMgr --------------
 	bool SceneMgr::isEmpty() const noexcept {
 		return _scene.empty();
 	}
@@ -132,10 +101,4 @@ namespace rev {
 	DEF_ADAPTOR(bool, onPause)
 	DEF_ADAPTOR(void, onResume)
 	#undef DEF_ADAPTOR
-
-	// -------------- U_Scene --------------
-	struct U_Scene::St_None : StateT<St_None> {};
-	U_Scene::U_Scene() {
-		setStateNew<St_None>();
-	}
 }

@@ -15,10 +15,11 @@
 #include "gl_resource.hpp"
 #include "glx.hpp"
 #include "font.hpp"
-#include "scene.hpp"
+#include "scene_mgr.hpp"
 #include "uniform_pool.hpp"
 #include "glx_block.hpp"
 #include "imgui_sdl2.hpp"
+#include "object_mgr.hpp"
 
 namespace rev {
 	namespace {

@@ -16,6 +16,7 @@
 #include "../../sys_uniform.hpp"
 #include "../../tech_pass.hpp"
 #include "../../output.hpp"
+#include "../../scene_mgr.hpp"
 
 namespace rev {
 	namespace test {

@@ -88,7 +88,7 @@ DEF_LUAIMPLEMENT_SPTR(
 	(rev::HDGroup)
 )
 
-#include "../scene.hpp"
+#include "../u_scene.hpp"
 DEF_LUAIMPLEMENT_SPTR(
 	rev::ObjMgr, rev::U_Scene, U_Scene,
 	luaNS::FSMachine,
@@ -97,6 +97,7 @@ DEF_LUAIMPLEMENT_SPTR(
 	(getUpdGroup)(getDrawGroup),
 	NOTHING
 )
+#include "../scene_mgr.hpp"
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	rev::SceneMgr, SceneMgr,
 	LUAIMPLEMENT_BASE,
