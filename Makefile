@@ -13,5 +13,6 @@ OPT_DEBUGGUI			= -DWITH_DEBUGGUI=$(WITH_DEBUGGUI)
 
 ADDITIONAL_CMAKE_OPTION		= $(OPT_SSE) $(OPT_SOUNDAPI) $(OPT_WITHOUT_UNITTEST) $(OPT_DEBUGGUI)
 # リソースディレクトリへのシンボリックリンク
-ADDITIONAL_CMD				= ln -sf $(PWD)/resource $(WORK_DIR)/tests/gameloop;
+ADDITIONAL_CMD				= ln -sf $(PWD)/resource $(WORK_DIR)/tests/gameloop; \
+							  ln -sf $(PWD)/resource $(WORK_DIR);
 include lubee/common.make
