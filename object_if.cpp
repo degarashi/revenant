@@ -7,49 +7,48 @@ namespace rev {
 	namespace {
 		const std::string cs_objname("Object");
 	}
-	// -------------------- Object --------------------
-	Object::Object():
+	IObject::IObject():
 		_bDestroy(false)
 	{}
-	Priority Object::getPriority() const {
+	Priority IObject::getPriority() const {
 		return 0;
 	}
-	bool Object::isDead() const {
+	bool IObject::isDead() const {
 		return _bDestroy;
 	}
-	bool Object::hasLuaState() const {
+	bool IObject::hasLuaState() const {
 		return false;
 	}
-	bool Object::_onUpdate() {
+	bool IObject::_onUpdate() {
 		if(isDead())
 			return true;
 		onUpdate(true);
 		return isDead();
 	}
-	void Object::onConnected(const HGroup& /*hGroup*/) {}
-	void Object::onDisconnected(const HGroup& /*hGroup*/) {}
-	void Object::onUpdate(bool /*execLua*/) {}
-	void Object::destroy() {
+	void IObject::onConnected(const HGroup& /*hGroup*/) {}
+	void IObject::onDisconnected(const HGroup& /*hGroup*/) {}
+	void IObject::onUpdate(bool /*execLua*/) {}
+	void IObject::destroy() {
 		_bDestroy = true;
 	}
-	const char* Object::getResourceName() const noexcept {
+	const char* IObject::getResourceName() const noexcept {
 		return cs_objname.c_str();
 	}
-	void Object::enumGroup(const CBFindGroup& /*cb*/, GroupTypeId /*id*/, int /*depth*/) const {
+	void IObject::enumGroup(const CBFindGroup& /*cb*/, GroupTypeId /*id*/, int /*depth*/) const {
 		ExpectF("not supported operation");
 	}
-	bool Object::recvMsg(LCValue& /*dst*/, const GMessageStr& /*id*/, const LCValue& /*arg*/) {
+	bool IObject::recvMsg(LCValue& /*dst*/, const GMessageStr& /*id*/, const LCValue& /*arg*/) {
 		return false;
 	}
-	void Object::proc(const CBUpdProc& /*p*/, bool /*bRecursive*/, Priority /*prioBegin*/, Priority /*prioEnd*/) {
+	void IObject::proc(const CBUpdProc& /*p*/, bool /*bRecursive*/, Priority /*prioBegin*/, Priority /*prioEnd*/) {
 		ExpectF("not supported operation");
 	}
-	void Object::onDraw(IEffect& /*e*/) const {}
-	void Object::onDown(ObjTypeId_OP /*prevId*/, const LCValue& /*arg*/) {}
-	bool Object::onPause() {
+	void IObject::onDraw(IEffect& /*e*/) const {}
+	void IObject::onDown(ObjTypeId_OP /*prevId*/, const LCValue& /*arg*/) {}
+	bool IObject::onPause() {
 		return detail::c_pauseDefault;
 	}
-	void Object::onStop() {}
-	void Object::onResume() {}
-	void Object::onReStart() {}
+	void IObject::onStop() {}
+	void IObject::onResume() {}
+	void IObject::onReStart() {}
 }

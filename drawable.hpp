@@ -3,7 +3,7 @@
 #include "object.hpp"
 
 namespace rev {
-	class DrawableObj : public Object {
+	class DrawableObj : public IObject {
 		protected:
 			// ソート用の描画タグ
 			DrawTag		_dtag;

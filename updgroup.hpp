@@ -5,7 +5,7 @@
 
 namespace rev {
 	//! Objectのグループ管理
-	class UpdGroup : public Object, public std::enable_shared_from_this<UpdGroup> {
+	class UpdGroup : public IObject, public std::enable_shared_from_this<UpdGroup> {
 		private:
 			static TLS<bool> tls_bUpdateRoot;
 			using UGVec = std::vector<WGroup>;

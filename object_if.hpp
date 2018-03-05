@@ -17,14 +17,14 @@ namespace rev {
 
 	class LCValue;
 	//! ゲームオブジェクト基底インタフェース
-	class Object : public Resource {
+	class IObject : public Resource {
 		private:
 			bool _bDestroy;
 			friend class UpdGroup;
 			// UpdGroupから呼ばれる
 			bool _onUpdate();
 		public:
-			Object();
+			IObject();
 			virtual Priority getPriority() const;
 			bool isDead() const;
 
@@ -40,7 +40,7 @@ namespace rev {
 			virtual void destroy();
 			//! 一意に割り振られるオブジェクトの識別IDを取得
 			virtual ObjTypeId getTypeId() const = 0;
-			// ---- ObjectGroup用メソッド ----
+			// ---- Group用メソッド ----
 			virtual void enumGroup(const CBFindGroup& cb, GroupTypeId id, int depth) const;
 			//! 特定の優先度範囲のオブジェクトを処理
 			virtual void proc(const CBUpdProc& p, bool bRecursive,
@@ -61,4 +61,4 @@ namespace rev {
 	};
 }
 #include "luaimport.hpp"
-DEF_LUAIMPORT(rev::Object)
+DEF_LUAIMPORT(rev::IObject)

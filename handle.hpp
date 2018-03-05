@@ -72,8 +72,8 @@ namespace rev {
 	class TextObj;
 	DEF_HANDLE(TextObj, Text)
 
-	class Object;
-	DEF_HANDLE(Object, Obj)
+	class IObject;
+	DEF_HANDLE(IObject, Obj)
 	class UpdGroup;
 	DEF_HANDLE(UpdGroup, Group)
 	class DrawableObj;

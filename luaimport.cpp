@@ -261,7 +261,7 @@ namespace rev {
 #include "object_if.hpp"
 namespace rev {
 	int LuaImport::RecvMsgCpp(lua_State* ls) {
-		auto* obj = LI_GetPtr<Object>()(ls, -3);
+		auto* obj = LI_GetPtr<IObject>()(ls, -3);
 		const auto msg = LCV<GMessageStr>()(-2, ls, nullptr);
 		// Noneで無ければ有効な戻り値とする
 		LCValue ret;

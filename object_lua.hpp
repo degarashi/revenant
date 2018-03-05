@@ -10,7 +10,7 @@ namespace rev {
 		};
 		extern const bool c_pauseDefault;
 	}
-	template <class T, class Base=Object>
+	template <class T, class Base=IObject>
 	class ObjectT_Lua : public ObjectT<T,Base>, public std::enable_shared_from_this<ObjectT_Lua<T,Base>> {
 		private:
 			using base = ObjectT<T,Base>;

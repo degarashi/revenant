@@ -3,7 +3,7 @@
 #include "object_id.hpp"
 
 namespace rev {
-	class U_Object : public Object {
+	class U_Object : public IObject {
 		public:
 			bool isNode() const noexcept override;
 			ObjTypeId getTypeId() const noexcept override;

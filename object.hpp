@@ -214,7 +214,7 @@ namespace rev {
 		typename ObjectT<T, Base>::template StateT<void> ObjectT<T, Base>::_nullState;
 
 	}
-	template <class T, class Base=Object>
+	template <class T, class Base=IObject>
 	class ObjectT : public detail::ObjectT<T, Base> {
 		using base = detail::ObjectT<T, Base>;
 		public:

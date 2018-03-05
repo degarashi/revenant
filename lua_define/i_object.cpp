@@ -3,7 +3,7 @@
 #include "../updgroup.hpp"
 #include "../object_mgr.hpp"
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
-	rev::Object, Object,
+	rev::IObject, Object,
 	LUAIMPLEMENT_BASE,
 	NOTHING,
 	NOTHING,

@@ -10,9 +10,9 @@ namespace rev {
 
 	#define rev_mgr_obj (::rev::ObjMgr::ref())
 	//! アクティブゲームオブジェクトの管理
-	class ObjMgr : public spi::ResMgr<Object, lubee::AlignedPool<Object>>, public spi::Singleton<ObjMgr> {
+	class ObjMgr : public spi::ResMgr<IObject, lubee::AlignedPool<IObject>>, public spi::Singleton<ObjMgr> {
 		private:
-			using base_t = spi::ResMgr<Object, lubee::AlignedPool<Object>>;
+			using base_t = spi::ResMgr<IObject, lubee::AlignedPool<IObject>>;
 			Lua_SP _lua;
 		public:
 			~ObjMgr();
