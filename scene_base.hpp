@@ -9,6 +9,7 @@ namespace rev {
 
 		public:
 			SceneBase(const HGroup& hUpd, const HDGroup& hDraw);
+			~SceneBase();
 			void setUpdate(const HGroup& hGroup);
 			const HGroup& getUpdate() const noexcept;
 			void setDraw(const HDGroup& hDGroup);
