@@ -33,11 +33,11 @@ namespace rev {
 		// アイドル時間チェック
 		if(_idleCount > 0)
 			--_idleCount;
-		else
+		else if(_idleCount == 0)
 			_hGroup->onUpdate(true);
 		++_accum;
 	}
-	void UpdTask::setIdle(int nFrame) {
+	void UpdTask::setIdle(const int nFrame) {
 		_idleCount = nFrame;
 	}
 	int UpdTask::getAccum() const {

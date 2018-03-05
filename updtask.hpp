@@ -21,6 +21,7 @@ namespace rev {
 			void proc(const CBUpdProc& p, bool bRecursive, Priority prioBegin, Priority prioEnd) override;
 
 			void onUpdate(bool execLua) override;
+			/*!	\param[in] nFrame	待機フレーム数(負数は無限) */
 			void setIdle(int nFrame);
 			int getAccum() const;
 			UpdTask& operator = (const UpdTask&) = delete;
