@@ -21,7 +21,7 @@ namespace rev {
 			void addObj(const HDObj& hObj);
 			void remObj(const HDObj& hObj);
 			void clear();
-			void onUpdate(bool bFirst) override;
+			void onUpdate(bool execLua) override;
 			void setSortAlgorithm(const DSort_V& ds, bool bDynamic);
 			void setSortAlgorithmId(const SortAlgList& al, bool bDynamic);
 			const DSort_V& getSortAlgorithm() const noexcept;

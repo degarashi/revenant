@@ -21,6 +21,7 @@ namespace rev {
 		private:
 			bool _bDestroy;
 			friend class UpdGroup;
+			// UpdGroupから呼ばれる
 			bool _onUpdate();
 		public:
 			Object();
@@ -32,7 +33,7 @@ namespace rev {
 			//! UpdGroupから削除される時に呼ばれる
 			virtual void onDisconnected(const HGroup& hGroup);
 			//! 各Objが実装するアップデート処理
-			virtual void onUpdate(bool bFirst);
+			virtual void onUpdate(bool execLua);
 
 			virtual bool isNode() const = 0;
 			virtual bool hasLuaState() const;

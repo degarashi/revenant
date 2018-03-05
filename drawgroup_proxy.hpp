@@ -14,7 +14,7 @@ namespace rev {
 		public:
 			DrawGroupProxy(const HDGroup& hDg, Priority prio=DefaultPriority);
 
-			void onUpdate(bool bFirst) override;
+			void onUpdate(bool execLua) override;
 			const DSort_V& getSortAlgorithm() const noexcept;
 			const DLObj_V& getMember() const noexcept;
 

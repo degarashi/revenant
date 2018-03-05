@@ -20,7 +20,7 @@ namespace rev {
 			bool recvMsg(LCValue& dst, const GMessageStr& msg, const LCValue& arg) override;
 			void proc(const CBUpdProc& p, bool bRecursive, Priority prioBegin, Priority prioEnd) override;
 
-			void onUpdate(bool bFirst) override;
+			void onUpdate(bool execLua) override;
 			void setIdle(int nFrame);
 			int getAccum() const;
 			UpdTask& operator = (const UpdTask&) = delete;

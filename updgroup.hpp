@@ -52,7 +52,7 @@ namespace rev {
 			bool isNode() const override;
 			void onConnected(const HGroup& hGroup) noexcept override;
 			void onDisconnected(const HGroup& hGroup) override;
-			void onUpdate(bool bFirst) override;
+			void onUpdate(bool execLua) override;
 			void onDraw(IEffect& e) const override;
 			void enumGroup(const CBFindGroup& cb, GroupTypeId id, int depth) const override;
 			//! グループ内のオブジェクト全てに配信

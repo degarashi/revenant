@@ -28,7 +28,7 @@ namespace rev {
 	}
 	void Object::onConnected(const HGroup& /*hGroup*/) {}
 	void Object::onDisconnected(const HGroup& /*hGroup*/) {}
-	void Object::onUpdate(bool /*bFirst*/) {}
+	void Object::onUpdate(bool /*execLua*/) {}
 	void Object::destroy() {
 		_bDestroy = true;
 	}

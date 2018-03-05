@@ -14,10 +14,12 @@ namespace rev {
 			Scene(const HGroup& hUpd=HGroup(), const HDGroup& hDraw=HDGroup()):
 				_sbase(hUpd, hDraw)
 			{}
-			void onUpdate(bool /*bFirst*/) override final {
+			void onUpdate(bool /*execLua*/) override final {
+				// Scene自体のonUpdate()
 				base::onUpdate(true);
 				if(!base::isDead()) {
 					UpdGroup::SetAsUpdateRoot();
+					// SceneメンバのonUpdate()
 					_sbase.getUpdate()->onUpdate(true);
 				}
 			}

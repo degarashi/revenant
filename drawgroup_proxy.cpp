@@ -7,9 +7,9 @@ namespace rev {
 	{
 		setPriority(prio);
 	}
-	void DrawGroupProxy::onUpdate(const bool bFirst) {
+	void DrawGroupProxy::onUpdate(const bool execLua) {
 		// DrawGroupのonUpdateを呼ぶとエラーになるが、一応呼び出し
-		_hDGroup->onUpdate(bFirst);
+		_hDGroup->onUpdate(execLua);
 	}
 	void DrawGroupProxy::setPriority(const Priority p) noexcept {
 		_dtag.priority = p;

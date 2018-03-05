@@ -85,7 +85,7 @@ namespace rev {
 	void DrawGroup::_doDrawSort() {
 		DSort::DoSort(_dsort, 0, _dobj.begin(), _dobj.end());
 	}
-	void DrawGroup::onUpdate(bool /*bFirst*/) {
+	void DrawGroup::onUpdate(bool /*execLua*/) {
 		ExpectF("called deleted function: DrawGroup::onUpdate()");
 	}
 	void DrawGroup::onDraw(IEffect& e) const {

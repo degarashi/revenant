@@ -19,6 +19,7 @@ namespace rev {
 			spi::Optional<LCValue> _callLuaMethod(const std::string& method, Ts&&... ts) {
 				if(const auto& sp = rev_mgr_obj.getLua()) {
 					sp->push(this->shared_from_this());
+					// (Lua側の継承元クラスのonUpdateは、Lua側で呼び出して貰う)
 					const LValueS lv(sp->getLS());
 					return lv.callMethodNRet(method, std::forward<Ts>(ts)...);
 				}
@@ -31,18 +32,18 @@ namespace rev {
 			}
 		public:
 			using base::base;
-			void onUpdate(const bool bFirst) override {
+			void onUpdate(const bool execLua) override {
 				// このassert文は別にここで無くとも良い
 				static_assert(std::is_base_of<Resource, ObjectT_Lua<T,Base>>{}, "");
 
+				// C++記述のonUpdate()メソッド優先
 				base::onUpdate(false);
-				if(bFirst) {
-					if(!base::isDead())
-						_callLuaMethod(luaNS::RecvMsg, luaNS::OnUpdate);
+				if(execLua && !base::isDead()) {
+					_callLuaMethod(luaNS::RecvMsg, luaNS::OnUpdate);
 				}
 			}
 			bool onPause() override {
-				if(auto ret = _callLuaMethod(luaNS::RecvMsg, luaNS::OnPause)) {
+				if(const auto ret = _callLuaMethod(luaNS::RecvMsg, luaNS::OnPause)) {
 					auto& tbl = boost::get<LCTable_SP>(*ret);
 					// FSMachineから返答があったらそれを返す
 					if(static_cast<bool>((*tbl).at(1)))

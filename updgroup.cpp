@@ -114,7 +114,7 @@ namespace rev {
 			}
 		#endif
 	}
-	void UpdGroup::onUpdate(bool /*bFirst*/) {
+	void UpdGroup::onUpdate(bool /*execLua*/) {
 		{
 			class FlagSet {
 				private:

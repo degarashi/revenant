@@ -20,6 +20,7 @@ namespace rev {
 					virtual ~State() {}
 					virtual ObjTypeId getStateId() const = 0;
 					virtual void onUpdate(T& self) {
+						// LuaのonUpdate()があるなら既に呼ばれてる筈なのでフラグはfalse
 						self.Base::onUpdate(false);
 					}
 					virtual bool recvMsg(T& self, LCValue& dst, const GMessageStr& msg, const LCValue& arg) {
@@ -191,7 +192,7 @@ namespace rev {
 					_callWithSwitchState([&](){ _state->onDown(getRef(), prevId, arg); });
 				}
 				// ----------- 以下はStateのアダプタメソッド -----------
-				void onUpdate(bool /*bFirst*/) override {
+				void onUpdate(bool /*execLua*/) override {
 					_callWithSwitchState([&](){ return _state->onUpdate(getRef()); });
 				}
 				bool recvMsg(LCValue& dst, const GMessageStr& msg, const LCValue& arg) override {
