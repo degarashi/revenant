@@ -301,9 +301,9 @@ namespace rev {
 				return lv.call<Ret...>(*this, std::forward<Args>(args)...);
 			}
 			//! LValueが指すテーブルからmethodにある関数を自身を第一引数にして呼ぶ
-			/*! 戻り値をLCValueとして返す */
+			/*! 戻り値をLCTable_SPとして返す */
 			template <class... Args>
-			LCValue callMethodNRet(const std::string& method, Args&&... args) const {
+			LCTable_SP callMethodNRet(const std::string& method, Args&&... args) const {
 				LValue lv = (*this)[method];
 				return lv.callNRet(*this, std::forward<Args>(args)...);
 			}
