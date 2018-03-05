@@ -18,7 +18,10 @@ namespace rev {
 	void UpdTask::setIdle(const int nFrame) {
 		_idleCount = nFrame;
 	}
-	int UpdTask::getAccum() const {
+	int UpdTask::getIdle() const noexcept {
+		return _idleCount;
+	}
+	int UpdTask::getAccum() const noexcept {
 		return _accum;
 	}
 }

@@ -15,6 +15,7 @@ namespace rev {
 			void onUpdate(bool execLua) override;
 			/*!	\param[in] nFrame	待機フレーム数(負数は無限) */
 			void setIdle(int nFrame);
-			int getAccum() const;
+			int getIdle() const noexcept;
+			int getAccum() const noexcept;
 	};
 }
