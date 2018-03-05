@@ -1,19 +1,19 @@
 #pragma once
-#include "object.hpp"
+#include "updgroup_if.hpp"
 #include "sdl_tls.hpp"
-#include <vector>
 
 namespace rev {
 	//! Objectのグループ管理
-	class UpdGroup : public IObject, public std::enable_shared_from_this<UpdGroup> {
+	class UpdGroup :
+		public IUpdGroup,
+		public std::enable_shared_from_this<UpdGroup>
+	{
 		private:
 			static TLS<bool> tls_bUpdateRoot;
-			using UGVec = std::vector<WGroup>;
+			using UGVec = std::vector<std::weak_ptr<UpdGroup>>;
 			//! Add or Remove予定のオブジェクトを持っているグループを登録
 			static UGVec	s_ug;
 
-			using ObjV = std::vector<HObj>;
-			using ObjVP = std::vector<std::pair<Priority, HObj>>;
 			using GroupV = std::vector<HGroup>;
 
 			Priority	_priority;
@@ -43,12 +43,6 @@ namespace rev {
 			~UpdGroup();
 			Priority getPriority() const override;
 
-			//! オブジェクト又はグループを追加
-			void addObj(const HObj& hObj);
-			void addObjPriority(const HObj& hObj, Priority p);
-			//! オブジェクト又はグループを削除
-			void remObj(const HObj& hObj);
-
 			bool isNode() const noexcept override;
 			ObjTypeId getTypeId() const override;
 			void onConnected(const HGroup& hGroup) override;
@@ -60,11 +54,17 @@ namespace rev {
 			bool recvMsg(LCValue& dst, const GMessageStr& msg, const LCValue& arg) override;
 			void proc(const CBUpdProc& p, bool bRecursive, Priority prioBegin, Priority prioEnd) override;
 
-			const ObjVP& getList() const noexcept;
-			ObjVP& getList() noexcept;
-			int getNMember() const noexcept;
+			//! オブジェクト又はグループを追加
+			void addObj(const HObj& hObj) override;
+			void addObjPriority(const HObj& hObj, Priority p) override;
+			//! オブジェクト又はグループを削除
+			void remObj(const HObj& hObj) override;
+			const ObjVP& getList() const noexcept override;
+			ObjVP& getList() noexcept override;
+			int getNMember() const noexcept override;
 			//! 子要素を全て削除
-			void clear();
+			void clear() override;
+			HGroup getHandle() override;
 
 			const char* getResourceName() const noexcept override;
 	};

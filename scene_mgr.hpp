@@ -24,7 +24,7 @@ namespace rev {
 			IScene& getSceneInterface(int n=0) const;
 			//! ヘルパー関数: シーンスタック中のUpdGroupを取得
 			/*! *getSceneBase(n).update->get() と同等 */
-			UpdGroup& getUpdGroupRef(int n=0) const;
+			IUpdGroup& getUpdGroupRef(int n=0) const;
 			//! ヘルパー関数: シーンスタック中のDrawGroupを取得
 			/*! *getSceneBase(n).draw->get() と同等 */
 			DrawGroup& getDrawGroupRef(int n=0) const;

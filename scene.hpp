@@ -39,7 +39,7 @@ namespace rev {
 			}
 			//! ヘルパー関数: シーンスタック中のUpdGroupを取得
 			/*! *getBase().update と同等 */
-			UpdGroup& getUpdGroupRef() const {
+			IUpdGroup& getUpdGroupRef() const {
 				return *getBase().getUpdate();
 			}
 			HGroup getUpdGroup() const override {

@@ -17,7 +17,7 @@ namespace rev {
 			return _scene.at(_scene.size()-1-n);
 		return HScene();
 	}
-	UpdGroup& SceneMgr::getUpdGroupRef(const int n) const {
+	IUpdGroup& SceneMgr::getUpdGroupRef(const int n) const {
 		return *getSceneInterface(n).getUpdGroup();
 	}
 	DrawGroup& SceneMgr::getDrawGroupRef(const int n) const {
