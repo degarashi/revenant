@@ -5,6 +5,6 @@ namespace rev {
 		return false;
 	}
 	ObjTypeId U_Object::getTypeId() const noexcept {
-		return IdT::Id;
+		return ObjectIdT<U_Object, idtag::Object>::Id;
 	}
 }

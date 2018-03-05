@@ -29,13 +29,11 @@ namespace rev {
 			int getNMember() const noexcept;
 
 			bool isNode() const noexcept override;
+			ObjTypeId getTypeId() const override;
 			void onDraw(IEffect& e) const override;
 			DrawTag& refDTag() noexcept;
 
 			const char* getResourceName() const noexcept override;
 	};
-	#define DefineDrawGroup(name)	DefineUpdBase(name, ::rev::DrawGroup)
-	DefineDrawGroup(U_DrawGroup)
 }
 DEF_LUAIMPORT(rev::DrawGroup)
-DEF_LUAIMPORT(rev::U_DrawGroup)

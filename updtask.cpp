@@ -11,7 +11,7 @@ namespace rev {
 		_accum(0),
 		_hGroup(hGroup)
 	{}
-	bool UpdTask::isNode() const {
+	bool UpdTask::isNode() const noexcept {
 		return true;
 	}
 	void UpdTask::onConnected(const HGroup& hGroup) {

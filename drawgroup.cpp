@@ -38,6 +38,9 @@ namespace rev {
 	bool DrawGroup::isNode() const noexcept {
 		return true;
 	}
+	ObjTypeId DrawGroup::getTypeId() const {
+		return ObjectIdT<DrawGroup, idtag::Object>::Id;
+	}
 	void DrawGroup::setSortAlgorithmId(const SortAlgList& al, const bool bDynamic) {
 		setSortAlgorithm(_MakeDSort(al), bDynamic);
 	}

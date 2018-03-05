@@ -4,9 +4,6 @@
 namespace rev {
 	class SceneBase {
 		private:
-			DefineUpdGroup(Update)
-			DefineDrawGroup(Draw)
-
 			HGroup		_update;
 			HDGroup		_draw;
 

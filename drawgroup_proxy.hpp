@@ -21,12 +21,10 @@ namespace rev {
 			void setPriority(Priority p) noexcept;
 			bool isNode() const noexcept override;
 			void onDraw(IEffect& e) const override;
+			ObjTypeId getTypeId() const override;
 			DrawTag& refDTag() noexcept;
 
 			const char* getResourceName() const noexcept override;
 	};
-	#define DefineDrawGroupProxy(name)	DefineUpdBase(name, ::rev::DrawGroupProxy)
-	DefineDrawGroupProxy(U_DrawGroupProxy)
 }
 DEF_LUAIMPORT(rev::DrawGroupProxy)
-DEF_LUAIMPORT(rev::U_DrawGroupProxy)

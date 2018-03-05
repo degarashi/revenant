@@ -3,9 +3,7 @@
 #include "object_id.hpp"
 
 namespace rev {
-	class U_Object : public Object, public ObjectIdT<detail::IdDummy, idtag::Object> {
-		private:
-			using IdT = ObjectIdT<detail::IdDummy, idtag::Object>;
+	class U_Object : public Object {
 		public:
 			bool isNode() const noexcept override;
 			ObjTypeId getTypeId() const noexcept override;

@@ -103,10 +103,13 @@ namespace rev {
 				void setStateUse(ST* st) {
 					setState(FPState(st, false));
 				}
-				bool isNode() const override {
+				bool isNode() const noexcept override {
 					return false;
 				}
 				ObjTypeId getTypeId() const override {
+					return IdT::Id;
+				}
+				static ObjTypeId GetTypeId() {
 					return IdT::Id;
 				}
 				T& getRef() { return *reinterpret_cast<T*>(this); }
@@ -211,11 +214,17 @@ namespace rev {
 		typename ObjectT<T, Base>::template StateT<void> ObjectT<T, Base>::_nullState;
 
 	}
-
 	template <class T, class Base=Object>
 	class ObjectT : public detail::ObjectT<T, Base> {
 		using base = detail::ObjectT<T, Base>;
 		public:
 			using base::base;
 	};
+	#define DefineObject(name, base) \
+		class name : public ::rev::ObjectT<name, base> { \
+			private: \
+				using base_t = ::rev::ObjectT<name, base>; \
+			public: \
+				using base_t::base_t; \
+		};
 }

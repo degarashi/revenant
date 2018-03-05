@@ -3,8 +3,8 @@
 
 namespace rev {
 	SceneBase::SceneBase(const HGroup& hUpd, const HDGroup& hDraw) {
-		_update = hUpd ? hUpd : rev_mgr_obj.emplace<Update>();
-		_draw = hDraw ? hDraw : rev_mgr_obj.emplace<Draw>();
+		_update = hUpd ? hUpd : rev_mgr_obj.emplace<UpdGroup>();
+		_draw = hDraw ? hDraw : rev_mgr_obj.emplace<DrawGroup>();
 	}
 	void SceneBase::setUpdate(const HGroup& hGroup) {
 		if(_update)

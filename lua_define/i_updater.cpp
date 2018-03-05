@@ -18,20 +18,13 @@ DEF_LUAIMPLEMENT_SPTR(
 	NOTHING,
 	NOTHING
 )
-DEF_LUAIMPLEMENT_PTR_NOCTOR(
-	rev::UpdGroup, UpdGroup,
+DEF_LUAIMPLEMENT_SPTR(
+	rev::ObjMgr, rev::UpdGroup, UpdGroup,
 	LUAIMPLEMENT_BASE,
 	NOTHING,
 	NOTHING,
 	(addObj)(addObjPriority)(remObj)
-	(getResourceName)(getPriority)(clear)(getNMember)
-)
-DEF_LUAIMPLEMENT_SPTR(
-	rev::ObjMgr, rev::U_UpdGroup, U_UpdGroup,
-	"UpdGroup",
-	NOTHING,
-	NOTHING,
-	NOTHING,
+	(getResourceName)(getPriority)(clear)(getNMember),
 	NOTHING
 )
 
@@ -54,37 +47,23 @@ DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	(setDrawPriority)
 )
 #include "../drawgroup.hpp"
-DEF_LUAIMPLEMENT_PTR_NOCTOR(
-	rev::DrawGroup, DrawGroup,
+DEF_LUAIMPLEMENT_SPTR(
+	rev::ObjMgr, rev::DrawGroup, DrawGroup,
 	"DrawableObj",
 	NOTHING,
 	NOTHING,
 	(addObj)(remObj)(setSortAlgorithmId)
 	(getResourceName)(getNMember)
-	(clear)
+	(clear),
+	(const SortAlgList&)(bool)
 )
 #include "../drawgroup_proxy.hpp"
-DEF_LUAIMPLEMENT_PTR_NOCTOR(
-	rev::DrawGroupProxy, DrawGroupProxy,
+DEF_LUAIMPLEMENT_SPTR(
+	rev::ObjMgr, rev::DrawGroupProxy, DrawGroupProxy,
 	"DrawableObj",
 	NOTHING,
 	NOTHING,
-	(setPriority)(getResourceName)
-)
-DEF_LUAIMPLEMENT_SPTR(
-	rev::ObjMgr, rev::U_DrawGroup, U_DrawGroup,
-	"DrawGroup",
-	NOTHING,
-	NOTHING,
-	NOTHING,
-	(const SortAlgList&)(bool)
-)
-DEF_LUAIMPLEMENT_SPTR(
-	rev::ObjMgr, rev::U_DrawGroupProxy, U_DrawGroupProxy,
-	"DrawGroupProxy",
-	NOTHING,
-	NOTHING,
-	NOTHING,
+	(setPriority)(getResourceName),
 	(rev::HDGroup)
 )
 
@@ -111,13 +90,10 @@ namespace rev {
 		RegisterFSMachineBase(lsc);
 		RegisterClass<U_Object>(lsc);
 		RegisterClass<UpdGroup>(lsc);
-		RegisterClass<U_UpdGroup>(lsc);
 		RegisterClass<U_ObjectUpd>(lsc);
 		RegisterClass<DrawableObj>(lsc);
 		RegisterClass<DrawGroup>(lsc);
 		RegisterClass<DrawGroupProxy>(lsc);
-		RegisterClass<U_DrawGroup>(lsc);
-		RegisterClass<U_DrawGroupProxy>(lsc);
 		RegisterClass<U_Scene>(lsc);
 		ImportClass(lsc, "System", "scene", &mgr_scene);
 	}

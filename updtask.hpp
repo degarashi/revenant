@@ -13,7 +13,7 @@ namespace rev {
 		public:
 			UpdTask(Priority p, const HGroup& hGroup);
 
-			bool isNode() const override;
+			bool isNode() const noexcept override;
 			void onConnected(const HGroup& hGroup) override;
 			void onDisconnected(const HGroup& hGroup) override;
 			void enumGroup(const CBFindGroup& cb, GroupTypeId id, int depth) const override;

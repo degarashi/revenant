@@ -15,7 +15,6 @@ namespace rev {
 				return s_id++;
 			}
 		};
-		struct IdDummy;
 	}
 	// 型Tはdetail::ObjectIdTにて新しいIdを生成する為に使用
 	template <class T, class Tag>

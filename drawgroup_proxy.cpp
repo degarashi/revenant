@@ -23,6 +23,9 @@ namespace rev {
 	bool DrawGroupProxy::isNode() const noexcept {
 		return true;
 	}
+	ObjTypeId DrawGroupProxy::getTypeId() const {
+		return ObjectIdT<DrawGroupProxy, idtag::Object>::Id;
+	}
 	void DrawGroupProxy::onDraw(IEffect& e) const {
 		_hDGroup->onDraw(e);
 	}

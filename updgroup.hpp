@@ -49,8 +49,9 @@ namespace rev {
 			//! オブジェクト又はグループを削除
 			void remObj(const HObj& hObj);
 
-			bool isNode() const override;
-			void onConnected(const HGroup& hGroup) noexcept override;
+			bool isNode() const noexcept override;
+			ObjTypeId getTypeId() const override;
+			void onConnected(const HGroup& hGroup) override;
 			void onDisconnected(const HGroup& hGroup) override;
 			void onUpdate(bool execLua) override;
 			void onDraw(IEffect& e) const override;
@@ -67,27 +68,5 @@ namespace rev {
 
 			const char* getResourceName() const noexcept override;
 	};
-	namespace idtag {
-		struct Group {};
-	}
-	template <class T, class Base>
-	class GroupT : public Base, public ObjectIdT<T, idtag::Group> {
-		private:
-			using IdT = ObjectIdT<T, idtag::Group>;
-		public:
-			using Base::Base;
-			ObjTypeId getTypeId() const override { return GetTypeId(); }
-			static ObjTypeId GetTypeId() { return IdT::Id; }
-	};
-	#define DefineUpdBase(name, base) \
-		class name : public ::rev::GroupT<name, base> { \
-			private: \
-				using base_t = ::rev::GroupT<name, base>; \
-			public: \
-				using base_t::base_t; \
-		};
-	#define DefineUpdGroup(name) DefineUpdBase(name, ::rev::UpdGroup)
-	DefineUpdGroup(U_UpdGroup)
 }
 DEF_LUAIMPORT(rev::UpdGroup)
-DEF_LUAIMPORT(rev::U_UpdGroup)

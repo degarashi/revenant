@@ -19,8 +19,11 @@ namespace rev {
 	Priority UpdGroup::getPriority() const {
 		return _priority;
 	}
-	bool UpdGroup::isNode() const {
+	bool UpdGroup::isNode() const noexcept {
 		return true;
+	}
+	ObjTypeId UpdGroup::getTypeId() const {
+		return ObjectIdT<UpdGroup, idtag::Object>::Id;
 	}
 	void UpdGroup::enumGroup(const CBFindGroup& cb, const GroupTypeId id, int depth) const {
 		for(auto& h : _groupV) {
@@ -163,7 +166,7 @@ namespace rev {
 			D_Assert0(_nParent==0);
 		}
 	}
-	void UpdGroup::onConnected(const HGroup& /*hGroup*/) noexcept {
+	void UpdGroup::onConnected(const HGroup& /*hGroup*/) {
 		++_nParent;
 	}
 	void UpdGroup::onDisconnected(const HGroup& /*hGroup*/) {

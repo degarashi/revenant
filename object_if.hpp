@@ -35,7 +35,7 @@ namespace rev {
 			//! 各Objが実装するアップデート処理
 			virtual void onUpdate(bool execLua);
 
-			virtual bool isNode() const = 0;
+			virtual bool isNode() const noexcept = 0;
 			virtual bool hasLuaState() const;
 			virtual void destroy();
 			//! 一意に割り振られるオブジェクトの識別IDを取得
