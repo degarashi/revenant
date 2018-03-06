@@ -50,6 +50,12 @@ namespace rev {
 	DEF_HANDLE(IGLResource, GLRes)
 	class IGLTexture;
 	DEF_HANDLE(IGLTexture, Tex)
+	class Texture_Mem;
+	DEF_HANDLE(Texture_Mem, TexMem)
+	class Texture_URI;
+	DEF_HANDLE(Texture_URI, TexURI)
+	class Texture_CubeURI;
+	DEF_HANDLE(Texture_CubeURI, TexCubeURI)
 	class GLVBuffer;
 	DEF_HANDLE(GLVBuffer, Vb)
 	class GLIBuffer;
