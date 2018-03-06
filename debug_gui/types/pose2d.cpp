@@ -1,7 +1,6 @@
 #include "beat/pose2d.hpp"
 #include "debug_gui/types/vector.hpp"
 #include "../../imgui/imgui.h"
-#include "angle.hpp"
 #include "../indent.hpp"
 #include "../entry_field.hpp"
 
