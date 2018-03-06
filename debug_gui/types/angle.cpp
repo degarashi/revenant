@@ -71,10 +71,13 @@ namespace rev {
 					using Deg = frea::DegF;
 					using Rad = frea::RadF;
 					const auto lb = base_t::ModAngleFormat(label);
+					const auto edf = [step, step_fast](const char* label, auto& data){
+						return ImGui::InputFloat(label, &data, step, step_fast, -1, ImGuiInputTextFlags_EnterReturnsTrue);
+					};
 					if(base_t::s_radian) {
 						const float prev = Rad(_a).get();
 						float tmp = prev;
-						if(ImGui::InputFloat(lb.c_str(), &tmp, step, step_fast)) {
+						if(edf(lb.c_str(), tmp)) {
 							if(std::abs(tmp - prev) > 1e-4f) {
 								_a = Rad(tmp);
 								return true;
@@ -83,7 +86,7 @@ namespace rev {
 					} else {
 						const float prev = Deg(_a).get();
 						float tmp = prev;
-						if(ImGui::InputFloat(lb.c_str(), &tmp, step, step_fast)) {
+						if(edf(lb.c_str(), tmp)) {
 							if(std::abs(tmp - prev) > 1e-4f) {
 								_a = Deg(tmp);
 								return true;
