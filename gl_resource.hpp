@@ -22,7 +22,7 @@ namespace rev {
 											_defaultColor;
 			//! 空のテクスチャ (何もテクスチャをセットしない事を示す)
 			/*! デバッグで色を変えたりしてチェックできる */
-			HTex							_hEmptyTex;
+			HTexMem							_hEmptyTex;
 			//! DeviceLost/Resetの状態管理
 			bool	_bInit;
 			//! デストラクタ内の時はtrue
@@ -37,7 +37,6 @@ namespace rev {
 			void _resourceInit(IGLResource* r);
 			void _initDefaultInfo();
 			void _clearDefaultInfo();
-			HTex _createTexture(bool bCube, const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore);
 
 		public:
 			GLRes();
@@ -58,19 +57,19 @@ namespace rev {
 				\param[in] fmt OpenGLの内部フォーマット(not ファイルのフォーマット)<br>
 								指定しなければファイルから推定
 			*/
-			HTex loadTexture(const URI& uri, MipState miplevel=MipState::NoMipmap, InCompressedFmt_OP fmt=spi::none);
+			HTexURI loadTexture(const URI& uri, MipState miplevel=MipState::NoMipmap, InCompressedFmt_OP fmt=spi::none);
 			//! 個別のファイルからキューブテクスチャを作成
 			/*! 画像サイズとフォーマットは全て一致していなければならない */
-			HTex loadCubeTexture(MipState miplevel, InCompressedFmt_OP fmt,
+			HTexCubeURI loadCubeTexture(MipState miplevel, InCompressedFmt_OP fmt,
 								const URI& uri0, const URI& uri1, const URI& uri2,
 								const URI& uri3, const URI& uri4, const URI& uri5);
 			//! 空のテクスチャを作成
 			/*! 領域だけ確保 */
-			HTex createTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore);
+			HTexMem createTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore);
 			/*! 用意したデータで初期化 */
-			HTex createTextureInit(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore, GLTypeFmt srcFmt, AB_Byte data);
+			HTexMem createTextureInit(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore, GLTypeFmt srcFmt, AB_Byte data);
 			//! 空のキューブテクスチャを作成
-			HTex createCubeTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool bRestore, bool bStream);
+			HTexMem createCubeTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool bRestore, bool bStream);
 
 			// ------------ Shader ------------
 			//! 文字列からシェーダーを作成
@@ -95,7 +94,7 @@ namespace rev {
 			//! インデックスバッファの確保
 			HIb makeIBuffer(DrawType dtype);
 
-			HTex getEmptyTexture() const;
+			HTexMem getEmptyTexture() const;
 			GLFBufferTmp& getTmpFramebuffer() const;
 			// --- from ResMgrBase ---
 			HRes loadResource(const URI& uri) override;

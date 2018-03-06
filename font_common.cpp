@@ -52,7 +52,7 @@ namespace rev {
 	void CharPlane::_addCacheTex() {
 		// OpenGLテクスチャ確保
 		// MEMO: 環境によってはGL_RGBAが32bitでないかもしれないので対策が必要
-		HTex hTex = mgr_gl.createTexture(_sfcSize, GL_RGBA, true, true);	// DeviceLost時: 内容のリストア有りで初期化
+		auto hTex = mgr_gl.createTexture(_sfcSize, GL_RGBA, true, true);	// DeviceLost時: 内容のリストア有りで初期化
 		_plane.push_back(hTex);
 		// Lane登録
 		lubee::RectI rect(0,_sfcSize.width, 0,_fontH);
@@ -73,7 +73,7 @@ namespace rev {
 		return _sfcSize;
 	}
 	// ------------------- Lane-------------------
-	Lane::Lane(const HTex& hT, const lubee::RectI& r):
+	Lane::Lane(const HTexMem& hT, const lubee::RectI& r):
 		LaneRaw{hT, r}
 	{}
 }

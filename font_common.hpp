@@ -81,23 +81,23 @@ namespace std {
 }
 namespace rev {
 	struct LaneRaw {
-		HTex			hTex;
+		HTexMem			hTex;
 		lubee::RectI	rect;	//!< 管理している領域
 	};
 	struct Lane : LaneRaw {
 		Lane	*pNext = nullptr;
-		Lane(const HTex& hT, const lubee::RectI& r);
+		Lane(const HTexMem& hT, const lubee::RectI& r);
 	};
 	struct ILaneAlloc {
 		virtual ~ILaneAlloc() {}
 		virtual bool alloc(LaneRaw& dst, std::size_t w) = 0;
-		virtual void addFreeLane(const HTex& hTex, const lubee::RectI& rect) = 0;
+		virtual void addFreeLane(const HTexMem& hTex, const lubee::RectI& rect) = 0;
 		virtual void clear() = 0;
 	};
 	using LaneAlloc_UP = std::unique_ptr<ILaneAlloc>;
 	//! CharPlaneと、その位置
 	struct CharPos {
-		HTex			hTex;		//!< フォントが格納されているテクスチャ (ハンドル所有権は別途CharPlaneが持つ)
+		HTexMem			hTex;		//!< フォントが格納されているテクスチャ (ハンドル所有権は別途CharPlaneが持つ)
 		lubee::RectF	uv;			//!< 参照すべきUV値
 		lubee::RectI	box;		//!< フォント原点に対する相対描画位置 (サイズ)
 		int				space;		//!< カーソルを進めるべき距離
@@ -106,7 +106,7 @@ namespace rev {
 	/*! 縦幅は固定。横は必要に応じて確保 */
 	class CharPlane {
 		private:
-			using PlaneVec = std::vector<HTex>;
+			using PlaneVec = std::vector<HTexMem>;
 			PlaneVec		_plane;
 			lubee::PowSize	_sfcSize;
 			const int		_fontH;		//!< フォント縦幅 (=height)

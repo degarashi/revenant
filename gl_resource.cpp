@@ -62,7 +62,7 @@ namespace rev {
 	const FBInfo_OP& GLRes::getDefaultColor() const {
 		return _defaultColor;
 	}
-	HTex GLRes::loadTexture(const URI& uri, const MipState miplevel, const InCompressedFmt_OP fmt) {
+	HTexURI GLRes::loadTexture(const URI& uri, const MipState miplevel, const InCompressedFmt_OP fmt) {
 		_setResourceTypeId(ResourceType::Texture);
 		return loadResourceApp<Texture_URI>(
 					uri,
@@ -84,7 +84,7 @@ namespace rev {
 				).first;
 	}
 	// 連番キューブ: Key=(Path+@, ext) URI=(Path, ext)
-	HTex GLRes::loadCubeTexture(const MipState miplevel, const InCompressedFmt_OP fmt,
+	HTexCubeURI GLRes::loadCubeTexture(const MipState miplevel, const InCompressedFmt_OP fmt,
 								const URI& uri0, const URI& uri1, const URI& uri2,
 								const URI& uri3, const URI& uri4, const URI& uri5)
 	{
@@ -106,53 +106,37 @@ namespace rev {
 				}
 			).first;
 	}
-	HTex GLRes::_createTexture(bool bCube, const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore) {
-		auto h = base_type::acquireA<Texture_Mem>(bCube, fmt, size, bStream, bRestore);
-		_resourceInit(h.get());
-		return h;
+	HTexMem GLRes::createCubeTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore) {
+		return makeResource<Texture_Mem>(true, fmt, size, bStream, bRestore);
 	}
-	HTex GLRes::createCubeTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore) {
-		return _createTexture(true, size, fmt, bStream, bRestore);
+	HTexMem GLRes::createTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore) {
+		return makeResource<Texture_Mem>(false, fmt, size, bStream, bRestore);
 	}
-	HTex GLRes::createTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore) {
-		return _createTexture(false, size, fmt, bStream, bRestore);
-	}
-	HTex GLRes::createTextureInit(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore, GLTypeFmt srcFmt, AB_Byte data) {
-		auto h = base_type::acquireA<Texture_Mem>(false, fmt, size, bStream, bRestore);
-		_resourceInit(h.get());
+	HTexMem GLRes::createTextureInit(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore, GLTypeFmt srcFmt, AB_Byte data) {
+		auto h = createTexture(size, fmt, bStream, bRestore);
 		h->writeData(data, srcFmt);
 		return h;
 	}
 	HSh GLRes::makeShader(const ShType type, const std::string& src) {
-		auto h = base_type::acquireA<GLShader>(type, src);
-		_resourceInit(h.get());
-		return h;
+		return makeResource<GLShader>(type, src);
 	}
 	HVb GLRes::makeVBuffer(const DrawType dtype) {
-		auto h = base_type::acquireA<GLVBuffer>(dtype);
-		_resourceInit(h.get());
-		return h;
+		return makeResource<GLVBuffer>(dtype);
 	}
 	HIb GLRes::makeIBuffer(const DrawType dtype) {
-		auto h = base_type::acquireA<GLIBuffer>(dtype);
-		_resourceInit(h.get());
-		return h;
+		return makeResource<GLIBuffer>(dtype);
 	}
 
 	HProg GLRes::makeProgram(const HSh& vsh, const HSh& psh) {
-		auto h = base_type::acquireA<GLProgram>(vsh,psh);
-		_resourceInit(h.get());
-		return h;
+		return makeResource<GLProgram>(vsh, psh);
 	}
 	HProg GLRes::makeProgram(const HSh& vsh, const HSh& gsh, const HSh& psh) {
-		auto h = base_type::acquireA<GLProgram>(vsh,gsh,psh);
-		_resourceInit(h.get());
-		return h;
+		return makeResource<GLProgram>(vsh, gsh, psh);
 	}
 	GLFBufferTmp& GLRes::getTmpFramebuffer() const {
 		return *_tmpFb;
 	}
-	HTex GLRes::getEmptyTexture() const {
+	HTexMem GLRes::getEmptyTexture() const {
 		return _hEmptyTex;
 	}
 	bool GLRes::deviceStatus() const {
@@ -211,13 +195,9 @@ namespace rev {
 		return ret;
 	}
 	HFb GLRes::makeFBuffer() {
-		auto h = base_type::acquireA<GLFBuffer>();
-		_resourceInit(h.get());
-		return h;
+		return makeResource<GLFBuffer>();
 	}
 	HRb GLRes::makeRBuffer(const int w, const int h, const GLInRenderFmt fmt) {
-		auto hRb = base_type::acquireA<GLRBuffer>(w, h, fmt);
-		_resourceInit(hRb.get());
-		return hRb;
+		return makeResource<GLRBuffer>(w, h, fmt);
 	}
 }

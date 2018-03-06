@@ -102,7 +102,7 @@ namespace rev {
 					}
 				}
 			}
-			void addFreeLane(const HTex& hTex, const lubee::RectI& rect) override {
+			void addFreeLane(const HTexMem& hTex, const lubee::RectI& rect) override {
 				_addFreeLane(new Lane{hTex, rect});
 			}
 			/*! \return 容量不足で確保できない時はfalse */
