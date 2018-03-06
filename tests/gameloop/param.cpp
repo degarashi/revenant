@@ -27,7 +27,7 @@ namespace rev {
 			return uri;
 		}
 		HFx Param::makeEffect() const {
-			return mgr_gl.template makeEffect<util::GLEffect_2D3D>();
+			return mgr_gl.template makeResource<util::GLEffect_2D3D>();
 		}
 		::rev::MainProc* Param::makeMainProc() const {
 			return new MainProc();

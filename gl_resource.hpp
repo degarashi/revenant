@@ -81,9 +81,9 @@ namespace rev {
 			//! 複数のシェーダーからプログラムを作成 (vertex, fragment)
 			HProg makeProgram(const HSh& vsh, const HSh& gsh, const HSh& psh);
 
-			template <class T>
-			HFx makeEffect() {
-				auto h = base_type::acquireA<T>();
+			template <class T, class... Ts>
+			std::shared_ptr<T> makeResource(Ts&&... ts) {
+				auto h = base_type::emplaceA_WithType<T>(std::forward<Ts>(ts)...);
 				_resourceInit(h.get());
 				return h;
 			}
