@@ -43,7 +43,8 @@ namespace rev {
 			public:
 				Entry(const int initial, const int columns):
 					_id(initial),
-					_cp(columns)
+					_cp(columns),
+					_modify(false)
 				{}
 				template <class... Ts>
 				void show(const Ts&... ts) {
