@@ -7,6 +7,10 @@ namespace rev {
 			void _Show(const frea::Angle<TAG,V>& a) {
 				AngleC<frea::Angle<TAG,V>>(a).show();
 			}
+			template void _Show<frea::Degree_t, float>(const frea::Angle<frea::Degree_t, float>& a);
+			template void _Show<frea::Degree_t, double>(const frea::Angle<frea::Degree_t, double>& a);
+			template void _Show<frea::Radian_t, float>(const frea::Angle<frea::Radian_t, float>& a);
+			template void _Show<frea::Radian_t, double>(const frea::Angle<frea::Radian_t, double>& a);
 
 			template <class TAG, class V>
 			bool _Edit(frea::Angle<TAG,V>& a) {
