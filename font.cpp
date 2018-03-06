@@ -1,3 +1,4 @@
+#include "resmgr_app.hpp"
 #include "font.hpp"
 #include "lane.hpp"
 #include "emplace.hpp"

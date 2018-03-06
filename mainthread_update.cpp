@@ -1,3 +1,4 @@
+#include "resmgr_app.hpp"
 #include "mainthread.hpp"
 #include "drawthread.hpp"
 #include "input.hpp"

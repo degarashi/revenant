@@ -1,3 +1,4 @@
+#include "resmgr_app.hpp"
 #include "imgui_sdl2.hpp"
 #include "sdl_window.hpp"
 #include "imgui/imgui.h"

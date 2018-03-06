@@ -1,3 +1,4 @@
+#include "../../resmgr_app.hpp"
 #include "main.hpp"
 #include "../../input.hpp"
 #include "../../glx_if.hpp"
