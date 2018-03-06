@@ -62,6 +62,9 @@ namespace rev {
 			const std::string& vendor() const;
 			const std::string& renderer() const;
 			const CapSet& refCapabilitySet() const;
+			#ifdef DEBUGGUI_ENABLED
+				void guiViewer(bool redirect=false) override;
+			#endif
 
 			void onDeviceLost() override;
 			void onDeviceReset() override;
