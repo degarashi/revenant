@@ -1,4 +1,7 @@
 #pragma once
+#ifdef RESMGRNAME_DEFINED
+	#error Include resmgr_app.hpp before spine/resmgr_named.hpp
+#endif
 #include "apppath.hpp"
 
 namespace rev {
