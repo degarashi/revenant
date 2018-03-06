@@ -18,6 +18,7 @@
 #include "fbrect.hpp"
 #include "primitive.hpp"
 #include "singleton_data_lazy.hpp"
+#include <SDL_version.h>
 
 namespace {
 	const char* GetClipboardText(void*) {
