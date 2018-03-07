@@ -4,11 +4,11 @@
 
 namespace rev {
 	namespace debug {
-		ColumnPush::ColumnPush(const int n):
+		ColumnPush::ColumnPush(const int n, const bool border):
 			_n(n)
 		{
 			if(n > 1)
-				ImGui::Columns(n);
+				ImGui::Columns(n, nullptr, border);
 		}
 		ColumnPush::ColumnPush(ColumnPush&& c):
 			_n(c._n)

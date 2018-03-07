@@ -6,7 +6,7 @@ namespace rev {
 			private:
 				int		_n;
 			public:
-				ColumnPush(int n);
+				ColumnPush(int n, bool border=true);
 				ColumnPush(ColumnPush&& c);
 				~ColumnPush();
 		};
