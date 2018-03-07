@@ -10,7 +10,7 @@ namespace rev {
 			FieldLabel(const char* label);
 		};
 		class EntryField :
-			public StylePush<1>,
+			public StylePush,
 			public ChildPush,
 			public FieldLabel,
 			public Entry

@@ -19,7 +19,7 @@ namespace rev {
 		}
 	}
 	void FileURI::guiViewer(bool) {
-		const auto style = debug::MakeStylePush(
+		const auto style = debug::StylePush(
 			ImGuiStyleVar_WindowPadding, ImVec2{0.f, 0.f}
 		);
 		if(const auto child = debug::ChildPush("FileURI", {0, ImGui::GetTextLineHeightWithSpacing()}, false, ImGuiWindowFlags_NoScrollbar)) {
