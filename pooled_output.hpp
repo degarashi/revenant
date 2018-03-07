@@ -1,5 +1,6 @@
 #pragma once
 #include "rev_output.hpp"
+#include "rev_logentry.hpp"
 #include <deque>
 #include <vector>
 
@@ -8,18 +9,9 @@ namespace rev {
 		//! ログメッセージをバッファに溜めておき、任意のタイミングで取得
 		class PooledRevOutput : public RevOutput {
 			private:
-				using base_t = RevOutput;
 				using Type = lubee::log::Type;
+				using base_t = RevOutput;
 				ProcLog		_def[Type::_Num];
-				struct Entry {
-					Type::e		type;
-					std::string	msg;
-
-					Entry(const Type::e typ, const std::string& s):
-						type(typ),
-						msg(s)
-					{}
-				};
 				// とりあえず素直な実装(1エントリにつき1文字列)
 				using EntryD = std::deque<Entry>;
 				EntryD			_entry;
