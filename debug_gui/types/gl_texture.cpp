@@ -46,10 +46,12 @@ namespace rev {
 			ret |= field.modified();
 
 			ImGui::Columns(1);
-			ImGui::Image(
-				mgr_gui.storeResource(shared_from_this()),
-				ImVec2(_size.width, _size.height)
-			);
+			if(const auto c = debug::ChildPush("texture", {0,0}, true, ImGuiWindowFlags_HorizontalScrollbar)) {
+				ImGui::Image(
+					mgr_gui.storeResource(shared_from_this()),
+					ImVec2(_size.width, _size.height)
+				);
+			}
 		}
 		return ret;
 	}
