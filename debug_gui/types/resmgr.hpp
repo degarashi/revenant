@@ -32,11 +32,7 @@ namespace rev {
 			bool _Edit(spi::ResMgr<T,A>& m) {
 				const auto c = ColumnPush(2);
 				const auto id = ImGui::GetID("ResMgr");
-				auto itr = g_selectPos.find(id);
-				if(itr == g_selectPos.end()) {
-					itr = g_selectPos.emplace(id, std::weak_ptr<void>()).first;
-				}
-				auto& cur = itr->second;
+				auto& cur = g_selectPos[id];
 				const auto cur_lk = cur.lock();
 				inner::ResMgr_Iter(m, [&cur, &cur_lk](const char* name, auto&& r){
 					if(ImGui::Selectable(name, cur_lk == r))
