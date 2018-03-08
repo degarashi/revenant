@@ -3,7 +3,6 @@
 
 namespace rev {
 	//! UpdGroupにフレームカウンタやアイドル機能をつけたクラス
-	/*! 中身は別のUpdGroupを使用 */
 	class UpdTask : public UpdGroup {
 		private:
 			int			_idleCount,		//!< 再起動までの待ち時間
