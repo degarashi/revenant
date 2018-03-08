@@ -52,11 +52,7 @@ namespace rev {
 			bool _Edit(spi::ResMgrName<T,K,A>& m) {
 				const auto c = ColumnPush(2);
 				const auto id = ImGui::GetID("Left");
-				auto itr = g_selectPos.find(id);
-				if(itr == g_selectPos.end()) {
-					itr = g_selectPos.emplace(id, std::weak_ptr<void>()).first;
-				}
-				auto& cur = itr->second;
+				auto& cur = g_selectPos[id];
 				const auto cur_lk = cur.lock();
 				inner::ResMgrNamed_Iter(m, [&cur, &cur_lk](const char* name, auto&& r){
 					if(ImGui::Selectable(name, cur_lk == r))
@@ -66,7 +62,7 @@ namespace rev {
 				ImGui::NextColumn();
 				if(const auto sp = cur.lock()) {
 					using R = typename std::decay_t<decltype(*m.begin())>::element_type;
-					return Edit("", *reinterpret_cast<R*>(sp.get()));
+					return Edit("", *std::static_pointer_cast<R>(sp));
 				}
 				return false;
 			}
