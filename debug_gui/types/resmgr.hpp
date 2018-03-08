@@ -4,7 +4,7 @@
 #include "../../imgui/imgui.h"
 #include "../column.hpp"
 #include "../child.hpp"
-#include <unordered_map>
+#include "../state_storage.hpp"
 
 namespace rev {
 	namespace debug {
@@ -25,24 +25,22 @@ namespace rev {
 					}
 				}
 			}
-			using SelectPos = std::unordered_map<ImGuiID, std::weak_ptr<void>>;
-			extern SelectPos g_selectPos;
-
 			template <class T, class A>
 			bool _Edit(spi::ResMgr<T,A>& m) {
 				const auto c = ColumnPush(2);
 				const auto id = ImGui::GetID("ResMgr");
-				auto& cur = g_selectPos[id];
-				const auto cur_lk = cur.lock();
-				inner::ResMgr_Iter(m, [&cur, &cur_lk](const char* name, auto&& r){
-					if(ImGui::Selectable(name, cur_lk == r))
-						cur = r;
+				using R = typename std::decay_t<decltype(*m.begin())>::element_type;
+				auto cur_lk = StateStorage::template Get<R>(id);
+				inner::ResMgr_Iter(m, [id, &cur_lk](const char* name, auto&& r){
+					if(ImGui::Selectable(name, cur_lk == r)) {
+						StateStorage::Set(id, r);
+						cur_lk = r;
+					}
 				});
 
 				ImGui::NextColumn();
-				if(const auto sp = cur.lock()) {
-					using R = typename std::decay_t<decltype(*m.begin())>::element_type;
-					return Edit("", *reinterpret_cast<R*>(sp.get()));
+				if(cur_lk) {
+					return Edit("", cur_lk);
 				}
 				return false;
 			}
