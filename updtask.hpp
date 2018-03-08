@@ -1,12 +1,13 @@
 #pragma once
 #include "updgroup.hpp"
+#include "interval.hpp"
 
 namespace rev {
 	//! UpdGroupにフレームカウンタやアイドル機能をつけたクラス
 	class UpdTask : public UpdGroup {
 		private:
-			int			_idleCount,		//!< 再起動までの待ち時間
-						_accum;			//!< 累積フレーム数
+			using Interval = interval::Combine<interval::Wait>;
+			Interval	_interval;
 
 		public:
 			UpdTask(Priority p=DefaultPriority);

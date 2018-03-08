@@ -4,24 +4,19 @@
 namespace rev {
 	UpdTask::UpdTask(Priority p):
 		UpdGroup(p),
-		_idleCount(0),
-		_accum(0)
+		_interval(interval::Wait(0))
 	{}
 	void UpdTask::onUpdate(const bool execLua) {
-		// アイドル時間チェック
-		if(_idleCount > 0)
-			--_idleCount;
-		else if(_idleCount == 0)
-			UpdGroup::onUpdate(execLua);;
-		++_accum;
+		if(_interval.advance())
+			UpdGroup::onUpdate(execLua);
 	}
 	void UpdTask::setIdle(const int nFrame) {
-		_idleCount = nFrame;
+		std::get<interval::Wait>(_interval).wait = nFrame;
 	}
 	int UpdTask::getIdle() const noexcept {
-		return _idleCount;
+		return std::get<interval::Wait>(_interval).wait;
 	}
 	int UpdTask::getAccum() const noexcept {
-		return _accum;
+		return _interval.accum;
 	}
 }
