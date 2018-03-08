@@ -23,6 +23,9 @@ namespace rev {
 			GroupV		_groupV;	//!< Idでグループ検索する時用
 			int			_nParent;
 
+			using Interval = interval::Combine<interval::Wait, interval::EveryN>;
+			Interval	_interval;
+
 			//! Add,RemoveListが空なら自身をグローバルリストに登録
 			void _registerUGVec();
 			//! オブジェクト又はグループを実際に追加、削除
@@ -42,6 +45,9 @@ namespace rev {
 			UpdGroup(Priority p=DefaultPriority);
 			~UpdGroup();
 			Priority getPriority() const override;
+
+			interval::Wait& refWait() override;
+			interval::EveryN& refEveryN() override;
 
 			bool isNode() const noexcept override;
 			ObjTypeId getTypeId() const override;

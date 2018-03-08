@@ -108,7 +108,8 @@ namespace rev {
 	}
 	UpdGroup::UpdGroup(const Priority p):
 		_priority(p),
-		_nParent(0)
+		_nParent(0),
+		_interval(interval::Wait(0), interval::EveryN(0))
 	{}
 	UpdGroup::~UpdGroup() {
 		if(!std::uncaught_exception()) {
@@ -134,8 +135,14 @@ namespace rev {
 		if(_nParent == 0)
 			clear();
 	}
+	interval::Wait& UpdGroup::refWait() {
+		return std::get<interval::Wait>(_interval);
+	}
+	interval::EveryN& UpdGroup::refEveryN() {
+		return std::get<interval::EveryN>(_interval);
+	}
 	void UpdGroup::onUpdate(bool /*execLua*/) {
-		{
+		if(_interval.advance()) {
 			class FlagSet {
 				private:
 					bool _bRootPrev = *tls_bUpdateRoot;

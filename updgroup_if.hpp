@@ -1,5 +1,6 @@
 #pragma once
 #include "object_if.hpp"
+#include "interval.hpp"
 #include <vector>
 
 namespace rev {
@@ -17,5 +18,7 @@ namespace rev {
 			virtual int getNMember() const noexcept = 0;
 			virtual void clear() = 0;
 			virtual HGroup getHandle() = 0;
+			virtual interval::Wait& refWait() = 0;
+			virtual interval::EveryN& refEveryN() = 0;
 	};
 }

@@ -82,8 +82,6 @@ namespace rev {
 	DEF_HANDLE(IObject, Obj)
 	class IUpdGroup;
 	DEF_HANDLE(IUpdGroup, Group)
-	class UpdTask;
-	DEF_HANDLE(UpdTask, Task);
 	class DrawableObj;
 	DEF_HANDLE(DrawableObj, DObj)
 	class DrawGroup;
