@@ -23,7 +23,8 @@ namespace rev {
 		using IConst = std::integral_constant<int,N>;
 		template <class... Ts>
 		struct Combine : std::tuple<Ts...> {
-			uint32_t	accum = 0;
+			uint32_t	accum = 0,
+						skipped = 0;
 
 			using std::tuple<Ts...>::tuple;
 			bool _advance(IConst<sizeof...(Ts)>) {
@@ -36,8 +37,12 @@ namespace rev {
 				return false;
 			}
 			bool advance() {
-				++accum;
-				return _advance(IConst<0>());
+				if(_advance(IConst<0>())) {
+					++accum;
+					return true;
+				}
+				++skipped;
+				return false;
 			}
 		};
 	}
