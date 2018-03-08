@@ -14,8 +14,13 @@ namespace rev {
 			c._destroy = true;
 		}
 		ChildPush::~ChildPush() {
-			if(!_destroy)
+			close();
+		}
+		void ChildPush::close() {
+			if(!_destroy) {
 				ImGui::EndChild();
+				_destroy = true;
+			}
 		}
 		ChildPush::operator bool () const noexcept {
 			return _result;

@@ -12,6 +12,7 @@ namespace rev {
 				ChildPush(const char* id, const ImVec2& size, bool border=false, ImGuiWindowFlags flags=0);
 				ChildPush(ChildPush&& c);
 				~ChildPush();
+				void close();
 				explicit operator bool () const noexcept;
 		};
 	}
