@@ -1,9 +1,12 @@
 #pragma once
-#include "input_common.hpp"
+#include "input_constant.hpp"
+#include "handle.hpp"
 #include <map>
+#include <vector>
 #include <SDL_events.h>
 
 namespace rev {
+	struct RecvPointer;
 	class SDLTouchpad {
 		// TouchpadID -> Queue
 		using EventQ = std::map<int, std::vector<SDL_Event>>;

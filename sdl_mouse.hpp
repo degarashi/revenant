@@ -1,9 +1,12 @@
 #pragma once
-#include "input_common.hpp"
 #include "input_sdl_const.hpp"
+#include "input_constant.hpp"
+#include "handle.hpp"
+#include "lubee/error.hpp"
 #include <SDL_mouse.h>
 
 namespace rev {
+	struct TPos2D;
 	class SDLMouse {
 		private:
 			bool		_button[N_SDLMouseButton];

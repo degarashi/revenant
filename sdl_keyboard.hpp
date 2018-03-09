@@ -1,5 +1,6 @@
 #pragma once
 #include "handle.hpp"
+#include "input_constant.hpp"
 #include <SDL_keyboard.h>
 
 namespace rev {
