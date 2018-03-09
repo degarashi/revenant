@@ -3,6 +3,9 @@
 
 namespace rev {
 	namespace debug {
+		ChildPush::ChildPush(const char* id, const float h, bool border, ImGuiWindowFlags flags):
+			ChildPush(id, {0,h}, border, flags)
+		{}
 		ChildPush::ChildPush(const char* id, const ImVec2& size, bool border, ImGuiWindowFlags flags):
 			_result(ImGui::BeginChild(id, size, border, flags)),
 			_destroy(false)
