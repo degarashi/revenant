@@ -10,7 +10,7 @@ namespace rev {
 			std::array<uint8_t, SDL_NUM_SCANCODES>	_state;
 			static HInput s_hInput;
 		protected:
-			int dep_getButton(int num) const noexcept;
+			int dep_getButton(VKey::e num) const noexcept;
 			bool dep_scan() noexcept;
 			// キーボードは1つだけ想定
 			template <class Maker>

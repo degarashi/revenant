@@ -49,7 +49,7 @@ namespace rev {
 		return InputType::Keyboard;
 	}
 	int Keyboard::getButton(const int num) const {
-		return dep_getButton(num);
+		return dep_getButton(static_cast<VKey::e>(num));
 	}
 	int Keyboard::numButtons() const {
 		return VKey::_Num;
