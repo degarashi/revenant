@@ -1,5 +1,5 @@
 #include "time.hpp"
-#include "lubee/logical.hpp"
+#include "lubee/arithmetic.hpp"
 
 namespace rev {
 	#ifdef WIN32
