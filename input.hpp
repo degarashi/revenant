@@ -1,6 +1,5 @@
 #pragma once
 #include "spine/resmgr_named.hpp"
-#include "spine/enum.hpp"
 #include "input_dep_sdl.hpp"
 #include <unordered_set>
 

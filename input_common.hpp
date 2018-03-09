@@ -3,6 +3,7 @@
 #include "frea/vector.hpp"
 #include "spine/singleton.hpp"
 #include "handle.hpp"
+#include "spine/enum.hpp"
 
 namespace rev {
 	extern const int InputRange,
@@ -37,17 +38,17 @@ namespace rev {
 		void newPointer(WPtr wptr) override;
 	};
 
-	enum class InputType {
-		Keyboard,
-		Mouse,
-		Joypad,
-		Touchpad
-	};
-	enum class MouseMode {
-		Absolute,
-		Clipping,
-		Relative
-	};
+	DefineEnum(InputType,
+		(Keyboard)
+		(Mouse)
+		(Joypad)
+		(Touchpad)
+	);
+	DefineEnum(MouseMode,
+		(Absolute)
+		(Clipping)
+		(Relative)
+	);
 
 	struct KeyLog {
 		int		scancode,
