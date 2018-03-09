@@ -43,10 +43,7 @@ namespace rev {
 		int filter(int val) const noexcept;
 	};
 	using DZoneL = std::vector<DZone>;
-	enum VKey {
-		VKEY_0, VKEY_1, // ...
-		NUM_VKEY
-	};
+
 	// Class <-> Dep の間は数値を正規化 (-InputRange +InputRange)
 	/*! Depend要件:
 		protected:

@@ -52,7 +52,7 @@ namespace rev {
 		return dep_getButton(num);
 	}
 	int Keyboard::numButtons() const {
-		return NUM_VKEY;
+		return VKey::_Num;
 	}
 	HInput Keyboard::OpenKeyboard() {
 		return KeyboardDep::OpenKeyboard<InputMaker<Keyboard>>();

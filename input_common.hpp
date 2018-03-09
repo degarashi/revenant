@@ -49,6 +49,9 @@ namespace rev {
 		(Clipping)
 		(Relative)
 	);
+	DefineEnum(VKey,
+		(_0)(_1)
+	);
 
 	struct KeyLog {
 		int		scancode,
