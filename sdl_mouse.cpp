@@ -1,5 +1,6 @@
 #include "input_sdlvalue.hpp"
-#include "input_dep_sdl.hpp"
+#include "sdl_mouse.hpp"
+#include <SDL_events.h>
 
 namespace rev {
 	HInput SDLMouse::s_hInput;

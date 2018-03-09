@@ -1,4 +1,4 @@
-#include "input_dep_sdl.hpp"
+#include "sdl_touchpad.hpp"
 
 namespace rev {
 	HInput SDLTouchpad::s_hInput;

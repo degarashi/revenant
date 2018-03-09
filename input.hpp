@@ -1,6 +1,11 @@
 #pragma once
 #include "spine/resmgr_named.hpp"
-#include "input_dep_sdl.hpp"
+#include "sdl_keyboard.hpp"
+#include "sdl_mouse.hpp"
+#include "sdl_joypad.hpp"
+#include "sdl_touchpad.hpp"
+#include "sdl_textinput.hpp"
+#include "sdl_keylog.hpp"
 
 namespace rev {
 	//! 入力共通インタフェース

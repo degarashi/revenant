@@ -1,4 +1,5 @@
-#include "input_dep_sdl.hpp"
+#include "sdl_joypad.hpp"
+#include "input_common.hpp"
 #include <SDL.h>
 
 namespace rev {
