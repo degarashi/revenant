@@ -50,7 +50,7 @@ DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	LUAIMPLEMENT_BASE,
 	(LinkButtonAsAxis),
 	NOTHING,
-	(makeAction)(addAction)(remAction)
+	(makeAction)
 )
 
 namespace rev {

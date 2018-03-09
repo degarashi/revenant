@@ -306,18 +306,12 @@ namespace rev {
 	// ----------------- InputMgr -----------------
 	HAct InputMgr::makeAction(const std::string& name) {
 		HAct ret = _act.emplace(name).first;
-		_aset.insert(ret);
+		_aset.emplace_back(ret);
 		return ret;
 	}
 	void InputMgr::LinkButtonAsAxis(HInput hI, HAct hAct, const int num_negative, const int num_positive) {
 		hAct->addLink(hI, InputFlag::ButtonFlip, num_negative);
 		hAct->addLink(hI, InputFlag::Button, num_positive);
-	}
-	void InputMgr::addAction(const HAct& hAct) {
-		_aset.insert(hAct);
-	}
-	void InputMgr::remAction(const HAct& hAct) {
-		_aset.erase(hAct);
 	}
 	namespace {
 		// Terminateメソッドを持っていたら呼び出す
@@ -352,8 +346,15 @@ namespace rev {
 		CallFunction<Keyboard, Mouse, Joypad, Touchpad, TextInputDep, KeyLogDep>(CallUpdate());
 		for(auto h : *this)
 			h->scan();
-		for(auto& h : _aset) {
-			h->update();
+		int n = _aset.size();
+		for(int i=0 ; i<n ; i++) {
+			if(const auto p = _aset[i].lock()) {
+				p->update();
+			} else {
+				_aset[i] = _aset.back();
+				--n;
+				--i;
+			}
 		}
 		_text = TextInputDep::GetText();
 	}

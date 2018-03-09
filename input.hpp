@@ -1,7 +1,6 @@
 #pragma once
 #include "spine/resmgr_named.hpp"
 #include "input_dep_sdl.hpp"
-#include <unordered_set>
 
 namespace rev {
 	//! 入力共通インタフェース
@@ -236,7 +235,7 @@ namespace rev {
 	/*! ボタンステートはAction毎に用意 */
 	class InputMgr : public spi::ResMgr<Input>, public spi::Singleton<InputMgr> {
 		private:
-			using ActSet = std::unordered_set<HAct>;
+			using ActSet = std::vector<WAct>;
 			ActMgr		_act;
 			ActSet		_aset;
 			std::string	_text;
@@ -258,9 +257,6 @@ namespace rev {
 			~InputMgr();
 
 			HAct makeAction(const std::string& name);
-			void addAction(const HAct& hAct);
-			// 更新リストから除くだけで削除はしない
-			void remAction(const HAct& hAct);
 			static void LinkButtonAsAxis(HInput hI, HAct hAct, int num_negative, int num_positive);
 			template <class T, class... Tuple>
 			static void LinkButtonAsAxisMulti(HInput hI, const T& t, const Tuple&... ts) {
