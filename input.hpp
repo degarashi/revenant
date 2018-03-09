@@ -279,10 +279,6 @@ namespace rev {
 				using IntS = std::make_index_sequence<sizeof...(H)>;
 				return _GetKeyValueSimplifiedMulti(IntS(), std::forward_as_tuple(h...));
 			}
-			// キーマッピングのファイル入出力
-			// 入力キャプチャコールバック
-			using CaptureCB = bool (HInput, int);
-			void addCaptureCB(CaptureCB cb);
 			// 次回の更新時に処理
 			void update();
 			// 文字入力処理用
