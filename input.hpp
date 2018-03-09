@@ -1,5 +1,6 @@
 #pragma once
 #include "spine/resmgr_named.hpp"
+#include "spine/enum.hpp"
 #include "input_dep_sdl.hpp"
 #include <unordered_set>
 
@@ -164,19 +165,16 @@ namespace rev {
 			const std::string& name() const override;
 	};
 
-	struct InputFlag {
-		enum E {
-			Button,
-			ButtonFlip,
-			Axis,
-			AxisNegative,
-			AxisPositive,
-			Hat,
-			HatX,
-			HatY,
-			_Num
-		};
-	};
+	DefineEnum(InputFlag,
+		(Button)
+		(ButtonFlip)
+		(Axis)
+		(AxisNegative)
+		(AxisPositive)
+		(Hat)
+		(HatX)
+		(HatY)
+	);
 	class Action : public Resource {
 		public:
 			// 値の取得
@@ -193,7 +191,7 @@ namespace rev {
 			//! 入力機器からの値取得方法を定義
 			struct Link {
 				HInput	hInput;
-				InputFlag::E	inF;
+				InputFlag::e	inF;
 				int		num;
 
 				bool operator == (const Link& l) const;
@@ -216,8 +214,8 @@ namespace rev {
 			bool isKeyPressed() const;
 			bool isKeyReleased() const;
 			bool isKeyPressing() const;
-			void addLink(HInput hI, InputFlag::E inF, int num);
-			void remLink(HInput hI, InputFlag::E inF, int num);
+			void addLink(HInput hI, InputFlag::e inF, int num);
+			void remLink(HInput hI, InputFlag::e inF, int num);
 			int getState() const;
 			int getValue() const;
 			//! getValueの結果を使いやすいように加工(-1〜1)して返す
