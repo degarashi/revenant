@@ -1,5 +1,6 @@
 #pragma once
-#include "input_common.hpp"
+#include "input_keylog.hpp"
+#include <vector>
 
 namespace rev {
 	using KeyLogV = std::vector<KeyLog>;

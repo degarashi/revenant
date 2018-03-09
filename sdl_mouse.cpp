@@ -1,4 +1,5 @@
 #include "input_sdlvalue.hpp"
+#include "input_common.hpp"
 #include "sdl_mouse.hpp"
 #include <SDL_events.h>
 

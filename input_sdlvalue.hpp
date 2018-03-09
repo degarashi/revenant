@@ -5,8 +5,8 @@
 #endif
 #include "spinlock.hpp"
 #include "input_sdl_const.hpp"
+#include "input_keylog.hpp"
 #include <vector>
-#include "input_common.hpp"
 
 namespace rev {
 	struct SDLInputShared {

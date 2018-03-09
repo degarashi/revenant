@@ -1,6 +1,6 @@
 #pragma once
 #include "spine/resmgr_named.hpp"
-#include "input_constant.hpp"
+#include "input_common.hpp"
 #include "sdl_keyboard.hpp"
 #include "sdl_mouse.hpp"
 #include "sdl_joypad.hpp"
