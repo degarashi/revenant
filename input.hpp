@@ -5,8 +5,6 @@
 namespace rev {
 	//! 入力共通インタフェース
 	struct Input : Resource {
-		virtual ~Input() {}
-
 		virtual InputType getType() const = 0;
 		// エラー時はfalseを返す
 		virtual bool scan() = 0;
