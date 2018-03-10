@@ -6,7 +6,7 @@ using ImGuiID = unsigned int;
 namespace rev {
 	struct Resource;
 	namespace debug {
-		class StateStorage {
+		class StateStorage_Res {
 			private:
 				using Value = std::weak_ptr<Resource>;
 				using Map = std::unordered_map<ImGuiID, Value>;

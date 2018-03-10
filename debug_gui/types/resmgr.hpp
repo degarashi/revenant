@@ -30,10 +30,10 @@ namespace rev {
 				const auto c = ColumnPush(2);
 				const auto id = ImGui::GetID("ResMgr");
 				using R = typename std::decay_t<decltype(*m.begin())>::element_type;
-				auto cur_lk = StateStorage::template Get<R>(id);
+				auto cur_lk = StateStorage_Res::template Get<R>(id);
 				inner::ResMgr_Iter(m, [id, &cur_lk](const char* name, auto&& r){
 					if(ImGui::Selectable(name, cur_lk == r)) {
-						StateStorage::Set(id, r);
+						StateStorage_Res::Set(id, r);
 						cur_lk = r;
 					}
 				});
