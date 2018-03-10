@@ -7,6 +7,9 @@ namespace rev {
 			_result(ImGui::Begin(label, p_open, flags)),
 			_destroy(false)
 		{}
+		WindowPush::WindowPush(const char* label, bool* p_open, const float w, const float h,const float bg_alpha_override, ImGuiWindowFlags flags):
+			WindowPush(label, p_open, {w,h}, bg_alpha_override, flags)
+		{}
 		WindowPush::WindowPush(const char* label, bool* p_open, const ImVec2& size_on_first_use, const float bg_alpha_override, ImGuiWindowFlags flags):
 			_result(ImGui::Begin(label, p_open, size_on_first_use, bg_alpha_override, flags)),
 			_destroy(false)
