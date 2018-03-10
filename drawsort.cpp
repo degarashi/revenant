@@ -46,9 +46,15 @@ namespace rev {
 	bool DSort_Z_Asc::compare(const DrawTag& d0, const DrawTag& d1) const {
 		return d0.zOffset < d1.zOffset;
 	}
+	const char* DSort_Z_Asc::getDebugName() const noexcept {
+		return "Z_Ascend";
+	}
 	// ------------------- DSort_Z_Desc -------------------
 	bool DSort_Z_Desc::compare(const DrawTag& d0, const DrawTag& d1) const {
 		return d0.zOffset > d1.zOffset;
+	}
+	const char* DSort_Z_Desc::getDebugName() const noexcept {
+		return "Z_Descend";
 	}
 	// ------------------- DSort_Priority_Asc -------------------
 	bool DSort_Priority_Asc::hasInfo(const DrawTag& /*d*/) const {
@@ -57,9 +63,15 @@ namespace rev {
 	bool DSort_Priority_Asc::compare(const DrawTag& d0, const DrawTag& d1) const {
 		return d0.priority < d1.priority;
 	}
+	const char* DSort_Priority_Asc::getDebugName() const noexcept {
+		return "Priority_Ascend";
+	}
 	// ------------------- DSort_Priority_Desc -------------------
 	bool DSort_Priority_Desc::compare(const DrawTag& d0, const DrawTag& d1) const {
 		return d0.priority > d1.priority;
+	}
+	const char* DSort_Priority_Desc::getDebugName() const noexcept {
+		return "Priority_Descend";
 	}
 	// ------------------- DSort_TechPass -------------------
 	bool DSort_TechPass::hasInfo(const DrawTag& d) const {
@@ -72,6 +84,9 @@ namespace rev {
 		if(hasInfo(d)) {
 			e.setTechnique(d.technique);
 		}
+	}
+	const char* DSort_TechPass::getDebugName() const noexcept {
+		return "TechPass";
 	}
 
 	namespace detail {
@@ -107,6 +122,9 @@ namespace rev {
 				u.setUniform(id[i], draw::MakeUniform(d.idTex[i]));
 		}
 	}
+	const char* DSort_Texture::getDebugName() const noexcept {
+		return "Texture";
+	}
 
 	// ------------------- DSort_Primitive -------------------
 	bool DSort_Primitive::hasInfo(const DrawTag& d) const {
@@ -117,5 +135,8 @@ namespace rev {
 	}
 	void DSort_Primitive::apply(const DrawTag& d, IEffect& e) {
 		e.setPrimitive(d.primitive);
+	}
+	const char* DSort_Primitive::getDebugName() const noexcept {
+		return "Primitive";
 	}
 }
