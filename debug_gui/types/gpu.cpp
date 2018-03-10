@@ -1,6 +1,6 @@
 #include "../../gpu.hpp"
-#include "../../imgui/imgui.h"
 #include "../entry_field.hpp"
+#include "../textfilter.hpp"
 #include <boost/format.hpp>
 
 namespace rev {
@@ -20,9 +20,8 @@ namespace rev {
 			ImGui::Spacing();
 			field.show("Caps");
 			ImGui::Separator();
-			static char cbuff[128];
-			ImGui::InputText("filter", cbuff, 128);
-			ImGuiTextFilter filter(cbuff);
+
+			debug::TextFilter filter(ImGui::GetID("filter"));
 			if(const auto caps = debug::ChildPush("caps", {0,0})) {
 				for(auto& c : refCapabilitySet()) {
 					if(filter.PassFilter(c.c_str()))

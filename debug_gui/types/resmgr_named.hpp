@@ -1,12 +1,12 @@
 #pragma once
 #include "spine/resmgr_named.hpp"
 #include "../print.hpp"
-#include "../../imgui/imgui.h"
 #include "../id.hpp"
 #include "../column.hpp"
 #include "../child.hpp"
 #include "../tree.hpp"
 #include "../state_storage_res.hpp"
+#include "../textfilter.hpp"
 
 namespace rev {
 	namespace debug {
@@ -14,9 +14,7 @@ namespace rev {
 			template <class M, class CB>
 			void ResMgrNamed_Iter(M& m, CB&& cb) {
 				std::stringstream ss;
-				static char cbuff[128];
-				ImGui::InputText("filter", cbuff, 128);
-				ImGuiTextFilter filter(cbuff);
+				TextFilter filter(ImGui::GetID("filter"));
 				const auto print = [&m, &ss, &filter, &cb](const bool anonymous){
 					const auto clear = [&ss](){
 						ss.clear();
