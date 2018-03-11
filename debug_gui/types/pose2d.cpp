@@ -3,6 +3,7 @@
 #include "../../imgui/imgui.h"
 #include "../indent.hpp"
 #include "../entry_field.hpp"
+#include "../spacing.hpp"
 
 namespace rev {
 	namespace debug {
@@ -14,14 +15,16 @@ namespace rev {
 							*lb_rotation = "Rotation";
 			}
 			void _Show(const ::beat::g2::Pose& p) {
-				if(auto f = EntryField(lb_pose2d, 0, 3)) {
+				using S = Spacing;
+				if(auto f = EntryField(lb_pose2d, S::Text()*3 + S::ItemSpacing()*2)) {
 					f.show(lb_offset, p.getOffset());
 					f.show(lb_scale, p.getScaling());
 					f.show(lb_rotation, p.getRotation());
 				}
 			}
 			bool _Edit(::beat::g2::Pose& p) {
-				if(auto f = EntryField(lb_pose2d, 0, 3)) {
+				using S = Spacing;
+				if(auto f = EntryField(lb_pose2d, S::ItemText()*3 + S::ItemSpacing()*2)) {
 					{
 						auto tmp = p.getOffset();
 						if(f.edit(lb_offset, tmp)) {
