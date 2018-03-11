@@ -19,5 +19,6 @@ namespace rev {
 			ShType getShaderType() const;
 			void onDeviceLost() override;
 			void onDeviceReset() override;
+			const char* getDebugName() const noexcept override;
 	};
 }
