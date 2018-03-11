@@ -1,6 +1,7 @@
 #include "../../interval.hpp"
 #include "../../imgui/imgui.h"
 #include "../print.hpp"
+#include "../spacing.hpp"
 
 namespace rev {
 	namespace interval {
@@ -10,7 +11,7 @@ namespace rev {
 			return debug::Edit("Wait", wait);
 		}
 		float Wait::guiHeight() const {
-			return ImGui::GetItemsLineHeightWithSpacing();
+			return debug::Spacing::ItemText();
 		}
 
 		bool EveryN::guiEditor() {
@@ -27,7 +28,7 @@ namespace rev {
 			return false;
 		}
 		float EveryN::guiHeight() const {
-			return ImGui::GetItemsLineHeightWithSpacing();
+			return debug::Spacing::ItemText();
 		}
 		void Accum::guiViewer() const {
 			ImGui::TextUnformatted("Accum: ");
@@ -39,7 +40,8 @@ namespace rev {
 			debug::Show("Skipped", skipped);
 		}
 		float Accum::guiHeight() const {
-			return ImGui::GetItemsLineHeightWithSpacing()*2;
+			using S = debug::Spacing;
+			return S::Text()*2 + S::ItemSpacing();
 		}
 	}
 }
