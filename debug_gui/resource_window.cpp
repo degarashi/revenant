@@ -2,6 +2,7 @@
 #include "../resource.hpp"
 #include "window.hpp"
 #include "sstream.hpp"
+#include "../imgui/imgui.h"
 #include <iomanip>
 
 namespace rev {
@@ -30,6 +31,7 @@ namespace rev {
 					s << sp.get() << '\t' << sp->getDebugName();
 					bool opened = true;
 					if(const auto w = WindowPush(s.output().c_str(), &opened, 640,480)) {
+						ImGui::Text("reference-count = %ld", sp.use_count());
 						sp->guiEditor();
 					}
 					if(!opened) {
