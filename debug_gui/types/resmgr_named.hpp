@@ -7,32 +7,28 @@
 #include "../tree.hpp"
 #include "../state_storage_res.hpp"
 #include "../textfilter.hpp"
+#include "../sstream.hpp"
 
 namespace rev {
 	namespace debug {
 		namespace inner {
 			template <class M, class CB>
 			void ResMgrNamed_Iter(M& m, CB&& cb) {
-				std::stringstream ss;
+				StringStream s;
 				TextFilter filter(ImGui::GetID("filter"));
-				const auto print = [&m, &ss, &filter, &cb](const bool anonymous){
-					const auto clear = [&ss](){
-						ss.clear();
-						ss.str("");
-					};
+				const auto print = [&m, &s, &filter, &cb](const bool anonymous){
 					int id = 0;
 					for(const auto& r : m) {
 						const auto& key = *m.getKey(r);
-						ss << r->getDebugName() << ": " << key;
 						if(anonymous == spi::IsAnonymous(key)) {
-							const auto ks = ss.str();
+							s << r->getDebugName() << ": " << key;
+							const auto ks = s.output();
 							const auto* kp = ks.c_str();
 							if(filter.PassFilter(kp)) {
 								const IdPush idp(++id);
 								cb(kp, r);
 							}
 						}
-						clear();
 					}
 				};
 				if(const auto c = ChildPush("ResMgrNamed", {0, 0}, false, ImGuiWindowFlags_HorizontalScrollbar)) {

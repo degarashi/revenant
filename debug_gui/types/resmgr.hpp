@@ -5,23 +5,19 @@
 #include "../column.hpp"
 #include "../child.hpp"
 #include "../state_storage_res.hpp"
+#include "../sstream.hpp"
 
 namespace rev {
 	namespace debug {
 		namespace inner {
 			template <class M, class CB>
 			void ResMgr_Iter(M& m, CB&& cb) {
-				std::stringstream ss;
-				const auto clear = [&ss](){
-					ss.str("");
-					ss.clear();
-				};
+				StringStream s;
 				if(const auto c = ChildPush("ResMgr", {0, 0}, false, ImGuiWindowFlags_HorizontalScrollbar)) {
 					for(auto&& r : m) {
 						const IdPush id(r.get());
-						ss << "address: 0x" << std::hex << r.get();
-						cb(ss.str().c_str(), r);
-						clear();
+						s << "address: 0x" << std::hex << r.get();
+						cb(s.output().c_str(), r);
 					}
 				}
 			}
