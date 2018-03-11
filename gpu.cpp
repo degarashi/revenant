@@ -94,6 +94,9 @@ namespace rev {
 	const GPUInfo::CapSet& GPUInfo::refCapabilitySet() const {
 		return _capSet;
 	}
+	const char* GPUInfo::getDebugName() const noexcept {
+		return "GPUInfo";
+	}
 	std::ostream& operator << (std::ostream& os, const GPUInfo& info) {
 		using std::endl;
 		os << "OpenGL Version: " << info.version() << endl

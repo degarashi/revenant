@@ -62,6 +62,7 @@ namespace rev {
 			const std::string& vendor() const;
 			const std::string& renderer() const;
 			const CapSet& refCapabilitySet() const;
+			const char* getDebugName() const noexcept override;
 			#ifdef DEBUGGUI_ENABLED
 				void guiViewer(bool redirect=false) override;
 			#endif
