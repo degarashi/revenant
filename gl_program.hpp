@@ -56,5 +56,6 @@ namespace rev {
 			GLParamInfo getActiveUniform(int n) const;
 			void use() const;
 			const TexIndex& getTexIndex() const noexcept;
+			const char* getDebugName() const noexcept override;
 	};
 }

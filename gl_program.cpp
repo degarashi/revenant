@@ -138,4 +138,7 @@ namespace rev {
 	const GLProgram::TexIndex& GLProgram::getTexIndex() const noexcept {
 		return _texIndex;
 	}
+	const char* GLProgram::getDebugName() const noexcept {
+		return "Program";
+	}
 }
