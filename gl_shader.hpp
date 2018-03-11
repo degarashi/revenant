@@ -20,5 +20,8 @@ namespace rev {
 			void onDeviceLost() override;
 			void onDeviceReset() override;
 			const char* getDebugName() const noexcept override;
+			#ifdef DEBUGGUI_ENABLED
+				bool guiEditor(bool redirect) override;
+			#endif
 	};
 }
