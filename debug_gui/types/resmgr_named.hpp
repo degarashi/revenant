@@ -8,6 +8,8 @@
 #include "../state_storage_res.hpp"
 #include "../textfilter.hpp"
 #include "../sstream.hpp"
+#include "../popup.hpp"
+#include "../resource_window.hpp"
 
 namespace rev {
 	namespace debug {
@@ -27,6 +29,14 @@ namespace rev {
 							if(filter.PassFilter(kp)) {
 								const IdPush idp(++id);
 								cb(kp, r);
+								if(ImGui::IsItemClicked(1)) {
+									ImGui::OpenPopup("popup");
+								}
+								if(const auto _ = debug::PopupPush("popup")) {
+									if(ImGui::Selectable("Open in new window...")) {
+										debug::ResourceWindow::Add(r);
+									}
+								}
 							}
 						}
 					}

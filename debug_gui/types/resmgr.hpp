@@ -6,6 +6,8 @@
 #include "../child.hpp"
 #include "../state_storage_res.hpp"
 #include "../sstream.hpp"
+#include "../popup.hpp"
+#include "../resource_window.hpp"
 
 namespace rev {
 	namespace debug {
@@ -18,6 +20,14 @@ namespace rev {
 						const IdPush id(r.get());
 						s << "address: 0x" << std::hex << r.get();
 						cb(s.output().c_str(), r);
+						if(ImGui::IsItemClicked(1)) {
+							ImGui::OpenPopup("popup");
+						}
+						if(const auto _ = debug::PopupPush("popup")) {
+							if(ImGui::Selectable("Open in new window...")) {
+								debug::ResourceWindow::Add(r);
+							}
+						}
 					}
 				}
 			}
