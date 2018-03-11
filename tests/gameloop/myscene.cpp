@@ -31,7 +31,7 @@ namespace rev {
 				// 終了ボタン定義
 				self._actQ = mgr_input.makeAction("quit");
 				auto hKb = Keyboard::OpenKeyboard();
-				self._actQ->addLink(hKb, InputFlag::Button, SDL_SCANCODE_ESCAPE);
+				self._actQ->addLink(hKb, InputFlag::Button, VKey::Escape);
 				// カメラ初期化
 				self._camera = mgr_cam2d.emplace();
 				auto scr = mgr_info.getScreenSize();
