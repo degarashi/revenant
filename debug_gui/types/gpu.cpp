@@ -6,8 +6,8 @@
 #include <boost/format.hpp>
 
 namespace rev {
-	bool GPUInfo::guiEditor(bool) {
-		auto field = debug::EntryField("GPUInfo");
+	bool GPUInfo::guiEditor(const bool edit) {
+		auto field = debug::EntryField("GPUInfo", edit);
 		const auto showVersion = [&field](const char* name, const auto& ver){
 			const auto fmt = boost::format("%1%.%2%.%3%") % ver.major % ver.minor % ver.revision;
 			field.show(name, fmt.str());
@@ -30,6 +30,6 @@ namespace rev {
 					ImGui::TextUnformatted(c.c_str());
 			}
 		}
-		return false;
+		return field.modified();
 	}
 }

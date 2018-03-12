@@ -15,13 +15,13 @@ namespace rev {
 							*lb_rotation = "Rotation";
 			}
 			void _Show(const ::beat::g2::Pose& p) {
-				auto f = EntryField(lb_pose2d);
+				auto f = EntryField(lb_pose2d, false);
 				f.show(lb_offset, p.getOffset());
 				f.show(lb_scale, p.getScaling());
 				f.show(lb_rotation, p.getRotation());
 			}
 			bool _Edit(::beat::g2::Pose& p) {
-				auto f = EntryField(lb_pose2d);
+				auto f = EntryField(lb_pose2d, true);
 				{
 					auto tmp = p.getOffset();
 					if(f.edit(lb_offset, tmp)) {

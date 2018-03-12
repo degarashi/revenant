@@ -8,11 +8,11 @@ namespace rev {
 			public Entry
 		{
 			private:
-				EntryField(IdPush&& idp, int columns);
+				EntryField(IdPush&& idp, bool edit, int columns);
 			public:
 				template <class Id>
-				EntryField(const Id& id, int columns=2):
-					EntryField(IdPush(id), columns)
+				EntryField(const Id& id, const bool edit, int columns=2):
+					EntryField(IdPush(id), edit, columns)
 				{}
 		};
 	}

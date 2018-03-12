@@ -4,9 +4,9 @@
 
 namespace rev {
 	namespace debug {
-		EntryField::EntryField(IdPush&& idp, const int columns):
+		EntryField::EntryField(IdPush&& idp, const bool edit, const int columns):
 			IdPush(std::move(idp)),
-			Entry(0, columns)
+			Entry(0, edit, columns)
 		{
 			ImGui::SetColumnWidth(0, 120.f);
 		}

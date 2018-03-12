@@ -4,13 +4,13 @@
 
 namespace rev {
 	bool Camera2D::guiEditor(const bool edit) {
-		auto field = debug::EntryField("Camera2D");
+		auto field = debug::EntryField("Camera2D", edit);
 		ImGui::Columns(1);
-		if(field.entry(edit, "pose", _rflag.ref<Pose>())) {
+		if(field.entry("pose", _rflag.ref<Pose>())) {
 			refPose();
 		}
 		ImGui::Columns(2);
-		if(field.entry(edit, "Aspect", _rflag.ref<AspectRatio>())) {
+		if(field.entry("Aspect", _rflag.ref<AspectRatio>())) {
 			setAspectRatio(getAspectRatio());
 		}
 		field.show("Accum", uint64_t(getAccum()));
