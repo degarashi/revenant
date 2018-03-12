@@ -10,9 +10,6 @@ namespace rev {
 			ImGui::SameLine();
 			return debug::Edit("Wait", wait);
 		}
-		float Wait::guiHeight() const {
-			return debug::Spacing::ItemText();
-		}
 
 		bool EveryN::guiEditor() {
 			ImGui::TextUnformatted("Every: ");
@@ -27,9 +24,6 @@ namespace rev {
 			}
 			return false;
 		}
-		float EveryN::guiHeight() const {
-			return debug::Spacing::ItemText();
-		}
 		void Accum::guiViewer() const {
 			ImGui::TextUnformatted("Accum: ");
 			ImGui::SameLine();
@@ -38,10 +32,6 @@ namespace rev {
 			ImGui::TextUnformatted("Skipped: ");
 			ImGui::SameLine();
 			debug::Show("Skipped", skipped);
-		}
-		float Accum::guiHeight() const {
-			using S = debug::Spacing;
-			return S::Text()*2 + S::ItemSpacing();
 		}
 	}
 }

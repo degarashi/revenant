@@ -15,37 +15,32 @@ namespace rev {
 							*lb_rotation = "Rotation";
 			}
 			void _Show(const ::beat::g2::Pose& p) {
-				using S = Spacing;
-				if(auto f = EntryField(lb_pose2d, S::Text()*3 + S::ItemSpacing()*2)) {
-					f.show(lb_offset, p.getOffset());
-					f.show(lb_scale, p.getScaling());
-					f.show(lb_rotation, p.getRotation());
-				}
+				auto f = EntryField(lb_pose2d);
+				f.show(lb_offset, p.getOffset());
+				f.show(lb_scale, p.getScaling());
+				f.show(lb_rotation, p.getRotation());
 			}
 			bool _Edit(::beat::g2::Pose& p) {
-				using S = Spacing;
-				if(auto f = EntryField(lb_pose2d, S::ItemText()*3 + S::ItemSpacing()*2)) {
-					{
-						auto tmp = p.getOffset();
-						if(f.edit(lb_offset, tmp)) {
-							p.setOffset(tmp);
-						}
+				auto f = EntryField(lb_pose2d);
+				{
+					auto tmp = p.getOffset();
+					if(f.edit(lb_offset, tmp)) {
+						p.setOffset(tmp);
 					}
-					{
-						auto tmp = p.getScaling();
-						if(f.edit(lb_scale, tmp)) {
-							p.setScaling(tmp);
-						}
-					}
-					{
-						auto tmp = p.getRotation();
-						if(f.edit(lb_rotation, tmp)) {
-							p.setRotation(tmp);
-						}
-					}
-					return f.modified();
 				}
-				return false;
+				{
+					auto tmp = p.getScaling();
+					if(f.edit(lb_scale, tmp)) {
+						p.setScaling(tmp);
+					}
+				}
+				{
+					auto tmp = p.getRotation();
+					if(f.edit(lb_rotation, tmp)) {
+						p.setRotation(tmp);
+					}
+				}
+				return f.modified();
 			}
 		}
 	}

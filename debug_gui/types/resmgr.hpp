@@ -15,10 +15,10 @@ namespace rev {
 			template <class M, class CB>
 			void ResMgr_Iter(M& m, CB&& cb) {
 				StringStream s;
-				if(const auto c = ChildPush("ResMgr", {0, 0}, false, ImGuiWindowFlags_HorizontalScrollbar)) {
+				if(const auto c = ChildPush("ResMgr", 0, false, ImGuiWindowFlags_HorizontalScrollbar)) {
 					for(auto&& r : m) {
 						const IdPush id(r.get());
-						s << "address: 0x" << std::hex << r.get();
+						s << r->getDebugName() << "\t(address: 0x" << std::hex << r.get() << ')';
 						cb(s.output().c_str(), r);
 						if(ImGui::IsItemClicked(1)) {
 							ImGui::OpenPopup("popup");
@@ -46,7 +46,9 @@ namespace rev {
 
 				ImGui::NextColumn();
 				if(cur_lk) {
-					return Edit("", cur_lk);
+					if(const auto _ = ChildPush("Right", 0, false, ImGuiWindowFlags_HorizontalScrollbar)) {
+						return Edit("", cur_lk);
+					}
 				}
 				return false;
 			}

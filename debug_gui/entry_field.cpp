@@ -4,8 +4,8 @@
 
 namespace rev {
 	namespace debug {
-		EntryField::EntryField(const char* label, const float height, const int columns):
-			ChildPush(label, {0, (height > 0) ? height+Spacing::Child() : 0}, true, 0),
+		EntryField::EntryField(IdPush&& idp, const int columns):
+			IdPush(std::move(idp)),
 			Entry(0, columns)
 		{
 			ImGui::SetColumnWidth(0, 120.f);

@@ -65,7 +65,9 @@ namespace rev {
 
 				ImGui::NextColumn();
 				if(cur_lk) {
-					return Edit("", cur_lk);
+					if(const auto _ = ChildPush("Right", 0, false, ImGuiWindowFlags_HorizontalScrollbar)) {
+						return Edit("", cur_lk);
+					}
 				}
 				return false;
 			}

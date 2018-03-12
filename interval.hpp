@@ -16,7 +16,6 @@ namespace rev {
 			bool advance();
 			#ifdef DEBUGGUI_ENABLED
 				bool guiEditor();
-				float guiHeight() const;
 			#endif
 		};
 		//! Nフレーム毎に動作する
@@ -27,7 +26,6 @@ namespace rev {
 			bool advance();
 			#ifdef DEBUGGUI_ENABLED
 				bool guiEditor();
-				float guiHeight() const;
 			#endif
 		};
 		struct Accum {
@@ -36,7 +34,6 @@ namespace rev {
 
 			#ifdef DEBUGGUI_ENABLED
 				void guiViewer() const;
-				float guiHeight() const;
 			#endif
 		};
 
@@ -70,20 +67,10 @@ namespace rev {
 				bool _guiEditor(std::index_sequence<Idx...>) {
 					return lubee::Or_A(std::get<Idx>(*this).guiEditor()...);
 				}
-				template <std::size_t... Idx>
-				float _guiHeight(std::index_sequence<Idx...>) const {
-					return debug::Spacing::ItemSpacing() * sizeof...(Ts) +
-							lubee::Add(std::get<Idx>(*this).guiHeight()...) +
-							ac.guiHeight();
-				}
 				bool guiEditor() {
-					const float w = _guiHeight(std::make_index_sequence<sizeof...(Ts)>{});
-					if(const auto c = debug::ChildPush("Combine", w+debug::Spacing::Child(), true)) {
-						const bool ret = _guiEditor(std::make_index_sequence<sizeof...(Ts)>{});
-						ac.guiViewer();
-						return ret;
-					}
-					return false;
+					const bool ret = _guiEditor(std::make_index_sequence<sizeof...(Ts)>{});
+					ac.guiViewer();
+					return ret;
 				}
 			#endif
 		};

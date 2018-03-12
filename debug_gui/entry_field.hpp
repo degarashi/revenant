@@ -1,15 +1,19 @@
 #pragma once
 #include "entry.hpp"
-#include "child.hpp"
 
 namespace rev {
 	namespace debug {
 		class EntryField :
-			public ChildPush,
+			public IdPush,
 			public Entry
 		{
+			private:
+				EntryField(IdPush&& idp, int columns);
 			public:
-				EntryField(const char* label, float height=0, int columns=2);
+				template <class Id>
+				EntryField(const Id& id, int columns=2):
+					EntryField(IdPush(id), columns)
+				{}
 		};
 	}
 }
