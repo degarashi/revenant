@@ -21,7 +21,7 @@ namespace rev {
 			void onDeviceReset() override;
 			const char* getDebugName() const noexcept override;
 			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor(bool redirect) override;
+				bool guiEditor(bool edit) override;
 			#endif
 	};
 }

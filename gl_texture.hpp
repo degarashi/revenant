@@ -76,7 +76,7 @@ namespace rev {
 			//! 内容をファイルに保存 (主にデバッグ用)
 			void save(const PathBlock& path, CubeFace face=CubeFace::PositiveX);
 			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor(bool redirect=false) override;
+				bool guiEditor(bool edit) override;
 			#endif
 
 			bool isCubemap() const;
@@ -136,7 +136,7 @@ namespace rev {
 			void onDeviceReset() override;
 			const char* getDebugName() const noexcept override;
 			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor(bool redirect) override;
+				bool guiEditor(bool edit) override;
 			#endif
 	};
 	//! 6つの画像ファイルからCubeテクスチャを構成

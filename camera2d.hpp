@@ -49,7 +49,7 @@ namespace rev {
 			Vec2 v2w(const Vec2& pos) const;
 			const char* getResourceName() const noexcept override;
 			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor(bool redirect=false) override;
+				bool guiEditor(bool edit) override;
 			#endif
 
 			bool operator == (const Camera2D& c) const noexcept;

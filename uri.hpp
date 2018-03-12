@@ -57,7 +57,7 @@ namespace rev {
 			DEF_URIMETHOD
 			bool operator == (const IdURI& u) const noexcept;
 			#ifdef DEBUGGUI_ENABLED
-				void guiViewer(bool redirect=false) override;
+				bool guiEditor(bool edit) override;
 			#endif
 	};
 
@@ -79,7 +79,7 @@ namespace rev {
 			DEF_URIMETHOD
 			bool operator == (const UserURI& u) const noexcept;
 			#ifdef DEBUGGUI_ENABLED
-				void guiViewer(bool redirect=false) override;
+				bool guiEditor(bool edit) override;
 			#endif
 	};
 
@@ -102,7 +102,7 @@ namespace rev {
 			DEF_URIMETHOD
 			bool operator == (const FileURI& f) const noexcept;
 			#ifdef DEBUGGUI_ENABLED
-				void guiViewer(bool redirect=false) override;
+				bool guiEditor(bool edit) override;
 			#endif
 	};
 
@@ -139,7 +139,7 @@ namespace rev {
 			const Data_t& data() const noexcept;
 			bool operator == (const DataURI& d) const noexcept;
 			#ifdef DEBUGGUI_ENABLED
-				void guiViewer(bool redirect=false) override;
+				bool guiEditor(bool edit) override;
 			#endif
 	};
 	#undef DEF_URIMETHOD

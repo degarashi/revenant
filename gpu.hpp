@@ -64,7 +64,7 @@ namespace rev {
 			const CapSet& refCapabilitySet() const;
 			const char* getDebugName() const noexcept override;
 			#ifdef DEBUGGUI_ENABLED
-				void guiViewer(bool redirect=false) override;
+				bool guiEditor(bool edit) override;
 			#endif
 
 			void onDeviceLost() override;

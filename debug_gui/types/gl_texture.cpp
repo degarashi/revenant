@@ -19,17 +19,17 @@ namespace rev {
 						*lb_format = "Format";
 		const char		*lb_uri = "uri";
 	}
-	bool IGLTexture::guiEditor(bool) {
+	bool IGLTexture::guiEditor(const bool edit) {
 		auto field = debug::EntryField("IGLTexture");
 		field.show(lb_openglId, _idTex);
 		{
 			const auto p0 = debug::MakeEditProxy<bool>(_iLinearMag);
 			const auto p1 = debug::MakeEditProxy<bool>(_iLinearMin);
-			field.edit(lb_linearMag, p0);
-			field.edit(lb_linearMin, p1);
+			field.entry(edit, lb_linearMag, p0);
+			field.entry(edit, lb_linearMin, p1);
 		}
-		field.edit(lb_anisoCoeff, _coeff);
-		if(field.edit(lb_wrapS, _wrapS) | field.edit(lb_wrapT, _wrapT))
+		field.entry(edit, lb_anisoCoeff, _coeff);
+		if(field.entry(edit, lb_wrapS, _wrapS) | field.entry(edit, lb_wrapT, _wrapT))
 			setUVWrap(_wrapS, _wrapT);
 		field.show(lb_mipState, _mipLevel);
 		field.show(lb_size, _size);
@@ -53,10 +53,10 @@ namespace rev {
 		}
 		return field.modified();
 	}
-	bool Texture_URI::guiEditor(bool) {
+	bool Texture_URI::guiEditor(const bool edit) {
 		auto field = debug::EntryField(getDebugName());
-		field.edit(lb_uri, _uri);
+		field.entry(edit, lb_uri, _uri);
 		ImGui::Columns(1);
-		return IGLTexture::guiEditor();
+		return IGLTexture::guiEditor(edit);
 	}
 }

@@ -30,6 +30,7 @@ namespace rev {
 	struct Resource;
 	namespace debug {
 		DEF_HASMETHOD(ToStr)
+		DEF_HASMETHOD(guiEditor)
 		template <class From, class To>
 		struct EditProxy {
 			From&	from;
@@ -61,6 +62,10 @@ namespace rev {
 			void _Show(const T& t) {
 				_Show(t.toStr());
 			}
+			template <class T, ENABLE_IF(HasMethod_guiEditor_t<T>{})>
+			void _Show(T& t) {
+				t.guiEditor(false);
+			}
 			template <class T, ENABLE_IF(spi::is_optional<T>{})>
 			void _Show(const T& t) {
 				if(t)
@@ -82,6 +87,8 @@ namespace rev {
 				else
 					_Show("(null)");
 			}
+			template <class From, class To>
+			void _Show(const EditProxy<From, To>&) {}
 
 			bool _Edit(bool& b);
 			bool _Edit(float& f);
@@ -115,6 +122,10 @@ namespace rev {
 			template <class T, ENABLE_IF(HasMethod_ToStr_t<T>{})>
 			bool _Edit(T& t) {
 				return _EditEnum(reinterpret_cast<spi::Enum_t&>(t.value), T::_Num, &T::ToStr);
+			}
+			template <class T, ENABLE_IF(HasMethod_guiEditor_t<T>{})>
+			bool _Edit(T& t) {
+				return t.guiEditor(true);
 			}
 			template <class T, ENABLE_IF(spi::is_optional<T>{})>
 			bool _Edit(const T& t) {
@@ -158,6 +169,13 @@ namespace rev {
 		bool Edit(const Id& id, T& t) {
 			const IdPush ip(id);
 			return inner::_Edit(t);
+		}
+		template <class Id, class T>
+		bool EditIf(const bool edit, const Id& id, T&& t) {
+			if(edit)
+				return Edit(id, std::forward<T>(t));
+			Show(id, std::forward<T>(t));
+			return false;
 		}
 		template <class Id, class T, class... Ts>
 		bool Slider(const Id& id, T& t, const Ts&... ts) {

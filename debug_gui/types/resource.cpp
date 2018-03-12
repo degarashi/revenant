@@ -4,10 +4,10 @@ namespace rev {
 	namespace debug {
 		namespace inner {
 			void _Show(Resource& r) {
-				r.guiViewer();
+				r.guiEditor(false);
 			}
 			bool _Edit(Resource& r) {
-				return r.guiEditor();
+				return r.guiEditor(true);
 			}
 		}
 	}

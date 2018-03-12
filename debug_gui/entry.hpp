@@ -57,6 +57,15 @@ namespace rev {
 					_id = ret.first;
 					return ret.second;
 				}
+				template <class... Ts>
+				bool entry(const bool b_edit, Ts&&... ts) {
+					if(b_edit) {
+						return edit(std::forward<Ts>(ts)...);
+					} else {
+						show(std::forward<Ts>(ts)...);
+						return false;
+					}
+				}
 				bool modified() const noexcept {
 					return _modify;
 				}

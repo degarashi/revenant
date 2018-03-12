@@ -87,7 +87,7 @@ namespace rev {
 			draw::Buffer getDrawToken() const;
 
 			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor(bool redirect) override;
+				bool guiEditor(bool edit) override;
 			#endif
 	};
 

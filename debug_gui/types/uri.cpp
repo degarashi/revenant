@@ -6,19 +6,21 @@
 #include "../child.hpp"
 
 namespace rev {
-	void IdURI::guiViewer(bool) {
+	bool IdURI::guiEditor(bool) {
 		if(const auto child = debug::ChildPush("IdURI", {0, ImGui::GetTextLineHeightWithSpacing()}, false, ImGuiWindowFlags_NoScrollbar)) {
 			debug::Entry ent(0, 2);
 			ent.show("id", getId());
 		}
+		return false;
 	}
-	void UserURI::guiViewer(bool) {
+	bool UserURI::guiEditor(bool) {
 		if(const auto child = debug::ChildPush("UserURI", {0, ImGui::GetTextLineHeightWithSpacing()}, false, ImGuiWindowFlags_NoScrollbar)) {
 			debug::Entry ent(0, 2);
 			ent.show("name", getName());
 		}
+		return false;
 	}
-	void FileURI::guiViewer(bool) {
+	bool FileURI::guiEditor(bool) {
 		const auto style = debug::StylePush(
 			ImGuiStyleVar_WindowPadding, ImVec2{0.f, 0.f}
 		);
@@ -26,8 +28,9 @@ namespace rev {
 			debug::Entry ent(0, 2);
 			ent.show("path", pathblock().plain_utf8());
 		}
+		return false;
 	}
-	void DataURI::guiViewer(bool) {
+	bool DataURI::guiEditor(bool) {
 		if(const auto child = debug::ChildPush("DataURI", {0, ImGui::GetTextLineHeightWithSpacing()}, false, ImGuiWindowFlags_NoScrollbar)) {
 			debug::Entry ent(0, 2);
 			ent.show("base64", _bBase64);
@@ -37,5 +40,6 @@ namespace rev {
 				ent.show(m.first, m.second);
 			}
 		}
+		return false;
 	}
 }

@@ -15,7 +15,7 @@ namespace rev {
 			Wait(int32_t n);
 			bool advance();
 			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor();
+				bool guiEditor(bool edit);
 			#endif
 		};
 		//! Nフレーム毎に動作する
@@ -25,7 +25,7 @@ namespace rev {
 			EveryN(uint32_t n);
 			bool advance();
 			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor();
+				bool guiEditor(bool edit);
 			#endif
 		};
 		struct Accum {
@@ -33,7 +33,7 @@ namespace rev {
 						skipped = 0;
 
 			#ifdef DEBUGGUI_ENABLED
-				void guiViewer() const;
+				bool guiEditor(bool edit);
 			#endif
 		};
 
@@ -64,12 +64,12 @@ namespace rev {
 			}
 			#ifdef DEBUGGUI_ENABLED
 				template <std::size_t... Idx>
-				bool _guiEditor(std::index_sequence<Idx...>) {
-					return lubee::Or_A(std::get<Idx>(*this).guiEditor()...);
+				bool _guiEditor(const bool edit, std::index_sequence<Idx...>) {
+					return lubee::Or_A(std::get<Idx>(*this).guiEditor(edit)...);
 				}
-				bool guiEditor() {
-					const bool ret = _guiEditor(std::make_index_sequence<sizeof...(Ts)>{});
-					ac.guiViewer();
+				bool guiEditor(bool edit) {
+					bool ret = _guiEditor(edit, std::make_index_sequence<sizeof...(Ts)>{});
+					ret |= ac.guiEditor(edit);
 					return ret;
 				}
 			#endif
