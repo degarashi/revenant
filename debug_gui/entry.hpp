@@ -2,6 +2,7 @@
 #include "print.hpp"
 #include "../imgui/imgui.h"
 #include "column.hpp"
+#include "group.hpp"
 
 namespace rev {
 	namespace debug {
@@ -11,7 +12,10 @@ namespace rev {
 			}
 			template <class T0, class... Ts>
 			int ShowEnt(const int id, const T0& ent, const Ts&... ts) {
-				Show(id, ent);
+				{
+					const auto _ = GroupPush();
+					Show(id, ent);
+				}
 				ImGui::NextColumn();
 				return ShowEnt(id+1, ts...);
 			}
