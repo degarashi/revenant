@@ -4,7 +4,8 @@ namespace rev {
 	namespace debug {
 		class ColumnPush {
 			private:
-				int		_n;
+				int		_prev,
+						_n;
 			public:
 				ColumnPush(int n, bool border=true);
 				ColumnPush(ColumnPush&& c);
