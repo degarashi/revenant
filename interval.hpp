@@ -4,6 +4,7 @@
 #ifdef DEBUGGUI_ENABLED
 	#include "debug_gui/child.hpp"
 	#include "lubee/arithmetic.hpp"
+	#include "debug_gui/spacing.hpp"
 #endif
 
 namespace rev {
@@ -71,11 +72,13 @@ namespace rev {
 				}
 				template <std::size_t... Idx>
 				float _guiHeight(std::index_sequence<Idx...>) const {
-					return lubee::Add(std::get<Idx>(*this).guiHeight()...) + ac.guiHeight();
+					return debug::Spacing::ItemSpacing() * sizeof...(Ts) +
+							lubee::Add(std::get<Idx>(*this).guiHeight()...) +
+							ac.guiHeight();
 				}
 				bool guiEditor() {
 					const float w = _guiHeight(std::make_index_sequence<sizeof...(Ts)>{});
-					if(const auto c = debug::ChildPush("Combine", w, true)) {
+					if(const auto c = debug::ChildPush("Combine", w+debug::Spacing::Child(), true)) {
 						const bool ret = _guiEditor(std::make_index_sequence<sizeof...(Ts)>{});
 						ac.guiViewer();
 						return ret;
