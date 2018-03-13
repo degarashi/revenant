@@ -3,6 +3,7 @@
 #include "lubee/error.hpp"
 #include "lubee/niftycounter.hpp"
 #include "spine/optional.hpp"
+#include "spine/enum.hpp"
 #include <boost/variant.hpp>
 #include <boost/preprocessor.hpp>
 #include <unordered_map>
@@ -85,16 +86,16 @@ namespace rev {
 	};
 	std::ostream& operator << (std::ostream& os, const GLFormatDesc& desc);
 
-	enum class GLSLType : uint32_t {
-		IntT,
-		FloatT,
-		DoubleT,
-		BoolT,
-		TextureT,
-		IntTextureT,
-		MatrixT,
-		DMatrixT
-	};
+	DefineEnum(GLSLType,
+		(IntT)
+		(FloatT)
+		(DoubleT)
+		(BoolT)
+		(TextureT)
+		(IntTextureT)
+		(MatrixT)
+		(DMatrixT)
+	);
 	struct GLSLFormatDesc {
 		GLSLType	type;
 		uint32_t	dim;
