@@ -79,6 +79,7 @@ namespace rev {
 			//! 内容をファイルに保存 (主にデバッグ用)
 			void save(const PathBlock& path, CubeFace face=CubeFace::PositiveX);
 			DEF_DEBUGGUI_PROP
+			DEF_DEBUGGUI_SUMMARY
 
 			bool isCubemap() const;
 			bool operator == (const IGLTexture& t) const;

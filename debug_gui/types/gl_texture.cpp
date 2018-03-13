@@ -43,6 +43,20 @@ namespace rev {
 		}
 		return field.modified();
 	}
+	void IGLTexture::summary() {
+		ImVec2 s;
+		constexpr float MaxSize = 256;
+		const float m = std::max(_size.width, _size.height);
+		if(m > MaxSize) {
+			const float r = MaxSize / m;
+			s.x = _size.width * r;
+			s.y = _size.height * r;
+		} else {
+			s.x = _size.width;
+			s.y = _size.height;
+		}
+		ImGui::Image(mgr_gui.storeResource(shared_from_this()), s);
+	}
 	bool Texture_URI::property(const bool edit) {
 		auto field = debug::EntryField(getDebugName(), edit);
 		field.entry("uri", _uri);
