@@ -10,6 +10,9 @@ namespace rev {
 		_flag(flag),
 		_func(cs_func[static_cast<int>(enable)])
 	{}
+	GLState::Type GL_BState::getType() const noexcept {
+		return Type::Boolean;
+	}
 	std::size_t GL_BState::getHash() const noexcept {
 		return _flag ^ reinterpret_cast<intptr_t>(&_func);
 	}

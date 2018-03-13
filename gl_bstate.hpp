@@ -12,9 +12,12 @@ namespace rev {
 			Func		_func;
 		public:
 			GL_BState(bool enable, GLenum flag);
+			Type getType() const noexcept override;
 			void apply() const override;
 			std::size_t getHash() const noexcept override;
 			bool operator == (const GLState& s) const noexcept override;
 			bool operator == (const GL_BState& s) const noexcept;
+			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
 	};
 }

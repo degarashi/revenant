@@ -36,7 +36,7 @@ namespace rev {
 					).str()
 				);
 			}
-			return MakeGL_VState(func, Convert<Args>(value[Idx])...);
+			return MakeGL_VState(func, funcName, Convert<Args>(value[Idx])...);
 		}
 		using Func = std::function<GLState_SP (const std::vector<parse::ValueSetting::ValueT>&)>;
 		#define CONCAT_SCOPE(a,b)	a::b
