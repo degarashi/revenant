@@ -34,6 +34,9 @@ namespace rev {
 			DrawTag& refDTag() noexcept;
 
 			const char* getResourceName() const noexcept override;
+
+			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
 	};
 }
 DEF_LUAIMPORT(rev::DrawGroup)
