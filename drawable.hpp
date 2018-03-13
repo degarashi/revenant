@@ -11,6 +11,8 @@ namespace rev {
 			DrawableObj(Priority prio=DefaultPriority);
 			const DrawTag& getDTag() const noexcept;
 			void setDrawPriority(Priority p) noexcept;
+			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
 	};
 	// Object::PriorityはUpdateObjと兼用の場合に使われる
 	template <class T>
