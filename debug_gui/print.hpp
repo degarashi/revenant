@@ -41,6 +41,10 @@ namespace rev {
 		EditProxy<From, To> MakeEditProxy(From& from) {
 			return EditProxy<From,To>(from);
 		}
+		template <class Id, class T>
+		void Show(const Id& id, const T& t);
+		template <class Id, class T>
+		bool Edit(const Id& id, T& t);
 		namespace inner {
 			void _Show(bool b);
 			void _Show(const char* s);
@@ -84,6 +88,12 @@ namespace rev {
 			}
 			template <class From, class To>
 			void _Show(const EditProxy<From, To>&) {}
+			template <class T, std::size_t N>
+			void _Show(const std::array<T,N>& a) {
+				for(std::size_t i=0 ; i<N ; i++) {
+					Show(i, a[i]);
+				}
+			}
 
 			bool _Edit(bool& b);
 			bool _Edit(float& f);
@@ -146,6 +156,14 @@ namespace rev {
 					_Show("(null)");
 					return false;
 				}
+			}
+			template <class T, std::size_t N>
+			bool _Edit(std::array<T,N>& a) {
+				bool mod = false;
+				for(std::size_t i=0 ; i<N ; i++) {
+					mod |= Edit(i, a[i]);
+				}
+				return mod;
 			}
 
 			template <class TAG, class V>
