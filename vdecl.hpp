@@ -39,6 +39,9 @@ namespace rev {
 
 				bool operator == (const VDInfo& v) const;
 				bool operator != (const VDInfo& v) const;
+				#ifdef DEBUGGUI_ENABLED
+					void showAsRow() const;
+				#endif
 			};
 		private:
 			using VDInfoV = std::vector<VDInfo>;
@@ -63,6 +66,9 @@ namespace rev {
 			void apply(const VData& vdata) const;
 			bool operator == (const VDecl& vd) const;
 			bool operator != (const VDecl& vd) const;
+			#ifdef DEBUGGUI_ENABLED
+				void property() const;
+			#endif
 	};
 	using VDecl_SP = std::shared_ptr<VDecl>;
 }
