@@ -6,5 +6,7 @@ namespace rev {
 		public:
 			virtual HGroup getUpdGroup() const;
 			virtual HDGroup getDrawGroup() const;
+			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
 	};
 }
