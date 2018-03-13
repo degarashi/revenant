@@ -101,7 +101,9 @@ namespace rev {
 		uint32_t	dim;
 		bool		bUnsigned;
 		bool		bCubed;
-
+		#ifdef DEBUGGUI_ENABLED
+			void showAsRow() const;
+		#endif
 		std::ostream& print(std::ostream& os) const;
 	};
 	std::ostream& operator << (std::ostream& os, const GLSLFormatDesc& desc);
