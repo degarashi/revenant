@@ -73,6 +73,7 @@ namespace rev {
 			HGroup getHandle() override;
 
 			const char* getResourceName() const noexcept override;
+			DEF_DEBUGGUI_PROP
 	};
 }
 DEF_LUAIMPORT(rev::UpdGroup)
