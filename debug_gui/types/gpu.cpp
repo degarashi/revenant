@@ -24,7 +24,7 @@ namespace rev {
 		ImGui::Separator();
 
 		debug::TextFilter filter(ImGui::GetID("filter"));
-		if(const auto caps = debug::ChildPush("caps", debug::Spacing::Text()*20)) {
+		if(const auto caps = debug::ChildPush("caps", 0)) {
 			for(auto& c : refCapabilitySet()) {
 				if(filter.PassFilter(c.c_str()))
 					ImGui::TextUnformatted(c.c_str());
