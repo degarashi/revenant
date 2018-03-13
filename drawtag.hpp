@@ -6,7 +6,7 @@ namespace rev {
 	struct ITech;
 	using Tech_SP = std::shared_ptr<ITech>;
 	using Priority = uint32_t;
-	struct DrawTag {
+	struct DrawTag : IDebugGui {
 		using TexAr = std::array<HTex, 4>;
 
 		Tech_SP		technique;
@@ -16,5 +16,8 @@ namespace rev {
 		float		zOffset;
 
 		DrawTag();
+
+		DEF_DEBUGGUI_NAME
+		DEF_DEBUGGUI_PROP
 	};
 }
