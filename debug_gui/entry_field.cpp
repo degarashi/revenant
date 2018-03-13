@@ -8,7 +8,8 @@ namespace rev {
 			IdPush(std::move(idp)),
 			Entry(0, edit, columns)
 		{
-			ImGui::SetColumnWidth(0, 120.f);
+			if(columns == 2)
+				ImGui::SetColumnWidth(0, 120.f);
 		}
 	}
 }
