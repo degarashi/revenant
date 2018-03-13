@@ -10,6 +10,9 @@ namespace rev {
 		GLParamInfo() = default;
 		GLParamInfo(const GLParamInfo&) = default;
 		GLParamInfo(const GLSLFormatDesc& desc);
+		#ifdef DEBUGGUI_ENABLED
+			void showAsRow() const;
+		#endif
 	};
 	//! GLSLプログラムクラス
 	class GLProgram :
@@ -59,5 +62,7 @@ namespace rev {
 			GLParamInfo getActiveUniform(int n) const;
 			void use() const;
 			const TexIndex& getTexIndex() const noexcept;
+			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
 	};
 }
