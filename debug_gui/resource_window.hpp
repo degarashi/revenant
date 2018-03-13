@@ -3,12 +3,12 @@
 #include <unordered_set>
 
 namespace rev {
-	struct Resource;
+	struct IDebugGui;
 	namespace debug {
 		class ResourceWindow {
 			private:
-				using SP = std::shared_ptr<Resource>;
-				using WP = std::weak_ptr<Resource>;
+				using SP = std::shared_ptr<IDebugGui>;
+				using WP = std::weak_ptr<IDebugGui>;
 				struct Entry {
 					const void*	ptr;
 					WP			wp;

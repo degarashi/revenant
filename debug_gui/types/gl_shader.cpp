@@ -3,7 +3,10 @@
 #include "../child.hpp"
 
 namespace rev {
-	bool GLShader::guiEditor(const bool edit) {
+	const char* GLShader::getDebugName() const noexcept {
+		return "Shader";
+	}
+	bool GLShader::property(const bool edit) {
 		auto f = debug::EntryField("Shader", edit);
 		f.show("OpenGL Id", _idSh);
 		f.show("Shader Type", _flag);

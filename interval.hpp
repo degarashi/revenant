@@ -1,47 +1,47 @@
 #pragma once
-#include <tuple>
-#include <utility>
+#include "debuggui_if.hpp"
 #ifdef DEBUGGUI_ENABLED
 	#include "debug_gui/child.hpp"
 	#include "lubee/arithmetic.hpp"
 	#include "debug_gui/spacing.hpp"
 #endif
+#include <tuple>
+#include <utility>
 
 namespace rev {
 	namespace interval {
 		//! Nフレーム後に動作を再開する
-		struct Wait {
+		struct Wait : IDebugGui {
 			int32_t		wait;
 			Wait(int32_t n);
 			bool advance();
-			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor(bool edit);
-			#endif
+
+			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
 		};
 		//! Nフレーム毎に動作する
-		struct EveryN {
+		struct EveryN : IDebugGui {
 			uint32_t	nth,
 						cur;
 			EveryN(uint32_t n);
 			bool advance();
-			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor(bool edit);
-			#endif
+
+			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
 		};
-		struct Accum {
+		struct Accum : IDebugGui {
 			uint32_t	accum = 0,
 						skipped = 0;
 
-			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor(bool edit);
-			#endif
+			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
 		};
 
 		//! 複数のインターバルクラスを直列に繋げる
 		template <int N>
 		using IConst = std::integral_constant<int,N>;
 		template <class... Ts>
-		struct Combine : std::tuple<Ts...> {
+		struct Combine : std::tuple<Ts...>, IDebugGui {
 			Accum		ac;
 
 			using std::tuple<Ts...>::tuple;
@@ -63,13 +63,16 @@ namespace rev {
 				return false;
 			}
 			#ifdef DEBUGGUI_ENABLED
-				template <std::size_t... Idx>
-				bool _guiEditor(const bool edit, std::index_sequence<Idx...>) {
-					return lubee::Or_A(std::get<Idx>(*this).guiEditor(edit)...);
+				const char* getDebugName() const noexcept override {
+					return "Combined Interval";
 				}
-				bool guiEditor(bool edit) {
-					bool ret = _guiEditor(edit, std::make_index_sequence<sizeof...(Ts)>{});
-					ret |= ac.guiEditor(edit);
+				template <std::size_t... Idx>
+				bool _property(const bool edit, std::index_sequence<Idx...>) {
+					return lubee::Or_A(std::get<Idx>(*this).property(edit)...);
+				}
+				bool property(bool edit) override {
+					bool ret = _property(edit, std::make_index_sequence<sizeof...(Ts)>{});
+					ret |= ac.property(edit);
 					return ret;
 				}
 			#endif

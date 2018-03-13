@@ -21,7 +21,10 @@ namespace rev {
 	using Size_Fmt = std::pair<lubee::SizeI, GLInCompressedFmt>;
 	//! OpenGLテクスチャインタフェース
 	/*!	フィルターはNEARESTとLINEARしか無いからboolで管理 */
-	class IGLTexture : public IGLResource, public std::enable_shared_from_this<IGLTexture> {
+	class IGLTexture :
+		public IGLResource,
+		public std::enable_shared_from_this<IGLTexture>
+	{
 		public:
 			friend class RUser<IGLTexture>;
 			friend class draw::Texture;
@@ -75,9 +78,7 @@ namespace rev {
 			bool isMipmap() const;
 			//! 内容をファイルに保存 (主にデバッグ用)
 			void save(const PathBlock& path, CubeFace face=CubeFace::PositiveX);
-			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor(bool edit) override;
-			#endif
+			DEF_DEBUGGUI_PROP
 
 			bool isCubemap() const;
 			bool operator == (const IGLTexture& t) const;
@@ -119,7 +120,7 @@ namespace rev {
 				\param[in] srcFmt 入力フォーマット(Type)
 				\param[in] face Cubemapにおける面 */
 			void writeRect(AB_Byte buff, const lubee::RectI& rect, GLTypeFmt srcFmt, CubeFace face=CubeFace::PositiveX);
-			const char* getDebugName() const noexcept override;
+			DEF_DEBUGGUI_NAME
 	};
 	Size_Fmt LoadTextureFromBuffer(const IGLTexture& tex, GLenum tflag, GLenum format, const lubee::SizeI& size, const ByteBuff& buff, bool bP2, bool bMip);
 
@@ -134,10 +135,8 @@ namespace rev {
 		public:
 			Texture_URI(const URI_SP& uri, MipState miplevel, InCompressedFmt_OP fmt);
 			void onDeviceReset() override;
-			const char* getDebugName() const noexcept override;
-			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor(bool edit) override;
-			#endif
+			DEF_DEBUGGUI_PROP
+			DEF_DEBUGGUI_NAME
 	};
 	//! 6つの画像ファイルからCubeテクスチャを構成
 	class Texture_CubeURI : public IGLTexture {
@@ -150,7 +149,7 @@ namespace rev {
 				MipState miplevel, InCompressedFmt_OP fmt
 			);
 			void onDeviceReset() override;
-			const char* getDebugName() const noexcept override;
+			DEF_DEBUGGUI_NAME
 	};
 }
 #include "luaimport.hpp"

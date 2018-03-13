@@ -1,6 +1,7 @@
 #pragma once
 #include "gl_types.hpp"
 #include "drawtoken/token.hpp"
+#include "debuggui_if.hpp"
 #include <vector>
 
 namespace rev {
@@ -39,7 +40,11 @@ namespace rev {
 	// バッファのDrawTokenはVDeclとの兼ね合いからそのままリストに積まずに
 	// StreamTagで一旦処理するのでスマートポインタではなく直接出力する
 	//! OpenGLバッファクラス
-	class GLBuffer : public IGLResource, public GLBufferCore, public std::enable_shared_from_this<GLBuffer> {
+	class GLBuffer :
+		public IGLResource,
+		public GLBufferCore,
+		public std::enable_shared_from_this<GLBuffer>
+	{
 		private:
 			using SPBuff = std::shared_ptr<void>;
 			SPBuff			_buff;			//!< 再構築の際に必要となるデータ実体(std::vector<T>)
@@ -86,16 +91,14 @@ namespace rev {
 			void onDeviceReset() override;
 			draw::Buffer getDrawToken() const;
 
-			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor(bool edit) override;
-			#endif
+			DEF_DEBUGGUI_PROP
 	};
 
 	//! 頂点バッファ
 	class GLVBuffer : public GLBuffer {
 		public:
 			GLVBuffer(DrawType dtype);
-			const char* getDebugName() const noexcept override;
+			DEF_DEBUGGUI_NAME
 	};
 	//! インデックスバッファ
 	class GLIBuffer : public GLBuffer {
@@ -109,6 +112,6 @@ namespace rev {
 			void updateData(const GLubyte* src, std::size_t nElem, GLuint offset);
 			GLenum getSizeFlag() const;
 			static GLenum GetSizeFlag(int stride);
-			const char* getDebugName() const noexcept override;
+			DEF_DEBUGGUI_NAME
 	};
 }

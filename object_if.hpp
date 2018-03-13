@@ -17,7 +17,9 @@ namespace rev {
 
 	class LCValue;
 	//! ゲームオブジェクト基底インタフェース
-	class IObject : public Resource {
+	class IObject :
+		public Resource
+	{
 		private:
 			bool _bDestroy;
 			friend class UpdGroup;

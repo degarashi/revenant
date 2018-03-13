@@ -41,25 +41,28 @@ namespace rev {
 			bool _Edit(float& f) {
 				return ImGui::InputFloat("", &f, 0.f, 0.f, -1, ImGuiInputTextFlags_EnterReturnsTrue);
 			}
-			bool _Edit(double& d) {
-				float f = d;
-				if(ImGui::InputFloat("", &f, 0.f, 0.f, -1, ImGuiInputTextFlags_EnterReturnsTrue)) {
-					d = f;
-					return true;
-				}
-				return false;
-			}
-			bool _Edit(int& i) {
+			bool _Edit(int32_t& i) {
 				return ImGui::InputInt("", &i, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue);
 			}
-			bool _Edit(unsigned int& u) {
-				int i = u;
-				if(ImGui::InputInt("", &i, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue)) {
-					u = i;
-					return true;
-				}
-				return false;
+			template <class T, ENABLE_IF_I(std::is_integral<T>{})>
+			bool _Edit(T& i) {
+				auto p = MakeEditProxy<int>(i);
+				return _Edit(p);
 			}
+			template <class T, ENABLE_IF_I(std::is_floating_point<T>{})>
+			bool _Edit(T& i) {
+				auto p = MakeEditProxy<float>(i);
+				return _Edit(p);
+			}
+			template bool _Edit<int8_t>(int8_t& t);
+			template bool _Edit<uint8_t>(uint8_t& t);
+			template bool _Edit<int16_t>(int16_t& t);
+			template bool _Edit<uint16_t>(uint16_t& t);
+			template bool _Edit<uint32_t>(uint32_t& t);
+			template bool _Edit<int64_t>(int64_t& t);
+			template bool _Edit<uint64_t>(uint64_t& t);
+			template bool _Edit<double>(double& t);
+
 			bool _Edit(lubee::SizeI& s) {
 				return _Edit(reinterpret_cast<frea::IVec2&>(s));
 			}

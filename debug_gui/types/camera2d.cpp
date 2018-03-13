@@ -3,7 +3,7 @@
 #include "../entry_field.hpp"
 
 namespace rev {
-	bool Camera2D::guiEditor(const bool edit) {
+	bool Camera2D::property(const bool edit) {
 		auto field = debug::EntryField("Camera2D", edit);
 		ImGui::Columns(1);
 		if(field.entry("pose", _rflag.ref<Pose>())) {
@@ -15,5 +15,8 @@ namespace rev {
 		}
 		field.show("Accum", uint64_t(getAccum()));
 		return field.modified();
+	}
+	const char* Camera2D::getDebugName() const noexcept {
+		return "Camera2D";
 	}
 }

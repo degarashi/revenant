@@ -51,7 +51,4 @@ namespace rev {
 	ShType GLShader::getShaderType() const {
 		return _flag;
 	}
-	const char* GLShader::getDebugName() const noexcept {
-		return "Shader";
-	}
 }

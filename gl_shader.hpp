@@ -1,5 +1,6 @@
 #pragma once
 #include "gl_types.hpp"
+#include "debuggui_if.hpp"
 
 namespace rev {
 	//! GLシェーダークラス
@@ -19,9 +20,8 @@ namespace rev {
 			ShType getShaderType() const;
 			void onDeviceLost() override;
 			void onDeviceReset() override;
-			const char* getDebugName() const noexcept override;
-			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor(bool edit) override;
-			#endif
+
+			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
 	};
 }

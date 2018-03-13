@@ -27,10 +27,9 @@ namespace spi {
 	class ResMgrName;
 }
 namespace rev {
-	struct Resource;
+	struct IDebugGui;
 	namespace debug {
 		DEF_HASMETHOD(ToStr)
-		DEF_HASMETHOD(guiEditor)
 		template <class From, class To>
 		struct EditProxy {
 			From&	from;
@@ -51,7 +50,7 @@ namespace rev {
 			void _Show(const lubee::SizeI& s);
 			void _Show(const lubee::SizeF& s);
 			void _Show(const beat::g2::Pose& p);
-			void _Show(Resource& r);
+			void _Show(IDebugGui& g);
 			template <class TAG, class V>
 			void _Show(const frea::Angle<TAG,V>& a);
 			template <class V, ENABLE_IF(frea::is_vector<V>{})>
@@ -61,10 +60,6 @@ namespace rev {
 			template <class T, ENABLE_IF(HasMethod_ToStr_t<T>{})>
 			void _Show(const T& t) {
 				_Show(t.toStr());
-			}
-			template <class T, ENABLE_IF(HasMethod_guiEditor_t<T>{})>
-			void _Show(T& t) {
-				t.guiEditor(false);
 			}
 			template <class T, ENABLE_IF(spi::is_optional<T>{})>
 			void _Show(const T& t) {
@@ -92,12 +87,14 @@ namespace rev {
 
 			bool _Edit(bool& b);
 			bool _Edit(float& f);
-			bool _Edit(double& d);
-			bool _Edit(int& i);
-			bool _Edit(unsigned int& u);
+			bool _Edit(int32_t& i);
+			template <class T, ENABLE_IF(std::is_integral<T>{})>
+			bool _Edit(T& t);
+			template <class T, ENABLE_IF(std::is_floating_point<T>{})>
+			bool _Edit(T& t);
 			bool _Edit(lubee::SizeI& s);
 			bool _Edit(lubee::SizeF& s);
-			bool _Edit(Resource& r);
+			bool _Edit(IDebugGui& g);
 			bool _Edit(beat::g2::Pose& p);
 			template <class TAG, class V>
 			bool _Edit(frea::Angle<TAG,V>& a);
@@ -122,10 +119,6 @@ namespace rev {
 			template <class T, ENABLE_IF(HasMethod_ToStr_t<T>{})>
 			bool _Edit(T& t) {
 				return _EditEnum(reinterpret_cast<spi::Enum_t&>(t.value), T::_Num, &T::ToStr);
-			}
-			template <class T, ENABLE_IF(HasMethod_guiEditor_t<T>{})>
-			bool _Edit(T& t) {
-				return t.guiEditor(true);
 			}
 			template <class T, ENABLE_IF(spi::is_optional<T>{})>
 			bool _Edit(const T& t) {

@@ -3,6 +3,7 @@
 #include "spine/optional.hpp"
 #include "handle.hpp"
 #include "spine/enum.hpp"
+#include "debuggui_if.hpp"
 
 namespace rev {
 	using GLboolean_OP = spi::Optional<GLboolean>;
@@ -77,7 +78,10 @@ namespace rev {
 	);
  	//! OpenGL関連のリソース
 	/*! Android用にデバイスロスト対応 */
-	struct IGLResource : Resource {
+	struct IGLResource :
+		Resource,
+		IDebugGui
+	{
 		virtual void onDeviceLost() {}
 		virtual void onDeviceReset() {}
 		virtual const char* getResourceName() const noexcept override;

@@ -1,6 +1,7 @@
 #pragma once
-#include <unordered_set>
 #include "gl_types.hpp"
+#include "debuggui_if.hpp"
+#include <unordered_set>
 
 namespace rev {
 	// OpenGLES2では同期オブジェクトが無いのでGPUTimeは無効
@@ -25,7 +26,9 @@ namespace rev {
 		};
 	#endif
 	//! GPUの情報表示
-	class GPUInfo : public IGLResource {
+	class GPUInfo :
+		public IGLResource
+	{
 		private:
 			struct Version {
 				union {
@@ -62,10 +65,8 @@ namespace rev {
 			const std::string& vendor() const;
 			const std::string& renderer() const;
 			const CapSet& refCapabilitySet() const;
-			const char* getDebugName() const noexcept override;
-			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor(bool edit) override;
-			#endif
+			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
 
 			void onDeviceLost() override;
 			void onDeviceReset() override;

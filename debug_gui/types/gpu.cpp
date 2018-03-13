@@ -6,7 +6,10 @@
 #include <boost/format.hpp>
 
 namespace rev {
-	bool GPUInfo::guiEditor(const bool edit) {
+	const char* GPUInfo::getDebugName() const noexcept {
+		return "GPUInfo";
+	}
+	bool GPUInfo::property(const bool edit) {
 		auto field = debug::EntryField("GPUInfo", edit);
 		const auto showVersion = [&field](const char* name, const auto& ver){
 			const auto fmt = boost::format("%1%.%2%.%3%") % ver.major % ver.minor % ver.revision;

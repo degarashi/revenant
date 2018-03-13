@@ -6,8 +6,6 @@ namespace rev {
 	struct Resource {
 		virtual ~Resource() {}
 		virtual const char* getResourceName() const noexcept = 0;
-		virtual const char* getDebugName() const noexcept;
-		virtual bool guiEditor(bool edit);
 		template <class Self>
 		bool _deepCmp(const Self& self, const Resource& r) const noexcept {
 			const Self* p = dynamic_cast<const Self*>(&r);

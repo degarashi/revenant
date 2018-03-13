@@ -5,13 +5,16 @@
 
 namespace rev {
 	namespace interval {
-		bool Wait::guiEditor(bool) {
+		bool Wait::property(bool) {
 			ImGui::TextUnformatted("Wait: ");
 			ImGui::SameLine();
 			return debug::Edit("Wait", wait);
 		}
+		const char* Wait::getDebugName() const noexcept {
+			return "Interval(Wait)";
+		}
 
-		bool EveryN::guiEditor(bool) {
+		bool EveryN::property(bool) {
 			ImGui::TextUnformatted("Every: ");
 			ImGui::SameLine();
 			{
@@ -24,7 +27,11 @@ namespace rev {
 			}
 			return false;
 		}
-		bool Accum::guiEditor(bool) {
+		const char* EveryN::getDebugName() const noexcept {
+			return "Interval(EveryN)";
+		}
+
+		bool Accum::property(bool) {
 			ImGui::TextUnformatted("Accum: ");
 			ImGui::SameLine();
 			debug::Show("Accum", accum);
@@ -33,6 +40,9 @@ namespace rev {
 			ImGui::SameLine();
 			debug::Show("Skipped", skipped);
 			return false;
+		}
+		const char* Accum::getDebugName() const noexcept {
+			return "Interval(Accum)";
 		}
 	}
 }

@@ -2,6 +2,7 @@
 #include "path.hpp"
 #include "lubee/operators.hpp"
 #include "spine/enum.hpp"
+#include "debuggui_if.hpp"
 #include "resource.hpp"
 #include <regex>
 
@@ -14,7 +15,8 @@ namespace rev {
 	using URI_SP = std::shared_ptr<URI>;
 	class URI :
 		public lubee::op::Ne<URI>,
-		public Resource
+		public Resource,
+		public IDebugGui
 	{
 		public:
 			DefineEnum(Type,
@@ -42,8 +44,7 @@ namespace rev {
 		std::string plain() const override; \
 		Type getType() const noexcept override; \
 		std::size_t getHash() const noexcept override; \
-		URI_SP clone() const override; \
-		const char* getDebugName() const noexcept override;
+		URI_SP clone() const override;
 
 	// 内部管理用
 	class IdURI;
@@ -56,9 +57,7 @@ namespace rev {
 			uint64_t getId() const noexcept;
 			DEF_URIMETHOD
 			bool operator == (const IdURI& u) const noexcept;
-			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor(bool edit) override;
-			#endif
+			DEF_DEBUGGUI_ALL
 	};
 
 	class UserURI;
@@ -78,9 +77,7 @@ namespace rev {
 			const std::string& getName() const noexcept;
 			DEF_URIMETHOD
 			bool operator == (const UserURI& u) const noexcept;
-			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor(bool edit) override;
-			#endif
+			DEF_DEBUGGUI_ALL
 	};
 
 	class FileURI;
@@ -101,9 +98,7 @@ namespace rev {
 			const PathBlock& pathblock() const noexcept;
 			DEF_URIMETHOD
 			bool operator == (const FileURI& f) const noexcept;
-			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor(bool edit) override;
-			#endif
+			DEF_DEBUGGUI_ALL
 	};
 
 	class DataURI;
@@ -138,9 +133,7 @@ namespace rev {
 
 			const Data_t& data() const noexcept;
 			bool operator == (const DataURI& d) const noexcept;
-			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor(bool edit) override;
-			#endif
+			DEF_DEBUGGUI_ALL
 	};
 	#undef DEF_URIMETHOD
 

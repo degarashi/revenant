@@ -6,15 +6,21 @@
 #include "../child.hpp"
 
 namespace rev {
-	bool IdURI::guiEditor(const bool edit) {
+	bool IdURI::property(const bool edit) {
 		if(const auto child = debug::ChildPush("IdURI", {0, ImGui::GetTextLineHeightWithSpacing()}, false, ImGuiWindowFlags_NoScrollbar)) {
 			debug::Entry ent(0, edit, 2);
-			ent.show("id", getId());
+			ent.entry("id", _num);
 			return ent.modified();
 		}
 		return false;
 	}
-	bool UserURI::guiEditor(const bool edit) {
+	const char* IdURI::getDebugName() const noexcept {
+		return "URI(Id)";
+	}
+	void IdURI::summary() {
+		property(false);
+	}
+	bool UserURI::property(const bool edit) {
 		if(const auto child = debug::ChildPush("UserURI", {0, ImGui::GetTextLineHeightWithSpacing()}, false, ImGuiWindowFlags_NoScrollbar)) {
 			debug::Entry ent(0, edit, 2);
 			ent.show("name", getName());
@@ -22,7 +28,13 @@ namespace rev {
 		}
 		return false;
 	}
-	bool FileURI::guiEditor(const bool edit) {
+	const char* UserURI::getDebugName() const noexcept {
+		return "URI(User)";
+	}
+	void UserURI::summary() {
+		property(false);
+	}
+	bool FileURI::property(const bool edit) {
 		const auto style = debug::StylePush(
 			ImGuiStyleVar_WindowPadding, ImVec2{0.f, 0.f}
 		);
@@ -33,7 +45,13 @@ namespace rev {
 		}
 		return false;
 	}
-	bool DataURI::guiEditor(const bool edit) {
+	const char* FileURI::getDebugName() const noexcept {
+		return "URI(File)";
+	}
+	void FileURI::summary() {
+		property(false);
+	}
+	bool DataURI::property(const bool edit) {
 		if(const auto child = debug::ChildPush("DataURI", {0, ImGui::GetTextLineHeightWithSpacing()}, false, ImGuiWindowFlags_NoScrollbar)) {
 			debug::Entry ent(0, edit, 2);
 			ent.show("base64", _bBase64);
@@ -45,5 +63,11 @@ namespace rev {
 			return ent.modified();
 		}
 		return false;
+	}
+	const char* DataURI::getDebugName() const noexcept {
+		return "URI(Data)";
+	}
+	void DataURI::summary() {
+		property(false);
 	}
 }

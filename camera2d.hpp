@@ -5,6 +5,7 @@
 #include "handle.hpp"
 #include "spine/resmgr.hpp"
 #include "spine/singleton.hpp"
+#include "debuggui_if.hpp"
 
 namespace rev {
 	//! 2Dカメラ姿勢クラス
@@ -12,7 +13,11 @@ namespace rev {
 		2Dゲームの他にミニマップ表示などで使用
 		姿勢の保持はPoseクラスが行い，カメラ固有の変数だけを持つ
 	*/
-	class Camera2D : public lubee::CheckAlign<Camera2D>, public Resource {
+	class Camera2D :
+		public lubee::CheckAlign<Camera2D>,
+		public Resource,
+		public IDebugGui
+	{
 		private:
 			struct Pose;
 			struct Getter : spi::RFlag_Getter<uint32_t> {
@@ -48,9 +53,8 @@ namespace rev {
 			//! View座標をワールド座標へ変換
 			Vec2 v2w(const Vec2& pos) const;
 			const char* getResourceName() const noexcept override;
-			#ifdef DEBUGGUI_ENABLED
-				bool guiEditor(bool edit) override;
-			#endif
+			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
 
 			bool operator == (const Camera2D& c) const noexcept;
 			bool operator != (const Camera2D& c) const noexcept;

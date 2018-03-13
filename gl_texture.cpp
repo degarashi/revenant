@@ -357,9 +357,6 @@ namespace rev {
 		const auto tbd = tex.use();
 		return WritePixelData(tflag, sfc, spi::none, bP2, bMip);
 	}
-	const char* Texture_Mem::getDebugName() const noexcept {
-		return "Texture_Mem";
-	}
 	// ------------------------- Texture_URI -------------------------
 	Texture_URI::Texture_URI(const URI_SP& uri, const MipState miplevel, const InCompressedFmt_OP fmt):
 		IGLTexture(miplevel, fmt, lubee::SizeI(0,0), false),
@@ -368,9 +365,6 @@ namespace rev {
 	void Texture_URI::onDeviceReset() {
 		if(_onDeviceReset())
 			std::tie(_size, _format) = LoadTexture(*this, mgr_rw.fromURI(*_uri, Access::Read), CubeFace::PositiveX);
-	}
-	const char* Texture_URI::getDebugName() const noexcept {
-		return "Texture_URI";
 	}
 
 	// ------------------------- Texture_CubeURI -------------------------
@@ -394,8 +388,5 @@ namespace rev {
 					std::tie(_size, _format) = size_fmt;
 			}
 		}
-	}
-	const char* Texture_CubeURI::getDebugName() const noexcept {
-		return "Texture_CubeURI";
 	}
 }

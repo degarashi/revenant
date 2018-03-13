@@ -3,20 +3,19 @@
 #include "../entry_field.hpp"
 
 namespace rev {
-	namespace {
-		const char		*lb_backupSize = "BackupSize",
-						*lb_bufferType = "BufferType",
-						*lb_drawType = "DrawType",
-						*lb_stride = "Stride",
-						*lb_openglId = "OpenGL_Id";
+	const char* GLVBuffer::getDebugName() const noexcept {
+		return "VertexBuffer";
 	}
-	bool GLBuffer::guiEditor(const bool edit) {
+	bool GLBuffer::property(const bool edit) {
 		auto f = debug::EntryField("GLBuffer", edit);
-		f.show(lb_openglId, _idBuff);
-		f.show(lb_bufferType, _buffType);
-		f.show(lb_drawType, _drawType);
-		f.show(lb_stride, _stride);
-		f.show(lb_backupSize, _buffSize);
+		f.show( "OpenGL_Id", _idBuff);
+		f.show( "BufferType", _buffType);
+		f.show( "DrawType", _drawType);
+		f.show( "Stride", _stride);
+		f.show( "BackupSize", _buffSize);
 		return f.modified();
+	}
+	const char* GLIBuffer::getDebugName() const noexcept {
+		return "IndexBuffer";
 	}
 }

@@ -12,7 +12,10 @@ namespace rev {
 		GLParamInfo(const GLSLFormatDesc& desc);
 	};
 	//! GLSLプログラムクラス
-	class GLProgram : public IGLResource, public std::enable_shared_from_this<GLProgram> {
+	class GLProgram :
+		public IGLResource,
+		public std::enable_shared_from_this<GLProgram>
+	{
 		public:
 			using TexIndex = std::unordered_map<GLint, GLint>;
 		private:
@@ -56,6 +59,5 @@ namespace rev {
 			GLParamInfo getActiveUniform(int n) const;
 			void use() const;
 			const TexIndex& getTexIndex() const noexcept;
-			const char* getDebugName() const noexcept override;
 	};
 }

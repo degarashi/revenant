@@ -4,6 +4,7 @@
 #include "sstream.hpp"
 #include "../imgui/imgui.h"
 #include <iomanip>
+#include "../debuggui_if.hpp"
 
 namespace rev {
 	namespace debug {
@@ -32,7 +33,7 @@ namespace rev {
 					bool opened = true;
 					if(const auto w = WindowPush(s.output().c_str(), &opened, 640,480)) {
 						ImGui::Text("reference-count = %ld", sp.use_count());
-						sp->guiEditor(true);
+						sp->property(true);
 					}
 					if(!opened) {
 						itr = s_set.erase(itr);

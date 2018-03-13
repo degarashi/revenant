@@ -5,44 +5,34 @@
 #include "../child.hpp"
 
 namespace rev {
-	namespace {
-		const char		*lb_openglId = "OpenGL Id",
-						*lb_linearMag = "Linear-Mag",
-						*lb_linearMin = "Linear-Min",
-						*lb_wrapS = "Wrap-S",
-						*lb_wrapT = "Wrap-T",
-						*lb_mipState = "MipState",
-						*lb_isCube = "Cube",
-						*lb_face = "CubeFace",
-						*lb_anisoCoeff = "Aniso-Coeff",
-						*lb_size = "Size",
-						*lb_format = "Format";
-		const char		*lb_uri = "uri";
+	const char* Texture_Mem::getDebugName() const noexcept {
+		return "Texture_Mem";
 	}
-	bool IGLTexture::guiEditor(const bool edit) {
+
+	bool IGLTexture::property(const bool edit) {
 		auto field = debug::EntryField("IGLTexture", edit);
-		field.show(lb_openglId, _idTex);
+		field.show( "OpenGL Id", _idTex);
 		{
 			const auto p0 = debug::MakeEditProxy<bool>(_iLinearMag);
 			const auto p1 = debug::MakeEditProxy<bool>(_iLinearMin);
-			field.entry(lb_linearMag, p0);
-			field.entry(lb_linearMin, p1);
+			field.entry("Linear-Mag", p0);
+			field.entry("Linear-Min", p1);
 		}
-		field.entry(lb_anisoCoeff, _coeff);
-		if(field.entry(lb_wrapS, _wrapS) | field.entry(lb_wrapT, _wrapT))
+		field.entry("Aniso-Coeff", _coeff);
+		if(field.entry("Wrap-S", _wrapS) | field.entry("Wrap-T", _wrapT))
 			setUVWrap(_wrapS, _wrapT);
-		field.show(lb_mipState, _mipLevel);
-		field.show(lb_size, _size);
-		field.show(lb_isCube, _texFlag != GL_TEXTURE_2D);
+		field.show("MipState", _mipLevel);
+		field.show("Size", _size);
+		field.show("Cube", _texFlag != GL_TEXTURE_2D);
 		field.show(
-			lb_face,
+			"CubeFace",
 			(_faceFlag == GL_TEXTURE_2D) ?
 			-1 : int(_faceFlag - GL_TEXTURE_CUBE_MAP_POSITIVE_X)
 		);
 		if(_format)
-			field.show(lb_format, GLFormat::QueryEnumString(*_format));
+			field.show("Format", GLFormat::QueryEnumString(*_format));
 		else
-			field.show(lb_format, "(none)");
+			field.show("Format", "(none)");
 
 		ImGui::Columns(1);
 		if(const auto c = debug::ChildPush("texture", 0, true, ImGuiWindowFlags_HorizontalScrollbar)) {
@@ -53,10 +43,17 @@ namespace rev {
 		}
 		return field.modified();
 	}
-	bool Texture_URI::guiEditor(const bool edit) {
+	bool Texture_URI::property(const bool edit) {
 		auto field = debug::EntryField(getDebugName(), edit);
-		field.entry(lb_uri, _uri);
+		field.entry("uri", _uri);
 		ImGui::Columns(1);
-		return field.modified() | IGLTexture::guiEditor(edit);
+		return field.modified() | IGLTexture::property(edit);
+	}
+	const char* Texture_URI::getDebugName() const noexcept {
+		return "Texture_URI";
+	}
+
+	const char* Texture_CubeURI::getDebugName() const noexcept {
+		return "Texture_CubeURI";
 	}
 }
