@@ -1,6 +1,7 @@
 #pragma once
 #include "handle.hpp"
 #include "drawtag.hpp"
+#include "debuggui_if.hpp"
 #include "spine/enum.hpp"
 #include <vector>
 
@@ -13,14 +14,12 @@ namespace rev {
 
 	class IEffect;
 	// ---- Draw sort algorithms ----
-	struct DSort {
+	struct DSort : IDebugGui {
 		//! ソートに必要な情報が記録されているか(デバッグ用)
 		virtual bool hasInfo(const DrawTag& d) const = 0;
 		virtual bool compare(const DrawTag& d0, const DrawTag& d1) const = 0;
 		virtual void apply(const DrawTag& d, IEffect& e);
-		virtual const char* getDebugName() const noexcept = 0;
 		static void DoSort(const DSort_V& alg, int cursor, typename DLObj_V::iterator itr0, typename DLObj_V::iterator itr1);
-		virtual ~DSort() {}
 	};
 	//! 描画ソート: Z距離の昇順
 	struct DSort_Z_Asc : DSort {
@@ -28,30 +27,30 @@ namespace rev {
 		const static float cs_border;
 		bool hasInfo(const DrawTag& d) const override;
 		bool compare(const DrawTag& d0, const DrawTag& d1) const override;
-		const char* getDebugName() const noexcept override;
+		DEF_DEBUGGUI_NAME
 	};
 	//! 描画ソート: Z距離の降順
 	struct DSort_Z_Desc : DSort_Z_Asc {
 		bool compare(const DrawTag& d0, const DrawTag& d1) const override;
-		const char* getDebugName() const noexcept override;
+		DEF_DEBUGGUI_NAME
 	};
 	//! 描画ソート: ユーザー任意の優先度値 昇順
 	struct DSort_Priority_Asc : DSort {
 		bool hasInfo(const DrawTag& d) const override;
 		bool compare(const DrawTag& d0, const DrawTag& d1) const override;
-		const char* getDebugName() const noexcept override;
+		DEF_DEBUGGUI_NAME
 	};
 	//! 描画ソート: ユーザー任意の優先度値 降順
 	struct DSort_Priority_Desc : DSort_Priority_Asc {
 		bool compare(const DrawTag& d0, const DrawTag& d1) const override;
-		const char* getDebugName() const noexcept override;
+		DEF_DEBUGGUI_NAME
 	};
 	//! 描画ソート: Tech&Pass Id
 	struct DSort_TechPass : DSort {
 		bool hasInfo(const DrawTag& d) const override;
 		bool compare(const DrawTag& d0, const DrawTag& d1) const override;
 		void apply(const DrawTag& d, IEffect& e) override;
-		const char* getDebugName() const noexcept override;
+		DEF_DEBUGGUI_NAME
 	};
 	namespace detail {
 		class DSort_UniformPairBase {
@@ -101,14 +100,14 @@ namespace rev {
 			bool hasInfo(const DrawTag& d) const override;
 			bool compare(const DrawTag& d0, const DrawTag& d1) const override;
 			void apply(const DrawTag& d, IEffect& e) override;
-			const char* getDebugName() const noexcept override;
+			DEF_DEBUGGUI_NAME
 	};
 	//! 描画ソート: Primitive
 	struct DSort_Primitive : DSort {
 		bool hasInfo(const DrawTag& d) const override;
 		bool compare(const DrawTag& d0, const DrawTag& d1) const override;
 		void apply(const DrawTag& d, IEffect& e) override;
-		const char* getDebugName() const noexcept override;
+		DEF_DEBUGGUI_NAME
 	};
 	extern const DSort_SP	cs_dsort_z_asc,
 							cs_dsort_z_desc,
