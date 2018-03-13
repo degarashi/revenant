@@ -26,5 +26,6 @@ namespace rev {
 			const HProg& getProgram() const noexcept override;
 			const UniformEnt& getDefaultValue() const noexcept override;
 			const Name& getName() const noexcept override;
+			DEF_DEBUGGUI_PROP
 	};
 }
