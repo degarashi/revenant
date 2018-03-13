@@ -3,6 +3,7 @@
 #include <cstdint>
 #include "spine/optional.hpp"
 #include "handle.hpp"
+#include "debuggui_if.hpp"
 
 namespace rev {
 	using Priority = uint32_t;
@@ -18,7 +19,8 @@ namespace rev {
 	class LCValue;
 	//! ゲームオブジェクト基底インタフェース
 	class IObject :
-		public Resource
+		public Resource,
+		public IDebugGui
 	{
 		private:
 			bool _bDestroy;
@@ -60,6 +62,8 @@ namespace rev {
 			virtual void onReStart();
 
 			const char* getResourceName() const noexcept override;
+			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
 	};
 }
 #include "luaimport.hpp"
