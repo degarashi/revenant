@@ -2,6 +2,7 @@
 #include "handle.hpp"
 #include "glx_const.hpp"
 #include "gl_types.hpp"
+#include "debuggui_if.hpp"
 #include <vector>
 
 namespace rev {
@@ -12,7 +13,7 @@ namespace rev {
 	using VSemAttrV = std::vector<VSemAttr>;
 	class VDecl;
 	using VDecl_SP = std::shared_ptr<VDecl>;
-	struct Primitive {
+	struct Primitive : IDebugGui {
 		VDecl_SP	vdecl;
 		HVb			vb[MaxVStream];
 		HIb			ib;
@@ -42,6 +43,7 @@ namespace rev {
 		bool operator != (const Primitive& p) const noexcept;
 		bool operator < (const Primitive& p) const noexcept;
 		bool hasInfo() const noexcept;
+		DEF_DEBUGGUI_PROP
 	};
 	using Primitive_SP = std::shared_ptr<Primitive>;
 	using Primitive_WP = std::weak_ptr<Primitive>;
