@@ -1,12 +1,16 @@
 #pragma once
 #include "spine/singleton.hpp"
 #include "lcvalue.hpp"
+#include "debuggui_if.hpp"
 
 namespace rev {
 	class IScene;
 	#define mgr_scene (::rev::SceneMgr::ref())
 	//! シーンスタックを管理
-	class SceneMgr : public spi::Singleton<SceneMgr> {
+	class SceneMgr :
+		public IDebugGui,
+		public spi::Singleton<SceneMgr>
+	{
 		private:
 			using StStack = std::vector<HScene>;
 			StStack		_scene;
@@ -42,6 +46,7 @@ namespace rev {
 			void onStop();
 			void onResume();
 			void onReStart();
+			DEF_DEBUGGUI_PROP
 	};
 }
 #include "luaimport.hpp"
