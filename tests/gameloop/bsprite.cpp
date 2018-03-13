@@ -1,8 +1,10 @@
 #include "bsprite.hpp"
+#include "../../drawgroup.hpp"
 
 // ----------------------- BoundingSprite -----------------------
-BoundingSprite::BoundingSprite(const rev::HTex& hTex, const frea::Vec2& pos, const frea::Vec2& svec):
+BoundingSprite::BoundingSprite(const rev::HDGroup& dg, const rev::HTex& hTex, const frea::Vec2& pos, const frea::Vec2& svec):
 	Sprite2D(hTex, 0.f),
+	_dg(dg),
 	_svec(svec)
 {
 	setScaling(frea::Vec2{0.1f, 0.1f});
@@ -41,9 +43,21 @@ struct BoundingSprite::St : StateT<St> {
 		// ZOffset = y
 		self.setZOffset(ofs.y);
 		self.outputDrawTag(self._dtag);
+		self._dtag.technique = Sprite2D::GetDefaultTech();
+	}
+	void onConnected(BoundingSprite& self, const rev::HGroup&) override {
+		self._dg->addObj(self.shared_from_this());
+	}
+	void onDisconnected(BoundingSprite& self, const rev::HGroup&) override {
+		self._dg->remObj(self.shared_from_this());
 	}
 	void onDraw(const BoundingSprite& self, rev::IEffect& e) const override {
 		self.draw(e);
 	}
 };
 
+#ifdef DEBUGGUI_ENABLED
+const char* BoundingSprite::getDebugName() const noexcept {
+	return "BoundingSprite";
+}
+#endif

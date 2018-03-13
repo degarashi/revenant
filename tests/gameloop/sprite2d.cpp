@@ -100,3 +100,8 @@ Sprite2DObj::Sprite2DObj(const rev::HTex& t, const float depth):
 {
 	setStateNew<St>();
 }
+#ifdef DEBUGGUI_ENABLED
+const char* Sprite2DObj::getDebugName() const noexcept {
+	return "Sprite2DObj";
+}
+#endif

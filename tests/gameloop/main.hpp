@@ -14,7 +14,8 @@ namespace rev {
 
 		struct MyScene : Scene<MyScene> {
 			util::TextHUD	_fps;
-			HAct			_actQ;
+			HAct			_actQ,
+							_actPause;
 			HCam2			_camera;
 
 			struct St_None;

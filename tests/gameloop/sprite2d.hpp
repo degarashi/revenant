@@ -56,5 +56,6 @@ class Sprite2DObj : public rev::DrawableObjT<Sprite2DObj>,
 		struct St;
 	public:
 		Sprite2DObj(const rev::HTex& t, float d);
+		DEF_DEBUGGUI_NAME
 };
 DEF_LUAIMPORT(Sprite2DObj)

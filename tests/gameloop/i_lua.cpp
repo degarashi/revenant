@@ -30,5 +30,5 @@ DEF_LUAIMPLEMENT_PTR(
 	NOTHING,
 	NOTHING,
 	NOTHING,
-	(const rev::HTex&)(const frea::Vec2&)(const frea::Vec2&)
+	(const rev::HDGroup&)(const rev::HTex&)(const frea::Vec2&)(const frea::Vec2&)
 )

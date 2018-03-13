@@ -9,7 +9,7 @@
 namespace rev {
 	namespace test {
 		lubee::SizeI Param::getScreenSize() const {
-			return {640, 480};
+			return {1440, 900};
 		}
 		//! アプリケション名(一時ファイル用)
 		const std::string& Param::getAppName() const {

@@ -16,7 +16,6 @@
 #include "../../sys_uniform_value.hpp"
 #include "../../sys_uniform.hpp"
 #include "../../tech_pass.hpp"
-#include "../../output.hpp"
 #include "../../scene_mgr.hpp"
 
 namespace rev {
@@ -32,6 +31,10 @@ namespace rev {
 				self._actQ = mgr_input.makeAction("quit");
 				auto hKb = Keyboard::OpenKeyboard();
 				self._actQ->addLink(hKb, InputFlag::Button, VKey::Escape);
+
+				self._actPause = mgr_input.makeAction("pause");
+				self._actPause->addLink(hKb, InputFlag::Button, VKey::F1);
+
 				// カメラ初期化
 				self._camera = mgr_cam2d.emplace();
 				auto scr = mgr_info.getScreenSize();
@@ -45,7 +48,8 @@ namespace rev {
 				self._fps.setWindowOffset({10,0});
 
 				auto& ug = self.getUpdGroupRef();
-				auto& dg = self.getDrawGroupRef();
+				auto dg = self.getDrawGroup();
+				dg->setSortAlgorithm({cs_dsort_texture, cs_dsort_priority_desc}, true);
 				auto lk = g_system_shared.lock();
 				auto rfi = lk->mt.getUniformF<int>();
 				auto rf = lk->mt.getUniformF<float>();
@@ -60,10 +64,9 @@ namespace rev {
 				for(int i=0 ; i<16 ; i++) {
 					const auto vDir = GenVecUnit<Vec2>(rf);
 					const auto vPos = GenVec<Vec2>(rf, {-1.f, 1.f});
-					auto obj = std::make_shared<BoundingSprite>(tex[rfi({0,5})], vPos, vDir*0.01f);
+					auto obj = std::make_shared<BoundingSprite>(dg, tex[rfi({0,5})], vPos, vDir*0.01f);
 					obj->setScaling(Vec2{0.2,0.2});
 					ug.addObj(obj);
-					dg.addObj(obj);
 				}
 				auto& cp = self._camera->refPose();
 				cp.identity();
@@ -72,12 +75,16 @@ namespace rev {
 				// 終了ボタン判定
 				if(self._actQ->isKeyPressed())
 					mgr_scene.setPopScene(1);
+				// ポーズボタン判定
+				if(self._actPause->isKeyPressed()) {
+					auto upd = self.getBase().getUpdate();
+					auto& w = upd->refWait();
+					w.wait = ~w.wait;
+				}
 			}
 			void onDraw(const MyScene& self, IEffect& e) const override {
 				// 適当に背景をベタ塗り
-				static float a=0;
-				a += 0.02f;
-				e.clearFramebuffer({frea::Vec4{std::sin(a)/2+0.5f,std::sin(a*1.3)/2+0.5,0,0}, 1.f, 0});
+				e.clearFramebuffer({frea::Vec4{0.6,0.6,1,0}, 1.f, 0});
 				// FPSを左上に表示
 				auto& fps = const_cast<decltype(self._fps)&>(self._fps);
 				{
