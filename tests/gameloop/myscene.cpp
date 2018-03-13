@@ -17,6 +17,7 @@
 #include "../../sys_uniform.hpp"
 #include "../../tech_pass.hpp"
 #include "../../scene_mgr.hpp"
+#include "mygui.hpp"
 
 namespace rev {
 	namespace test {
@@ -68,6 +69,9 @@ namespace rev {
 					obj->setScaling(Vec2{0.2,0.2});
 					ug.addObj(obj);
 				}
+#ifdef DEBUGGUI_ENABLED
+				ug.addObj(std::make_shared<MyGUI>(self.getDrawGroup()));
+#endif
 				auto& cp = self._camera->refPose();
 				cp.identity();
 			}
