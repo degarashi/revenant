@@ -9,7 +9,6 @@
 
 namespace rev {
 	struct IGL {
-		#define GLDEFINE(...)
 		#define DEF_GLCONST(...)
 		#define DEF_GLMETHOD(ret_type, num, name, args, argnames) \
 			virtual ret_type name(BOOST_PP_SEQ_ENUM(args)) = 0; \
@@ -20,7 +19,6 @@ namespace rev {
 		#undef DEF_GLMETHOD
 		#undef DEF_GLMETHOD2
 		#undef DEF_GLCONST
-		#undef GLDEFINE
 		virtual void setSwapInterval(int n) = 0;
 		virtual void stencilFuncFront(int func, int ref, int mask) = 0;
 		virtual void stencilFuncBack(int func, int ref, int mask) = 0;
@@ -33,7 +31,6 @@ namespace rev {
 	};
 	//! 直でOpenGL関数を呼ぶ
 	struct IGL_Draw : IGL {
-		#define GLDEFINE(...)
 		#define DEF_GLCONST(...)
 		#define DEF_GLMETHOD(ret_type, num, name, args, argnames) \
 			virtual ret_type name(BOOST_PP_SEQ_ENUM(args)) override; \
@@ -57,7 +54,6 @@ namespace rev {
 		#undef DEF_GLMETHOD
 		#undef DEF_GLMETHOD2
 		#undef DEF_GLCONST
-		#undef GLDEFINE
 
 		void setSwapInterval(int n) override;
 		void stencilFuncFront(int func, int ref, int mask)  override;
@@ -103,7 +99,6 @@ namespace rev {
 			using PutCall = std::unique_ptr<GLWrap, Put>;
 			void _putReset();
 		public:
-			#define GLDEFINE(...)
 			#define DEF_GLCONST(...)
 			#define DEF_GLMETHOD(ret_type, num, name, args, argnames) \
 				using t_##name = ret_type APICALL(*)(BOOST_PP_SEQ_ENUM(args)); \
@@ -113,7 +108,6 @@ namespace rev {
 
 			#undef DEF_GLMETHOD
 			#undef DEF_GLCONST
-			#undef GLDEFINE
 		public:
 			GLWrap(bool bShareEnabled);
 			void loadGLFunc();

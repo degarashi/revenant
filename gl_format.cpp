@@ -192,13 +192,11 @@ namespace rev {
 			}
 		};
 		#define DEF_GLMETHOD(...)
-		#define GLDEFINE(...)
 		#define DEF_GLCONST(name, value)	fnAddValue(#name, static_cast<GLenum>(value));
 
 		#include REV_OPENGL_INCLUDE
 
 		#undef DEF_GLCONST
-		#undef GLDEFINE
 		#undef DEF_GLMETHOD
 	}
 	OPTIMIZE_RESET

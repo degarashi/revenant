@@ -21,7 +21,6 @@ namespace rev {
 
 	// OpenGL関数ロード
 	// FuncNameで読み込めなければFuncNameARBとFuncNameEXTで試す
-	#define GLDEFINE(...)
 	#define DEF_GLCONST(...)
 	#define DEF_GLMETHOD(ret_type, num, name, args, argnames) \
 		GLWrap::name = nullptr; \
@@ -37,5 +36,4 @@ namespace rev {
 		}
 	#undef DEF_GLMETHOD
 	#undef DEF_GLCONST
-	#undef GLDEFINE
 }
