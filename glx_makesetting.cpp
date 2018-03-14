@@ -22,7 +22,7 @@ namespace rev {
 			return boost::apply_visitor(Visitor<To>(), v);
 		}
 		template <class... Args, class Value, std::size_t... Idx>
-		GLState_SP Make(void (IGL::*func)(Args...), const char* funcName, const Value& value, std::index_sequence<Idx...>) {
+		GLState_SP Make(void (IGL::*func)(Args...), const Value& value, std::index_sequence<Idx...>) {
 			// 引数の数が合わなかったらエラー
 			const int nV = value.size();
 			constexpr int NArgs = sizeof...(Args);
@@ -30,13 +30,13 @@ namespace rev {
 				throw std::runtime_error(
 					(
 						boost::format("amount of argument(s) is not valid(func=%1%, required=%2%, actual=%3%)")
-							% funcName
+							% GLWrap::GetFunctionName(func)
 							% NArgs
 							% nV
 					).str()
 				);
 			}
-			return MakeGL_VState(func, funcName, Convert<Args>(value[Idx])...);
+			return MakeGL_VState(func, Convert<Args>(value[Idx])...);
 		}
 		using Func = std::function<GLState_SP (const std::vector<parse::ValueSetting::ValueT>&)>;
 		#define CONCAT_SCOPE(a,b)	a::b
@@ -47,7 +47,6 @@ namespace rev {
 						&IGL, \
 						BOOST_PP_TUPLE_ELEM(1,elem) \
 					), \
-					BOOST_PP_STRINGIZE(BOOST_PP_TUPLE_ELEM(1, elem)), \
 					value, \
 					std::make_index_sequence<BOOST_PP_SUB(BOOST_PP_TUPLE_SIZE(elem), 2)>{} \
 				); \

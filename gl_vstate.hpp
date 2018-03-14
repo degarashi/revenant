@@ -31,7 +31,6 @@ namespace rev {
 			using Args_t = std::tuple<Args...>;
 			Args_t	_args;
 			Func	_func;
-			const char*	_name;
 			template <std::size_t... Idx>
 			void _apply(std::index_sequence<Idx...>) const {
 				(GL.*_func)(std::get<Idx>(_args)...);
@@ -43,16 +42,15 @@ namespace rev {
 			template <std::size_t... Idx>
 			void _guiViewer(std::index_sequence<Idx...>) const {
 				GL_VState_Gui(
-					_name,
+					GLWrap::GetFunctionName(_func),
 					NArgs,
 					GL_VState_ToStr(std::get<Idx>(_args)).c_str()...
 				);
 			}
 		public:
-			GL_VState(const Func f, const char* name, const Args&... args):
+			GL_VState(const Func f, const Args&... args):
 				_args{args...},
-				_func(f),
-				_name(name)
+				_func(f)
 			{}
 			std::size_t getHash() const noexcept override {
 				// 適当実装だがとりあえず、これで。
@@ -83,8 +81,8 @@ namespace rev {
 			#endif
 	};
 	template <class... Args, class... Args2>
-	auto MakeGL_VState(void (IGL::*func)(Args...), const char* funcName, const Args2... args) {
+	auto MakeGL_VState(void (IGL::*func)(Args...), const Args2... args) {
 		using ret_t = GL_VState<decltype(func), Args...>;
-		return std::make_shared<ret_t>(func, funcName, static_cast<Args>(args)...);
+		return std::make_shared<ret_t>(func, static_cast<Args>(args)...);
 	}
 }
