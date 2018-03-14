@@ -6,8 +6,8 @@
 namespace rev {
 	namespace debug {
 		TextFilter::TextFilter(const ImGuiID id):
-			ImGuiTextFilter(debug::StateStorage<CBuff256>::GetDefault(id)->data()),
-			_buff(*debug::StateStorage<CBuff256>::GetDefault(id))
+			ImGuiTextFilter(St::GetDefault(id)->data()),
+			_buff(*St::GetDefault(id))
 		{
 			if(Draw()) {
 				std::strncpy(

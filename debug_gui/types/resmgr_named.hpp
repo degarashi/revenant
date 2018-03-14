@@ -5,7 +5,7 @@
 #include "../column.hpp"
 #include "../child.hpp"
 #include "../tree.hpp"
-#include "../state_storage_res.hpp"
+#include "../state_storage.hpp"
 #include "../textfilter.hpp"
 #include "../sstream.hpp"
 #include "../popup.hpp"
@@ -55,10 +55,11 @@ namespace rev {
 				const auto c = ColumnPush(2);
 				const auto id = ImGui::GetID("Left");
 				using R = typename std::decay_t<decltype(*m.begin())>::element_type;
-				auto cur_lk = StateStorage_Res::template Get<R>(id);
+				using St = StateStorage<std::weak_ptr<IDebugGui>>;
+				auto cur_lk = St::template Get<R>(id);
 				inner::ResMgrNamed_Iter(m, [id, &cur_lk](const char* name, auto&& r){
 					if(ImGui::Selectable(name, cur_lk == r)) {
-						StateStorage_Res::Set(id, r);
+						St::Set(id, r);
 						cur_lk = r;
 					}
 				});

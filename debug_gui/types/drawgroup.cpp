@@ -2,7 +2,7 @@
 #include "../textfilter.hpp"
 #include "../column.hpp"
 #include "../id.hpp"
-#include "../state_storage_res.hpp"
+#include "../state_storage.hpp"
 #include "../print.hpp"
 #include "../popup.hpp"
 #include "../indent.hpp"
@@ -38,7 +38,8 @@ namespace rev {
 		{
 			const auto col = debug::ColumnPush(2);
 			const auto id_obj = ImGui::GetID("Object");
-			auto cur = debug::StateStorage_Res::Get<IObject>(id_obj);
+			using St = debug::StateStorage<std::weak_ptr<IDebugGui>>;
+			auto cur = St::Get<IObject>(id_obj);
 			if(const auto c = debug::ChildPush("Left", {0,0})) {
 				debug::TextFilter filter(ImGui::GetID("Filter"));
 				ImGui::TextUnformatted("Member");
@@ -61,7 +62,7 @@ namespace rev {
 						if(filter.PassFilter(str.c_str())) {
 							if(ImGui::Selectable(str.c_str(), cur == p.second)) {
 								cur = p.second;
-								debug::StateStorage_Res::Set(id_obj, cur);
+								St::Set(id_obj, cur);
 							}
 							if(ImGui::IsItemClicked(1)) {
 								ImGui::OpenPopup("popup");

@@ -3,7 +3,7 @@
 #include "../id.hpp"
 #include "../child.hpp"
 #include "../column.hpp"
-#include "../state_storage_res.hpp"
+#include "../state_storage.hpp"
 #include "../print.hpp"
 #include "../../imgui/imgui.h"
 
@@ -13,7 +13,8 @@ namespace rev {
 			const auto colmn = debug::ColumnPush(2);
 			ImGui::SetColumnWidth(0, 120);
 			const auto id = ImGui::GetID("");
-			auto cur = debug::StateStorage_Res::Get<IScene>(id);
+			using St = debug::StateStorage<std::weak_ptr<IDebugGui>>;
+			auto cur = St::Get<IScene>(id);
 			{
 				const auto idp = debug::IdPush("Left");
 				ImGui::TextUnformatted("SceneStack");
@@ -23,7 +24,7 @@ namespace rev {
 					const auto str = lubee::log::MakeMessage("[%d] %s", idx, s->getDebugName());
 					if(ImGui::Selectable(str.c_str(), cur == s)) {
 						cur = s;
-						debug::StateStorage_Res::Set(id, cur);
+						St::Set(id, cur);
 					}
 					++idx;
 				}
