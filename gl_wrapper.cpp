@@ -123,13 +123,7 @@ namespace rev {
 		DEF_SINGLE_METHOD(ret_type, name, args, argnames) \
 		DEF_SINGLE_METHOD(ret_type, BOOST_PP_CAT(name, _NC), args, argnames)
 
-		#ifdef ANDROID
-			#include "opengl_define/android_gl.inc"
-		#elif defined(WIN32)
-			#include "opengl_define/mingw_gl.inc"
-		#else
-			#include "opengl_define/linux_gl.inc"
-		#endif
+		#include REV_OPENGL_INCLUDE
 
 	#undef DEF_SINGLE_METHOD
 	#undef DEF_GLMETHOD

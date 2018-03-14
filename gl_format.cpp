@@ -194,13 +194,9 @@ namespace rev {
 		#define DEF_GLMETHOD(...)
 		#define GLDEFINE(...)
 		#define DEF_GLCONST(name, value)	fnAddValue(#name, static_cast<GLenum>(value));
-			#ifdef ANDROID
-				#include "opengl_define/android_gl.inc"
-			#elif defined(WIN32)
-				#include "opengl_define/mingw_gl.inc"
-			#else
-				#include "opengl_define/linux_gl.inc"
-			#endif
+
+		#include REV_OPENGL_INCLUDE
+
 		#undef DEF_GLCONST
 		#undef GLDEFINE
 		#undef DEF_GLMETHOD

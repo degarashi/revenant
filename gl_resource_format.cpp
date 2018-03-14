@@ -14,13 +14,9 @@ namespace rev {
 	OPTIMIZE_OFF
 	void GLRes::LuaExport(LuaState& lsc) {
 		auto tbl = std::make_shared<LCTable>();
-		#ifdef ANDROID
-			#include "opengl_define/android_gl.inc"
-		#elif defined(WIN32)
-			#include "opengl_define/mingw_gl.inc"
-		#else
-			#include "opengl_define/linux_gl.inc"
-		#endif
+
+		#include REV_OPENGL_INCLUDE
+
 		lsc.setField(-1, "Format", tbl);
 		tbl->clear();
 

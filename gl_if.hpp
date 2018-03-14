@@ -15,13 +15,7 @@ namespace rev {
 			virtual ret_type name(BOOST_PP_SEQ_ENUM(args)) = 0; \
 			virtual ret_type name##_NC(BOOST_PP_SEQ_ENUM(args)) = 0;
 
-		#ifdef ANDROID
-			#include "opengl_define/android_gl.inc"
-		#elif defined(WIN32)
-			#include "opengl_define/mingw_gl.inc"
-		#else
-			#include "opengl_define/linux_gl.inc"
-		#endif
+		#include REV_OPENGL_INCLUDE
 
 		#undef DEF_GLMETHOD
 		#undef DEF_GLMETHOD2
@@ -45,13 +39,7 @@ namespace rev {
 			virtual ret_type name(BOOST_PP_SEQ_ENUM(args)) override; \
 			virtual ret_type name##_NC(BOOST_PP_SEQ_ENUM(args)) override;
 
-		#ifdef ANDROID
-			#include "opengl_define/android_gl.inc"
-		#elif defined(WIN32)
-			#include "opengl_define/mingw_gl.inc"
-		#else
-			#include "opengl_define/linux_gl.inc"
-		#endif
+		#include REV_OPENGL_INCLUDE
 
 		void setSwapInterval(int n) override;
 		void stencilFuncFront(int func, int ref, int mask)  override;
@@ -64,13 +52,7 @@ namespace rev {
 	};
 	//! DrawThreadにOpenGL関数呼び出しを委託
 	struct IGL_OtherSingle : IGL {
-		#ifdef ANDROID
-			#include "opengl_define/android_gl.inc"
-		#elif defined(WIN32)
-			#include "opengl_define/mingw_gl.inc"
-		#else
-			#include "opengl_define/linux_gl.inc"
-		#endif
+		#include REV_OPENGL_INCLUDE
 
 		#undef DEF_GLMETHOD
 		#undef DEF_GLMETHOD2
@@ -127,13 +109,7 @@ namespace rev {
 				using t_##name = ret_type APICALL(*)(BOOST_PP_SEQ_ENUM(args)); \
 				static t_##name name;
 
-			#ifdef ANDROID
-				#include "opengl_define/android_gl.inc"
-			#elif defined(WIN32)
-				#include "opengl_define/mingw_gl.inc"
-			#else
-				#include "opengl_define/linux_gl.inc"
-			#endif
+			#include REV_OPENGL_INCLUDE
 
 			#undef DEF_GLMETHOD
 			#undef DEF_GLCONST

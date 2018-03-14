@@ -13,3 +13,11 @@
 #if defined(WIN32)
 	#include <GL/glcorearb.h>
 #endif
+
+#ifdef ANDROID
+	#define REV_OPENGL_INCLUDE "opengl_define/android_gl.inc"
+#elif defined(WIN32)
+	#define REV_OPENGL_INCLUDE "opengl_define/mingw_gl.inc"
+#else
+	#define REV_OPENGL_INCLUDE "opengl_define/linux_gl.inc"
+#endif

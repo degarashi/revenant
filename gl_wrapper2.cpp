@@ -31,13 +31,7 @@ namespace rev {
 		Expect(GLWrap::name != nullptr, "could not load OpenGL function: %s", #name)
 		void GLWrap::loadGLFunc() {
 			// 各種API関数
-			#ifdef ANDROID
-				#include "opengl_define/android_gl.inc"
-			#elif defined(WIN32)
-				#include "opengl_define/mingw_gl.inc"
-			#else
-				#include "opengl_define/linux_gl.inc"
-			#endif
+			#include REV_OPENGL_INCLUDE
 			// その他OS依存なAPI関数
 			g_bglfuncInit = true;
 		}
