@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <memory>
 #include <boost/preprocessor.hpp>
+#include <cstring>
 
 namespace rev {
 	struct IGL {
@@ -98,7 +99,18 @@ namespace rev {
 			};
 			using PutCall = std::unique_ptr<GLWrap, Put>;
 			void _putReset();
+
 		public:
+			constexpr static std::size_t MF_Size = sizeof(&IGL::setSwapInterval);
+			using MF_Pointer = std::array<uint8_t, MF_Size>;
+			using MF_Map = std::unordered_map<MF_Pointer, const char*>;
+		private:
+			static MF_Map s_funcName;
+			static const char* _GetFunctionName(const MF_Pointer& mfp);
+		public:
+			//! 関数ポインタから関数名を取得
+			static const char* GetFunctionName(const MF_Pointer& ptr);
+
 			#define DEF_GLCONST(...)
 			#define DEF_GLMETHOD(ret_type, num, name, args, argnames) \
 				using t_##name = ret_type APICALL(*)(BOOST_PP_SEQ_ENUM(args)); \
@@ -119,6 +131,12 @@ namespace rev {
 			Handler& getDrawHandler();
 			Shared& refShared();
 			PutCall putShared();
+			template <class Ret, class... Args>
+			static const char* GetFunctionName(Ret (IGL::*func)(Args...)) {
+				MF_Pointer mfp;
+				std::memcpy(mfp.data(), &func, MF_Size);
+				return _GetFunctionName(mfp);
+			}
 	};
 	#undef APICALL
 }
