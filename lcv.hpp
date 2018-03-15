@@ -20,10 +20,6 @@ namespace rev {
 	template <class T>
 	struct LCV_In;
 	template <class T>
-	struct LCV_In<T*>;
-	template <class T>
-	struct LCV_In<T&>;
-	template <class T>
 	struct LCV;
 	template <>
 	struct LCV<void> {};
