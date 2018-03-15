@@ -743,6 +743,7 @@ namespace rev {
 }
 #include "luaimport.hpp"
 #include <map>
+#include "remove_const_noexcept.hpp"
 namespace rev {
 	//! Luaから引数を変換取得して関数を呼ぶ
 	template <class... Ts0>
@@ -977,7 +978,7 @@ namespace rev {
 			//! メンバ関数のエクスポート
 			/*! lscにFuncTableを積んだ状態で呼ぶ */
 			template <class GET, class T, class RT, class FT, class... Ts>
-			static void RegisterMember(LuaState& lsc, const char* name, RT (FT::*func)(Ts...)) {
+			static void _RegisterMember(LuaState& lsc, const char* name, RT (FT::*func)(Ts...)) {
 				const CheckTop ct(lsc.getLS());
 				lsc.push(name);
 				SetMethod(lsc.getLS(), func);
@@ -988,15 +989,10 @@ namespace rev {
 				_PushIndent(s_importLog) << LCV<RT>() << ' ' << name << '(';
 				_OutputArgs<Ts...>(s_importLog) << ')' << std::endl;
 			}
-			//! constメンバ関数のエクスポート
-			template <class GET, class T, class RT, class FT, class... Ts>
-			static void RegisterMember(LuaState& lsc, const char* name, RT (FT::*func)(Ts...) const) {
-				RegisterMember<GET,T>(lsc, name, (RT (FT::*)(Ts...))func);
-			}
 			//! メンバ変数のエクスポート
 			/*! lscにReadTable, WriteTableを積んだ状態で呼ぶ */
 			template <class GET, class T, class V, class VT>
-			static void RegisterMember(LuaState& lsc, const char* name, V VT::*member) {
+			static void _RegisterMember(LuaState& lsc, const char* name, V VT::*member) {
 				const CheckTop ct(lsc.getLS());
 				// ReadValue関数の登録
 				lsc.push(name);
@@ -1011,6 +1007,14 @@ namespace rev {
 
 				// ---- ログ出力 ----
 				_PushIndent(s_importLog) << LCV<V>() << ' ' << name << std::endl;
+			}
+			template <class GET, class T, class Target, ENABLE_IF(::rev::IsMethod<Target>{} || ::rev::IsFunction<Target>{})>
+			static void RegisterMember(LuaState& lsc, const char* name, Target t) {
+				_RegisterMember<GET,T>(lsc, name, reinterpret_cast<Remove_ConstNoexcept_t<Target>>(t));
+			}
+			template <class GET, class T, class Target, ENABLE_IF(!::rev::IsMethod<Target>{} && !::rev::IsFunction<Target>{})>
+			static void RegisterMember(LuaState& lsc, const char* name, Target t) {
+				_RegisterMember<GET,T>(lsc, name, t);
 			}
 			//! static関数のエクスポート
 			/*! lscにObjectを積んだ状態で呼ぶ */
