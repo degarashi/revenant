@@ -2,6 +2,7 @@
 #include "spine/singleton.hpp"
 #include "lcvalue.hpp"
 #include "debuggui_if.hpp"
+#include <vector>
 
 namespace rev {
 	class IScene;

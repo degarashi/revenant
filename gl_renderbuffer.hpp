@@ -4,6 +4,7 @@
 #include "gl_format.hpp"
 #include "lubee/size.hpp"
 #include <boost/variant.hpp>
+#include <vector>
 
 namespace rev {
 	using ByteBuff = std::vector<uint8_t>;

@@ -30,6 +30,7 @@ namespace rev {
 		}
 	};
 }
+#include <functional>
 namespace std {
 	template <> struct hash<::rev::GL16Id> {
 		size_t operator() (const ::rev::GL16Id& id) const {
@@ -45,6 +46,7 @@ namespace std {
 }
 
 #include "lubee/wrapper.hpp"
+#include <vector>
 namespace rev {
 	inline std::string ConvertToStr(const std::string& s) { return s; }
 	template <class T>

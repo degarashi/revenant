@@ -2,6 +2,7 @@
 #include "handle.hpp"
 #include <memory>
 #include <algorithm>
+#include <vector>
 
 namespace rev {
 	struct Access {
