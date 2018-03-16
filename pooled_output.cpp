@@ -2,7 +2,7 @@
 
 namespace rev {
 	namespace {
-		constexpr std::size_t DefaultMaxEntry = 8;
+		constexpr std::size_t DefaultMaxEntry = 256;
 	}
 	namespace log {
 		PooledRevOutput::PooledRevOutput():
