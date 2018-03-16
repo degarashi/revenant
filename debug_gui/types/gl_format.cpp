@@ -18,9 +18,9 @@ namespace rev {
 		int dx, dy;
 		GetDim(dim, dx, dy);
 		if(dy > 0) {
-			ImGui::Text("Dim: %dx%d", dy, dx);
+			ImGui::Text("%dx%d", dy, dx);
 		} else
-			ImGui::Text("Dim: %d", dx);
+			ImGui::Text("%d", dx);
 		ImGui::NextColumn();
 
 		debug::Show(nullptr, bUnsigned);
