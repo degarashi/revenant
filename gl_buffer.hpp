@@ -114,6 +114,11 @@ namespace rev {
 			void updateData(const GLubyte* src, std::size_t nElem, GLuint offset);
 			GLenum getSizeFlag() const;
 			static GLenum GetSizeFlag(int stride);
+			#ifdef DEBUGGUI_ENABLED
+				template <class T>
+				bool _property(int columns, const char* typestr, bool edit);
+			#endif
 			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
 	};
 }
