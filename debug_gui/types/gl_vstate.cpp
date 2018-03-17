@@ -2,6 +2,7 @@
 #include "../../gl_format.hpp"
 #include "../indent.hpp"
 #include "../../imgui/imgui.h"
+#include "../sstream.hpp"
 
 namespace rev {
 	std::string GL_VState_ToStr(const float f) {
@@ -23,33 +24,27 @@ namespace rev {
 		return b ? "True" : "False";
 	}
 	void GL_VState_Gui(const char* func, int n, ...) {
+		StringStream s;
 		ImGui::TextUnformatted(func);
 		if(n > 0) {
-			ImGui::SameLine();
-			ImGui::TextUnformatted("(");
-
 			va_list va;
 			va_start(va, n);
 			{
 				bool bF = true;
-				const auto _ = debug::IndentPush();
 				while(n != 0) {
 					if(!bF) {
-						ImGui::SameLine();
-						ImGui::TextUnformatted(",");
+						s << ", \n";
 					} else
 						bF = false;
 
-					auto* str = va_arg(va, const char*);
-					ImGui::SameLine();
-					ImGui::TextUnformatted(str);
+					s << va_arg(va, const char*);
 					--n;
 				}
 			}
 			va_end(va);
 
-			ImGui::SameLine();
-			ImGui::TextUnformatted(")");
+			const auto _ = debug::IndentPush();
+			ImGui::TextWrapped("%s", s.output().c_str());
 		}
 	}
 }
