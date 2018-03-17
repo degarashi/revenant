@@ -48,6 +48,9 @@ namespace rev {
 				}
 				ImGui::Separator();
 			}
+			if(ImGui::CollapsingHeader("Program")) {
+				debug::Show("Program", getProgram());
+			}
 		}
 		return mod | f.modified();
 	}
