@@ -53,21 +53,21 @@ namespace rev {
 			void	_initData();
 
 			template <class T>
-			using Raw = typename std::decay<T>::type;
+			using Decay = typename std::decay<T>::type;
 			template <class T>
-			using ChkIfVector = typename std::enable_if<is_vector<Raw<T>>::value>::type;
+			using ChkIfVector = typename std::enable_if<is_vector<Decay<T>>::value>::type;
 			template <class T, class = ChkIfVector<T>>
-			void _setVec(T&& src, GLuint stride) {
-				using RawType = Raw<T>;
-				auto fnDeleter = [](void* ptr) {
-					auto* rt = reinterpret_cast<RawType*>(ptr);
+			void _setVec(T&& src, const GLuint stride) {
+				using Vec = Decay<T>;
+				const auto deleter = [](void* ptr) {
+					auto* rt = reinterpret_cast<Vec*>(ptr);
 					delete rt;
 				};
 				_stride = stride;
-				_buffSize = src.size() * sizeof(typename Raw<T>::value_type);
-				RawType* rt = new RawType(std::forward<T>(src));
+				_buffSize = src.size() * sizeof(typename Vec::value_type);
+				Vec* rt = new Vec(std::forward<T>(src));
 				_pBuffer = rt->data();
-				_buff = SPBuff(static_cast<void*>(rt), fnDeleter);
+				_buff = SPBuff(static_cast<void*>(rt), deleter);
 			}
 
 		public:
@@ -78,7 +78,7 @@ namespace rev {
 			// 全域を書き換え
 			void initData(const void* src, std::size_t nElem, GLuint stride);
 			template <class T, class = ChkIfVector<T>>
-			void initData(T&& src, GLuint stride=sizeof(typename Raw<T>::value_type)) {
+			void initData(T&& src, GLuint stride=sizeof(typename Decay<T>::value_type)) {
 				_setVec(std::forward<T>(src), stride);
 				_initData();
 			}
