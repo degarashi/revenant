@@ -144,7 +144,7 @@ namespace rev {
 		_iLinearMag = bLinearMag ? 1 : 0;
 		_iLinearMin = bLinearMin ? 1 : 0;
 	}
-	void IGLTexture::setLinear(bool bLinear) {
+	void IGLTexture::setMagMinFilter(bool bLinear) {
 		setFilter(bLinear, bLinear);
 	}
 	void IGLTexture::onDeviceLost() {

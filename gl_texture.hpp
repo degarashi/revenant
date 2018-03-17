@@ -57,7 +57,7 @@ namespace rev {
 			virtual ~IGLTexture();
 
 			void setFilter(bool bLinearMag, bool bLinearMin);
-			void setLinear(bool bLinear);
+			void setMagMinFilter(bool bLinear);
 			void setAnisotropicCoeff(float coeff);
 			void setUVWrap(WrapState s, WrapState t);
 			void setWrap(WrapState st);

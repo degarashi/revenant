@@ -9,7 +9,7 @@ DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	LUAIMPLEMENT_BASE,
 	NOTHING,
 	NOTHING,
-	(getResourceName)(getTextureId)(setFilter)(setLinear)(setAnisotropicCoeff)
+	(getResourceName)(getTextureId)(setFilter)(setMagMinFilter)(setAnisotropicCoeff)
 	(setUVWrap)(setWrap)(getSize)(getTextureId)(getTexFlag)(getFaceFlag)(isMipmap)(save)(isCubemap)
 )
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
