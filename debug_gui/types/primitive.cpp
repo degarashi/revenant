@@ -19,6 +19,7 @@ namespace rev {
 		if(vdecl) {
 			if(ImGui::CollapsingHeader("Vertex-Decl")) {
 				const auto _ = debug::IndentPush();
+				const auto idp = debug::IdPush("Vertex-Decl");
 				vdecl->property();
 			}
 		}
@@ -26,13 +27,16 @@ namespace rev {
 		for(int i=0 ; i<MaxVStream ; i++) {
 			if(vb[i]) {
 				s << "VertexBuffer[" << i << "]";
-				if(const auto _ = debug::TreePush(s.output().c_str())) {
+				const auto name = s.output();
+				if(const auto _ = debug::TreePush(name.c_str())) {
+					const auto idp = debug::IdPush(name.c_str());
 					mod |= vb[i]->property(edit);
 				}
 			}
 		}
 		if(ib) {
 			if(const auto _ = debug::TreePush("IndexBuffer")) {
+				const auto idp = debug::IdPush("IndexBuffer");
 				mod |= ib->property(edit);
 			}
 		}
