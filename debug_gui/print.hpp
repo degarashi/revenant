@@ -87,7 +87,9 @@ namespace rev {
 					_Show("(null)");
 			}
 			template <class From, class To>
-			void _Show(const EditProxy<From, To>&) {}
+			void _Show(const EditProxy<From, To>& p) {
+				_Show(static_cast<To>(p.from));
+			}
 			template <class T, std::size_t N>
 			void _Show(const std::array<T,N>& a) {
 				for(std::size_t i=0 ; i<N ; i++) {
