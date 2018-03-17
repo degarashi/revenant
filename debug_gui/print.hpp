@@ -166,6 +166,12 @@ namespace rev {
 				return mod;
 			}
 
+			bool _Slider(int& i, int v_min, int v_max);
+			template <class T, ENABLE_IF(std::is_integral<T>{})>
+			bool _Slider(T& t, T v_min, T v_max, T step);
+			bool _Slider(float& f, float v_min, float v_max);
+			template <class T, ENABLE_IF(std::is_floating_point<T>{})>
+			bool _Slider(T& t, T v_min, T v_max);
 			template <class TAG, class V>
 			bool _Slider(frea::Angle<TAG,V>& a, const frea::Angle<TAG,V>& v_min, const frea::Angle<TAG,V>& v_max);
 			template <class V, ENABLE_IF(frea::is_vector<V>{})>

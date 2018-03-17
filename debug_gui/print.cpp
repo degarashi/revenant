@@ -69,6 +69,23 @@ namespace rev {
 			bool _Edit(lubee::SizeF& s) {
 				return _Edit(reinterpret_cast<frea::Vec2&>(s));
 			}
+
+			bool _Slider(float& f, const float v_min, const float v_max) {
+				return ImGui::SliderFloat("", &f, v_min, v_max);
+			}
+			bool _Slider(int& i, const int v_min, const int v_max) {
+				return ImGui::SliderInt("", &i, v_min, v_max);
+			}
+			template <class T, ENABLE_IF_I(std::is_integral<T>{})>
+			bool _Slider(T& t, const T v_min, const T v_max) {
+				auto p = MakeEditProxy<int>(t);
+				return _Slider(p, v_min, v_max);
+			}
+			template <class T, ENABLE_IF_I(std::is_floating_point<T>{})>
+			bool _Slider(T& t, const T v_min, const T v_max) {
+				auto p = MakeEditProxy<float>(t);
+				return _Slider(p, v_min, v_max);
+			}
 		}
 	}
 }
