@@ -103,18 +103,12 @@ namespace rev {
 
 	class DataURI;
 	using DataURI_SP = std::shared_ptr<DataURI>;
-	namespace debug {
-		namespace inner {
-			void _Show(const DataURI&);
-		}
-	}
 	class DataURI : public URI {
 		private:
 			template <class Ar>
 			friend void serialize(Ar&, DataURI&);
 			template <class T>
 			friend struct cereal::LoadAndConstruct;
-			friend void debug::inner::_Show(const DataURI&);
 
 			using Data_t = std::string;
 			using MediaType = std::pair<std::string, std::string>;
