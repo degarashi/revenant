@@ -68,6 +68,32 @@ namespace rev {
 			"Verbose",
 		};
 	}
+	namespace {
+		// first= n行までのオフセット
+		// second= sがn行より大きければtrue
+		std::pair<std::size_t, bool> LogClip(int n, const std::string& s) {
+			if(n <= 0)
+				return std::make_pair(s.length(), false);
+			std::string::size_type pos = 0;
+			for(;;) {
+				pos = s.find_first_of('\n', pos);
+				if(pos == s.npos)
+					break;
+				if(--n == 0)
+					return std::make_pair(pos, s.length() > pos);
+				++pos;
+			}
+			return std::make_pair(s.length(), false);
+		}
+		// n行を越える分は ...<more> で省略したログメッセージを作成
+		std::string MakeClippedLog(const int n, const std::string& s) {
+			const auto clip = LogClip(n, s);
+			if(clip.second) {
+				return s.substr(0, clip.first) + " ...<more>";
+			}
+			return s;
+		}
+	}
 	void Logger::drawGUI(bool *const p_open) const {
 		if(const auto w = debug::WindowPush("Log", p_open)) {
 			const auto chkbox = [this](const auto typ){
@@ -99,7 +125,7 @@ namespace rev {
 							auto& e = _entry[idx];
 							const auto s = debug::StylePush(ImGuiCol_Text, c_textColor[e.type]);
 							const debug::IdPush idp(idx);
-							if(ImGui::Selectable(e.msg.c_str(), idx==_selected, 0, {0, lineHeight})) {
+							if(ImGui::Selectable(MakeClippedLog(2, e.msg).c_str(), idx==_selected, 0, {0, lineHeight})) {
 								_selected = idx;
 							}
 						}
