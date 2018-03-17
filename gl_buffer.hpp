@@ -69,6 +69,8 @@ namespace rev {
 				_pBuffer = rt->data();
 				_buff = SPBuff(static_cast<void*>(rt), deleter);
 			}
+		protected:
+			void* _getBufferPtr() const;
 
 		public:
 			GLBuffer(BufferType typ, DrawType dtype);
