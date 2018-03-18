@@ -42,7 +42,7 @@ namespace rev {
 		relPos = p;
 	}
 	const char* TPos2D::getResourceName() const noexcept {
-		return ::rev::resource_name::TPos2D;
+		return "TPos2D";
 	}
 	// ----------------- Keyboard -----------------
 	InputType Keyboard::getType() const {
@@ -300,7 +300,7 @@ namespace rev {
 		addLink(hI, InputFlag::Button, num_positive);
 	}
 	const char* Action::getResourceName() const noexcept {
-		return ::rev::resource_name::Action;
+		return "Action";
 	}
 
 	// ----------------- InputMgr -----------------

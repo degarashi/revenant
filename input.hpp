@@ -32,7 +32,7 @@ namespace rev {
 		// 1つ以上の座標が検出されたら何れかを返す
 		virtual WPtr getPointer() const { return WPtr(); }
 		const char* getResourceName() const noexcept {
-			return ::rev::resource_name::Input;
+			return "Input";
 		}
 	};
 

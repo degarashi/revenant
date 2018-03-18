@@ -386,7 +386,7 @@ namespace rev {
 	typename RWops::DataPtrC RWops::getMemoryC() const { return _data->getMemoryC(); }
 	URIRef_OP RWops::getUri() const noexcept { return _data->getUri(); }
 	const char* RWops::getResourceName() const noexcept {
-		return ::rev::resource_name::RWops;
+		return "RWops";
 	}
 	SDL_RWops* RWops::getOps() const noexcept { return _data->getOps(); }
 

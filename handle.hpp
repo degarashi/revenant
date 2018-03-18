@@ -4,17 +4,6 @@
 
 namespace rev {
 	using Name = std::string;
-	namespace resource_name {
-		#define DEF_NAME(name) constexpr const char* name = #name
-		DEF_NAME(RWops);
-		DEF_NAME(TPos2D);
-		DEF_NAME(Action);
-		DEF_NAME(Input);
-		DEF_NAME(ABuffer);
-		DEF_NAME(ASource);
-		DEF_NAME(AGroup);
-		#undef DEF_NAME
-	}
 
 	#define DEF_HANDLE(typ, name) \
 		using H##name = std::shared_ptr<typ>; \

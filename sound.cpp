@@ -30,7 +30,7 @@ namespace rev {
 		_format(AFormat::Format::Invalid, 0)
 	{}
 	const char* ABuffer::getResourceName() const noexcept {
-		return ::rev::resource_name::ABuffer;
+		return "ABuffer";
 	}
 	// --------------------- ABufSub ---------------------
 	ABufSub::ABufSub(const HAb& hAb, const uint32_t nLoop):
@@ -431,7 +431,7 @@ namespace rev {
 		}
 	}
 	const char* ASource::getResourceName() const noexcept {
-		return ::rev::resource_name::ASource;
+		return "ASource";
 	}
 	// --------------------- ASource::S_Empty ---------------------
 	ASource::S_Empty::S_Empty(ASource& /*s*/) {}
@@ -712,7 +712,7 @@ namespace rev {
 		_source.clear();
 	}
 	const char* AGroup::getResourceName() const noexcept {
-		return ::rev::resource_name::AGroup;
+		return "AGroup";
 	}
 
 	namespace {
