@@ -4,6 +4,7 @@
 #include "handle.hpp"
 #include "spine/enum.hpp"
 #include "debuggui_if.hpp"
+#include "resource.hpp"
 
 namespace rev {
 	using GLboolean_OP = spi::Optional<GLboolean>;

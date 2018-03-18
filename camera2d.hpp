@@ -6,6 +6,7 @@
 #include "spine/resmgr.hpp"
 #include "spine/singleton.hpp"
 #include "debuggui_if.hpp"
+#include "resource.hpp"
 
 namespace rev {
 	//! 2Dカメラ姿勢クラス

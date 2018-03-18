@@ -4,6 +4,7 @@
 #include "spine/optional.hpp"
 #include "handle.hpp"
 #include "debuggui_if.hpp"
+#include "resource.hpp"
 
 namespace rev {
 	using Priority = uint32_t;

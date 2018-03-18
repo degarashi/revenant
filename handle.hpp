@@ -1,5 +1,4 @@
 #pragma once
-#include "resource.hpp"
 #include <memory>
 
 namespace rev {
@@ -8,6 +7,7 @@ namespace rev {
 	#define DEF_HANDLE(typ, name) \
 		using H##name = std::shared_ptr<typ>; \
 		using W##name = std::weak_ptr<typ>;
+	struct Resource;
 	DEF_HANDLE(Resource, Res)
 
 	class RWops;

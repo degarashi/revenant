@@ -4,6 +4,7 @@
 #include "spine/singleton.hpp"
 #include "handle.hpp"
 #include "spine/enum.hpp"
+#include "resource.hpp"
 
 namespace rev {
 	struct TPos2D : Resource {
