@@ -4,6 +4,7 @@
 #include "spine/enum.hpp"
 #include "debuggui_if.hpp"
 #include "resource.hpp"
+#include "handle/uri.hpp"
 #include <regex>
 
 namespace cereal {
@@ -11,8 +12,6 @@ namespace cereal {
 	struct LoadAndConstruct;
 }
 namespace rev {
-	class URI;
-	using URI_SP = std::shared_ptr<URI>;
 	class URI :
 		public lubee::op::Ne<URI>,
 		public Resource,
@@ -30,12 +29,12 @@ namespace rev {
 			virtual std::string plain() const = 0;
 			virtual Type getType() const noexcept = 0;
 			virtual std::size_t getHash() const noexcept = 0;
-			virtual URI_SP clone() const = 0;
+			virtual HURI clone() const = 0;
 			const char* getResourceName() const noexcept override;
 
 			bool operator == (const URI& u) const noexcept;
 	};
-	URI_SP MakeURIFromString(const char* s);
+	HURI MakeURIFromString(const char* s);
 	std::ostream& operator << (std::ostream& os, const URI& u);
 
 	#define DEF_URIMETHOD \
@@ -44,7 +43,7 @@ namespace rev {
 		std::string plain() const override; \
 		Type getType() const noexcept override; \
 		std::size_t getHash() const noexcept override; \
-		URI_SP clone() const override;
+		HURI clone() const override;
 
 	// 内部管理用
 	class IdURI;

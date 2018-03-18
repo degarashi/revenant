@@ -5,8 +5,6 @@
 #include "singleton_data_lazy.hpp"
 
 namespace rev {
-	class VDecl;
-	using VDecl_SP = std::shared_ptr<VDecl>;
 	//! CharCodeとフォントテクスチャ対応付け (全Face共通)
 	using FontChMap = std::unordered_map<CharID, CharPos>;
 	// (FaceNameを複数箇所で共有する都合上)
@@ -48,16 +46,12 @@ namespace rev {
 			frea::Vec3	uvt;
 
 			const static SingletonDataLazy<VDecl, text, 0>	s_decl;
-			static VDecl_SP MakeData(lubee::IConst<0>);
+			static HVDecl MakeData(lubee::IConst<0>);
 		};
 	}
 }
 
 namespace rev {
-	struct Primitive;
-	using Primitive_SP = std::shared_ptr<Primitive>;
-	struct ITech;
-	using Tech_SP = std::shared_ptr<ITech>;
 	//! 文章の描画に必要なフォントや頂点を用意
 	/*!
 		TriangleList形式。とりあえず改行だけ対応
@@ -70,7 +64,7 @@ namespace rev {
 	class TextObj {
 		using CPosL = std::vector<const CharPos*>;
 		struct DrawSet {
-			Primitive_SP	primitive;
+			HPrim	primitive;
 			HTex	hTex;
 			int		nChar;	//!< スペースなど制御文字を除いた文字数
 		};
@@ -108,8 +102,8 @@ namespace rev {
 			void draw(IEffect& gle) const;
 			const lubee::SizeF& getSize() const;
 			void exportDrawTag(DrawTag& d) const;
-			static Tech_SP MakeData(lubee::IConst<0>);
-			static Tech_SP GetDefaultTech();
+			static HTech MakeData(lubee::IConst<0>);
+			static HTech GetDefaultTech();
 	};
 
 	#define mgr_text (::rev::FontGen::ref())

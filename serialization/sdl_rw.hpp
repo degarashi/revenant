@@ -49,7 +49,7 @@ namespace cereal {
 	struct LoadAndConstruct<::rev::RWops::VectorData> {
 		template <class Ar>
 		static void load_and_construct(Ar& ar, cereal::construct<::rev::RWops::VectorData>& construct) {
-			::rev::URI_SP uri;
+			::rev::HURI uri;
 			::rev::ByteBuff buff;
 			int64_t pos;
 			ar(uri, buff, pos);

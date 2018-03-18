@@ -9,15 +9,13 @@ namespace rev {
 	namespace draw {
 		class VStream;
 	}
-	struct Primitive;
-	using Primitive_SP = std::shared_ptr<Primitive>;
 	//! GLXエフェクト管理クラス
 	class GLEffect : public IEffect, public std::enable_shared_from_this<GLEffect> {
 		public:
 			bool			_bInit = false;		//!< deviceLost/Resetの状態区別
 			diff::Effect	_diffCount;			/*!< バッファのカウントクリアはclearTask()かbeginTask()の呼び出しタイミング */
 
-			Primitive_SP	_primitive,
+			HPrim	_primitive,
 							_primitive_prev;
 			using HFb_OP = spi::Optional<HFb>;
 			HFb_OP				_hFb;			//!< 描画対象のフレームバッファ (無効ならデフォルトターゲット)
@@ -26,7 +24,7 @@ namespace rev {
 								_scissorrect;
 			bool				_bView,
 								_bScissor;
-			Tech_SP				_tech_sp;		//!< 現在使用中のTech
+			HTech				_tech_sp;		//!< 現在使用中のTech
 			UniformEnt			_uniformEnt;
 			draw::TokenML		_tokenML;		//!< 描画スレッドに渡す予定のコマンド
 
@@ -42,8 +40,8 @@ namespace rev {
 			virtual void _prepareUniforms();
 		public:
 			GLEffect();
-			Tech_SP setTechnique(const Tech_SP& tech) override;
-			const Tech_SP& getTechnique() const noexcept override;
+			HTech setTechnique(const HTech& tech) override;
+			const HTech& getTechnique() const noexcept override;
 			void onDeviceLost() override;
 			void onDeviceReset() override;
 			UniformEnt& refUniformEnt() noexcept override;
@@ -67,7 +65,7 @@ namespace rev {
 			FBRect setScissor(const FBRect& r) override;
 
 			// ----------------- Primitive -----------------
-			void setPrimitive(const Primitive_SP& p) noexcept override;
+			void setPrimitive(const HPrim& p) noexcept override;
 
 			// ----------------- Buffer Clear -----------------
 			void clearFramebuffer(const draw::ClearParam& param) override;

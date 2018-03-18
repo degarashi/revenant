@@ -4,7 +4,6 @@
 #include <unordered_map>
 
 namespace rev {
-	class URI;
 	class TechPass : public IGLResource {
 		private:
 			// [Tech|Pass] -> [TechId, PassId]
@@ -20,7 +19,7 @@ namespace rev {
 			};
 			//! Effectファイル(gfx)を読み込む
 			TechPass(const std::string& path);
-			Tech_SP getTechnique(const Name& techpass) const;
-			Tech_SP getTechnique(const Name& tech, const Name& pass) const;
+			HTech getTechnique(const Name& techpass) const;
+			HTech getTechnique(const Name& tech, const Name& pass) const;
 	};
 }

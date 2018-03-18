@@ -16,7 +16,7 @@
 
 namespace rev {
 	namespace {
-		const Primitive_SP c_invalidPrimitive = std::make_shared<Primitive>();
+		const HPrim c_invalidPrimitive = std::make_shared<Primitive>();
 	}
 	GLEffect::GLEffect():
 		_primitive(std::make_shared<Primitive>()),
@@ -53,7 +53,7 @@ namespace rev {
 	UniformEnt& GLEffect::refUniformEnt() noexcept {
 		return _uniformEnt;
 	}
-	Tech_SP GLEffect::setTechnique(const Tech_SP& tech) {
+	HTech GLEffect::setTechnique(const HTech& tech) {
 		_clean_drawvalue();
 
 		const auto prev_tech = _tech_sp;
@@ -71,7 +71,7 @@ namespace rev {
 		_uniformEnt.copyFrom(_tech_sp->getDefaultValue());
 		return prev_tech;
 	}
-	const Tech_SP& GLEffect::getTechnique() const noexcept {
+	const HTech& GLEffect::getTechnique() const noexcept {
 		return _tech_sp;
 	}
 	void GLEffect::_outputFramebuffer() {
@@ -124,7 +124,7 @@ namespace rev {
 			_bInit = true;
 		}
 	}
-	void GLEffect::setPrimitive(const Primitive_SP& p) noexcept {
+	void GLEffect::setPrimitive(const HPrim& p) noexcept {
 		_primitive = p;
 	}
 	void GLEffect::clearFramebuffer(const draw::ClearParam& param) {

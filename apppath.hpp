@@ -44,11 +44,11 @@ namespace rev {
 			const PathV& getPath(const std::string& resname) const;
 	};
 	class FileURI;
-	using FileURI_SP = std::shared_ptr<FileURI>;
 	//! リソースパスのキャッシュと参照
 	/*! リソースマネージャクラスに内包して使う */
 	class AppPathCache {
 		private:
+			using FileURI_SP = std::shared_ptr<FileURI>;
 			// リソース名 -> URIのキャッシュ
 			using Cache = std::unordered_map<std::string, FileURI_SP>;
 			// リソース番号 -> リソースマップ

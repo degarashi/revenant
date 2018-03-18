@@ -9,8 +9,6 @@
 #include "chunk.hpp"
 
 namespace rev {
-	class Surface;
-	using Surface_SP = std::shared_ptr<Surface>;
 	class PathBlock;
 	using ByteBuff = std::vector<uint8_t>;
 	namespace draw {
@@ -132,9 +130,9 @@ namespace rev {
 	*/
 	class Texture_URI : public IGLTexture {
 		private:
-			URI_SP				_uri;
+			HURI				_uri;
 		public:
-			Texture_URI(const URI_SP& uri, MipState miplevel, InCompressedFmt_OP fmt);
+			Texture_URI(const HURI& uri, MipState miplevel, InCompressedFmt_OP fmt);
 			void onDeviceReset() override;
 			DEF_DEBUGGUI_PROP
 			DEF_DEBUGGUI_NAME
@@ -142,11 +140,11 @@ namespace rev {
 	//! 6つの画像ファイルからCubeテクスチャを構成
 	class Texture_CubeURI : public IGLTexture {
 		private:
-			URI_SP				_uri[6];
+			HURI				_uri[6];
 		public:
 			Texture_CubeURI(
-				const URI_SP& uri0, const URI_SP& uri1, const URI_SP& uri2,
-				const URI_SP& uri3, const URI_SP& uri4, const URI_SP& uri5,
+				const HURI& uri0, const HURI& uri1, const HURI& uri2,
+				const HURI& uri3, const HURI& uri4, const HURI& uri5,
 				MipState miplevel, InCompressedFmt_OP fmt
 			);
 			void onDeviceReset() override;

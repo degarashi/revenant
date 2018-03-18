@@ -6,7 +6,7 @@
 
 namespace rev {
 	struct URIWrap {
-		URI_SP		uri;
+		HURI		uri;
 		URIWrap() = default;
 		URIWrap(const URI& uri):
 			uri(uri.clone())

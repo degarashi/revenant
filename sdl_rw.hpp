@@ -106,15 +106,15 @@ namespace rev {
 			//! 内部(メモリ上の)データ
 			class VectorData : public Data {
 				private:
-					URI_SP			_uri;
+					HURI			_uri;
 					ByteBuff		_buff;
 
 					template <class Ar>
 					friend void serialize(Ar&, VectorData&);
 					friend struct cereal::LoadAndConstruct<VectorData>;
 				public:
-					VectorData(const URI_SP& uri, ByteBuff&& b);
-					VectorData(const URI_SP& uri, const void* ptr, std::size_t size);
+					VectorData(const HURI& uri, ByteBuff&& b);
+					VectorData(const HURI& uri, const void* ptr, std::size_t size);
 					DEF_METHODS
 			};
 			//! ファイルシステムと関連付けされた外部データ
@@ -207,9 +207,9 @@ namespace rev {
 			static std::string ReadModeStr(int mode);
 
 			// メモリ上のデータ(ムーブ)
-			static RWops FromByteBuffMove(const URI_SP& uri, ByteBuff&& buff, const Callback_SP& cb);
+			static RWops FromByteBuffMove(const HURI& uri, ByteBuff&& buff, const Callback_SP& cb);
 			// メモリ上のデータ(コピー)
-			static RWops FromVector(const URI_SP& uri, const void* mem, std::size_t size, const Callback_SP& cb);
+			static RWops FromVector(const HURI& uri, const void* mem, std::size_t size, const Callback_SP& cb);
 			// 外部データ(ポインタ+データ長)
 			static RWops FromTemporal(void* mem, std::size_t size, const Callback_SP& cb);
 			static RWops FromConstTemporal(const void* mem, std::size_t size, const Callback_SP& cb);

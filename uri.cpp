@@ -24,7 +24,7 @@ namespace {
 	}
 }
 namespace rev {
-	URI_SP MakeURIFromString(const char* s) {
+	HURI MakeURIFromString(const char* s) {
 		if(auto ret = FileURI::Interpret(s))
 			return ret;
 		if(auto ret = DataURI::Interpret(s))
@@ -72,7 +72,7 @@ namespace rev {
 	std::size_t IdURI::getHash() const noexcept {
 		return std::hash<uint64_t>()(_num);
 	}
-	URI_SP IdURI::clone() const {
+	HURI IdURI::clone() const {
 		return std::make_shared<IdURI>(_num);
 	}
 	URI::Type IdURI::getType() const noexcept {
@@ -116,7 +116,7 @@ namespace rev {
 	std::size_t UserURI::getHash() const noexcept {
 		return std::hash<std::string>()(_name);
 	}
-	URI_SP UserURI::clone() const {
+	HURI UserURI::clone() const {
 		return std::make_shared<UserURI>(*this);
 	}
 
@@ -163,7 +163,7 @@ namespace rev {
 	bool FileURI::operator == (const FileURI& f) const noexcept {
 		return _path == f._path;
 	}
-	URI_SP FileURI::clone() const {
+	HURI FileURI::clone() const {
 		return std::make_shared<FileURI>(*this);
 	}
 
@@ -258,7 +258,7 @@ namespace rev {
 				_data == d._data &&
 				_mediaType == d._mediaType;
 	}
-	URI_SP DataURI::clone() const {
+	HURI DataURI::clone() const {
 		return std::make_shared<DataURI>(*this);
 	}
 }

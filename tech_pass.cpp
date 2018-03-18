@@ -16,7 +16,7 @@ namespace rev {
 			}
 		}
 	}
-	Tech_SP TechPass::getTechnique(const Name& techpass) const {
+	HTech TechPass::getTechnique(const Name& techpass) const {
 		const auto itr = _nameToId.find(techpass);
 		if(itr != _nameToId.end()) {
 			const auto idx = itr->second;
@@ -24,7 +24,7 @@ namespace rev {
 		}
 		return nullptr;
 	}
-	Tech_SP TechPass::getTechnique(const Name& tech, const Name& pass) const {
+	HTech TechPass::getTechnique(const Name& tech, const Name& pass) const {
 		Name tp(tech);
 		tp.append(pass);
 		return getTechnique(tp);

@@ -1,14 +1,15 @@
 #include "urihandler.hpp"
 #include "lubee/error.hpp"
+#include "handle/uri.hpp"
 
 namespace rev {
-	auto UriHandlerV::_findHandler(const UriHandler_SP& h) const {
+	auto UriHandlerV::_findHandler(const HURIHandler& h) const {
 		return std::find_if(_handler.begin(), _handler.end(),
 				[&h](const HandlerPair& p){
 					return p.second == h;
 				});
 	}
-	void UriHandlerV::addHandler(const Priority prio, const UriHandler_SP& h) {
+	void UriHandlerV::addHandler(const Priority prio, const HURIHandler& h) {
 		Assert0(_findHandler(h) == _handler.end());
 		_handler.emplace_back(prio, h);
 		std::sort(
@@ -17,7 +18,7 @@ namespace rev {
 				return p0.first < p1.first; }
 		);
 	}
-	void UriHandlerV::remHandler(const UriHandler_SP& h) {
+	void UriHandlerV::remHandler(const HURIHandler& h) {
 		auto itr = _findHandler(h);
 		Assert0(itr != _handler.end());
 		_handler.erase(itr);

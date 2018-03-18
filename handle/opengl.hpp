@@ -29,6 +29,14 @@ namespace rev {
 	class GLRBuffer;
 	DEF_HANDLE(GLRBuffer, Rb)
 
+	struct GLState;
+	DEF_HANDLE(GLState, GLState)
+	class VDecl;
+	DEF_HANDLE(VDecl, VDecl)
+	struct ITech;
+	DEF_HANDLE(ITech, Tech)
+	struct Primitive;
+	DEF_HANDLE(Primitive, Prim)
 	class TechPass;
 	DEF_HANDLE(TechPass, TP)
 	namespace parse {

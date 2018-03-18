@@ -6,7 +6,7 @@ namespace rev {
 		class BlockSet;
 		using BlockSet_SP = std::shared_ptr<BlockSet>;
 	}
-	using Tech_SPV = std::vector<Tech_SP>;
+	using Tech_SPV = std::vector<HTech>;
 	struct TechPair {
 		Name		name;
 		Tech_SPV	pass;

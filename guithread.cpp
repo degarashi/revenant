@@ -8,13 +8,11 @@
 #include "pooled_output.hpp"
 #include "output.hpp"
 #include "sharedata.hpp"
+#include "handle/sdl.hpp"
 #include <SDL.h>
 #include <SDL_image.h>
 
 namespace rev {
-	class Window;
-	using Window_SP = std::shared_ptr<Window>;
-
 	const uint32_t EVID_SIGNAL = SDL_RegisterEvents(1);
 	// ---------------- GUIThread ----------------
 	GUIThread::GUIThread(GameloopParam_UP param):
@@ -25,7 +23,7 @@ namespace rev {
 	int GUIThread::run() {
 		SDLInitializer	sdlI(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK | SDL_INIT_TIMER);
 		IMGInitializer	imgI(IMG_INIT_JPG | IMG_INIT_PNG);
-		Window_SP window;
+		HWin window;
 		tls_threadID = SDL_GetThreadID(nullptr);
 		tls_threadName = "GuiThread";
 		#ifdef ANDROID

@@ -2,11 +2,10 @@
 #include "spine/singleton.hpp"
 #include "sdl_thread.hpp"
 #include "lvalue.hpp"
+#include "handle/uri.hpp"
 #include <lua.hpp>
 
 namespace rev {
-	class URI;
-	using URI_SP = std::shared_ptr<URI>;
 	class LCTable;
 	using LCTable_SP = std::shared_ptr<LCTable>;
 
@@ -20,7 +19,7 @@ namespace rev {
 					LoadThread();
 			};
 			struct Block {
-				using Pair = std::pair<std::string, URI_SP>;
+				using Pair = std::pair<std::string, HURI>;
 				using URIVec = std::vector<Pair>;
 				URIVec		uriVec;
 				int			current;		//!< 現在読み込み中のリソース

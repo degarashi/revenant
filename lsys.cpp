@@ -72,7 +72,7 @@ namespace rev {
 		LCTable ret;
 		tbl.iterateTable([&ret](LuaState& lsc) {
 			LCValue ent = lsc.toLCValue(-2);
-			const URI_SP uri = MakeURIFromString(lsc.toString(-1).c_str());
+			const HURI uri = MakeURIFromString(lsc.toString(-1).c_str());
 			auto h = ResMgrBase::LoadResource(*uri);
 			LCValue lcv(h);
 			TryEmplace(ret, std::move(ent), h);

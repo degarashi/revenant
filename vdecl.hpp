@@ -70,5 +70,4 @@ namespace rev {
 				void property() const;
 			#endif
 	};
-	using VDecl_SP = std::shared_ptr<VDecl>;
 }

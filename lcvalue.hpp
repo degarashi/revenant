@@ -186,7 +186,6 @@ namespace rev {
 			}
 	};
 	std::ostream& operator << (std::ostream& os, const LCValue& lcv);
-	using LCValue_SP = std::shared_ptr<LCValue>;
 }
 namespace std {
 	template <>

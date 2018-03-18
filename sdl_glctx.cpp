@@ -3,10 +3,10 @@
 #include "sdl_error.hpp"
 
 namespace rev {
-	GLContext::GLContext(const SPWindow& w) {
+	GLContext::GLContext(const HWin& w) {
 		_ctx = SDLAssert(SDL_GL_CreateContext, w->getWindow());
 	}
-	GLContext_SP GLContext::CreateContext(const SPWindow& w, bool bShare) {
+	GLContext_SP GLContext::CreateContext(const HWin& w, bool bShare) {
 		// SharedContext設定なのにCurrentContextがセットされていない場合はエラー
 		Assert(!bShare || SDL_GL_GetCurrentContext(), "SharedContext flag has set, however there is no active context");
 		Window::SetGLAttributes(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, bShare ? 1 : 0);
@@ -16,7 +16,7 @@ namespace rev {
 		makeCurrent();
 		D_SDLAssert(SDL_GL_DeleteContext, _ctx);
 	}
-	void GLContext::makeCurrent(const SPWindow& w) {
+	void GLContext::makeCurrent(const HWin& w) {
 		D_SDLAssert(SDL_GL_MakeCurrent, w->getWindow(), _ctx);
 		_spWindow = w;
 	}

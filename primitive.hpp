@@ -11,10 +11,8 @@ namespace rev {
 	}
 	struct VSemAttr;
 	using VSemAttrV = std::vector<VSemAttr>;
-	class VDecl;
-	using VDecl_SP = std::shared_ptr<VDecl>;
 	struct Primitive : IDebugGui {
-		VDecl_SP	vdecl;
+		HVDecl		vdecl;
 		HVb			vb[MaxVStream];
 		HIb			ib;
 		DrawMode	drawMode;
@@ -45,6 +43,4 @@ namespace rev {
 		bool hasInfo() const noexcept;
 		DEF_DEBUGGUI_PROP
 	};
-	using Primitive_SP = std::shared_ptr<Primitive>;
-	using Primitive_WP = std::weak_ptr<Primitive>;
 }

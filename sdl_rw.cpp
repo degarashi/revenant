@@ -125,13 +125,13 @@ namespace rev {
 	}
 
 	// --------------------- RWops::VectorData ---------------------
-	RWops::VectorData::VectorData(const URI_SP& uri, ByteBuff&& b):
+	RWops::VectorData::VectorData(const HURI& uri, ByteBuff&& b):
 		_uri(uri),
 		_buff(std::move(b))
 	{
 		_init(SDLAssert(SDL_RWFromMem, _buff.data(), _buff.size()));
 	}
-	RWops::VectorData::VectorData(const URI_SP& uri, const void* ptr, const std::size_t size):
+	RWops::VectorData::VectorData(const HURI& uri, const void* ptr, const std::size_t size):
 		VectorData(
 			uri,
 			ByteBuff(
@@ -211,14 +211,14 @@ namespace rev {
 			cb
 		);
 	}
-	RWops RWops::FromByteBuffMove(const URI_SP& uri, ByteBuff&& buff, const Callback_SP& cb) {
+	RWops RWops::FromByteBuffMove(const HURI& uri, ByteBuff&& buff, const Callback_SP& cb) {
 		return RWops(
 			Access::Read|Access::Write,
 			std::make_unique<VectorData>(uri, std::move(buff)),
 			cb
 		);
 	}
-	RWops RWops::FromVector(const URI_SP& uri, const void* mem, const std::size_t size, const Callback_SP& cb) {
+	RWops RWops::FromVector(const HURI& uri, const void* mem, const std::size_t size, const Callback_SP& cb) {
 		return RWops(
 			Access::Read|Access::Write,
 			std::make_unique<VectorData>(uri, mem, size),

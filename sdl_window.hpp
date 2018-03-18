@@ -1,12 +1,10 @@
 #pragma once
 #include <SDL_video.h>
-#include <memory>
+#include "handle/sdl.hpp"
 #include "lubee/size.hpp"
 #include "spine/enum.hpp"
 
 namespace rev {
-	class Window;
-	using SPWindow = std::shared_ptr<Window>;
 	class Window {
 		public:
 			enum class Stat {
@@ -75,9 +73,9 @@ namespace rev {
 				GetGLAttributes(std::forward<Ts>(ts)...);
 			}
 
-			static SPWindow Create(const Param& p);
-			static SPWindow Create(const std::string& title, int w, int h, uint32_t flag=0);
-			static SPWindow Create(const std::string& title, int x, int y, int w, int h, uint32_t flag=0);
+			static HWin Create(const Param& p);
+			static HWin Create(const std::string& title, int w, int h, uint32_t flag=0);
+			static HWin Create(const std::string& title, int x, int y, int w, int h, uint32_t flag=0);
 			~Window();
 
 			void setFullscreen(bool bFull) noexcept;

@@ -1,6 +1,6 @@
 #pragma once
 #include "handle/rw.hpp"
-#include <memory>
+#include "handle/uri.hpp"
 #include <algorithm>
 #include <vector>
 
@@ -17,21 +17,20 @@ namespace rev {
 		virtual HRW openURI(const URI& uri, int access) const = 0;
 		virtual ~URIHandler() {}
 	};
-	using UriHandler_SP = std::shared_ptr<URIHandler>;
 
 	class UriHandlerV {
 		private:
 			using Priority = uint32_t;
-			using HandlerPair = std::pair<Priority, UriHandler_SP>;
+			using HandlerPair = std::pair<Priority, HURIHandler>;
 			using HandlerVec = std::vector<HandlerPair>;
 			template <class Ar>
 			friend void serialize(Ar&, UriHandlerV&);
 
 			HandlerVec	_handler;
-			auto _findHandler(const UriHandler_SP& h) const;
+			auto _findHandler(const HURIHandler& h) const;
 		public:
-			void addHandler(const Priority prio, const UriHandler_SP& h);
-			void remHandler(const UriHandler_SP& h);
+			void addHandler(const Priority prio, const HURIHandler& h);
+			void remHandler(const HURIHandler& h);
 			HRW procHandler(const URI& uri, const int access) const;
 			HRW procHandler(const std::string& uri, const int access) const ;
 			void clearHandler();

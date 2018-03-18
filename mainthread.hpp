@@ -4,6 +4,7 @@
 #include "mainproc.hpp"
 #include "dir.hpp"
 #include "spinlock.hpp"
+#include "handle/opengl.hpp"
 #include <unordered_set>
 
 namespace rev {
@@ -12,8 +13,6 @@ namespace rev {
 
 	class Window;
 	class DrawThread;
-	class IEffect;
-	using HFx = std::shared_ptr<IEffect>;
 	class FNotify;
 	class Camera2DMgr;
 	class Camera3DMgr;

@@ -8,7 +8,7 @@
 #include "../../tech_pass.hpp"
 
 // ----------------------- Sprite -----------------------
-Primitive_SP Sprite2D::MakeData(lubee::IConst<0>) {
+rev::HPrim Sprite2D::MakeData(lubee::IConst<0>) {
 	auto ret = std::make_shared<rev::Primitive>();
 
 	// 大きさ1の矩形を定義して後でスケーリング
@@ -30,10 +30,10 @@ Primitive_SP Sprite2D::MakeData(lubee::IConst<0>) {
 	info.offsetElem = 0;
 	return ret;
 }
-rev::Tech_SP Sprite2D::MakeData(lubee::IConst<1>) {
+rev::HTech Sprite2D::MakeData(lubee::IConst<1>) {
 	return mgr_gl.loadTechPass("sprite2d.glx")->getTechnique("Sprite|Default");
 }
-rev::Tech_SP Sprite2D::GetDefaultTech() {
+rev::HTech Sprite2D::GetDefaultTech() {
 	return s_defaultTech.GetData();
 }
 
@@ -77,8 +77,8 @@ void Sprite2D::outputDrawTag(rev::DrawTag& d) const {
 
 // ---------------------- Sprite頂点宣言 ----------------------
 const rev::SingletonDataLazy<rev::VDecl, vertex::sprite, 0> vertex::sprite::s_vdecl;
-rev::VDecl_SP vertex::sprite::MakeData(lubee::IConst<0>) {
-	return rev::VDecl_SP{
+rev::HVDecl vertex::sprite::MakeData(lubee::IConst<0>) {
+	return rev::HVDecl{
 		new rev::VDecl({
 			{0,0, GL_FLOAT, GL_FALSE, 3, {rev::VSem::POSITION, 0}},
 			{0,12, GL_FLOAT, GL_FALSE, 2, {rev::VSem::TEXCOORD, 0}}

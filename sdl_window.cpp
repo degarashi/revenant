@@ -88,14 +88,14 @@ namespace rev {
 			Window::SetGLAttributes(c_AttrId[i], this->*c_AttrPtr[i]);
 	}
 	// --------------------- Window ---------------------
-	SPWindow Window::Create(const Param& p) {
+	HWin Window::Create(const Param& p) {
 		return Create(p.title, p.posx, p.posy, p.size.width, p.size.height, p.flag);
 	}
-	SPWindow Window::Create(const std::string& title, const int w, const int h, const uint32_t flag) {
+	HWin Window::Create(const std::string& title, const int w, const int h, const uint32_t flag) {
 		return Create(title, 128, 128, w, h, flag);
 	}
-	SPWindow Window::Create(const std::string& title, const int x, const int y, const int w, const int h, const uint32_t flag) {
-		return SPWindow(new Window(SDLWarn(SDL_CreateWindow, title.c_str(), x, y, w, h, flag|SDL_WINDOW_OPENGL)));
+	HWin Window::Create(const std::string& title, const int x, const int y, const int w, const int h, const uint32_t flag) {
+		return HWin(new Window(SDLWarn(SDL_CreateWindow, title.c_str(), x, y, w, h, flag|SDL_WINDOW_OPENGL)));
 	}
 	Window::Window(SDL_Window* w) noexcept:
 		_window(w)

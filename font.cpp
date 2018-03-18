@@ -96,8 +96,8 @@ namespace rev {
 
 	// --------------------------- VDecl for text ---------------------------
 	const SingletonDataLazy<VDecl, vertex::text, 0> vertex::text::s_decl;
-	VDecl_SP vertex::text::MakeData(lubee::IConst<0>) {
-		return VDecl_SP(
+	HVDecl vertex::text::MakeData(lubee::IConst<0>) {
+		return HVDecl(
 			new VDecl({
 				{0, 0, GL_FLOAT, GL_FALSE, 2, {VSem::POSITION, 0}},
 				{0, 8, GL_FLOAT, GL_FALSE, 3, {VSem::TEXCOORD, 0}}
@@ -236,10 +236,10 @@ namespace rev {
 	namespace {
 		const Name Tech_Id("Text|Default");
 	}
-	Tech_SP TextObj::MakeData(lubee::IConst<0>) {
+	HTech TextObj::MakeData(lubee::IConst<0>) {
 		return mgr_gl.loadTechPass("text.glx")->getTechnique(Tech_Id);
 	}
-	Tech_SP TextObj::GetDefaultTech() {
+	HTech TextObj::GetDefaultTech() {
 		return s_defaultTech.GetData();
 	}
 

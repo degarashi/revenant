@@ -26,7 +26,7 @@ namespace rev {
 			public:
 				using Buffer_OP = spi::Optional<Buffer>;
 				// vertex stream
-				VDecl_SP	spVDecl;
+				HVDecl		spVDecl;
 				Buffer_OP	vbuff[MaxVStream];
 				VSemAttrV	vAttrId;
 				// index stream

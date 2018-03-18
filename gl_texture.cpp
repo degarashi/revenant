@@ -282,9 +282,9 @@ namespace rev {
 			\param[in]	bP2		trueなら2の乗数サイズへ変換
 			\param[in]	bMip	trueならミップマップ生成
 		*/
-		Size_Fmt WritePixelData(const GLenum tflag, const Surface_SP& sfc, const InCompressedFmt_OP fmt, const bool bP2, const bool bMip) {
+		Size_Fmt WritePixelData(const GLenum tflag, const HSfc& sfc, const InCompressedFmt_OP fmt, const bool bP2, const bool bMip) {
 			// SDLフォーマットから適したOpenGLフォーマットへ変換
-			Surface_SP tsfc = sfc;
+			HSfc tsfc = sfc;
 			GLFormatDesc desc;
 			if(fmt) {
 				desc = *GLFormat::QueryInfo(*fmt);
@@ -343,7 +343,7 @@ namespace rev {
 		}
 		//! texのfaceにhRWのピクセルデータを書き込む
 		Size_Fmt LoadTexture(const IGLTexture& tex, const HRW& hRW, const CubeFace face) {
-			const Surface_SP sfc = Surface::Load(hRW);
+			const HSfc sfc = Surface::Load(hRW);
 			const GLenum tflag = tex.getFaceFlag(face);
 			const auto tbd = tex.use();
 			return WritePixelData(tflag, sfc, tex.getFormat(), true, tex.isMipmap());
@@ -353,12 +353,12 @@ namespace rev {
 		// 簡単の為に一旦SDL_Surfaceに変換
 		const auto info = GLFormat::QueryInfo(format);
 		const int pixelsize = info->numElem* GLFormat::QuerySize(info->baseType);
-		const Surface_SP sfc = Surface::Create(buff, pixelsize*size.width, size.width, size.height, info->sdlFormat);
+		const HSfc sfc = Surface::Create(buff, pixelsize*size.width, size.width, size.height, info->sdlFormat);
 		const auto tbd = tex.use();
 		return WritePixelData(tflag, sfc, spi::none, bP2, bMip);
 	}
 	// ------------------------- Texture_URI -------------------------
-	Texture_URI::Texture_URI(const URI_SP& uri, const MipState miplevel, const InCompressedFmt_OP fmt):
+	Texture_URI::Texture_URI(const HURI& uri, const MipState miplevel, const InCompressedFmt_OP fmt):
 		IGLTexture(miplevel, fmt, lubee::SizeI(0,0), false),
 		_uri(uri)
 	{}
@@ -369,8 +369,8 @@ namespace rev {
 
 	// ------------------------- Texture_CubeURI -------------------------
 	Texture_CubeURI::Texture_CubeURI(
-		const URI_SP& uri0, const URI_SP& uri1, const URI_SP& uri2,
-		const URI_SP& uri3, const URI_SP& uri4, const URI_SP& uri5,
+		const HURI& uri0, const HURI& uri1, const HURI& uri2,
+		const HURI& uri3, const HURI& uri4, const HURI& uri5,
 		const MipState miplevel, const InCompressedFmt_OP fmt
 	):
 		IGLTexture(miplevel, fmt, lubee::SizeI(0,0), true),

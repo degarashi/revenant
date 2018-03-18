@@ -10,12 +10,6 @@ struct ImDrawData;
 using ImTextureID = void*;
 namespace rev {
 	class Window;
-	using SPWindow = std::shared_ptr<Window>;
-	class VDecl;
-	using VDecl_SP = std::shared_ptr<VDecl>;
-	struct ITech;
-	using Tech_SP = std::shared_ptr<ITech>;
-
 	#define mgr_gui (::rev::ImGui_SDL2::ref())
 	class ImGui_SDL2 :
 		public spi::Singleton<ImGui_SDL2>
@@ -24,13 +18,13 @@ namespace rev {
 			HTex		_font;
 			HInput		_keyboard,
 						_mouse;
-			Tech_SP		_tech;
+			HTech		_tech;
 			HFx			_effect;
 			struct {
 				GLint	texture,
 						projMat;
 			} _unif;
-			VDecl_SP	_vdecl;
+			HVDecl	_vdecl;
 
 			using Void_SPC = std::shared_ptr<const void>;
 			using ResV = std::list<Void_SPC>;

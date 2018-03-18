@@ -19,7 +19,4 @@ namespace rev {
 		int			attrId;
 	};
 	using VSemAttrV = std::vector<VSemAttr>;
-
-	class VDecl;
-	using VDecl_SP = std::shared_ptr<VDecl>;
 }

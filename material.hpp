@@ -4,14 +4,12 @@
 #include "uniform_ent.hpp"
 
 namespace rev {
-	struct GLState;
-	using GLState_SP = std::shared_ptr<GLState>;
-	using GLState_SPV = std::vector<GLState_SP>;
+	using GLState_SPV = std::vector<HGLState>;
 	//! Techに追加パラメータを付加した物
 	class Material : public ITech {
 		private:
 			#define SEQ \
-				((Base)(Tech_SP)) \
+				((Base)(HTech)) \
 				((M_Uniform)(UniformEnt)(Base)) \
 				((F_DefaultValue)(UniformEnt)(M_Uniform)) \
 				((M_Setting)(GLState_SPV)) \

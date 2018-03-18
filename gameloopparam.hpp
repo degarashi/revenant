@@ -2,13 +2,9 @@
 #include "lubee/size.hpp"
 #include "handle/opengl.hpp"
 #include "handle/object.hpp"
+#include "handle/uri.hpp"
 
 namespace rev {
-	class URI;
-	using URI_SP = std::shared_ptr<URI>;
-	class Window;
-	using Window_SP = std::shared_ptr<Window>;
-
 	struct MainProc;
 	struct DrawProc;
 	struct GameloopParam {
@@ -19,7 +15,7 @@ namespace rev {
 		//! 組織名(一時ファイル用)
 		virtual const std::string& getOrgName() const = 0;
 		//! パス記述ファイル名
-		virtual const URI_SP& getPathfile() const = 0;
+		virtual const HURI& getPathfile() const = 0;
 		virtual HFx makeEffect() const = 0;
 		virtual MainProc* makeMainProc() const = 0;
 		virtual DrawProc* makeDrawProc() const = 0;

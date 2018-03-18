@@ -31,8 +31,8 @@ namespace {
 namespace rev {
 	namespace {
 		struct VDMaker {
-			static VDecl_SP MakeData(lubee::IConst<0>) {
-				return VDecl_SP(
+			static HVDecl MakeData(lubee::IConst<0>) {
+				return HVDecl(
 					new VDecl{
 						{0,0, GL_FLOAT, GL_FALSE, 2, {VSem::POSITION, 0}},
 						{0,8, GL_FLOAT, GL_FALSE, 2, {VSem::TEXCOORD, 0}},

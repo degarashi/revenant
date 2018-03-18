@@ -108,17 +108,17 @@ namespace rev {
 				}
 				GLState_SPV exportSetting() const {
 					struct Hash {
-						std::size_t operator()(const GLState_SP& s) const noexcept {
+						std::size_t operator()(const HGLState& s) const noexcept {
 							return s->getHash();
 						}
 					};
 					struct Equal {
-						bool operator()(const GLState_SP& s0, const GLState_SP& s1) const noexcept {
+						bool operator()(const HGLState& s0, const HGLState& s1) const noexcept {
 							return *s0 == *s1;
 						}
 					};
-					std::unordered_set<GLState_SP, Hash, Equal> set;
-					const auto ovr = [&set](GLState_SP&& sp){
+					std::unordered_set<HGLState, Hash, Equal> set;
+					const auto ovr = [&set](HGLState&& sp){
 						const auto itr = set.find(sp);
 						if(itr != set.end())
 							set.erase(itr);
