@@ -6,4 +6,6 @@ namespace rev {
 	DEF_HANDLE(Window, Win)
 	class Surface;
 	DEF_HANDLE(Surface, Sfc)
+	class RWops;
+	DEF_HANDLE(RWops, RW)
 }
