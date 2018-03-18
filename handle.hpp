@@ -15,11 +15,6 @@ namespace rev {
 		DEF_NAME(AGroup);
 		#undef DEF_NAME
 	}
-	struct ResourceNotFound : std::runtime_error {
-		ResourceNotFound(const std::string& name):
-			std::runtime_error("resource: " + name + "is not found")
-		{}
-	};
 
 	#define DEF_HANDLE(typ, name) \
 		using H##name = std::shared_ptr<typ>; \

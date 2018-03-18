@@ -1,5 +1,6 @@
 #pragma once
 #include "lubee/deep_cmp.hpp"
+#include <stdexcept>
 
 namespace rev {
 	#define DEF_RESOURCE_EQUAL bool deepCmp(const Resource& r) const noexcept { return _deepCmp(*this, r); }
@@ -14,5 +15,10 @@ namespace rev {
 			return false;
 		}
 		DEF_RESOURCE_EQUAL
+	};
+	struct ResourceNotFound : std::runtime_error {
+		ResourceNotFound(const std::string& name):
+			std::runtime_error("resource: " + name + "is not found")
+		{}
 	};
 }
