@@ -4,7 +4,7 @@
 #include "frea/expquat.hpp"
 #include "lubee/meta/typelist.hpp"
 #include "upobj.hpp"
-#include "handle.hpp"
+#include "handle/resource.hpp"
 #include "lv_common.hpp"
 #include <boost/variant.hpp>
 

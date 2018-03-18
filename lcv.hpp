@@ -5,6 +5,7 @@
 #include "luaimport_types.hpp"
 #include "rewindtop.hpp"
 #include "lcvalue.hpp"
+#include "handle/rw.hpp"
 #include <ostream>
 #include <unordered_map>
 

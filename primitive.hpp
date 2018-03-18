@@ -1,8 +1,8 @@
 #pragma once
-#include "handle.hpp"
 #include "glx_const.hpp"
 #include "gl_types.hpp"
 #include "debuggui_if.hpp"
+#include "handle/opengl.hpp"
 #include <vector>
 
 namespace rev {

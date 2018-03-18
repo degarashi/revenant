@@ -2,7 +2,8 @@
 #include <limits>
 #include <cstdint>
 #include "spine/optional.hpp"
-#include "handle.hpp"
+#include "handle/object.hpp"
+#include "handle/opengl.hpp"
 #include "debuggui_if.hpp"
 #include "resource.hpp"
 

@@ -2,10 +2,12 @@
 #include "spine/singleton.hpp"
 #include "lcvalue.hpp"
 #include "debuggui_if.hpp"
+#include "handle/object.hpp"
 #include <vector>
 
 namespace rev {
 	class IScene;
+	class IEffect;
 	#define mgr_scene (::rev::SceneMgr::ref())
 	//! シーンスタックを管理
 	class SceneMgr :

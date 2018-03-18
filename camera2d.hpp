@@ -2,7 +2,7 @@
 #include "spine/rflag.hpp"
 #include "beat/pose2d.hpp"
 #include "frea/matrix.hpp"
-#include "handle.hpp"
+#include "handle/camera.hpp"
 #include "spine/resmgr.hpp"
 #include "spine/singleton.hpp"
 #include "debuggui_if.hpp"

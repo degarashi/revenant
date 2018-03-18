@@ -4,6 +4,7 @@
 #include "lubee/wrapper.hpp"
 #include "drawtoken/token.hpp"
 #include "sdl_tls.hpp"
+#include "handle/opengl.hpp"
 #include "lubee/rect.hpp"
 #include <boost/variant.hpp>
 

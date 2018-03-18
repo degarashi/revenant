@@ -1,5 +1,6 @@
 #pragma once
 #include "urihandler.hpp"
+#include "handle/resource.hpp"
 
 namespace rev {
 	using Priority = uint32_t;

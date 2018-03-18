@@ -1,5 +1,6 @@
 #pragma once
 #include "../gl_buffer.hpp"
+#include "../handle/opengl.hpp"
 
 namespace rev {
 	namespace draw {

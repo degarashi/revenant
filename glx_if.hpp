@@ -1,6 +1,7 @@
 #pragma once
 #include "differential.hpp"
 #include "gl_types.hpp"
+#include "handle/opengl.hpp"
 #include <unordered_map>
 
 namespace lubee {

@@ -1,6 +1,7 @@
 #pragma once
 #include "lubee/size.hpp"
-#include "handle.hpp"
+#include "handle/opengl.hpp"
+#include "handle/object.hpp"
 
 namespace rev {
 	class URI;

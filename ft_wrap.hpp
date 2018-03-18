@@ -5,7 +5,8 @@
 #include "spine/enum.hpp"
 #include "spine/resmgr.hpp"
 #include "spine/singleton.hpp"
-#include "handle.hpp"
+#include "handle/rw.hpp"
+#include "handle/text.hpp"
 #include <vector>
 
 namespace rev {

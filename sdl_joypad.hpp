@@ -1,5 +1,5 @@
 #pragma once
-#include "handle.hpp"
+#include "handle/input.hpp"
 #include <SDL_joystick.h>
 
 namespace rev {

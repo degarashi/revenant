@@ -3,6 +3,8 @@
 #include "../../spinlock.hpp"
 #include "../../util/texthud.hpp"
 #include "../../scene.hpp"
+#include "../../handle/input.hpp"
+#include "../../handle/camera.hpp"
 
 namespace rev {
 	namespace test {

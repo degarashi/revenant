@@ -5,8 +5,10 @@
 #include "resmgr_app.hpp"
 #include "lubee/size.hpp"
 #include "resmgr_base.hpp"
+#include "handle/opengl.hpp"
 
 namespace rev {
+	class GLFBuffer;
 	class GLFBufferTmp;
 	class LuaState;
 	#define mgr_gl (::rev::GLRes::ref())

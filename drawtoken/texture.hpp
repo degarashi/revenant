@@ -1,6 +1,7 @@
 #pragma once
 #include "drawtoken_t.hpp"
 #include "../gl_texture.hpp"
+#include "../handle/opengl.hpp"
 
 namespace rev {
 	namespace draw {

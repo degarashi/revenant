@@ -1,7 +1,6 @@
 #pragma once
 #include "gl_header.hpp"
 #include "spine/optional.hpp"
-#include "handle.hpp"
 #include "spine/enum.hpp"
 #include "debuggui_if.hpp"
 #include "resource.hpp"

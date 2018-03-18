@@ -1,5 +1,6 @@
 #pragma once
-#include "handle.hpp"
+#include "handle/opengl.hpp"
+#include "handle/input.hpp"
 #include "spine/singleton.hpp"
 #include "clock.hpp"
 #include "gl_header.hpp"

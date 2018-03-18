@@ -1,8 +1,8 @@
 #pragma once
-#include "handle.hpp"
 #include "drawtag.hpp"
 #include "debuggui_if.hpp"
 #include "spine/enum.hpp"
+#include "handle/object.hpp"
 #include <vector>
 
 namespace rev {
