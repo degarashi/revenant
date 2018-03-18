@@ -7,6 +7,7 @@
 #include <unordered_map>
 
 namespace rev {
+	using Name = std::string;
 	class UniformEnt;
 	struct VSemAttr;
 	using VSemAttrV = std::vector<VSemAttr>;

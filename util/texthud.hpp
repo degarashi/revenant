@@ -5,6 +5,7 @@
 #include "lubee/wrapper.hpp"
 
 namespace rev {
+	using Name = std::string;
 	namespace util {
 		//! テキスト描画クラス (for HUD)
 		class TextHUD : public Text {
