@@ -52,11 +52,11 @@ namespace rev {
 				}
 			}
 		public:
-			// CB = function<Dat (const URI&)>
-			// INIT = function<void (Resource)>
-			template <class T2, class CB>
-			auto loadResourceApp(const URI& key, CB&& cb) {
-				return base_t::template acquireWithMake<T2>(key, cb);
+			// (acquireWithMakeをそのまま呼ぶと名前がわかりにくい為)
+			// Make: args=(const URIWrap&, Constructor<T2>&)
+			template <class T2, class Make>
+			auto loadResourceApp(const URI& key, Make&& mk) {
+				return base_t::template acquireWithMake<T2>(key, mk);
 			}
 			bool deepCmp(const ResMgrApp& r) const noexcept {
 				return static_cast<const base_t&>(*this).deepCmp(r) &&
