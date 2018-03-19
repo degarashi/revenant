@@ -37,7 +37,7 @@ namespace rev {
 				self._actPause->addLink(hKb, InputFlag::Button, VKey::F1);
 
 				// カメラ初期化
-				self._camera = mgr_cam2d.emplace();
+				self._camera = Camera2D::NewS();
 				auto scr = mgr_info.getScreenSize();
 				self._camera->setAspectRatio(scr.width / scr.height);
 

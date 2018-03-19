@@ -157,6 +157,8 @@ namespace rev { \
 #define LUAIMPLEMENT_BASE luaNS::Object
 #define DEF_LUAIMPLEMENT_SPTR(mgr, clazz, class_raw, base, seq_smethod, seq_member, seq_method, seq_ctor) \
 	DEF_LUAIMPLEMENT_IMPL(mgr, clazz, class_raw, base, seq_smethod, seq_member, seq_method, seq_ctor, ::rev::MakeHandle)
+#define DEF_LUAIMPLEMENT_SPOBJ(clazz, class_raw, base, seq_smethod, seq_member, seq_method, seq_ctor) \
+	DEF_LUAIMPLEMENT_IMPL(::rev::lua::Dummy, clazz, class_raw, base, seq_smethod, seq_member, seq_method, seq_ctor, ::rev::MakeSPObject)
 #define DEF_LUAIMPLEMENT_PTR(clazz, class_raw, base, seq_smethod, seq_member, seq_method, seq_ctor) \
 	DEF_LUAIMPLEMENT_IMPL(::rev::lua::Dummy, clazz, class_raw, base, seq_smethod, seq_member, seq_method, seq_ctor, ::rev::MakeObject)
 #define DEF_LUAIMPLEMENT_PTR_NOCTOR(clazz, class_raw, base, seq_smethod, seq_member, seq_method) \

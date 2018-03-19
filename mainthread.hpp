@@ -14,8 +14,6 @@ namespace rev {
 	class Window;
 	class DrawThread;
 	class FNotify;
-	class Camera2DMgr;
-	class Camera3DMgr;
 	class PointerMgr;
 	class InputMgr;
 	class SystemInfo;
@@ -52,8 +50,6 @@ namespace rev {
 			using SPtr = std::shared_ptr<T>;
 			struct Manager : spi::Singleton<Manager> {
 				SPtr<LSysFunc>				lsys;
-				SPtr<Camera2DMgr>			cam2;
-				SPtr<Camera3DMgr>			cam3;
 				SPtr<InputMgr>				inpm;
 				SPtr<PointerMgr>			ptrm;
 				SPtr<SystemInfo>			info;

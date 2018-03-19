@@ -34,8 +34,8 @@ DEF_LUAIMPLEMENT_PTR_NOCTOR(
 )
 
 #include "../camera3d.hpp"
-DEF_LUAIMPLEMENT_SPTR(
-	rev::Camera3DMgr, rev::Camera3D, Camera3D,
+DEF_LUAIMPLEMENT_SPOBJ(
+	rev::Camera3D, Camera3D,
 	LUAIMPLEMENT_BASE,
 	NOTHING,
 	NOTHING,
@@ -47,8 +47,8 @@ DEF_LUAIMPLEMENT_SPTR(
 )
 
 #include "../camera2d.hpp"
-DEF_LUAIMPLEMENT_SPTR(
-	rev::Camera2DMgr, rev::Camera2D, Camera2D,
+DEF_LUAIMPLEMENT_SPOBJ(
+	rev::Camera2D, Camera2D,
 	LUAIMPLEMENT_BASE,
 	NOTHING,
 	NOTHING,

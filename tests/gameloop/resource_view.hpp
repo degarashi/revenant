@@ -6,8 +6,7 @@ namespace rev {
 	class ResourceView : public spi::Singleton<ResourceView> {
 		private:
 			struct {
-				bool	camera,
-						gl,
+				bool	gl,
 						scene;
 			} _show;
 		public:

@@ -10,7 +10,11 @@
 
 namespace rev {
 	/*! 姿勢の保持はPoseクラスが行い，カメラ固有の変数だけを持つ */
-	class Camera3D : public lubee::CheckAlign<Camera3D>, public Resource {
+	class Camera3D :
+		public lubee::CheckAlign<Camera3D>,
+		public lubee::AAllocator<Camera3D>,
+		public Resource
+	{
 		private:
 			using AMat4 = frea::AMat4;
 			using AVec4 = frea::AVec4;
@@ -66,11 +70,6 @@ namespace rev {
 			bool operator != (const Camera3D& c) const noexcept;
 			DEF_RESOURCE_EQUAL
 	};
-	#define mgr_cam (::rev::Camera3DMgr::ref())
-	class Camera3DMgr:
-		public spi::ResMgr<Camera3D, lubee::AlignedPool<Camera3D>>,
-		public spi::Singleton<Camera3DMgr>
-	{};
 }
 #include "luaimport.hpp"
 DEF_LUAIMPORT(rev::Camera3D)

@@ -16,6 +16,7 @@ namespace rev {
 	*/
 	class Camera2D :
 		public lubee::CheckAlign<Camera2D>,
+		public lubee::AAllocator<Camera2D>,
 		public Resource,
 		public IDebugGui
 	{
@@ -61,11 +62,6 @@ namespace rev {
 			bool operator != (const Camera2D& c) const noexcept;
 			DEF_RESOURCE_EQUAL
 	};
-	#define mgr_cam2d (::rev::Camera2DMgr::ref())
-	class Camera2DMgr:
-		public spi::ResMgr<Camera2D, lubee::AlignedPool<Camera2D>>,
-		public spi::Singleton<Camera2DMgr>
-	{};
 }
 #include "luaimport.hpp"
 DEF_LUAIMPORT(rev::Camera2D)

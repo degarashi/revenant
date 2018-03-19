@@ -27,8 +27,6 @@ namespace rev {
 	}
 	void MainThread::_InitManagers(Manager& m, const GameloopParam& param, const Window& w) {
 		m.lsys = std::make_shared<LSysFunc>();
-		m.cam2 = std::make_shared<Camera2DMgr>();
-		m.cam3 = std::make_shared<Camera3DMgr>();
 		m.ptrm = std::make_shared<PointerMgr>();
 		m.inpm = std::make_shared<InputMgr>();
 		m.info = std::make_shared<SystemInfo>();

@@ -15,17 +15,11 @@ namespace rev {
 	{}
 	void ResourceView::drawMenu() {
 		if(const auto m = debug::MenuPush("ResourceViewer")) {
-			ImGui::MenuItem("Camera", nullptr, &_show.camera);
 			ImGui::MenuItem("OpenGL", nullptr, &_show.gl);
 			ImGui::MenuItem("Scene", nullptr, &_show.scene);
 		}
 	}
 	void ResourceView::drawView() {
-		if(_show.camera){
-			if(const auto w = debug::WindowPush("Camera-Resource", &_show.camera, {640.f, 480.f})) {
-				debug::Edit(nullptr, mgr_cam2d);
-			}
-		}
 		if(_show.gl) {
 			if(const auto w = debug::WindowPush("GL-Resource", &_show.gl, {640.f, 480.f})) {
 				debug::Edit(nullptr, mgr_gl);
