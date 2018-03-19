@@ -85,7 +85,7 @@ namespace rev {
 			void setWindowClip(bool); */
 	class Mouse : public MouseDep, public Input {
 		DZoneL		_axisDZ = DZoneL(MouseDep::dep_numAxes());
-		HPtr		_hPtr = mgr_pointer.emplace(TPos2D::Clean);
+		HPtr		_hPtr = std::make_shared<TPos2D>(TPos2D::Clean);
 		const static std::string		s_name;
 
 		public:

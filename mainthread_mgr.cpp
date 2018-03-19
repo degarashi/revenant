@@ -27,7 +27,6 @@ namespace rev {
 	}
 	void MainThread::_InitManagers(Manager& m, const GameloopParam& param, const Window& w) {
 		m.lsys = std::make_shared<LSysFunc>();
-		m.ptrm = std::make_shared<PointerMgr>();
 		m.inpm = std::make_shared<InputMgr>();
 		m.info = std::make_shared<SystemInfo>();
 		// 初回はここで情報をセットする (以降はIMainProc::runUにて)

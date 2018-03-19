@@ -21,8 +21,6 @@ namespace rev {
 		void setNewRel(const frea::Vec2& p) noexcept;
 		const char* getResourceName() const noexcept override;
 	};
-	#define mgr_pointer (::rev::PointerMgr::ref())
-	class PointerMgr : public spi::ResMgr<TPos2D>, public spi::Singleton<PointerMgr> {};
 
 	struct RecvPointer {
 		virtual void newPointer(WPtr wptr) = 0;

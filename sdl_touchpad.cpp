@@ -19,7 +19,7 @@ namespace rev {
 				auto itr = _fmap.find(f.fingerId);
 				switch(e.type) {
 					case SDL_FINGERDOWN: {
-						HPtr hP = mgr_pointer.emplace();
+						HPtr hP = std::make_shared<TPos2D>();
 						r->newPointer(hP);
 						_fmap[f.fingerId] = std::move(hP);
 					} break;

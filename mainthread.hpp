@@ -14,7 +14,6 @@ namespace rev {
 	class Window;
 	class DrawThread;
 	class FNotify;
-	class PointerMgr;
 	class InputMgr;
 	class SystemInfo;
 	namespace draw {
@@ -51,7 +50,6 @@ namespace rev {
 			struct Manager : spi::Singleton<Manager> {
 				SPtr<LSysFunc>				lsys;
 				SPtr<InputMgr>				inpm;
-				SPtr<PointerMgr>			ptrm;
 				SPtr<SystemInfo>			info;
 				SPtr<AppPath>				appPath;
 				SPtr<GLRes>					glr;
