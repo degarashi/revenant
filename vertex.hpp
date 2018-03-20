@@ -1,6 +1,5 @@
 #pragma once
 #include "spine/enum.hpp"
-#include <memory>
 #include <vector>
 
 #define SEQ_VSEM (POSITION)(NORMAL)(TEXCOORD)(COLOR)(JOINT)(WEIGHT)(BINORMAL)(TANGENT)
