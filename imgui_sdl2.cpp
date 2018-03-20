@@ -34,9 +34,9 @@ namespace rev {
 			static HVDecl MakeData(lubee::IConst<0>) {
 				return HVDecl(
 					new VDecl{
-						{0,0, GL_FLOAT, GL_FALSE, 2, {VSem::POSITION, 0}},
-						{0,8, GL_FLOAT, GL_FALSE, 2, {VSem::TEXCOORD, 0}},
-						{0,16, GL_UNSIGNED_BYTE, GL_TRUE, 4, {VSem::COLOR, 0}}
+						{0,0, GL_FLOAT, GL_FALSE, 2, {VSemEnum::POSITION, 0}},
+						{0,8, GL_FLOAT, GL_FALSE, 2, {VSemEnum::TEXCOORD, 0}},
+						{0,16, GL_UNSIGNED_BYTE, GL_TRUE, 4, {VSemEnum::COLOR, 0}}
 					}
 				);
 			}

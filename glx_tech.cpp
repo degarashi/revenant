@@ -340,7 +340,7 @@ namespace rev {
 
 		struct UniqueChk {
 			GLint		id;
-			VSem::e		sem;
+			VSemEnum::e	sem;
 			const char*	name;
 			bool operator == (const UniqueChk& u) const noexcept {
 				return id == u.id;
@@ -355,7 +355,7 @@ namespace rev {
 		for(auto& p : attrL) {
 			const char* name = p->name.c_str();
 			if(const auto at = prog->getAttribId(name)) {
-				const auto sem = static_cast<VSem::e>(p->sem);
+				const auto sem = static_cast<VSemEnum::e>(p->sem);
 				VSemAttr a;
 				a.sem = VSemantic {
 					sem,

@@ -99,8 +99,8 @@ namespace rev {
 	HVDecl vertex::text::MakeData(lubee::IConst<0>) {
 		return HVDecl(
 			new VDecl({
-				{0, 0, GL_FLOAT, GL_FALSE, 2, {VSem::POSITION, 0}},
-				{0, 8, GL_FLOAT, GL_FALSE, 3, {VSem::TEXCOORD, 0}}
+				{0, 0, GL_FLOAT, GL_FALSE, 2, {VSemEnum::POSITION, 0}},
+				{0, 8, GL_FLOAT, GL_FALSE, 3, {VSemEnum::TEXCOORD, 0}}
 			})
 		);
 	}

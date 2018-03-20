@@ -80,8 +80,8 @@ const rev::SingletonDataLazy<rev::VDecl, vertex::sprite, 0> vertex::sprite::s_vd
 rev::HVDecl vertex::sprite::MakeData(lubee::IConst<0>) {
 	return rev::HVDecl{
 		new rev::VDecl({
-			{0,0, GL_FLOAT, GL_FALSE, 3, {rev::VSem::POSITION, 0}},
-			{0,12, GL_FLOAT, GL_FALSE, 2, {rev::VSem::TEXCOORD, 0}}
+			{0,0, GL_FLOAT, GL_FALSE, 3, {rev::VSemEnum::POSITION, 0}},
+			{0,12, GL_FLOAT, GL_FALSE, 2, {rev::VSemEnum::TEXCOORD, 0}}
 		})
 	};
 }
