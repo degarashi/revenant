@@ -28,7 +28,7 @@ namespace rev {
 				// vertex stream
 				HVDecl		spVDecl;
 				Buffer_OP	vbuff[MaxVStream];
-				VSemAttrV	vAttrId;
+				VSem_AttrV	vAttrId;
 				// index stream
 				Buffer_OP	ibuff;
 

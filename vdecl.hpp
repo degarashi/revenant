@@ -5,6 +5,7 @@
 #include "glx_const.hpp"
 
 namespace rev {
+	using VSem_AttrV = std::vector<VSem_AttrId>;
 	// 主にGLEffectからVDeclへのデータ受け渡しで使われる
 	struct VData {
 		using BuffA = const spi::Optional<draw::Buffer> (&)[MaxVStream];
@@ -12,9 +13,9 @@ namespace rev {
 		// [StreamIndex] -> Buffer(optional)
 		BuffA				buff;
 		// [VSemanticsIndex] -> AttributeId
-		const VSemAttrV&	attr;
+		const VSem_AttrV&	attr;
 
-		VData(BuffA b, const VSemAttrV& at):
+		VData(BuffA b, const VSem_AttrV& at):
 			buff(b),
 			attr(at)
 		{}
@@ -45,7 +46,7 @@ namespace rev {
 			};
 		private:
 			using VDInfoV = std::vector<VDInfo>;
-			using Func = std::function<void (GLuint, const VSemAttrV&)>;
+			using Func = std::function<void (GLuint, const VSem_AttrV&)>;
 			using FuncV = std::vector<Func>;
 			FuncV		_func;
 			// ストリーム毎のサイズを1次元配列で格納 = 0番から並べる

@@ -9,8 +9,8 @@
 namespace rev {
 	using Name = std::string;
 	class UniformEnt;
-	struct VSemAttr;
-	using VSemAttrV = std::vector<VSemAttr>;
+	struct VSem_AttrId;
+	using VSemAttrV = std::vector<VSem_AttrId>;
 	using UniIdSet = std::unordered_set<GLint>;
 	using GLState_SPV = std::vector<HGLState>;
 	struct ITech : IDebugGui {

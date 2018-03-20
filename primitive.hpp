@@ -9,8 +9,8 @@ namespace rev {
 	namespace draw {
 		class VStream;
 	}
-	struct VSemAttr;
-	using VSemAttrV = std::vector<VSemAttr>;
+	struct VSem_AttrId;
+	using VSemAttrV = std::vector<VSem_AttrId>;
 	struct Primitive : IDebugGui {
 		HVDecl		vdecl;
 		HVb			vb[MaxVStream];

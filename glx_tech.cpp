@@ -356,7 +356,7 @@ namespace rev {
 			const char* name = p->name.c_str();
 			if(const auto at = prog->getAttribId(name)) {
 				const auto sem = static_cast<VSemEnum::e>(p->sem);
-				VSemAttr a;
+				VSem_AttrId a;
 				a.sem = VSemantic {
 					sem,
 					(p->index) ? *p->index : 0

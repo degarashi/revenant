@@ -1,6 +1,5 @@
 #pragma once
 #include "spine/enum.hpp"
-#include <vector>
 
 #define SEQ_VSEM (POSITION)(NORMAL)(TEXCOORD)(COLOR)(JOINT)(WEIGHT)(BINORMAL)(TANGENT)
 
@@ -13,9 +12,9 @@ namespace rev {
 		bool operator == (const VSemantic& v) const noexcept;
 		bool operator < (const VSemantic& v) const noexcept;
 	};
-	struct VSemAttr {
+	// SemanticからシェーダのAttributeIdへの対応付け
+	struct VSem_AttrId {
 		VSemantic	sem;
 		int			attrId;
 	};
-	using VSemAttrV = std::vector<VSemAttr>;
 }

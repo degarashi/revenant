@@ -56,7 +56,7 @@ namespace rev {
 		for(int i=0 ; i<static_cast<int>(countof(stream)) ; i++) {
 			_entIdx[i] = cur;
 			for(auto& t2 : stream[i]) {
-				_func[cur] = [t2](const GLuint stride, const VSemAttrV& attr) {
+				_func[cur] = [t2](const GLuint stride, const VSem_AttrV& attr) {
 					const auto itr = std::find_if(attr.cbegin(), attr.cend(),
 						[s=t2.sem](const auto& a){
 							return a.sem == s;
