@@ -88,7 +88,7 @@ namespace rev {
 	void SystemUniform3D::outputUniforms(UniformEnt& u) const {
 		#define DEF_SETUNIF(name, func) \
 			u.setUniform(sysunif3d::matrix::name, [&](){ \
-				return draw::MakeUniform(spi::AcWrapperValue(func##name())); \
+				return draw::MakeUniform(spi::UnwrapAcValue(func##name())); \
 			});
 		DEF_SETUNIF(World, get)
 		DEF_SETUNIF(WorldInv, get)
