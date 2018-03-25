@@ -28,6 +28,7 @@ namespace rev {
 			virtual void setFramebuffer(const HFb& fb) = 0;
 			virtual HFb getFramebuffer() const = 0;
 			virtual FBRect setViewport(const FBRect& r) = 0;
+			virtual const FBRect& getViewport() const noexcept = 0;
 			virtual FBRect setScissor(const FBRect& r) = 0;
 			virtual void resetFramebuffer() = 0;
 			virtual void setPrimitive(const HPrim& p) noexcept = 0;

@@ -62,6 +62,7 @@ namespace rev {
 			//! アプリケーション初期化時のデフォルトフレームバッファに戻す
 			void resetFramebuffer() override;
 			FBRect setViewport(const FBRect& r) override;
+			const FBRect& getViewport() const noexcept override;
 			FBRect setScissor(const FBRect& r) override;
 
 			// ----------------- Primitive -----------------

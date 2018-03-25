@@ -190,6 +190,9 @@ namespace rev {
 		_bView = true;
 		return prev;
 	}
+	const FBRect& GLEffect::getViewport() const noexcept {
+		return _viewrect;
+	}
 	// MEMO: Viewportのコードと重複しているので後でなんとかする
 	FBRect GLEffect::setScissor(const FBRect& r) {
 		const auto prev = _viewrect;
