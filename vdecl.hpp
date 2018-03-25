@@ -38,14 +38,18 @@ namespace rev {
 							elemSize;		//!< 要素数
 				VSemantic	sem;
 
+				VDInfo() = default;
+				VDInfo(GLuint streamId, GLuint offset, GLuint elemFlag,
+						GLuint bNormalize, GLuint elemSize,
+						VSemantic sem);
 				bool operator == (const VDInfo& v) const;
 				bool operator != (const VDInfo& v) const;
 				#ifdef DEBUGGUI_ENABLED
 					void showAsRow() const;
 				#endif
 			};
-		private:
 			using VDInfoV = std::vector<VDInfo>;
+		private:
 			using Func = std::function<void (GLuint, const VSem_AttrV&)>;
 			using FuncV = std::vector<Func>;
 			FuncV		_func;

@@ -7,6 +7,15 @@
 
 namespace rev {
 	// ----------------- VDecl::VDInfo -----------------
+	VDecl::VDInfo::VDInfo(const GLuint streamId, const GLuint offset, const GLuint elemFlag,
+						const GLuint bNormalize, const GLuint elemSize, const VSemantic sem):
+		streamId(streamId),
+		offset(offset),
+		elemFlag(elemFlag),
+		bNormalize(bNormalize),
+		elemSize(elemSize),
+		sem(sem)
+	{}
 	bool VDecl::VDInfo::operator == (const VDInfo& v) const {
 		if( ((streamId ^ v.streamId)
 			| (offset ^ v.offset)
