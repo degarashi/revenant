@@ -6,14 +6,14 @@
 
 namespace rev {
 	namespace draw {
-		void Unif_Vec_Exec(int idx, GLint id, const void* ptr, int n);
-		template <class T, int DN>
+		void Unif_Vec_Exec(std::size_t idx, GLint id, const void* ptr, std::size_t n);
+		template <class T, std::size_t DN>
 		class Unif_Vec : public Uniform<Unif_Vec<T,DN>> {
 			protected:
 				using base_t = Uniform<Unif_Vec<T,DN>>;
 				using SPT = std::shared_ptr<T>;
-				SPT		_data;
-				int		_nAr;
+				SPT			_data;
+				std::size_t	_nAr;
 
 			public:
 				template <
@@ -42,25 +42,33 @@ namespace rev {
 						V::align
 					))
 				>
-				Unif_Vec(const V* vp, const int n):
+				Unif_Vec(const V* vp, const std::size_t n):
 					_nAr(n)
 				{
 					_data.reset(new T[V::size*n]);
 					auto* dst = _data.get();
-					for(int i=0 ; i<n ; i++) {
+					for(std::size_t i=0 ; i<n ; i++) {
 						std::memcpy(dst, vp, sizeof(T)*V::size);
 						dst += V::size;
 						++vp;
 					}
 				}
-				Unif_Vec(const T* v, const int dim, const int n):
+				Unif_Vec(const T* v, const std::size_t dim, const std::size_t n):
 					_data(new T[dim * n]),
 					_nAr(n)
 				{
 					std::memcpy(_data.get(), v, sizeof(T)*dim*n);
 				}
 				void exec() override {
-					Unif_Vec_Exec(std::is_integral<T>::value * 4 + DN-1, base_t::idUnif, _data.get(), _nAr);
+					std::size_t idx = 0;
+					if constexpr (std::is_integral<T>{}) {
+						if constexpr (std::is_unsigned<T>{}) {
+							idx = 8;
+						} else
+							idx = 4;
+					}
+					idx += DN-1;
+					Unif_Vec_Exec(idx, base_t::idUnif, _data.get(), _nAr);
 				}
 		};
 	}

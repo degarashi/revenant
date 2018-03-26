@@ -4,9 +4,9 @@
 
 namespace rev {
 	namespace draw {
-		void Unif_Mat_Exec(int idx, GLint id, const void* ptr, int n, bool bT);
+		void Unif_Mat_Exec(std::size_t idx, GLint id, const void* ptr, std::size_t n, bool bT);
 		// 要素Tによる行の幅がDNの行列
-		template <class T, int DN>
+		template <class T, std::size_t DN>
 		class Unif_Mat : public Unif_Vec<T,DN> {
 			private:
 				using base_t = Unif_Vec<T,DN>;
@@ -29,7 +29,7 @@ namespace rev {
 						(M::dim_m==M::dim_n)
 					))
 				>
-				Unif_Mat(const M* mp, const int n, const bool bT):
+				Unif_Mat(const M* mp, const std::size_t n, const bool bT):
 					base_t(reinterpret_cast<const T*>(mp->m), M::dim_m*M::dim_m, n),
 					_bT(bT)
 				{}

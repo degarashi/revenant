@@ -57,39 +57,50 @@ namespace rev {
 
 		// -------------- Uniforms --------------
 		namespace {
-			using IGLF_V = void (*)(GLint, const void*, int);
+			using IGLF_V = void (*)(GLint, const void*, std::size_t);
 			const IGLF_V c_iglfV[] = {
-				[](GLint id, const void* ptr, const int n) {
+				// -------- Float --------
+				[](GLint id, const void* ptr, const std::size_t n) {
 					GL.glUniform1fv(id, n, reinterpret_cast<const GLfloat*>(ptr)); },
-				[](GLint id, const void* ptr, const int n) {
+				[](GLint id, const void* ptr, const std::size_t n) {
 					GL.glUniform2fv(id, n, reinterpret_cast<const GLfloat*>(ptr)); },
-				[](GLint id, const void* ptr, const int n) {
+				[](GLint id, const void* ptr, const std::size_t n) {
 					GL.glUniform3fv(id, n, reinterpret_cast<const GLfloat*>(ptr)); },
-				[](GLint id, const void* ptr, const int n) {
+				[](GLint id, const void* ptr, const std::size_t n) {
 					GL.glUniform4fv(id, n, reinterpret_cast<const GLfloat*>(ptr)); },
-				[](GLint id, const void* ptr, const int n) {
+				// -------- Integer --------
+				[](GLint id, const void* ptr, const std::size_t n) {
 					GL.glUniform1iv(id, n, reinterpret_cast<const GLint*>(ptr)); },
-				[](GLint id, const void* ptr, const int n) {
+				[](GLint id, const void* ptr, const std::size_t n) {
 					GL.glUniform2iv(id, n, reinterpret_cast<const GLint*>(ptr)); },
-				[](GLint id, const void* ptr, const int n) {
+				[](GLint id, const void* ptr, const std::size_t n) {
 					GL.glUniform3iv(id, n, reinterpret_cast<const GLint*>(ptr)); },
-				[](GLint id, const void* ptr, const int n) {
-					GL.glUniform4iv(id, n, reinterpret_cast<const GLint*>(ptr)); }
+				[](GLint id, const void* ptr, const std::size_t n) {
+					GL.glUniform4iv(id, n, reinterpret_cast<const GLint*>(ptr)); },
+				// -------- Unsigned Integer --------
+				[](GLint id, const void* ptr, const std::size_t n) {
+					GL.glUniform1uiv(id, n, reinterpret_cast<const GLuint*>(ptr)); },
+				[](GLint id, const void* ptr, const std::size_t n) {
+					GL.glUniform2uiv(id, n, reinterpret_cast<const GLuint*>(ptr)); },
+				[](GLint id, const void* ptr, const std::size_t n) {
+					GL.glUniform3uiv(id, n, reinterpret_cast<const GLuint*>(ptr)); },
+				[](GLint id, const void* ptr, const std::size_t n) {
+					GL.glUniform4uiv(id, n, reinterpret_cast<const GLuint*>(ptr)); },
 			};
-			using IGLF_M = void(*)(GLint, const void*, int, GLboolean);
+			using IGLF_M = void(*)(GLint, const void*, std::size_t, GLboolean);
 			const IGLF_M c_iglfM[] = {
-				[](GLint id, const void* ptr, const int n, const GLboolean bT) {
+				[](GLint id, const void* ptr, const std::size_t n, const GLboolean bT) {
 					GL.glUniformMatrix2fv(id, n, bT, reinterpret_cast<const GLfloat*>(ptr)); },
-				[](GLint id, const void* ptr, const int n, const GLboolean bT) {
+				[](GLint id, const void* ptr, const std::size_t n, const GLboolean bT) {
 					GL.glUniformMatrix3fv(id, n, bT, reinterpret_cast<const GLfloat*>(ptr)); },
-				[](GLint id, const void* ptr, const int n, const GLboolean bT) {
+				[](GLint id, const void* ptr, const std::size_t n, const GLboolean bT) {
 					GL.glUniformMatrix4fv(id, n, bT, reinterpret_cast<const GLfloat*>(ptr)); }
 			};
 		}
-		void Unif_Vec_Exec(const int idx, const GLint id, const void* ptr, const int n) {
+		void Unif_Vec_Exec(const std::size_t idx, const GLint id, const void* ptr, const std::size_t n) {
 			c_iglfV[idx](id, ptr, n);
 		}
-		void Unif_Mat_Exec(const int idx, const GLint id, const void* ptr, const int n, const bool bT) {
+		void Unif_Mat_Exec(const std::size_t idx, const GLint id, const void* ptr, const std::size_t n, const bool bT) {
 			c_iglfM[idx](id, ptr, n, bT ? GL_TRUE : GL_FALSE);
 		}
 	}
