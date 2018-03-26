@@ -106,6 +106,13 @@ namespace rev {
 		#endif
 		std::ostream& print(std::ostream& os) const;
 	};
+	constexpr void DecompDim(const uint32_t) {}
+	template <class... Ts>
+	constexpr void DecompDim(const uint32_t n, uint32_t& d0, Ts&... dst) {
+		d0 = n&0x07;
+		DecompDim(n>>3, dst...);
+	}
+
 	std::ostream& operator << (std::ostream& os, const GLSLFormatDesc& desc);
 
 	class GLFormat {
