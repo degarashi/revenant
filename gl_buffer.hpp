@@ -32,11 +32,6 @@ namespace rev {
 			GLuint getStride() const;
 	};
 
-	template <class T>
-	struct is_vector : std::false_type {};
-	template <class T>
-	struct is_vector<std::vector<T>> : std::true_type {};
-
 	// バッファのDrawTokenはVDeclとの兼ね合いからそのままリストに積まずに
 	// StreamTagで一旦処理するのでスマートポインタではなく直接出力する
 	//! OpenGLバッファクラス
@@ -45,6 +40,11 @@ namespace rev {
 		public GLBufferCore,
 		public std::enable_shared_from_this<GLBuffer>
 	{
+		private:
+			template <class T>
+			struct is_vector : std::false_type {};
+			template <class T>
+			struct is_vector<std::vector<T>> : std::true_type {};
 		private:
 			using SPBuff = std::shared_ptr<void>;
 			SPBuff			_buff;			//!< 再構築の際に必要となるデータ実体(std::vector<T>)
