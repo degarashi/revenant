@@ -3,7 +3,6 @@
 #include "gl_types.hpp"
 #include "debuggui_if.hpp"
 #include "handle/opengl.hpp"
-#include <vector>
 
 namespace rev {
 	namespace draw {
