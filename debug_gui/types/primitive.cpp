@@ -9,6 +9,7 @@
 #include "../child.hpp"
 #include "../sstream.hpp"
 #include "../indent.hpp"
+#include "lubee/meta/countof.hpp"
 
 namespace rev {
 	bool Primitive::property(const bool edit) {
@@ -24,7 +25,7 @@ namespace rev {
 			}
 		}
 		StringStream s;
-		for(int i=0 ; i<MaxVStream ; i++) {
+		for(std::size_t i=0 ; i<countof(vb) ; i++) {
 			if(vb[i]) {
 				s << "VertexBuffer[" << i << "]";
 				const auto name = s.output();
