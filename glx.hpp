@@ -6,9 +6,6 @@
 #include "drawtoken/tokenml.hpp"
 
 namespace rev {
-	namespace draw {
-		class VStream;
-	}
 	//! GLXエフェクト管理クラス
 	class GLEffect : public IEffect, public std::enable_shared_from_this<GLEffect> {
 		public:
