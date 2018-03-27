@@ -19,17 +19,19 @@ namespace rev {
 	bool Primitive::indexCmp(const Primitive& p) const noexcept {
 		return ib != p.ib;
 	}
-	void Primitive::extractVertexData(draw::VStream& dst, const VSemAttrV& vAttrId) const {
+	draw::VStream Primitive::extractVertexData(const VSemAttrV& vAttrId) const {
+		draw::VStream ret;
 		// vertex
 		Assert(vdecl, "VDecl is not set");
-		dst.spVDecl = vdecl;
+		ret.spVDecl = vdecl;
 		for(int i=0 ; i<static_cast<int>(countof(vb)) ; i++) {
 			if(vb[i])
-				dst.vbuff[i] = vb[i]->getDrawToken();
+				ret.vbuff[i] = vb[i]->getDrawToken();
 		}
-		dst.vAttrId = vAttrId;
+		ret.vAttrId = vAttrId;
 		if(ib)
-			dst.ibuff = draw::Buffer(ib->getDrawToken());
+			ret.ibuff = draw::Buffer(ib->getDrawToken());
+		return ret;
 	}
 	void Primitive::getArray(CmpArray& dst) const noexcept {
 		auto add = [p = dst.data()](auto& ptr) mutable {

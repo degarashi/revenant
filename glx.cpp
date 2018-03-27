@@ -137,8 +137,7 @@ namespace rev {
 		_outputFramebuffer();
 		_diffCount.buffer += _getDifference();
 		// set V/IBuffer(VDecl)
-		draw::VStream vs;
-		_primitive->extractVertexData(vs, _tech_sp->getVAttr());
+		draw::VStream vs = _primitive->extractVertexData(_tech_sp->getVAttr());
 		const auto& p = _primitive;
 		if(!p->ib) {
 			_tokenML.allocate<draw::Draw>(
