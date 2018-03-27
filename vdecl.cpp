@@ -8,20 +8,23 @@
 namespace rev {
 	// ----------------- VDecl::VDInfo -----------------
 	VDecl::VDInfo::VDInfo(const GLuint streamId, const GLuint offset, const GLuint elemFlag,
-						const GLuint bNormalize, const GLuint elemSize, const VSemantic sem):
+						const GLuint bNormalize, const GLuint elemSize,
+						const VSemantic sem, const GLuint strideOvr):
 		streamId(streamId),
 		offset(offset),
 		elemFlag(elemFlag),
 		bNormalize(bNormalize),
 		elemSize(elemSize),
-		sem(sem)
+		sem(sem),
+		strideOvr(strideOvr)
 	{}
 	bool VDecl::VDInfo::operator == (const VDInfo& v) const {
 		if( ((streamId ^ v.streamId)
 			| (offset ^ v.offset)
 			| (elemFlag ^ v.elemFlag)
 			| (bNormalize ^ v.bNormalize)
-			| (elemSize ^ v.elemSize)) == 0)
+			| (elemSize ^ v.elemSize)
+			| (strideOvr ^ v.strideOvr)) == 0)
 		{
 			return sem == v.sem;
 		}
@@ -66,12 +69,19 @@ namespace rev {
 			_streamOfs[i] = cur;
 			for(auto& t2 : stream[i]) {
 				// 描画スレッドからの呼び出しとなるのでt2はコピー
-				_setter[cur] = [t2](const GLuint stride, const VSem_AttrV& attr) {
-					const auto itr = std::find_if(attr.cbegin(), attr.cend(),
-						[s=t2.sem](const auto& a){
-							return a.sem == s;
-						}
-					);
+				_setter[cur] = [t2](const GLuint vb_stride, const VSem_AttrV& attr) {
+					// Stride-Overrideが0の時はVBufferから提供されたStrideを使う
+					const auto stride = (t2.strideOvr==0) ? vb_stride : t2.strideOvr;
+					D_Assert0(stride > 0);
+					// Semanticを線形探索
+					const auto itr =
+						std::find_if(
+							attr.cbegin(),
+							attr.cend(),
+							[s=t2.sem](const auto& a){
+								return a.sem == s;
+							}
+						);
 					if(itr == attr.cend())
 						return;
 					const auto attrId = itr->attrId;
@@ -97,8 +107,6 @@ namespace rev {
 			if(const auto* vb = stream[i]) {
 				const RUser _(*vb);
 				const GLuint stride = vb->getStride();
-				D_Assert0(stride > 0);
-
 				const auto from = _streamOfs[i],
 							to = _streamOfs[i+1];
 				for(std::size_t j=from ; j<to ; j++)

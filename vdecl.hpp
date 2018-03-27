@@ -23,11 +23,12 @@ namespace rev {
 							bNormalize,		//!< OpenGLが正規化するか(bool)
 							elemSize;		//!< 要素数
 				VSemantic	sem;
+				GLuint		strideOvr;		//!< 頂点サイズ(上書き) optional
 
 				VDInfo() = default;
 				VDInfo(GLuint streamId, GLuint offset, GLuint elemFlag,
 						GLuint bNormalize, GLuint elemSize,
-						VSemantic sem);
+						VSemantic sem, GLuint strideOvr=0);
 				bool operator == (const VDInfo& v) const;
 				bool operator != (const VDInfo& v) const;
 				#ifdef DEBUGGUI_ENABLED
