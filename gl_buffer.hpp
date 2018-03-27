@@ -7,13 +7,13 @@
 namespace rev {
 	namespace draw {
 		class Buffer;
-		class VStream;
+		class Stream;
 	}
 	class GLBufferCore {
 		private:
 			friend class RUser<GLBufferCore>;
 			friend class draw::Buffer;
-			friend class draw::VStream;
+			friend class draw::Stream;
 			void use_begin() const;
 			void use_end() const;
 		protected:

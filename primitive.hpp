@@ -6,7 +6,7 @@
 
 namespace rev {
 	namespace draw {
-		class VStream;
+		class Stream;
 	}
 	struct VSem_AttrId;
 	using VSemAttrV = std::vector<VSem_AttrId>;
@@ -35,7 +35,7 @@ namespace rev {
 		bool vertexCmp(const Primitive& p) const noexcept;
 		bool indexCmp(const Primitive& p) const noexcept;
 		std::pair<int,int> getDifference(const Primitive& p) const noexcept;
-		draw::VStream extractVertexData(const VSemAttrV& vAttr) const;
+		draw::Stream extractVertexData(const VSemAttrV& vAttr) const;
 		void getArray(CmpArray& dst) const noexcept;
 		bool operator != (const Primitive& p) const noexcept;
 		bool operator < (const Primitive& p) const noexcept;

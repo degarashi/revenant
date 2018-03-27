@@ -4,11 +4,11 @@
 
 namespace rev {
 	namespace draw {
-		// -------------- VStream --------------
-		RUser<VStream> VStream::use() {
-			return RUser<VStream>(*this);
+		// -------------- Stream --------------
+		RUser<Stream> Stream::use() {
+			return RUser<Stream>(*this);
 		}
-		void VStream::use_begin() const {
+		void Stream::use_begin() const {
 			if(spVDecl) {
 				const GLBufferCore* tmp[MaxVStream];
 				for(std::size_t i=0 ; i<MaxVStream ; i++)
@@ -18,7 +18,7 @@ namespace rev {
 			if(ibuff)
 				ibuff->use_begin();
 		}
-		void VStream::use_end() const {
+		void Stream::use_end() const {
 			if(spVDecl) {
 				GL.glBindBuffer(GL_ARRAY_BUFFER, 0);
 				GL.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -34,7 +34,7 @@ namespace rev {
 			_func();
 		}
 		// -------------- Tag_Draw --------------
-		Draw::Draw(VStream&& vs, const GLenum mode, const GLint first, const GLsizei count):
+		Draw::Draw(Stream&& vs, const GLenum mode, const GLint first, const GLsizei count):
 			DrawBase(std::move(vs)),
 			_mode(mode),
 			_first(first),
@@ -46,7 +46,7 @@ namespace rev {
 			D_GLAssert0();
 		}
 		// -------------- Tag_DrawI --------------
-		DrawIndexed::DrawIndexed(VStream&& vs, const GLenum mode, const GLsizei count, const GLenum sizeF, const GLuint offset):
+		DrawIndexed::DrawIndexed(Stream&& vs, const GLenum mode, const GLsizei count, const GLenum sizeF, const GLuint offset):
 			DrawBase(std::move(vs)),
 			_mode(mode),
 			_count(count),

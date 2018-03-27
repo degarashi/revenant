@@ -18,9 +18,9 @@ namespace rev {
 		//MEMO: ソースの改変を経ている為、少し実装が回りくどいと思われる
 		//! 頂点インプットに関するOpenGLコール
 		/*! 頂点バッファ, インデックスバッファ, 頂点フォーマットが対象 */
-		class VStream {
+		class Stream {
 			private:
-				friend class RUser<VStream>;
+				friend class RUser<Stream>;
 				void use_begin() const;
 				void use_end() const;
 			public:
@@ -32,18 +32,18 @@ namespace rev {
 				// index stream
 				Buffer_OP	ibuff;
 
-				RUser<VStream> use();
+				RUser<Stream> use();
 		};
 		template <class T>
 		class DrawBase : public TokenT<T> {
 			private:
-				VStream		_vstream;
+				Stream		_stream;
 			protected:
-				DrawBase(VStream&& vs):
-					_vstream(std::move(vs))
+				DrawBase(Stream&& vs):
+					_stream(std::move(vs))
 				{}
-				RUser<VStream> use() {
-					return _vstream.use();
+				RUser<Stream> use() {
+					return _stream.use();
 				}
 		};
 		//! Draw token (without index)
@@ -53,7 +53,7 @@ namespace rev {
 				GLint		_first;
 				GLsizei		_count;
 			public:
-				Draw(VStream&& vs, GLenum mode, GLint first, GLsizei count);
+				Draw(Stream&& vs, GLenum mode, GLint first, GLsizei count);
 				void exec() override;
 		};
 		//! Draw token (with index)
@@ -68,7 +68,7 @@ namespace rev {
 					\param[in] count 描画に使用される要素数
 					\param[in] sizeF 1要素のサイズを表すフラグ
 					\param[in] offset オフセットバイト数 */
-				DrawIndexed(VStream&& vs, GLenum mode, GLsizei count, GLenum sizeF, GLuint offset);
+				DrawIndexed(Stream&& vs, GLenum mode, GLsizei count, GLenum sizeF, GLuint offset);
 				void exec() override;
 		};
 	}
