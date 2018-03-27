@@ -28,21 +28,15 @@ namespace rev {
 				// vertex stream
 				HVDecl		spVDecl;
 				Buffer_OP	vbuff[MaxVStream];
+
 				VSem_AttrV	vAttrId;
 				// index stream
 				Buffer_OP	ibuff;
 		};
-		template <class T>
-		class DrawBase : public TokenT<T> {
-			protected:
-				Stream		_stream;
-				DrawBase(Stream&& vs):
-					_stream(std::move(vs))
-				{}
-		};
 		//! Draw token (without index)
-		class Draw : public DrawBase<Draw> {
+		class Draw : public TokenT<Draw> {
 			private:
+				Stream		_stream;
 				GLenum		_mode;
 				GLint		_first;
 				GLsizei		_count;
@@ -51,8 +45,9 @@ namespace rev {
 				void exec() override;
 		};
 		//! Draw token (with index)
-		class DrawIndexed : public DrawBase<DrawIndexed> {
+		class DrawIndexed : public TokenT<DrawIndexed> {
 			private:
+				Stream		_stream;
 				GLenum		_mode;
 				GLsizei		_count;
 				GLenum		_sizeF;

@@ -32,7 +32,7 @@ namespace rev {
 		}
 		// -------------- Tag_Draw --------------
 		Draw::Draw(Stream&& vs, const GLenum mode, const GLint first, const GLsizei count):
-			DrawBase(std::move(vs)),
+			_stream(std::move(vs)),
 			_mode(mode),
 			_first(first),
 			_count(count)
@@ -44,7 +44,7 @@ namespace rev {
 		}
 		// -------------- Tag_DrawI --------------
 		DrawIndexed::DrawIndexed(Stream&& vs, const GLenum mode, const GLsizei count, const GLenum sizeF, const GLuint offset):
-			DrawBase(std::move(vs)),
+			_stream(std::move(vs)),
 			_mode(mode),
 			_count(count),
 			_sizeF(sizeF),
