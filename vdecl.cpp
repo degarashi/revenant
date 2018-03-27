@@ -36,7 +36,7 @@ namespace rev {
 		_init();
 	}
 	// 一旦Vectorに変換
-	VDecl::VDecl(std::initializer_list<VDInfo> il):
+	VDecl::VDecl(const std::initializer_list<VDInfo> il):
 		VDecl(VDInfoV(il.begin(), il.end()))
 	{}
 	void VDecl::_init() {
@@ -60,12 +60,13 @@ namespace rev {
 			}
 		}
 
-		_func.resize(_vdInfo.size());
-		int cur = 0;
-		for(int i=0 ; i<static_cast<int>(countof(stream)) ; i++) {
-			_entIdx[i] = cur;
+		_setter.resize(_vdInfo.size());
+		std::size_t cur = 0;
+		for(std::size_t i=0 ; i<countof(stream) ; i++) {
+			_streamOfs[i] = cur;
 			for(auto& t2 : stream[i]) {
-				_func[cur] = [t2](const GLuint stride, const VSem_AttrV& attr) {
+				// 描画スレッドからの呼び出しとなるのでt2はコピー
+				_setter[cur] = [t2](const GLuint stride, const VSem_AttrV& attr) {
 					const auto itr = std::find_if(attr.cbegin(), attr.cend(),
 						[s=t2.sem](const auto& a){
 							return a.sem == s;
@@ -88,17 +89,20 @@ namespace rev {
 				++cur;
 			}
 		}
-		_entIdx[MaxVStream] = _entIdx[MaxVStream-1];
+		_streamOfs[MaxVStream] = _streamOfs[MaxVStream-1];
 	}
-	void VDecl::apply(const VData& vdata) const {
-		for(int i=0 ; i<MaxVStream ; i++) {
+	void VDecl::apply(const GLBufferCore* (&stream)[MaxVStream], const VSem_AttrV& attr) const {
+		for(std::size_t i=0 ; i<countof(stream) ; i++) {
 			// VStreamが設定されていればBindする
-			if(const auto& ovb = vdata.buff[i]) {
-				const auto& vb = *ovb;
-				const auto u = vb.use();
-				const GLuint stride = vb.getStride();
-				for(int j=_entIdx[i] ; j<_entIdx[i+1] ; j++)
-					_func[j](stride, vdata.attr);
+			if(const auto* vb = stream[i]) {
+				const auto _ = vb->use();
+				const GLuint stride = vb->getStride();
+				D_Assert0(stride > 0);
+
+				const auto from = _streamOfs[i],
+							to = _streamOfs[i+1];
+				for(std::size_t j=from ; j<to ; j++)
+					_setter[j](stride, attr);
 			}
 		}
 	}

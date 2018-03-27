@@ -9,8 +9,12 @@ namespace rev {
 			return RUser<VStream>(*this);
 		}
 		void VStream::use_begin() const {
-			if(spVDecl)
-				spVDecl->apply(VData{vbuff, vAttrId});
+			if(spVDecl) {
+				const GLBufferCore* tmp[MaxVStream];
+				for(std::size_t i=0 ; i<MaxVStream ; i++)
+					tmp[i] = vbuff[i] ? &(*vbuff[i]) : nullptr;
+				spVDecl->apply(tmp, vAttrId);
+			}
 			if(ibuff)
 				ibuff->use_begin();
 		}

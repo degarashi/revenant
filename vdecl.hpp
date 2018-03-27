@@ -6,21 +6,7 @@
 
 namespace rev {
 	using VSem_AttrV = std::vector<VSem_AttrId>;
-	// 主にGLEffectからVDeclへのデータ受け渡しで使われる
-	struct VData {
-		using BuffA = const spi::Optional<draw::Buffer> (&)[MaxVStream];
-
-		// [StreamIndex] -> Buffer(optional)
-		BuffA				buff;
-		// [VSemanticsIndex] -> AttributeId
-		const VSem_AttrV&	attr;
-
-		VData(BuffA b, const VSem_AttrV& at):
-			buff(b),
-			attr(at)
-		{}
-	};
-	//! 頂点宣言
+	//! DirectX9ライクな頂点宣言
 	class VDecl {
 		private:
 			template <class Ar>
@@ -50,12 +36,12 @@ namespace rev {
 			};
 			using VDInfoV = std::vector<VDInfo>;
 		private:
-			using Func = std::function<void (GLuint, const VSem_AttrV&)>;
-			using FuncV = std::vector<Func>;
-			FuncV		_func;
+			using Setter = std::function<void (GLuint, const VSem_AttrV&)>;
+			using SetterV = std::vector<Setter>;
 			// ストリーム毎のサイズを1次元配列で格納 = 0番から並べる
+			SetterV		_setter;
 			// 各ストリームの先頭インデックス
-			int			_entIdx[MaxVStream+1];
+			std::size_t	_streamOfs[MaxVStream+1];
 			// 元データ(シリアライズ用)
 			VDInfoV		_vdInfo;
 
@@ -68,7 +54,8 @@ namespace rev {
 			//! 入力: {streamId, offset, GLFlag, bNoramalize, semantics}
 			VDecl(std::initializer_list<VDInfo> il);
 			//! OpenGLへ頂点位置を設定
-			void apply(const VData& vdata) const;
+			// [描画スレッドからの呼び出し]
+			void apply(const GLBufferCore* (&stream)[MaxVStream], const VSem_AttrV& attr) const;
 			bool operator == (const VDecl& vd) const;
 			bool operator != (const VDecl& vd) const;
 			#ifdef DEBUGGUI_ENABLED
