@@ -1,5 +1,6 @@
 #pragma once
+#include <cstdint>
 
 namespace rev {
-	constexpr static int MaxVStream = 4;
+	constexpr static std::size_t MaxVStream = 4;
 }
