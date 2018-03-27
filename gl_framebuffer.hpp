@@ -55,8 +55,6 @@ namespace rev {
 			static const lubee::SizeI& GetCurrentFBSize() noexcept;
 			GLFBufferCore(GLuint id);
 			GLuint getBufferId() const;
-
-			RUser<GLFBufferCore> use() const;
 	};
 	//! 非ハンドル管理で一時的にFramebufferを使いたい時のヘルパークラス (内部用)
 	class GLFBufferTmp : public GLFBufferCore {
@@ -71,7 +69,6 @@ namespace rev {
 			void use_end() const;
 
 			void getDrawToken(draw::TokenDst& dst) const;
-			RUser<GLFBufferTmp> use() const;
 	};
 	using Size_OP = spi::Optional<lubee::SizeI>;
 	class LuaState;

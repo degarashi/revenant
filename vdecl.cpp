@@ -95,7 +95,7 @@ namespace rev {
 		for(std::size_t i=0 ; i<countof(stream) ; i++) {
 			// VStreamが設定されていればBindする
 			if(const auto* vb = stream[i]) {
-				const auto _ = vb->use();
+				const RUser _(*vb);
 				const GLuint stride = vb->getStride();
 				D_Assert0(stride > 0);
 

@@ -45,8 +45,6 @@ namespace rev {
 			void onDeviceReset() override;
 			void onDeviceLost() override;
 
-			RUser<GLRBuffer> use() const;
-
 			void setOnLost(OnLost beh, const frea::Vec4* color=nullptr);
 			GLuint getBufferId() const;
 			const lubee::SizeI& getSize() const;

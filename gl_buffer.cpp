@@ -23,9 +23,6 @@ namespace rev {
 	GLuint GLBufferCore::getStride() const {
 		return _stride;
 	}
-	RUser<GLBufferCore> GLBufferCore::use() const {
-		return RUser<GLBufferCore>(*this);
-	}
 	void GLBufferCore::use_begin() const {
 		GL.glBindBuffer(getBuffType(), getBuffId());
 	}
@@ -55,7 +52,7 @@ namespace rev {
 		if(_idBuff == 0) {
 			D_GLWarn(glGenBuffers, 1, &_idBuff);
 			if(_buff) {
-				auto u = use();
+				const RUser _(*this);
 				D_GLWarn(glBufferData, _buffType, _buffSize, _pBuffer, _drawType);
 			}
 		}
@@ -69,7 +66,7 @@ namespace rev {
 	}
 	void GLBuffer::_initData() {
 		if(getBuffId() > 0) {
-			auto u = use();
+			const RUser _(*this);
 			D_GLWarn(glBufferData, _buffType, _buffSize, _pBuffer, _drawType);
 		}
 	}
@@ -84,7 +81,7 @@ namespace rev {
 					ofs = offset*_stride;
 		std::memcpy(reinterpret_cast<char*>(_pBuffer)+ofs, src, szCopy);
 		if(getBuffId() > 0) {
-			auto u = use();
+			const RUser _(*this);
 			D_GLWarn(glBufferSubData, _buffType, ofs, szCopy, src);
 		}
 	}

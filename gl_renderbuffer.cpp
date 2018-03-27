@@ -16,7 +16,7 @@ namespace rev {
 	void GLRBuffer::onDeviceReset() {
 		if(_idRbo == 0) {
 			GL.glGenRenderbuffers(1, &_idRbo);
-			auto u = use();
+			const RUser _(*this);
 			allocate();
 			cs_onReset[_behLost](mgr_gl.getTmpFramebuffer(), *this);
 		}
@@ -49,7 +49,7 @@ namespace rev {
 		Nothing,		// CLEAR
 		#ifndef USE_OPENGLES2
 			[](GLFBufferTmp& fb, GLRBuffer& rb) {		// RESTORE
-				auto fbi = fb.use();
+				const RUser _(fb);
 				fb.attachRBuffer(GLFBufferTmp::Att::Id::COLOR0, rb._idRbo);
 				GLFormat::Info_OP op = GLFormat::QueryInfo(rb._fmt.get());
 				int texSize;
@@ -96,7 +96,7 @@ namespace rev {
 		[](GLFBufferTmp& fb, GLRBuffer& rb) {		// CLEAR
 			const frea::Vec4& c = boost::get<frea::Vec4>(rb._restoreInfo);
 			GL.glClearColor(c.x, c.y, c.z, c.w);
-			auto fbi = fb.use();
+			const RUser _(fb);
 			fb.attachRBuffer(GLFBuffer::Att::Id::COLOR0, rb._idRbo);
 			GL.glClear(GL_COLOR_BUFFER_BIT);
 		},
@@ -104,7 +104,7 @@ namespace rev {
 		#ifndef USE_OPENGLES2
 			[](GLFBufferTmp& fb, GLRBuffer& rb) {		// RESTORE
 				auto& buff = boost::get<ByteBuff>(rb._restoreInfo);
-				auto fbi = fb.use();
+				const RUser _(fb);
 				fb.attachRBuffer(GLFBuffer::Att::Id::COLOR0, rb._idRbo);
 				GL.glDrawPixels(0,0, rb._fmt.get(), rb._buffFmt, &buff[0]);
 				rb._restoreInfo = boost::blank();
@@ -114,9 +114,6 @@ namespace rev {
 		#endif
 	};
 
-	RUser<GLRBuffer> GLRBuffer::use() const {
-		return RUser<GLRBuffer>(*this);
-	}
 	void GLRBuffer::use_begin() const {
 		GL.glBindRenderbuffer(GL_RENDERBUFFER, _idRbo);
 		GLAssert0();

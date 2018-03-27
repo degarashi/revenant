@@ -11,7 +11,8 @@ namespace rev {
 	}
 	class GLBufferCore {
 		private:
-			friend class RUser<GLBufferCore>;
+			template <class T>
+			friend class RUser;
 			friend class draw::Buffer;
 			friend class draw::Stream;
 			void use_begin() const;
@@ -24,8 +25,6 @@ namespace rev {
 		public:
 			GLBufferCore(BufferType typ, DrawType dtype);
 			virtual ~GLBufferCore() {}
-
-			RUser<GLBufferCore> use() const;
 
 			GLuint getBuffId() const;
 			BufferType getBuffType() const;

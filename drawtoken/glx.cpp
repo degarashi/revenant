@@ -5,9 +5,6 @@
 namespace rev {
 	namespace draw {
 		// -------------- Stream --------------
-		RUser<Stream> Stream::use() {
-			return RUser<Stream>(*this);
-		}
 		void Stream::use_begin() const {
 			if(spVDecl) {
 				const GLBufferCore* tmp[MaxVStream];
@@ -41,7 +38,7 @@ namespace rev {
 			_count(count)
 		{}
 		void Draw::exec() {
-			auto u = use();
+			const RUser _(_stream);
 			GL.glDrawArrays(_mode, _first, _count);
 			D_GLAssert0();
 		}
@@ -54,7 +51,7 @@ namespace rev {
 			_offset(offset)
 		{}
 		void DrawIndexed::exec() {
-			auto u = use();
+			const RUser _(_stream);
 			GL.glDrawElements(_mode, _count, _sizeF, reinterpret_cast<const GLvoid*>(_offset));
 			D_GLAssert0();
 		}

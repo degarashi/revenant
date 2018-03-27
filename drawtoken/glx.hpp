@@ -31,20 +31,14 @@ namespace rev {
 				VSem_AttrV	vAttrId;
 				// index stream
 				Buffer_OP	ibuff;
-
-				RUser<Stream> use();
 		};
 		template <class T>
 		class DrawBase : public TokenT<T> {
-			private:
-				Stream		_stream;
 			protected:
+				Stream		_stream;
 				DrawBase(Stream&& vs):
 					_stream(std::move(vs))
 				{}
-				RUser<Stream> use() {
-					return _stream.use();
-				}
 		};
 		//! Draw token (without index)
 		class Draw : public DrawBase<Draw> {

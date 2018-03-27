@@ -61,8 +61,6 @@ namespace rev {
 			void setWrap(WrapState st);
 			const char* getResourceName() const noexcept override;
 
-			RUser<IGLTexture> use() const;
-
 			const lubee::SizeI& getSize() const;
 			GLint getTextureId() const;
 			const InCompressedFmt_OP& getFormat() const;

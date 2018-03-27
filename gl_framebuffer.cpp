@@ -13,9 +13,6 @@ namespace rev {
 		GLFBufferCore(idFb),
 		_size(s)
 	{}
-	RUser<GLFBufferTmp> GLFBufferTmp::use() const {
-		return RUser<GLFBufferTmp>(*this);
-	}
 	void GLFBufferTmp::use_end() const {
 		for(int i=0 ; i<Att::NUM_ATTACHMENT ; i++)
 			const_cast<GLFBufferTmp*>(this)->_attachRenderbuffer(Att::Id(i), 0);
@@ -47,9 +44,6 @@ namespace rev {
 	GLFBufferCore::GLFBufferCore(GLuint id):
 		_idFbo(id)
 	{}
-	RUser<GLFBufferCore> GLFBufferCore::use() const {
-		return RUser<GLFBufferCore>(*this);
-	}
 	void GLFBufferCore::_attachRenderbuffer(const Att::Id aId, const GLuint rb) {
 		GLAssert(glFramebufferRenderbuffer, GL_FRAMEBUFFER, _AttIdtoGL(aId), GL_RENDERBUFFER, rb);
 	}
