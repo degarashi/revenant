@@ -7,80 +7,107 @@
 namespace rev::draw {
 	void Unif_Vec_Exec(std::size_t idx, GLint id, const void* ptr, std::size_t n);
 
-	template <class T, std::size_t DN>
-	class Unif_Vec : public Uniform<Unif_Vec<T,DN>> {
-		protected:
-			inline constexpr static std::size_t Dim = DN;
-			using base_t = Uniform<Unif_Vec<T,Dim>>;
+	namespace detail {
+		template <class T, std::size_t Dim>
+		constexpr std::size_t CalcIndex() {
+			std::size_t idx=0;
+			if constexpr (std::is_integral<T>{}) {
+				if constexpr (std::is_unsigned<T>{}) {
+					idx = 8;
+				} else
+					idx = 4;
+			} else
+				idx = 0;
+
+			idx += Dim-1;
+			return idx;
+		}
+	}
+	// Vector配列
+	template <class T, std::size_t Dim>
+	class Unif_VecA : public Uniform<Unif_VecA<T,Dim>> {
+		private:
+			using base_t = Uniform<Unif_VecA<T,Dim>>;
 			using vec_t = frea::Vec_t<T, Dim, false>;
-			// Vectorを値の配列で格納
-			using SPT = std::shared_ptr<T[]>;
-			SPT			_data;
-			std::size_t	_nAr;
+			using vec_v = std::vector<vec_t>;
+			vec_v	_data;
 
 		public:
-			// Vector単体
-			template <
-				class V,
-				ENABLE_IF(
-					frea::is_vector<V>{} &&
-					V::size == Dim
-				)
-			>
-			Unif_Vec(const V& v):
-				Unif_Vec(v.m, 1)
+			template <class Itr>
+			Unif_VecA(const Itr itr, const Itr itrE):
+				_data(itr, itrE)
 			{}
-			// unalignedならそのままTのメモリ配列として扱う
-			template <
-				class V,
-				ENABLE_IF(
-					frea::is_vector<V>{} &&
-					V::size == Dim &&
-					!V::align
-				)
-			>
-			Unif_Vec(const V* vp, const std::size_t n):
-				Unif_Vec(vp->m, n)
+			template <class V>
+			Unif_VecA(const std::vector<V>& src):
+				Unif_VecA(src.cbegin(), src.cend())
 			{}
-			// alignedの場合、メモリの詰め直しを行う
-			template <
-				class V,
-				  ENABLE_IF(
-					frea::is_vector<V>{} &&
-					V::size == Dim &&
-					V::align
-				)
-			>
-			Unif_Vec(const V* vp, const std::size_t n):
-				_nAr(n)
-			{
-				_data.reset(new T[Dim * n]);
-				auto* dst = _data.get();
-				for(std::size_t i=0 ; i<n ; i++) {
-					std::memcpy(dst, vp, sizeof(T) * Dim);
-					dst += Dim;
-					++vp;
-				}
-				D_Assert0(dst == _data.get() + n);
-			}
-			Unif_Vec(const T* v, const std::size_t n):
-				_data(new T[Dim * n]),
-				_nAr(n)
-			{
-				std::memcpy(_data.get(), v, sizeof(T)*Dim*n);
-			}
+			Unif_VecA(std::vector<vec_t>&& src):
+				_data(std::move(src))
+			{}
 			void exec() override {
-				std::size_t idx;
-				if constexpr (std::is_integral<T>{}) {
-					if constexpr (std::is_unsigned<T>{}) {
-						idx = 8;
-					} else
-						idx = 4;
-				} else
-					idx = 0;
+				constexpr auto idx = detail::CalcIndex<T,Dim>();
+				Unif_Vec_Exec(idx, base_t::idUnif, _data.data(), _data.size());
+			}
+	};
+	template <class T>
+	class Unif_VecA<T, 1> : public Uniform<Unif_VecA<T, 1>> {
+		private:
+			using base_t = Uniform<Unif_VecA<T, 1>>;
+			using Data = std::vector<T>;
+			Data	_data;
 
-				idx += Dim-1;
-				Unif_Vec_Exec(idx, base_t::idUnif, _data.get(), _nAr);
+		public:
+			template <class Itr>
+			Unif_VecA(const Itr itr, const Itr itrE):
+				_data(itr, itrE)
+			{}
+			template <class V>
+			Unif_VecA(const std::vector<V>& src):
+				Unif_VecA(src.cbegin(), src.cend())
+			{}
+			Unif_VecA(std::vector<T>&& src):
+				_data(std::move(src))
+			{}
+
+			void exec() override {
+				constexpr auto idx = detail::CalcIndex<T,1>();
+				Unif_Vec_Exec(idx, base_t::idUnif, _data.data(), _data.size());
+			}
+	};
+	// Vector単体
+	template <class T, std::size_t Dim>
+	class Unif_Vec : public Uniform<Unif_Vec<T,Dim>> {
+		private:
+			using base_t = Uniform<Unif_Vec<T,Dim>>;
+			using vec_t = frea::Vec_t<T, Dim, false>;
+			vec_t	_data;
+
+		public:
+			template <class V>
+			Unif_Vec(const V& v):
+				_data(v)
+			{}
+			void exec() override {
+				constexpr auto idx = detail::CalcIndex<T,Dim>();
+				Unif_Vec_Exec(idx, base_t::idUnif, &_data, 1);
+			}
+	};
+	template <class T>
+	class Unif_Vec<T,1> : public Uniform<Unif_Vec<T,1>> {
+		private:
+			using base_t = Uniform<Unif_Vec<T,1>>;
+			T		_data;
+		public:
+			template <class V>
+			Unif_Vec(const V& t):
+				_data(t.x)
+			{}
+			Unif_Vec(const T& t):
+				_data(t)
+			{}
+			void exec() override {
+				constexpr auto idx = detail::CalcIndex<T,1>();
+				Unif_Vec_Exec(idx, base_t::idUnif, &_data, 1);
 			}
 	};
 }

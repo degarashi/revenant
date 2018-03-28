@@ -1,112 +1,74 @@
 #pragma once
+#include "vector.hpp"
 #include "matrix.hpp"
 #include "texture.hpp"
+#include <type_traits>
 
-namespace rev {
-	namespace draw {
-		using Token_SP = std::shared_ptr<Token>;
-		template <class To, class From>
-		Token_SP _MakeUniform_To(const From* t, const std::size_t nvalue);
+namespace rev::draw {
+	using Token_SP = std::shared_ptr<Token>;
 
-		inline Token_SP MakeUniform(const bool* b, const std::size_t nvalue) {
-			return std::make_shared<Unif_Vec<bool,1>>(b, nvalue);
-		}
-		inline Token_SP MakeUniform(const float* f, const std::size_t nvalue) {
-			return std::make_shared<Unif_Vec<float,1>>(f, nvalue);
-		}
-		inline Token_SP MakeUniform(const int32_t* t, const std::size_t nvalue) {
-			return std::make_shared<Unif_Vec<int32_t,1>>(t, nvalue);
-		}
-		inline Token_SP MakeUniform(const uint32_t* t, const std::size_t nvalue) {
-			return std::make_shared<Unif_Vec<uint32_t,1>>(t, nvalue);
-		}
-		inline Token_SP MakeUniform(const HTex* t, const std::size_t nvalue) {
-			return std::make_shared<TextureA>(t, nvalue);
-		}
-
-		// floating-point型はfloatへ変換
-		template <class T, ENABLE_IF(std::is_floating_point<T>{})>
-		Token_SP MakeUniform(const T* t, const std::size_t nvalue) {
-			return _MakeUniform_To<float>(t, nvalue);
-		}
-		// signed integralはint32_tに変換
-		template <class T, ENABLE_IF(std::is_integral<T>{} && std::is_signed<T>{})>
-		Token_SP MakeUniform(const T* t, const std::size_t nvalue) {
-			return _MakeUniform_To<int32_t>(t, nvalue);
-		}
-		// unsigned integralはuint32_tに変換
-		template <class T, ENABLE_IF(std::is_integral<T>{} && std::is_unsigned<T>{})>
-		Token_SP MakeUniform(const T* t, const std::size_t nvalue) {
-			return _MakeUniform_To<uint32_t>(t, nvalue);
-		}
-
-		//! ベクトル型変数
-		template <class V, ENABLE_IF(frea::is_vector<V>{})>
-		Token_SP MakeUniform(const V* v, const std::size_t nvalue) {
-			return std::make_shared<Unif_Vec<typename V::value_t, V::size>>(v, nvalue);
-		}
-		//! 行列Uniform変数(非正方形)
-		template <
-			class M,
-			ENABLE_IF((
-				frea::is_matrix<M>{} &&
-				(M::dim_m != M::dim_n)
-			))
-		>
-		Token_SP MakeUniform(const M* m, const std::size_t nvalue) {
-			// 正方形に変換
-			constexpr int DIM = lubee::Arithmetic<M::dim_m, M::dim_n>::great;
-			std::vector<frea::Mat_t<typename M::value_t,DIM,DIM,false>> tm(nvalue);
-			for(std::size_t i=0 ; i<nvalue ; i++)
-				tm[i] = m[i].template convert<DIM,DIM>();
-			return MakeUniform(tm.data(), nvalue);
-		}
-		//! 行列Uniform変数(正方形)
-		template <
-			class M,
-			ENABLE_IF(
-				frea::is_matrix<M>{} &&
-				(M::dim_m == M::dim_n)
-			)
-		>
-		Token_SP MakeUniform(const M* m, const std::size_t nvalue) {
-			return std::make_shared<Unif_Mat<typename M::value_t, M::dim_m>>(m, nvalue, true);
-		}
-
-		//! std::vectorはポインタとサイズに分割
+	namespace detail {
+		template <class T, ENABLE_IF(std::is_floating_point_v<T>)>
+		GLfloat NumberCnv(T);
+		template <class T, ENABLE_IF(std::is_integral_v<T> && std::is_unsigned_v<T>)>
+		GLuint NumberCnv(T);
+		template <class T, ENABLE_IF(std::is_integral_v<T> && std::is_signed_v<T>)>
+		GLint NumberCnv(T);
 		template <class T>
-		Token_SP MakeUniform(const std::vector<T>& ar, std::size_t maxsize=0) {
-			if(maxsize == 0)
-				maxsize = ar.size();
-			return MakeUniform(ar.data(), maxsize);
-		}
-		// std::vector<bool>は特殊化されているのでその対処
-		inline Token_SP MakeUniform(const std::vector<bool>& ar, std::size_t maxsize=0) {
-			if(maxsize == 0)
-				maxsize = ar.size();
-			// boolで特殊化されてる物を解除
-			const std::vector<uint8_t> tmp(ar.cbegin(), ar.cbegin()+maxsize);
-			return MakeUniform(tmp);
-		}
-		//! std::arrayはポインタとサイズに分割
-		template <class T, std::size_t N>
-		Token_SP MakeUniform(const std::array<T,N>& ar, std::size_t maxsize=0) {
-			if(maxsize == 0)
-				maxsize = ar.size();
-			return MakeUniform(ar.data(), maxsize);
-		}
-		//! 単体の値 -> ポインタ + サイズ(=1)
-		template <class T>
-		Token_SP MakeUniform(const T& t) {
-			return MakeUniform(&t, 1);
-		}
-		//! 値を変換してから再度MakeUniform
-		template <class To, class From>
-		Token_SP _MakeUniform_To(const From* t, const std::size_t nvalue) {
-			std::vector<To> tmp(nvalue);
-			for(std::size_t i=0 ; i<nvalue ; i++)
-				tmp[i] = t[i];
-			return MakeUniform(tmp.data(), nvalue);
-		}
+		using NumberCnv_t = decltype(NumberCnv(std::declval<T>()));
+
+		template <class T, ENABLE_IF(frea::is_vector<T>{})>
+		Unif_VecA<NumberCnv_t<typename T::value_t>, T::size> Detect(const std::vector<T>&);
+		template <class T, ENABLE_IF(frea::is_vector<T>{})>
+		Unif_Vec<NumberCnv_t<typename T::value_t>, T::size> Detect(const T&);
+		template <
+			class Itr,
+			class V = std::decay_t<decltype(*std::declval<Itr>())>,
+			ENABLE_IF(frea::is_vector<V>{})
+		>
+		Unif_VecA<NumberCnv_t<typename V::value_t>, V::size> Detect(Itr, Itr);
+
+		template <class M, ENABLE_IF(frea::is_matrix<M>{})>
+		Unif_MatA<NumberCnv_t<typename M::value_t>, M::dim_m> Detect(const std::vector<M>&);
+		template <class M, ENABLE_IF(frea::is_matrix<M>{})>
+		Unif_Mat<NumberCnv_t<typename M::value_t>, M::dim_m> Detect(const M&);
+		template <
+			class Itr,
+			class M = std::decay_t<decltype(*std::declval<Itr>())>,
+			ENABLE_IF(frea::is_matrix<M>{})
+		>
+		Unif_MatA<NumberCnv_t<typename M::value_t>, M::dim_m> Detect(Itr, Itr);
+
+		template <class T, ENABLE_IF(std::is_arithmetic_v<T>)>
+		Unif_VecA<NumberCnv_t<T>, 1> Detect(const std::vector<T>&);
+		template <class T, ENABLE_IF(std::is_arithmetic_v<T>)>
+		Unif_Vec<NumberCnv_t<T>, 1> Detect(const T&);
+		template <
+			class Itr,
+			class T = std::decay_t<decltype(std::declval<Itr>())>,
+			ENABLE_IF(!frea::is_vector<T>{})
+		>
+		Unif_VecA<NumberCnv_t<T>, 1> Detect(Itr, Itr);
+
+		Texture Detect(const HTex&);
+		template <
+			class Itr,
+			class T = std::decay_t<decltype(std::declval<Itr>())>,
+			ENABLE_IF((std::is_same_v<T, HTex>))
+		>
+		TextureA Detect(Itr, Itr);
+	}
+
+	// 単体またはstd::vector<>
+	template <class T>
+	Token_SP MakeUniform(T&& t) {
+		using U = decltype(detail::Detect(std::forward<T>(t)));
+		return Token_SP(new U(std::forward<T>(t)));
+	}
+	// 範囲指定による複数要素
+	template <class Itr>
+	Token_SP MakeUniform(const Itr itr, const Itr itrE) {
+		using U = decltype(detail::Detect(itr, itrE));
+		return Token_SP(new U(itr, itrE));
 	}
 }

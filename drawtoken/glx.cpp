@@ -78,7 +78,7 @@ namespace rev {
 					GL.glUniform3iv(id, n, reinterpret_cast<const GLint*>(ptr)); },
 				[](GLint id, const void* ptr, const std::size_t n) {
 					GL.glUniform4iv(id, n, reinterpret_cast<const GLint*>(ptr)); },
-				// -------- Unsigned Integer --------
+				// -------- Unsigned Integer(or Bool) --------
 				[](GLint id, const void* ptr, const std::size_t n) {
 					GL.glUniform1uiv(id, n, reinterpret_cast<const GLuint*>(ptr)); },
 				[](GLint id, const void* ptr, const std::size_t n) {

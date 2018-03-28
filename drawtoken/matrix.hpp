@@ -1,46 +1,55 @@
 #pragma once
-#include "vector.hpp"
+#include "drawtoken_t.hpp"
 #include "frea/matrix.hpp"
 
 namespace rev::draw {
 	void Unif_Mat_Exec(std::size_t idx, GLint id, const void* ptr, std::size_t n, bool bT);
 
-	// 要素Tによる行の幅がDimの行列
+	// Matrix配列
 	template <class T, std::size_t Dim>
-	class Unif_Mat : public Unif_Vec<T,Dim> {
+	class Unif_MatA : public Uniform<Unif_MatA<T,Dim>> {
 		private:
-			using base_t = Unif_Vec<T,Dim>;
-			bool	_bT;
+			using base_t = Uniform<Unif_MatA<T,Dim>>;
+			using mat_t = frea::Mat_t<T, Dim, Dim, false>;
+			using mat_v = std::vector<mat_t>;
+			mat_v		_data;
+
 		public:
-			// Matrix単体
-			template <class M>
-			Unif_Mat(const M& m, const bool bT):
-				Unif_Mat(&m, 1, bT)
+			template <class Itr>
+			Unif_MatA(const Itr itr, const Itr itrE):
+				_data(itr, itrE)
 			{}
-			template <
-				class M,
-				ENABLE_IF(
-					frea::is_matrix<M>{} &&
-					M::dim_m == Dim &&
-					M::dim_n == Dim
-				)
-			>
-			Unif_Mat(const M* mp, const std::size_t n, const bool bT):
-				base_t(mp->m, n*Dim),
-				_bT(bT)
+			template <class M>
+			Unif_MatA(const std::vector<M>& src):
+				Unif_MatA(src.cbegin(), src.cend())
+			{}
+			Unif_MatA(std::vector<mat_t>&& src):
+				_data(std::move(src))
 			{}
 			void exec() override {
-				D_Assert0(base_t::_nAr % Dim == 0);
-				Unif_Mat_Exec(Dim-2, base_t::idUnif, base_t::_data.get(), base_t::_nAr/Dim, _bT);
+				Unif_Mat_Exec(Dim-2, base_t::idUnif, _data.data(), _data.size(), true);
 			}
-			void clone(TokenDst& dst) const override {
-				new(dst.allocate_memory(getSize(), draw::CalcTokenOffset<Unif_Mat>())) Unif_Mat(*this);
-			}
-			void takeout(TokenDst& dst) override {
-				new(dst.allocate_memory(getSize(), draw::CalcTokenOffset<Unif_Mat>())) Unif_Mat(std::move(*this));
-			}
-			std::size_t getSize() const override {
-				return sizeof(*this);
+	};
+	// Matrix単体
+	template <class T, std::size_t Dim>
+	class Unif_Mat : public Uniform<Unif_Mat<T,Dim>> {
+		private:
+			using base_t = Uniform<Unif_Mat<T,Dim>>;
+			using mat_t = frea::Mat_t<T, Dim, Dim, false>;
+			mat_t		_data;
+
+		public:
+			template <class M>
+			Unif_Mat(const M& m):
+				_data(m)
+			{}
+			void exec() override {
+				Unif_Mat_Exec(Dim-2, base_t::idUnif, &_data.m[0][0], 1, true);
 			}
 	};
 }
+			// constexpr int DIM = lubee::Arithmetic<M::dim_m, M::dim_n>::great;
+			// std::vector<frea::Mat_t<typename M::value_t,DIM,DIM,false>> tm(nvalue);
+			// for(std::size_t i=0 ; i<nvalue ; i++)
+				// tm[i] = m[i].template convert<DIM,DIM>();
+			// return MakeUniform(tm.data(), nvalue);
