@@ -75,24 +75,25 @@ namespace rev {
 
 		//! std::vectorはポインタとサイズに分割
 		template <class T>
-		Token_SP MakeUniform(const std::vector<T>& ar, std::size_t s=0) {
-			if(s == 0)
-				s = ar.size();
-			return MakeUniform(ar.data(), s);
+		Token_SP MakeUniform(const std::vector<T>& ar, std::size_t maxsize=0) {
+			if(maxsize == 0)
+				maxsize = ar.size();
+			return MakeUniform(ar.data(), maxsize);
 		}
-		inline Token_SP MakeUniform(const std::vector<bool>& ar, std::size_t s=0) {
-			if(s == 0)
-				s = ar.size();
+		// std::vector<bool>は特殊化されているのでその対処
+		inline Token_SP MakeUniform(const std::vector<bool>& ar, std::size_t maxsize=0) {
+			if(maxsize == 0)
+				maxsize = ar.size();
 			// boolで特殊化されてる物を解除
-			const std::vector<uint8_t> tmp(ar.cbegin(), ar.cbegin()+s);
+			const std::vector<uint8_t> tmp(ar.cbegin(), ar.cbegin()+maxsize);
 			return MakeUniform(tmp);
 		}
 		//! std::arrayはポインタとサイズに分割
 		template <class T, std::size_t N>
-		Token_SP MakeUniform(const std::array<T,N>& ar, std::size_t s=0) {
-			if(s == 0)
-				s = ar.size();
-			return MakeUniform(ar.data(), s);
+		Token_SP MakeUniform(const std::array<T,N>& ar, std::size_t maxsize=0) {
+			if(maxsize == 0)
+				maxsize = ar.size();
+			return MakeUniform(ar.data(), maxsize);
 		}
 		//! 単体の値 -> ポインタ + サイズ(=1)
 		template <class T>
