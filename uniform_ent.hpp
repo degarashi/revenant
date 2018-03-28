@@ -16,7 +16,6 @@ namespace rev {
 		private:
 			using UniformIdMap_t = std::unordered_map<int, draw::Token_SP>;
 			struct Result_t {
-				std::unordered_set<GLint>	idset;
 				draw::TokenML				token;
 			};
 			#define SEQ \

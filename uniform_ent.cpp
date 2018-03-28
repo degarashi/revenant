@@ -9,14 +9,12 @@ namespace rev {
 		return true;
 	}
 	bool UniformEnt::_refresh(Result::value_t& dst, Result*) const {
-		dst.idset.clear();
 		dst.token.clear();
 		const auto& prog = getProgram();
 		const auto& tIdx = prog->getTexIndex();
 		const auto& ent = getIdEntry();
 		for(auto& e : ent) {
 			const auto id = e.first;
-			dst.idset.emplace(id);
 			// テクスチャユニット番号を検索
 			const auto itr = tIdx.find(id);
 			e.second->exportToken(dst.token, id, (itr != tIdx.end()) ? itr->second : -1);
