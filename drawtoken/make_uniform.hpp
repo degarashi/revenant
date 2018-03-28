@@ -9,16 +9,16 @@ namespace rev {
 		Token_SP _MakeUniform_To(const From* t, const std::size_t nvalue);
 
 		inline Token_SP MakeUniform(const bool* b, const std::size_t nvalue) {
-			return std::make_shared<Unif_Vec<bool,1>>(b, 1, nvalue);
+			return std::make_shared<Unif_Vec<bool,1>>(b, nvalue);
 		}
 		inline Token_SP MakeUniform(const float* f, const std::size_t nvalue) {
-			return std::make_shared<Unif_Vec<float,1>>(f, 1, nvalue);
+			return std::make_shared<Unif_Vec<float,1>>(f, nvalue);
 		}
 		inline Token_SP MakeUniform(const int32_t* t, const std::size_t nvalue) {
-			return std::make_shared<Unif_Vec<int32_t,1>>(t, 1, nvalue);
+			return std::make_shared<Unif_Vec<int32_t,1>>(t, nvalue);
 		}
 		inline Token_SP MakeUniform(const uint32_t* t, const std::size_t nvalue) {
-			return std::make_shared<Unif_Vec<uint32_t,1>>(t, 1, nvalue);
+			return std::make_shared<Unif_Vec<uint32_t,1>>(t, nvalue);
 		}
 		inline Token_SP MakeUniform(const HTex* t, const std::size_t nvalue) {
 			return std::make_shared<TextureA>(t, nvalue);
@@ -64,10 +64,10 @@ namespace rev {
 		//! 行列Uniform変数(正方形)
 		template <
 			class M,
-			ENABLE_IF((
+			ENABLE_IF(
 				frea::is_matrix<M>{} &&
 				(M::dim_m == M::dim_n)
-			))
+			)
 		>
 		Token_SP MakeUniform(const M* m, const std::size_t nvalue) {
 			return std::make_shared<Unif_Mat<typename M::value_t, M::dim_m>>(m, nvalue, true);
