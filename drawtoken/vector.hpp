@@ -2,6 +2,10 @@
 #include "uniform.hpp"
 #include "frea/vector.hpp"
 
+#ifdef DEBUGGUI_ENABLED
+	#include "../debug_gui/print.hpp"
+#endif
+
 namespace rev::draw {
 	void Unif_Vec_Exec(std::size_t idx, GLint id, const void* ptr, std::size_t n);
 
@@ -49,6 +53,11 @@ namespace rev::draw {
 			bool isArray() const noexcept override {
 				return true;
 			}
+			#ifdef DEBUGGUI_ENABLED
+				void printValue() const override {
+					debug::Show(nullptr, _data.cbegin(), _data.cend());
+				}
+			#endif
 	};
 	template <class T>
 	class Unif_VecA<T, 1> : public Uniform<Unif_VecA<T, 1>> {
@@ -77,6 +86,11 @@ namespace rev::draw {
 			bool isArray() const noexcept override {
 				return true;
 			}
+			#ifdef DEBUGGUI_ENABLED
+				void printValue() const override {
+					debug::Show(nullptr, _data.cbegin(), _data.cend());
+				}
+			#endif
 	};
 	// Vector単体
 	template <class T, std::size_t Dim>
@@ -98,6 +112,11 @@ namespace rev::draw {
 			bool isArray() const noexcept override {
 				return false;
 			}
+			#ifdef DEBUGGUI_ENABLED
+				void printValue() const override {
+					debug::Show(nullptr, _data);
+				}
+			#endif
 	};
 	template <class T>
 	class Unif_Vec<T,1> : public Uniform<Unif_Vec<T,1>> {
@@ -119,5 +138,10 @@ namespace rev::draw {
 			bool isArray() const noexcept override {
 				return false;
 			}
+			#ifdef DEBUGGUI_ENABLED
+				void printValue() const override {
+					debug::Show(nullptr, _data);
+				}
+			#endif
 	};
 }

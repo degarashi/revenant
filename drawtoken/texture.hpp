@@ -19,6 +19,9 @@ namespace rev::draw {
 			virtual ~Texture();
 			void exec() override;
 			bool isArray() const noexcept override;
+			#ifdef DEBUGGUI_ENABLED
+				void printValue() const override;
+			#endif
 	};
 	class TextureA :
 		public Uniform<TextureA>
@@ -38,5 +41,8 @@ namespace rev::draw {
 			void exportToken(TokenDst& dst, GLint id, int activeTexId) const override;
 			void exec() override;
 			bool isArray() const noexcept override;
+			#ifdef DEBUGGUI_ENABLED
+				void printValue() const override;
+			#endif
 	};
 }

@@ -1,6 +1,9 @@
 #pragma once
 #include "uniform.hpp"
 #include "frea/matrix.hpp"
+#ifdef DEBUGGUI_ENABLED
+	#include "../debug_gui/print.hpp"
+#endif
 
 namespace rev::draw {
 	void Unif_Mat_Exec(std::size_t idx, GLint id, const void* ptr, std::size_t n, bool bT);
@@ -58,6 +61,11 @@ namespace rev::draw {
 			bool isArray() const noexcept override {
 				return true;
 			}
+			#ifdef DEBUGGUI_ENABLED
+				void printValue() const override {
+					debug::Show(nullptr, _data.cbegin(), _data.cend());
+				}
+			#endif
 	};
 	// Matrix単体
 	template <class T, std::size_t Dim>
@@ -96,5 +104,10 @@ namespace rev::draw {
 			bool isArray() const noexcept override {
 				return false;
 			}
+			#ifdef DEBUGGUI_ENABLED
+				void printValue() const override {
+					debug::Show(nullptr, _data);
+				}
+			#endif
 	};
 }

@@ -5,6 +5,7 @@ namespace rev::draw {
 	struct IUniform {
 		virtual ~IUniform() {}
 		virtual bool isArray() const noexcept = 0;
+		virtual void printValue() const = 0;
 	};
 	template <class T>
 	struct Uniform :
