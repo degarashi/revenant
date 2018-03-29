@@ -45,15 +45,16 @@ namespace rev::draw {
 		Unif_Vec<NumberCnv_t<T>, 1> Detect(const T&);
 		template <
 			class Itr,
-			class T = std::decay_t<decltype(std::declval<Itr>())>,
+			class T = std::decay_t<decltype(*std::declval<Itr>())>,
 			ENABLE_IF(!frea::is_vector<T>{})
 		>
 		Unif_VecA<NumberCnv_t<T>, 1> Detect(Itr, Itr);
 
 		Texture Detect(const HTex&);
+		TextureA Detect(const std::vector<HTex>&);
 		template <
 			class Itr,
-			class T = std::decay_t<decltype(std::declval<Itr>())>,
+			class T = std::decay_t<decltype(*std::declval<Itr>())>,
 			ENABLE_IF((std::is_same_v<T, HTex>))
 		>
 		TextureA Detect(Itr, Itr);
