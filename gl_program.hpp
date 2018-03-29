@@ -57,8 +57,6 @@ namespace rev {
 			void _makeUniformMap();
 			void _makeAttribMap();
 			void _makeTexIndex();
-			GLint_OP _getUniformId_Literal(const char* name) const;
-			GLint_OP _getAttributeId_Literal(const char* name) const;
 
 		public:
 			template <class... Shader>
@@ -75,16 +73,18 @@ namespace rev {
 			//! リテラル文字列によるUniform-Id検索
 			template <std::size_t N>
 			GLint_OP getUniformId(const char (&name)[N]) const {
-				return _getUniformId_Literal(name);
+				return getUniformId_Literal(name);
 			}
+			GLint_OP getUniformId_Literal(const char* name) const;
 			//! 通常の文字列によるUniform-Id検索
 			GLint_OP getUniformId(const Name& name) const;
 
 			//! リテラル文字列によるAttribute-Id検索
 			template <std::size_t N>
 			GLint_OP getAttribId(const char (&name)[N]) const {
-				return _getAttributeId_Literal(name);
+				return getAttributeId_Literal(name);
 			}
+			GLint_OP getAttributeId_Literal(const char* name) const;
 			//! 通常の文字列によるUniform-Id検索
 			GLint_OP getAttribId(const Name& name) const;
 

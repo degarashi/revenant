@@ -138,14 +138,14 @@ namespace rev {
 			return itr->second;
 		return spi::none;
 	}
-	GLint_OP GLProgram::_getUniformId_Literal(const char* name) const {
+	GLint_OP GLProgram::getUniformId_Literal(const char* name) const {
 		auto itr = _literalUmap.find(name);
 		if(itr == _literalUmap.end()) {
 			itr = _literalUmap.emplace(name, getUniformId(name)).first;
 		}
 		return itr->second;
 	}
-	GLint_OP GLProgram::_getAttributeId_Literal(const char* name) const {
+	GLint_OP GLProgram::getAttributeId_Literal(const char* name) const {
 		auto itr = _literalAmap.find(name);
 		if(itr == _literalAmap.end()) {
 			itr = _literalAmap.emplace(name, getAttribId(name)).first;
