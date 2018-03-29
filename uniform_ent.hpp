@@ -30,6 +30,16 @@ namespace rev {
 			RFLAG_SETMETHOD_DEFINE(SEQ)
 			RFLAG_REFMETHOD_DEFINE(SEQ)
 			#undef SEQ
+
+			// TODO: コピペなので後で纏める
+			template <std::size_t N, class Make>
+			bool setUniform(const char (&name)[N], Make&& make) {
+				if(const auto id = getProgram()->getUniformId(name)) {
+					setUniform(*id, make());
+					return true;
+				}
+				return false;
+			}
 			template <class Make>
 			bool setUniform(const Name& name, Make&& make) {
 				if(const auto id = getProgram()->getUniformId(name)) {
