@@ -15,7 +15,8 @@ namespace rev {
 
 	namespace sysunif3d {
 		namespace matrix {
-			const Name		Transform("sys_mTrans"),
+			const LiteralStr
+							Transform("sys_mTrans"),
 							TransformInv("sys_mTransInv"),
 							Proj("sys_mProj"),
 							ProjInv("sys_mProjInv"),
@@ -31,7 +32,8 @@ namespace rev {
 	}
 	namespace unif3d {
 		namespace texture {
-			const Name		Specular("u_texSpecular"),
+			const LiteralStr
+							Specular("u_texSpecular"),
 							Normal("u_texNormal"),
 							Emissive("u_texEmissive");
 		}

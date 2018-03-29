@@ -7,15 +7,18 @@
 
 namespace rev {
 	namespace unif {
-		const Name	Alpha("u_alpha"),
+		const LiteralStr
+					Alpha("u_alpha"),
 					Color("u_color");
 		namespace texture {
-			const Name	Diffuse("u_texDiffuse");
+			const LiteralStr
+					Diffuse("u_texDiffuse");
 		}
 	}
 	namespace sysunif {
 		namespace screen {
-			const Name	Size("sys_vScreenSize");
+			const LiteralStr
+					Size("sys_vScreenSize");
 		}
 	}
 
