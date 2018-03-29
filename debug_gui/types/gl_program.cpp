@@ -19,7 +19,7 @@ namespace rev {
 		ImGui::Spacing();
 
 		const auto _ = debug::ColumnPush(1);
-		const auto print = [edit](const char* name, const int n, auto&& cb){
+		const auto print = [edit](const char* name, const std::size_t n, auto&& cb){
 			if(n > 0) {
 				ImGui::TextUnformatted(name);
 				{
@@ -27,7 +27,7 @@ namespace rev {
 					ImGui::Separator();
 					f.show("Id", "Name", "Type", "Dim", "Unsigned", "Cubed");
 					ImGui::Separator();
-					for(int i=0 ; i<n ; i++) {
+					for(std::size_t i=0 ; i<n ; i++) {
 						debug::Show(nullptr, i);
 						ImGui::NextColumn();
 						cb(i).showAsRow();
@@ -36,9 +36,25 @@ namespace rev {
 				ImGui::Separator();
 			}
 		};
-		print("Uniforms", getNActiveUniform(), [this](const int i){ return getActiveUniform(i); });
+		{
+			const auto& umap = getUniform();
+			auto itr = umap.cbegin();
+			print("Uniforms", umap.size(), [&itr](const int) -> const auto& {
+				auto itr2 = itr;
+				++itr;
+				return itr2->second;
+			});
+		}
 		ImGui::Spacing();
-		print("Attributes", getNActiveAttribute(), [this](const int i){ return getActiveAttribute(i); });
+		{
+			const auto& amap = getAttrib();
+			auto itr = amap.cbegin();
+			print("Attributes", amap.size(), [&itr](const int){
+				auto itr2 = itr;
+				++itr;
+				return itr2->second;
+			});
+		}
 
 		ImGui::Spacing();
 		ImGui::TextUnformatted("Shaders:");
@@ -66,7 +82,7 @@ namespace rev {
 		return mod | f.modified();
 	}
 
-	void GLParamInfo::showAsRow() const {
+	void GLProgram::GLParamInfo::showAsRow() const {
 		debug::Show(nullptr, name);
 		ImGui::NextColumn();
 		GLSLFormatDesc::showAsRow();

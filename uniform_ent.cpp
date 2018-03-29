@@ -11,13 +11,12 @@ namespace rev {
 	bool UniformEnt::_refresh(Result::value_t& dst, Result*) const {
 		dst.token.clear();
 		const auto& prog = getProgram();
-		const auto& tIdx = prog->getTexIndex();
 		const auto& ent = getIdEntry();
 		for(auto& e : ent) {
 			const auto id = e.first;
 			// テクスチャユニット番号を検索
-			const auto itr = tIdx.find(id);
-			e.second->exportToken(dst.token, id, (itr != tIdx.end()) ? itr->second : -1);
+			const auto num = prog->getTexIndex(id);
+			e.second->exportToken(dst.token, id, (num ? *num : -1));
 		}
 		return true;
 	}

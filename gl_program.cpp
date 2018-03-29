@@ -7,18 +7,69 @@
 #include "drawtoken/program.hpp"
 
 namespace rev {
-	// ------------------ GLParamInfo ------------------
-	GLParamInfo::GLParamInfo(const GLSLFormatDesc& desc):
+	// ------------------ GLProgram::GLParamInfo ------------------
+	GLProgram::GLParamInfo::GLParamInfo(const GLSLFormatDesc& desc):
 		GLSLFormatDesc(desc)
 	{}
+
 	// ---------------------- GLProgram ----------------------
+	namespace {
+		// GLSL変数名の最大がよくわからない (ので、数は適当)
+		constexpr int MaxGLSLName = 0x100;
+	}
+	GLProgram::GLParamInfo GLProgram::_getActiveParam(const std::size_t n, const InfoF infoF) const {
+		GLchar buff[MaxGLSLName];
+		GLsizei len;
+		GLint sz;
+		GLenum typ;
+		(GL.*infoF)(getProgramId(), n, countof(buff), &len, &sz, &typ, buff);
+		GLParamInfo ret = *GLFormat::QueryGLSLInfo(typ);
+		ret.name = buff;
+		return ret;
+	}
+	std::size_t GLProgram::_getNumParam(const GLenum flag) const {
+		int iv;
+		GL.glGetProgramiv(getProgramId(), flag, &iv);
+		return iv;
+	}
 	void GLProgram::_setShader(const HSh& hSh) {
 		if(hSh)
 			_shader[hSh->getShaderType()] = hSh;
 	}
+	void GLProgram::_makeAttribMap() {
+		const std::size_t n = _getNumParam(GL_ACTIVE_ATTRIBUTES);
+		for(std::size_t i=0 ; i<n ; i++) {
+			GLParamInfo info = _getActiveParam(i, &IGL::glGetActiveAttrib);
+			info.id = GL.glGetAttribLocation(_idProg, info.name.c_str());
+			D_Assert0(info.id >= 0);
+			_amap.emplace(info.name, std::move(info));
+		}
+	}
+	void GLProgram::_makeUniformMap() {
+		const std::size_t n = _getNumParam(GL_ACTIVE_UNIFORMS);
+		for(std::size_t i=0 ; i<n ; i++) {
+			GLParamInfo info = _getActiveParam(i, &IGL::glGetActiveUniform);
+			info.id = GL.glGetUniformLocation(_idProg, info.name.c_str());
+			D_Assert0(info.id >= 0);
+			_umap.emplace(info.name, std::move(info));
+		}
+	}
+	void GLProgram::_makeTexIndex() {
+		GLint curI = 0;
+		// Sampler2D変数が見つかった順にテクスチャIdを割り振る
+		for(auto& u : _umap) {
+			const auto& info = u.second;
+			if(info.type == GLSLType::TextureT) {
+				// GetActiveUniformでのインデックスとGetUniformLocationIdは異なる場合があるので・・
+				const GLint id = *getUniformId(info.name);
+				_texIndex.emplace(id, curI++);
+			}
+		}
+		D_GLAssert0();
+	}
 	void GLProgram::_initProgram() {
 		_idProg = GL.glCreateProgram();
-		for(int i=0 ; i<static_cast<int>(ShType::_Num) ; i++) {
+		for(std::size_t i=0 ; i<ShType::_Num ; i++) {
 			auto& sh = _shader[i];
 			// Geometryシェーダー以外は必須
 			if(sh) {
@@ -35,6 +86,9 @@ namespace rev {
 		GL.glGetProgramiv(_idProg, GL_LINK_STATUS, &ib);
 		if(ib != GL_TRUE)
 			throw GLE_ProgramError(_idProg);
+
+		_makeUniformMap();
+		_makeAttribMap();
 		_makeTexIndex();
 	}
 	GLProgram::~GLProgram() {
@@ -55,6 +109,10 @@ namespace rev {
 				D_GLWarn(glDeleteProgram, buffId);
 			});
 			_idProg = 0;
+			_literalUmap.clear();
+			_literalAmap.clear();
+			_umap.clear();
+			_amap.clear();
 			_texIndex.clear();
 		}
 	}
@@ -68,50 +126,43 @@ namespace rev {
 			_initProgram();
 		}
 	}
-	const HSh& GLProgram::getShader(const ShType type) const {
+	const HSh& GLProgram::getShader(const ShType type) const noexcept {
 		return _shader[type];
 	}
-	GLint_OP GLProgram::getUniformId(const std::string& name) const {
-		GLint id = GL.glGetUniformLocation_NC(getProgramId(), name.c_str());
-		return id>=0 ? GLint_OP(id) : GLint_OP(spi::none);
-	}
-	GLint_OP GLProgram::getAttribId(const std::string& name) const {
-		GLint id = GL.glGetAttribLocation_NC(getProgramId(), name.c_str());
-		return id>=0 ? GLint_OP(id) : GLint_OP(spi::none);
-	}
-	GLuint GLProgram::getProgramId() const {
+	GLuint GLProgram::getProgramId() const noexcept {
 		return _idProg;
 	}
-	int GLProgram::_getNumParam(GLenum flag) const {
-		int iv;
-		GL.glGetProgramiv(getProgramId(), flag, &iv);
-		return iv;
+	GLint_OP GLProgram::getTexIndex(const GLint id) const {
+		if(const auto itr = _texIndex.find(id);
+			itr != _texIndex.end())
+			return itr->second;
+		return spi::none;
 	}
-	int GLProgram::getNActiveAttribute() const {
-		return _getNumParam(GL_ACTIVE_ATTRIBUTES);
+	GLint_OP GLProgram::_getUniformId_Literal(const char* name) const {
+		auto itr = _literalUmap.find(name);
+		if(itr == _literalUmap.end()) {
+			itr = _literalUmap.emplace(name, getUniformId(name)).first;
+		}
+		return itr->second;
 	}
-	int GLProgram::getNActiveUniform() const {
-		return _getNumParam(GL_ACTIVE_UNIFORMS);
+	GLint_OP GLProgram::_getAttributeId_Literal(const char* name) const {
+		auto itr = _literalAmap.find(name);
+		if(itr == _literalAmap.end()) {
+			itr = _literalAmap.emplace(name, getAttribId(name)).first;
+		}
+		return itr->second;
 	}
-	namespace {
-		// GLSL変数名の最大がよくわからない (ので、数は適当)
-		constexpr int MaxGLSLName = 0x100;
+	GLint_OP GLProgram::getUniformId(const Name& name) const {
+		if(const auto itr = _umap.find(name);
+			itr != _umap.end())
+			return itr->second.id;
+		return spi::none;
 	}
-	GLParamInfo GLProgram::_getActiveParam(const int n, const InfoF infoF) const {
-		GLchar buff[MaxGLSLName];
-		GLsizei len;
-		GLint sz;
-		GLenum typ;
-		(GL.*infoF)(getProgramId(), n, countof(buff), &len, &sz, &typ, buff);
-		GLParamInfo ret = *GLFormat::QueryGLSLInfo(typ);
-		ret.name = buff;
-		return ret;
-	}
-	GLParamInfo GLProgram::getActiveAttribute(const int n) const {
-		return _getActiveParam(n, &IGL::glGetActiveAttrib);
-	}
-	GLParamInfo GLProgram::getActiveUniform(const int n) const {
-		return _getActiveParam(n, &IGL::glGetActiveUniform);
+	GLint_OP GLProgram::getAttribId(const Name& name) const {
+		if(const auto itr = _amap.find(name);
+			itr != _amap.end())
+			return itr->second.id;
+		return spi::none;
 	}
 	void GLProgram::use() const {
 		GL.glUseProgram(getProgramId());
@@ -121,21 +172,10 @@ namespace rev {
 		new(dst.allocate_memory( sizeof(UT), draw::CalcTokenOffset<UT>()))
 			UT(const_cast<GLProgram*>(this)->shared_from_this());
 	}
-	void GLProgram::_makeTexIndex() {
-		const GLint nUnif = getNActiveUniform();
-		// Sampler2D変数が見つかった順にテクスチャIdを割り振る
-		GLint curI = 0;
-		for(GLint i=0 ; i<nUnif ; i++) {
-			const auto info = getActiveUniform(i);
-			if(info.type == GLSLType::TextureT) {
-				// GetActiveUniformでのインデックスとGetUniformLocationIdは異なる場合があるので・・
-				const GLint id = *getUniformId(info.name);
-				_texIndex.emplace(id, curI++);
-			}
-		}
-		D_GLAssert0();
+	const GLProgram::UniformMap& GLProgram::getUniform() const noexcept {
+		return _umap;
 	}
-	const GLProgram::TexIndex& GLProgram::getTexIndex() const noexcept {
-		return _texIndex;
+	const GLProgram::AttribMap& GLProgram::getAttrib() const noexcept {
+		return _amap;
 	}
 }
