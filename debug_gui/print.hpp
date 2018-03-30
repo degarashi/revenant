@@ -41,10 +41,10 @@ namespace rev {
 		EditProxy<From, To> MakeEditProxy(From& from) {
 			return EditProxy<From,To>(from);
 		}
-		template <class Id, class T>
-		void Show(const Id& id, const T& t);
-		template <class Id, class T>
-		bool Edit(const Id& id, T& t);
+		template <class T>
+		void Show(IdPush, const T& t);
+		template <class T>
+		bool Edit(IdPush, T& t);
 		namespace inner {
 			void _Show(bool b);
 			void _Show(const char* s);
@@ -179,26 +179,23 @@ namespace rev {
 			template <class V, ENABLE_IF(frea::is_vector<V>{})>
 			bool _Slider(V& v, const typename V::value_t& v_min, const typename V::value_t& v_max);
 		}
-		template <class Id, class T>
-		void Show(const Id& id, const T& t) {
-			const IdPush ip(id);
+		template <class T>
+		void Show(IdPush, const T& t) {
 			inner::_Show(t);
 		}
-		template <class Id, class T>
-		bool Edit(const Id& id, T& t) {
-			const IdPush ip(id);
+		template <class T>
+		bool Edit(IdPush, T& t) {
 			return inner::_Edit(t);
 		}
-		template <class Id, class T>
-		bool EditIf(const bool edit, const Id& id, T&& t) {
+		template <class T>
+		bool EditIf(const bool edit, IdPush idp, T&& t) {
 			if(edit)
-				return Edit(id, std::forward<T>(t));
-			Show(id, std::forward<T>(t));
+				return Edit(std::move(idp), std::forward<T>(t));
+			Show(std::move(idp), std::forward<T>(t));
 			return false;
 		}
-		template <class Id, class T, class... Ts>
-		bool Slider(const Id& id, T& t, const Ts&... ts) {
-			const IdPush ip(id);
+		template <class T, class... Ts>
+		bool Slider(IdPush, T& t, const Ts&... ts) {
 			return inner::_Slider(t, ts...);
 		}
 	}
