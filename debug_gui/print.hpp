@@ -1,6 +1,6 @@
 #pragma once
 #include "frea/fwd.hpp"
-#include "frea/detect_type.hpp"
+#include "frea/matrix.hpp"
 #include "lubee/meta/enable_if.hpp"
 #include "id.hpp"
 #include "constant.hpp"
@@ -46,6 +46,28 @@ namespace rev {
 		template <class T>
 		bool Edit(IdPush, T& t);
 		namespace inner {
+			template <class T, ENABLE_IF(std::is_floating_point_v<T>)>
+			float ValueCnv(T);
+			template <class T, ENABLE_IF(std::is_integral_v<T>)>
+			int ValueCnv(T);
+			template <class T>
+			using ValueCnv_t = decltype(ValueCnv(std::declval<T>()));
+
+			std::true_type ValueCnvB(float);
+			std::true_type ValueCnvB(int);
+			std::false_type ValueCnvB(...);
+			template <class T>
+			using ValueCnvB_t = decltype(ValueCnvB(std::declval<T>()));
+
+			template <class V>
+			void _ShowVector(const V&);
+			template <class M>
+			void _ShowMatrix(const M&);
+			template <class V>
+			bool _EditVector(V&);
+			template <class M>
+			bool _EditMatrix(M&);
+
 			void _Show(bool b);
 			void _Show(const char* s);
 			void _Show(const std::string& s);
@@ -57,10 +79,18 @@ namespace rev {
 			void _Show(IDebugGui& g);
 			template <class TAG, class V>
 			void _Show(const frea::Angle<TAG,V>& a);
+
 			template <class V, ENABLE_IF(frea::is_vector<V>{})>
-			void _Show(const V& v);
+			void _Show(const V& v) {
+				using V2 = frea::Vec_t<ValueCnv_t<typename V::value_t>, V::size, false>;
+				_ShowVector(V2(v));
+			}
 			template <class M, ENABLE_IF(frea::is_matrix<M>{})>
-			void _Show(const M& m);
+			void _Show(const M& m) {
+				using M2 = frea::Mat_t<ValueCnv_t<typename M::value_t>, M::dim_m, M::dim_n, false>;
+				_ShowMatrix(M2(m));
+			}
+
 			template <class T, ENABLE_IF(HasMethod_ToStr_t<T>{})>
 			void _Show(const T& t) {
 				_Show(t.toStr());
@@ -104,10 +134,16 @@ namespace rev {
 			bool _Edit(beat::g2::Pose& p);
 			template <class TAG, class V>
 			bool _Edit(frea::Angle<TAG,V>& a);
-			template <class V, ENABLE_IF(frea::is_vector<V>{})>
+
+			template <class V, ENABLE_IF( frea::is_vector<V>{} && (!V::align && ValueCnvB_t<typename V::value_t>{}))>
 			bool _Edit(V& v);
-			template <class M, ENABLE_IF(frea::is_matrix<M>{})>
+			template <class V, ENABLE_IF( frea::is_vector<V>{} && (V::align || !ValueCnvB_t<typename V::value_t>{}))>
+			bool _Edit(V& v);
+			template <class M, ENABLE_IF( frea::is_matrix<M>{} && (!M::align && ValueCnvB_t<typename M::value_t>{}))>
 			bool _Edit(M& m);
+			template <class M, ENABLE_IF( frea::is_matrix<M>{} && (M::align || !ValueCnvB_t<typename M::value_t>{}))>
+			bool _Edit(M& m);
+
 			template <class T, class A>
 			bool _Edit(spi::ResMgr<T,A>& m);
 			template <class T, class K, class A>
@@ -152,6 +188,27 @@ namespace rev {
 					_Show("(null)");
 					return false;
 				}
+			}
+
+			template <class V, ENABLE_IF_I( frea::is_vector<V>{} && (!V::align && ValueCnvB_t<typename V::value_t>{}))>
+			bool _Edit(V& v) {
+				return _EditVector(v);
+			}
+			template <class V, ENABLE_IF_I( frea::is_vector<V>{} && (V::align || !ValueCnvB_t<typename V::value_t>{}))>
+			bool _Edit(V& v) {
+				using V2 = frea::Vec_t<typename V::value_t, V::size, false>;
+				auto proxy = MakeEditProxy<V2>(v);
+				return _Edit(proxy);
+			}
+			template <class M, ENABLE_IF_I( frea::is_matrix<M>{} && (!M::align && ValueCnvB_t<typename M::value_t>{}))>
+			bool _Edit(M& m) {
+				return _EditMatrix(m);
+			}
+			template <class M, ENABLE_IF_I( frea::is_matrix<M>{} && (M::align || !ValueCnvB_t<typename M::value_t>{}))>
+			bool _Edit(M& m) {
+				using M2 = frea::Mat_t<typename M::value_t, M::dim_m, M::dim_n, false>;
+				auto proxy = MakeEditProxy<M2>(m);
+				return _Edit(proxy);
 			}
 
 			bool _Slider(int& i, int v_min, int v_max);
