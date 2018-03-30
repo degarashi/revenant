@@ -17,17 +17,13 @@ namespace rev {
 			template void _Show(const frea::IVec3& v);
 			template void _Show(const frea::IVec4& v);
 
-			template <class V>
-			bool _Edit_2(V& v, std::true_type) {
-				return FVector<V>(v).edit("");
-			}
-			template <class V>
-			bool _Edit_2(V& v, std::false_type) {
-				return IVector<V>(v).edit("");
-			}
 			template <class V, ENABLE_IF(frea::is_vector<V>{})>
 			bool _Edit(V& v) {
-				return _Edit_2(v, std::is_floating_point<typename V::value_t>{});
+				if constexpr (std::is_floating_point_v<typename V::value_t>) {
+					return FVector<V>(v).edit("");
+				} else {
+					return IVector<V>(v).edit("");
+				}
 			}
 			template bool _Edit<frea::Vec2>(frea::Vec2& v);
 			template bool _Edit<frea::Vec3>(frea::Vec3& v);
