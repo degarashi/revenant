@@ -1,5 +1,5 @@
 #pragma once
-#include "drawtoken_t.hpp"
+#include "uniform.hpp"
 #include "frea/matrix.hpp"
 
 namespace rev::draw {

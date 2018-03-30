@@ -3,7 +3,7 @@
 #include "gl_format.hpp"
 #include "lubee/size.hpp"
 #include "lubee/rect.hpp"
-#include "drawtoken/drawtoken_t.hpp"
+#include "drawtoken/uniform.hpp"
 #include "abstbuffer.hpp"
 #include "uri.hpp"
 #include "chunk.hpp"
