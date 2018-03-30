@@ -9,7 +9,9 @@ namespace rev {
 		struct Token;
 		using Token_SP = std::shared_ptr<Token>;
 	}
-	class UniformEnt {
+	class UniformEnt :
+		public IDebugGui
+	{
 		private:
 			using UniformIdMap_t = std::unordered_map<int, draw::Token_SP>;
 			struct Result_t {
@@ -39,5 +41,8 @@ namespace rev {
 			void setUniform(const int id, const draw::Token_SP& t);
 			void copyFrom(const UniformEnt& e);
 			void clearValue();
+
+			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
 	};
 }
