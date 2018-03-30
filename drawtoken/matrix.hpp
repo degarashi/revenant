@@ -54,8 +54,3 @@ namespace rev::draw {
 			}
 	};
 }
-			// constexpr int DIM = lubee::Arithmetic<M::dim_m, M::dim_n>::great;
-			// std::vector<frea::Mat_t<typename M::value_t,DIM,DIM,false>> tm(nvalue);
-			// for(std::size_t i=0 ; i<nvalue ; i++)
-				// tm[i] = m[i].template convert<DIM,DIM>();
-			// return MakeUniform(tm.data(), nvalue);
