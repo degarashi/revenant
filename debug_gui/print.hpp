@@ -90,12 +90,6 @@ namespace rev {
 			void _Show(const EditProxy<From, To>& p) {
 				_Show(static_cast<To>(p.from));
 			}
-			template <class T, std::size_t N>
-			void _Show(const std::array<T,N>& a) {
-				for(std::size_t i=0 ; i<N ; i++) {
-					Show(i, a[i]);
-				}
-			}
 
 			bool _Edit(bool& b);
 			bool _Edit(float& f);
@@ -159,14 +153,6 @@ namespace rev {
 					return false;
 				}
 			}
-			template <class T, std::size_t N>
-			bool _Edit(std::array<T,N>& a) {
-				bool mod = false;
-				for(std::size_t i=0 ; i<N ; i++) {
-					mod |= Edit(i, a[i]);
-				}
-				return mod;
-			}
 
 			bool _Slider(int& i, int v_min, int v_max);
 			template <class T, ENABLE_IF(std::is_integral<T>{})>
@@ -183,6 +169,14 @@ namespace rev {
 		void Show(IdPush, const T& t) {
 			inner::_Show(t);
 		}
+		template <class Itr>
+		void Show(IdPush, Itr itr, const Itr itrE) {
+			std::size_t idx=0;
+			while(itr != itrE) {
+				Show(idx++, *itr);
+				++itr;
+			}
+		}
 		template <class T>
 		bool Edit(IdPush, T& t) {
 			return inner::_Edit(t);
@@ -193,6 +187,16 @@ namespace rev {
 				return Edit(std::move(idp), std::forward<T>(t));
 			Show(std::move(idp), std::forward<T>(t));
 			return false;
+		}
+		template <class Itr>
+		bool Edit(IdPush, Itr itr, const Itr itrE) {
+			bool ret = false;
+			std::size_t idx=0;
+			while(itr != itrE) {
+				ret |= Edit(idx++, *itr);
+				++itr;
+			}
+			return ret;
 		}
 		template <class T, class... Ts>
 		bool Slider(IdPush, T& t, const Ts&... ts) {
