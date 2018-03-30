@@ -46,6 +46,9 @@ namespace rev::draw {
 				constexpr auto idx = detail::CalcIndex<T,Dim>();
 				Unif_Vec_Exec(idx, base_t::idUnif, _data.data(), _data.size());
 			}
+			bool isArray() const noexcept override {
+				return true;
+			}
 	};
 	template <class T>
 	class Unif_VecA<T, 1> : public Uniform<Unif_VecA<T, 1>> {
@@ -71,6 +74,9 @@ namespace rev::draw {
 				constexpr auto idx = detail::CalcIndex<T,1>();
 				Unif_Vec_Exec(idx, base_t::idUnif, _data.data(), _data.size());
 			}
+			bool isArray() const noexcept override {
+				return true;
+			}
 	};
 	// Vector単体
 	template <class T, std::size_t Dim>
@@ -89,6 +95,9 @@ namespace rev::draw {
 				constexpr auto idx = detail::CalcIndex<T,Dim>();
 				Unif_Vec_Exec(idx, base_t::idUnif, &_data, 1);
 			}
+			bool isArray() const noexcept override {
+				return false;
+			}
 	};
 	template <class T>
 	class Unif_Vec<T,1> : public Uniform<Unif_Vec<T,1>> {
@@ -106,6 +115,9 @@ namespace rev::draw {
 			void exec() override {
 				constexpr auto idx = detail::CalcIndex<T,1>();
 				Unif_Vec_Exec(idx, base_t::idUnif, &_data, 1);
+			}
+			bool isArray() const noexcept override {
+				return false;
 			}
 	};
 }

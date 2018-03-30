@@ -18,6 +18,7 @@ namespace rev::draw {
 			void setIds(GLint id, int activeTexId) const;
 			virtual ~Texture();
 			void exec() override;
+			bool isArray() const noexcept override;
 	};
 	class TextureA :
 		public Uniform<TextureA>
@@ -36,5 +37,6 @@ namespace rev::draw {
 			}
 			void exportToken(TokenDst& dst, GLint id, int activeTexId) const override;
 			void exec() override;
+			bool isArray() const noexcept override;
 	};
 }

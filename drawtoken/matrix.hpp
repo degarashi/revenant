@@ -29,6 +29,9 @@ namespace rev::draw {
 			void exec() override {
 				Unif_Mat_Exec(Dim-2, base_t::idUnif, _data.data(), _data.size(), true);
 			}
+			bool isArray() const noexcept override {
+				return true;
+			}
 	};
 	// Matrix単体
 	template <class T, std::size_t Dim>
@@ -45,6 +48,9 @@ namespace rev::draw {
 			{}
 			void exec() override {
 				Unif_Mat_Exec(Dim-2, base_t::idUnif, &_data.m[0][0], 1, true);
+			}
+			bool isArray() const noexcept override {
+				return false;
 			}
 	};
 }

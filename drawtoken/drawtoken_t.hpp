@@ -9,5 +9,7 @@ namespace rev::draw {
 			idUnif = id;
 			this->clone(dst);
 		}
+
+		virtual bool isArray() const noexcept = 0;
 	};
 }

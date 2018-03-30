@@ -51,6 +51,9 @@ namespace rev::draw {
 		}
 		GL.glUniform1i(idUnif, _actId);
 	}
+	bool Texture::isArray() const noexcept {
+		return false;
+	}
 
 	// --------------- TextureA ---------------
 	TextureA::TextureA(const std::vector<HTex>& t):
@@ -66,5 +69,8 @@ namespace rev::draw {
 	void TextureA::exec() {
 		for(auto& p : _texA)
 			p.exec();
+	}
+	bool TextureA::isArray() const noexcept {
+		return true;
 	}
 }
