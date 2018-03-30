@@ -1,8 +1,6 @@
 #pragma once
 #include "drawtoken_t.hpp"
 #include "frea/vector.hpp"
-#include <cstring>
-#include <memory>
 
 namespace rev::draw {
 	void Unif_Vec_Exec(std::size_t idx, GLint id, const void* ptr, std::size_t n);
