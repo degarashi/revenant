@@ -178,4 +178,14 @@ namespace rev {
 	const GLProgram::AttribMap& GLProgram::getAttrib() const noexcept {
 		return _amap;
 	}
+	const char* GLProgram::getUniformName(const GLint id) const {
+		const auto itr = std::find_if(_umap.cbegin(), _umap.cend(),
+			[id](const auto& p){
+				return GLint(p.second.id) == id;
+			}
+		);
+		if(itr != _umap.cend())
+			return itr->first.c_str();
+		return nullptr;
+	}
 }

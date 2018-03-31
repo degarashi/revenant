@@ -93,6 +93,9 @@ namespace rev {
 			const AttribMap& getAttrib() const noexcept;
 			void use() const;
 			GLint_OP getTexIndex(GLint id) const;
+
+			// デバッグ用(線形探索なので遅い)
+			const char* getUniformName(GLint id) const;
 			DEF_DEBUGGUI_NAME
 			DEF_DEBUGGUI_PROP
 	};
