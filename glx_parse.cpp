@@ -144,8 +144,8 @@ namespace rev {
 			)
 			#pragma GCC diagnostic pop
 			const auto UniformVal =
-				R_IVec1 | R_IVec2 | R_IVec3 | R_IVec4 |
 				R_FVec1 | R_FVec2 | R_FVec3 | R_FVec4 |
+				R_IVec1 | R_IVec2 | R_IVec3 | R_IVec4 |
 				R_BVec1 | R_BVec2 | R_BVec3 | R_BVec4;
 
 			const x3::rule<class Arg, ArgItem>							Arg;
