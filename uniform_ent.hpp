@@ -5,7 +5,6 @@
 #include "gl_program.hpp"
 
 namespace rev {
-	using Name = std::string;
 	namespace draw {
 		struct Token;
 		using Token_SP = std::shared_ptr<Token>;
