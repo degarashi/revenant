@@ -10,6 +10,22 @@ namespace rev {
 		f.show("Name", getName());
 		{
 			const auto _ = debug::ColumnPush(1);
+			if(ImGui::CollapsingHeader("DefaultParameter")) {
+				const auto _ = debug::IndentPush();
+				auto& val = const_cast<UniformEnt&>(getDefaultValue());
+				mod |= val.property(edit);
+			}
+			if(const auto& p = getProgram()) {
+				if(ImGui::CollapsingHeader("NoDefaultParameter")) {
+					const auto _ = debug::IndentPush();
+					const auto& nodef = getNoDefaultValue();
+					for(auto id : nodef) {
+						const auto* name = p->getUniformName(id);
+						D_Assert0(name);
+						ImGui::TextUnformatted(name);
+					}
+				}
+			}
 			if(ImGui::CollapsingHeader("Enable / Disable")) {
 				const auto _ = debug::IndentPush();
 				int idx = 0;
