@@ -2,8 +2,6 @@
 #include "spine/rflag.hpp"
 #include "drawtoken/tokenml.hpp"
 #include "handle/opengl.hpp"
-#include <unordered_map>
-#include <unordered_set>
 #include "gl_program.hpp"
 
 namespace rev {
