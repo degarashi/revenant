@@ -16,3 +16,8 @@ ADDITIONAL_CMAKE_OPTION		= $(OPT_SSE) $(OPT_SOUNDAPI) $(OPT_WITHOUT_UNITTEST) $(
 ADDITIONAL_CMD				= ln -sf $(PWD)/resource $(WORK_DIR)/tests/gameloop; \
 							  ln -sf $(PWD)/resource $(WORK_DIR);
 include lubee/common.make
+
+# 動作テスト
+gameloop:
+	-pkill gameloop
+	$(WORK_DIR)/tests/gameloop/gameloop
