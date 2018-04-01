@@ -5,6 +5,7 @@ namespace rev {
 		virtual ~IDebugGui() {}
 		virtual const char* getDebugName() const noexcept;
 		virtual bool property(bool edit);
+		// 内容を簡潔に表示
 		virtual void summary() const;
 	};
 }

@@ -55,7 +55,7 @@ namespace rev {
 			s.x = _size.width;
 			s.y = _size.height;
 		}
-		ImGui::ImageButton(mgr_gui.storeTexture(shared_from_this()), s);
+		ImGui::Image(mgr_gui.storeTexture(shared_from_this()), s);
 	}
 	bool Texture_URI::property(const bool edit) {
 		auto field = debug::EntryField(getDebugName(), edit);

@@ -35,16 +35,11 @@ namespace rev {
 				StringStream s;
 				const auto _ = debug::GroupPush();
 				for(int i=0 ; i<4 ; i++) {
+					const auto _ = debug::IdPush(i);
 					if(idTex[i]) {
-						s << "[" << i << "] ...";
-						if(ImGui::Button(s.output().c_str())) {
+						idTex[i]->summary();
+						if(ImGui::IsItemClicked())
 							debug::ResourceWindow::Add(idTex[i]);
-						}
-						if(ImGui::IsItemHovered()) {
-							ImGui::BeginTooltip();
-							idTex[i]->summary();
-							ImGui::EndTooltip();
-						}
 					} else
 						break;
 				}
