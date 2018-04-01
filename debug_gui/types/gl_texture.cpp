@@ -43,7 +43,7 @@ namespace rev {
 		}
 		return field.modified();
 	}
-	void IGLTexture::summary() {
+	void IGLTexture::summary() const {
 		ImVec2 s;
 		constexpr float MaxSize = 256;
 		const float m = std::max(_size.width, _size.height);

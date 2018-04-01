@@ -5,7 +5,7 @@ namespace rev {
 		virtual ~IDebugGui() {}
 		virtual const char* getDebugName() const noexcept;
 		virtual bool property(bool edit);
-		virtual void summary();
+		virtual void summary() const;
 	};
 }
 #ifdef DEBUGGUI_ENABLED
@@ -14,7 +14,7 @@ namespace rev {
 	#define DEF_DEBUGGUI_NAME \
 		const char* getDebugName() const noexcept override;
 	#define DEF_DEBUGGUI_SUMMARY \
-		void summary() override;
+		void summary() const override;
 
 	#define DEF_DEBUGGUI_ALL\
 		DEF_DEBUGGUI_PROP \

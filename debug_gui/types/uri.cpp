@@ -17,8 +17,8 @@ namespace rev {
 	const char* IdURI::getDebugName() const noexcept {
 		return "URI(Id)";
 	}
-	void IdURI::summary() {
-		property(false);
+	void IdURI::summary() const {
+		const_cast<IdURI*>(this)->property(false);
 	}
 	bool UserURI::property(const bool edit) {
 		if(const auto child = debug::ChildPush("UserURI", {0, ImGui::GetTextLineHeightWithSpacing()}, false, ImGuiWindowFlags_NoScrollbar)) {
@@ -31,8 +31,8 @@ namespace rev {
 	const char* UserURI::getDebugName() const noexcept {
 		return "URI(User)";
 	}
-	void UserURI::summary() {
-		property(false);
+	void UserURI::summary() const {
+		const_cast<UserURI*>(this)->property(false);
 	}
 	bool FileURI::property(const bool edit) {
 		const auto style = debug::StylePush(
@@ -48,8 +48,8 @@ namespace rev {
 	const char* FileURI::getDebugName() const noexcept {
 		return "URI(File)";
 	}
-	void FileURI::summary() {
-		property(false);
+	void FileURI::summary() const {
+		const_cast<FileURI*>(this)->property(false);
 	}
 	bool DataURI::property(const bool edit) {
 		if(const auto child = debug::ChildPush("DataURI", {0, ImGui::GetTextLineHeightWithSpacing()}, false, ImGuiWindowFlags_NoScrollbar)) {
@@ -67,7 +67,7 @@ namespace rev {
 	const char* DataURI::getDebugName() const noexcept {
 		return "URI(Data)";
 	}
-	void DataURI::summary() {
-		property(false);
+	void DataURI::summary() const {
+		const_cast<DataURI*>(this)->property(false);
 	}
 }

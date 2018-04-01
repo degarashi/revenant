@@ -7,6 +7,6 @@ namespace rev {
 	bool IDebugGui::property(bool) {
 		return false;
 	}
-	void IDebugGui::summary() {
+	void IDebugGui::summary() const {
 	}
 }
