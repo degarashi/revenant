@@ -29,6 +29,31 @@ namespace {
 	}
 }
 namespace rev {
+	// --------------- ImGui_SDL2::Store ---------------
+	ImGui_SDL2::Store::Store() {
+		clear();
+	}
+	void ImGui_SDL2::Store::clear() {
+		idToHdl.clear();
+		ptrToId.clear();
+	}
+	uintptr_t ImGui_SDL2::Store::add(const HTexC& t, const uintptr_t id) {
+		D_Assert0(idToHdl.size() == ptrToId.size());
+		const auto b0 = idToHdl.emplace(id, TexF{t}).second,
+					b1 = ptrToId.emplace(t.get(), id).second;
+		D_Assert0(b0 && b1);
+		return id;
+	}
+	HTexC ImGui_SDL2::_getTexture(const uintptr_t id) const {
+		if(id == cs_fontId)
+			return _font;
+		const auto& i2h = _currentStore().idToHdl;
+		const auto itr = i2h.find(id);
+		D_Assert0(itr != i2h.end());
+		return itr->second.handle;
+	}
+
+	// --------------- ImGui_SDL2 ---------------
 	namespace {
 		struct VDMaker {
 			static HVDecl MakeData(lubee::IConst<0>) {
@@ -43,10 +68,13 @@ namespace rev {
 		};
 		const SingletonDataLazy<VDecl, VDMaker, 0> g_vdecl;
 	}
-
+	const uintptr_t ImGui_SDL2::cs_invalidId = std::numeric_limits<uintptr_t>::max(),
+					ImGui_SDL2::cs_fontId = cs_invalidId-1;
 	ImGui_SDL2::ImGui_SDL2(const HInput& keyboard, const HInput& mouse, const Window& window):
 		_keyboard(keyboard),
-		_mouse(mouse)
+		_mouse(mouse),
+		_idStack(cs_fontId, 0),
+		_storeSw(0)
 	{
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
@@ -88,15 +116,57 @@ namespace rev {
 		_initTech();
 	}
 	ImGui_SDL2::~ImGui_SDL2() {
-		ImGui::GetIO().Fonts->TexID = 0;
+		ImGui::GetIO().Fonts->TexID = reinterpret_cast<ImTextureID>(cs_invalidId);
 		ImGui::DestroyContext();
 	}
-	ImTextureID ImGui_SDL2::storeResource(const Void_SPC& r) {
-		_resV.emplace_front(r);
-		return &_resV.front();
+	ImTextureID ImGui_SDL2::storeTexture(const HTexC& t) {
+		auto& cur = _currentStore();
+		auto& prev = _prevStore();
+
+		if(const auto itr = cur.ptrToId.find(t.get());
+			itr != cur.ptrToId.end())
+		{
+			std::cout << "cur" << itr->second << std::endl;
+			// 今のフレームで使用された
+			return reinterpret_cast<ImTextureID>(itr->second);
+		}
+		if(const auto itr = prev.ptrToId.find(t.get());
+			itr != prev.ptrToId.end())
+		{
+			std::cout << "prev" << itr->second << std::endl;
+			// 前のフレームで使用された
+			prev.idToHdl.at(itr->second).used = true;
+			return reinterpret_cast<ImTextureID>(cur.add(t, itr->second));
+		}
+		std::cout << "new" << std::endl;
+		// 新しくIDを生成
+		return reinterpret_cast<ImTextureID>(cur.add(t, _idStack.get()));
 	}
-	void ImGui_SDL2::_clearResource() {
-		_resV.clear();
+	const ImGui_SDL2::Store& ImGui_SDL2::_prevStore() const {
+		return _store[_storeSw^1];
+	}
+	ImGui_SDL2::Store& ImGui_SDL2::_prevStore() {
+		return _store[_storeSw^1];
+	}
+	const ImGui_SDL2::Store& ImGui_SDL2::_currentStore() const {
+		return _store[_storeSw];
+	}
+	ImGui_SDL2::Store& ImGui_SDL2::_currentStore() {
+		return _store[_storeSw];
+	}
+
+	void ImGui_SDL2::_switchResource() {
+		{
+			// 古いIDを回収
+			const auto& prev = _prevStore();
+			for(auto& p : prev.idToHdl) {
+				if(!p.second.used) {
+					_idStack.put(p.first);
+				}
+			}
+		}
+		_storeSw ^= 1;
+		_currentStore().clear();
 	}
 	void ImGui_SDL2::newFrame(const HFx& fx, const Window& window, const Duration delta) {
 		_effect = fx;
@@ -166,7 +236,7 @@ namespace rev {
 	}
 	void ImGui_SDL2::endFrame() {
 		ImGui::Render();
-		_clearResource();
+		_switchResource();
 	}
 	void ImGui_SDL2::_initFontsTexture() {
 		// Build texture atlas
@@ -187,7 +257,7 @@ namespace rev {
 		);
 		_font->setFilter(true, true);
 		// Store our identifier
-		io.Fonts->TexID = reinterpret_cast<ImTextureID>(&_font);
+		io.Fonts->TexID = reinterpret_cast<ImTextureID>(cs_fontId);
 	}
 	void ImGui_SDL2::_initTech() {
 		auto tp = mgr_gl.loadTechPass("imgui.glx");
@@ -233,7 +303,7 @@ namespace rev {
 					pcmd->UserCallback(cmd_list, pcmd);
 				}
 				else {
-					u.setUniform(_unif.texture, draw::MakeUniform(*reinterpret_cast<HTex*>(pcmd->TextureId)));
+					u.setUniform(_unif.texture, draw::MakeUniform(_getTexture(reinterpret_cast<uintptr_t>(pcmd->TextureId))));
 					e.setScissor({true, {
 						(int)pcmd->ClipRect.x,
 						(int)pcmd->ClipRect.z,

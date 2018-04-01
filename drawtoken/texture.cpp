@@ -14,7 +14,7 @@ namespace rev::draw {
 		};
 	}
 	// --------------- Texture ---------------
-	Texture::Texture(const HTex& hTex):
+	Texture::Texture(const HTexC& hTex):
 		IGLTexture(*hTex),
 		_hTex(hTex),
 		_actId(-1)
@@ -56,7 +56,7 @@ namespace rev::draw {
 	}
 
 	// --------------- TextureA ---------------
-	TextureA::TextureA(const std::vector<HTex>& t):
+	TextureA::TextureA(const std::vector<HTexC>& t):
 		TextureA(t.cbegin(), t.cend())
 	{}
 	void TextureA::exportToken(TokenDst& dst, const GLint id, const int activeTexId) const {

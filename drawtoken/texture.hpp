@@ -10,10 +10,10 @@ namespace rev::draw {
 		public Uniform<Texture>
 	{
 		private:
-			HTex			_hTex;
+			HTexC			_hTex;
 			mutable int		_actId;
 		public:
-			Texture(const HTex& hTex);
+			Texture(const HTexC& hTex);
 			void exportToken(TokenDst& dst, GLint id, int activeTexId) const override;
 			void setIds(GLint id, int activeTexId) const;
 			virtual ~Texture();
@@ -30,7 +30,7 @@ namespace rev::draw {
 			using TexA = std::vector<Texture>;
 			TexA	_texA;
 		public:
-			TextureA(const std::vector<HTex>& t);
+			TextureA(const std::vector<HTexC>& t);
 			template <class Itr>
 			TextureA(Itr itr, const Itr itrE) {
 				while(itr != itrE) {

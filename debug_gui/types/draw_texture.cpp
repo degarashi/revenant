@@ -4,7 +4,7 @@
 
 namespace rev::draw {
 	void Texture::printValue() const {
-		if(ImGui::ImageButton(mgr_gui.storeResource(_hTex), {128,128})) {}
+		if(ImGui::ImageButton(mgr_gui.storeTexture(_hTex), {128,128})) {}
 	}
 
 	void TextureA::printValue() const {
