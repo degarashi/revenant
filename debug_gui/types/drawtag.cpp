@@ -4,7 +4,6 @@
 #include "../../tech_if.hpp"
 #include "../../gl_texture.hpp"
 #include "../resource_window.hpp"
-#include "../sstream.hpp"
 #include "../indent.hpp"
 
 namespace rev {
@@ -32,7 +31,6 @@ namespace rev {
 			ImGui::TextUnformatted("Texture");
 			ImGui::NextColumn();
 			{
-				StringStream s;
 				const auto _ = debug::GroupPush();
 				for(int i=0 ; i<4 ; i++) {
 					const auto _ = debug::IdPush(i);
