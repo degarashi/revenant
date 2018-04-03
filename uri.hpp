@@ -56,7 +56,9 @@ namespace rev {
 			uint64_t getId() const noexcept;
 			DEF_URIMETHOD
 			bool operator == (const IdURI& u) const noexcept;
-			DEF_DEBUGGUI_ALL
+			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
+			DEF_DEBUGGUI_SUMMARY
 	};
 
 	class UserURI;
@@ -76,7 +78,9 @@ namespace rev {
 			const std::string& getName() const noexcept;
 			DEF_URIMETHOD
 			bool operator == (const UserURI& u) const noexcept;
-			DEF_DEBUGGUI_ALL
+			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
+			DEF_DEBUGGUI_SUMMARY
 	};
 
 	class FileURI;
@@ -97,7 +101,9 @@ namespace rev {
 			const PathBlock& pathblock() const noexcept;
 			DEF_URIMETHOD
 			bool operator == (const FileURI& f) const noexcept;
-			DEF_DEBUGGUI_ALL
+			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
+			DEF_DEBUGGUI_SUMMARY
 	};
 
 	class DataURI;
@@ -126,7 +132,9 @@ namespace rev {
 
 			const Data_t& data() const noexcept;
 			bool operator == (const DataURI& d) const noexcept;
-			DEF_DEBUGGUI_ALL
+			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
+			DEF_DEBUGGUI_SUMMARY
 	};
 	#undef DEF_URIMETHOD
 
