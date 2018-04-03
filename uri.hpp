@@ -31,6 +31,8 @@ namespace rev {
 			virtual std::size_t getHash() const noexcept = 0;
 			virtual HURI clone() const = 0;
 			const char* getResourceName() const noexcept override;
+			DEF_DEBUGGUI_SUMMARY
+			DEF_DEBUGGUI_SUMMARYSTR
 
 			bool operator == (const URI& u) const noexcept;
 	};
@@ -58,7 +60,6 @@ namespace rev {
 			bool operator == (const IdURI& u) const noexcept;
 			DEF_DEBUGGUI_NAME
 			DEF_DEBUGGUI_PROP
-			DEF_DEBUGGUI_SUMMARY
 	};
 
 	class UserURI;
@@ -80,7 +81,6 @@ namespace rev {
 			bool operator == (const UserURI& u) const noexcept;
 			DEF_DEBUGGUI_NAME
 			DEF_DEBUGGUI_PROP
-			DEF_DEBUGGUI_SUMMARY
 	};
 
 	class FileURI;
@@ -103,7 +103,6 @@ namespace rev {
 			bool operator == (const FileURI& f) const noexcept;
 			DEF_DEBUGGUI_NAME
 			DEF_DEBUGGUI_PROP
-			DEF_DEBUGGUI_SUMMARY
 	};
 
 	class DataURI;
@@ -134,7 +133,6 @@ namespace rev {
 			bool operator == (const DataURI& d) const noexcept;
 			DEF_DEBUGGUI_NAME
 			DEF_DEBUGGUI_PROP
-			DEF_DEBUGGUI_SUMMARY
 	};
 	#undef DEF_URIMETHOD
 

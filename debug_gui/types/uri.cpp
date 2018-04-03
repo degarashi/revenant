@@ -6,6 +6,15 @@
 #include "../child.hpp"
 
 namespace rev {
+	std::string URI::summary_str() const {
+		std::stringstream ss;
+		ss << *this;
+		return ss.str();
+	}
+	void URI::summary() const {
+		ImGui::TextUnformatted(summary_str().c_str());
+	}
+
 	bool IdURI::property(const bool edit) {
 		if(const auto child = debug::ChildPush("IdURI", {0, ImGui::GetTextLineHeightWithSpacing()}, false, ImGuiWindowFlags_NoScrollbar)) {
 			debug::Entry ent(0, edit, 2);
@@ -17,9 +26,6 @@ namespace rev {
 	const char* IdURI::getDebugName() const noexcept {
 		return "URI(Id)";
 	}
-	void IdURI::summary() const {
-		const_cast<IdURI*>(this)->property(false);
-	}
 	bool UserURI::property(const bool edit) {
 		if(const auto child = debug::ChildPush("UserURI", {0, ImGui::GetTextLineHeightWithSpacing()}, false, ImGuiWindowFlags_NoScrollbar)) {
 			debug::Entry ent(0, edit, 2);
@@ -30,9 +36,6 @@ namespace rev {
 	}
 	const char* UserURI::getDebugName() const noexcept {
 		return "URI(User)";
-	}
-	void UserURI::summary() const {
-		const_cast<UserURI*>(this)->property(false);
 	}
 	bool FileURI::property(const bool edit) {
 		const auto style = debug::StylePush(
@@ -47,9 +50,6 @@ namespace rev {
 	}
 	const char* FileURI::getDebugName() const noexcept {
 		return "URI(File)";
-	}
-	void FileURI::summary() const {
-		const_cast<FileURI*>(this)->property(false);
 	}
 	bool DataURI::property(const bool edit) {
 		if(const auto child = debug::ChildPush("DataURI", {0, ImGui::GetTextLineHeightWithSpacing()}, false, ImGuiWindowFlags_NoScrollbar)) {
@@ -66,8 +66,5 @@ namespace rev {
 	}
 	const char* DataURI::getDebugName() const noexcept {
 		return "URI(Data)";
-	}
-	void DataURI::summary() const {
-		const_cast<DataURI*>(this)->property(false);
 	}
 }
