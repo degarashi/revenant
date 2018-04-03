@@ -18,7 +18,7 @@ namespace rev {
 				if(const auto c = ChildPush("ResMgr", 0, false, ImGuiWindowFlags_HorizontalScrollbar)) {
 					for(auto&& r : m) {
 						const IdPush id(r.get());
-						s << r->getDebugName() << "\t(address: 0x" << std::hex << r.get() << ')';
+						s << r->summary_str() << "\t(address: 0x" << std::hex << r.get() << ')';
 						cb(s.output().c_str(), r);
 						if(ImGui::IsItemClicked(1)) {
 							ImGui::OpenPopup("popup");
