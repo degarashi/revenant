@@ -23,7 +23,7 @@ namespace rev {
 					for(const auto& r : m) {
 						const auto& key = *m.getKey(r);
 						if(anonymous == spi::IsAnonymous(key)) {
-							s << r->getDebugName() << ": " << key;
+							s << r->summary_str() << ": " << key;
 							const auto ks = s.output();
 							const auto* kp = ks.c_str();
 							if(filter.PassFilter(kp)) {
