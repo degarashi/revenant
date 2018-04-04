@@ -38,7 +38,7 @@ namespace rev {
 		{
 			const auto col = debug::ColumnPush(2);
 			const auto id_obj = ImGui::GetID("Object");
-			using St = debug::StateStorage<std::weak_ptr<IDebugGui>>;
+			using St = debug::StateStorage<WDbg>;
 			auto cur = St::Get<IObject>(id_obj);
 			if(const auto c = debug::ChildPush("Left", {0,0})) {
 				debug::TextFilter filter(ImGui::GetID("Filter"));

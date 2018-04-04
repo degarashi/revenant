@@ -8,6 +8,7 @@
 #include "textfilter.hpp"
 #include "spine/optional.hpp"
 #include "child.hpp"
+#include "../handle/gui.hpp"
 
 namespace rev::debug {
 	DefineEnumPair(ListViewFlag,
@@ -28,14 +29,12 @@ namespace rev::debug {
 			}
 
 			const auto id = ImGui::GetID("Left");
-			using WDbg = std::weak_ptr<IDebugGui>;
 			using St = debug::StateStorage<WDbg>;
 			auto cur = St::Get(id);
 			if(const auto _ = debug::ChildPush("Left", {0,0}, false, ImGuiWindowFlags_HorizontalScrollbar)) {
 				std::size_t idx = 0;
 				while(itr != itrE) {
 					const auto _ = debug::IdPush(idx++);
-					using HDbg = std::shared_ptr<IDebugGui>;
 					HDbg obj = *itr;
 					const auto str = obj->summary_str();
 					if(!filter || filter->PassFilter(str.c_str())) {

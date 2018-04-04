@@ -55,7 +55,7 @@ namespace rev {
 				const auto c = ColumnPush(2);
 				const auto id = ImGui::GetID("Left");
 				using R = typename std::decay_t<decltype(*m.begin())>::element_type;
-				using St = StateStorage<std::weak_ptr<IDebugGui>>;
+				using St = StateStorage<WDbg>;
 				auto cur_lk = St::template Get<R>(id);
 				inner::ResMgrNamed_Iter(m, [id, &cur_lk](const char* name, auto&& r){
 					if(ImGui::Selectable(name, cur_lk == r)) {

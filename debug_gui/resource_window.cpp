@@ -8,7 +8,7 @@
 
 namespace rev {
 	namespace debug {
-		ResourceWindow::Entry::Entry(const void *const p, WP wp):
+		ResourceWindow::Entry::Entry(const void *const p, WDbg wp):
 			ptr(p),
 			wp(wp)
 		{}
@@ -20,7 +20,7 @@ namespace rev {
 		}
 
 		ResourceWindow::Set ResourceWindow::s_set;
-		void ResourceWindow::Add(const SP& sp) {
+		void ResourceWindow::Add(const HDbg& sp) {
 			s_set.emplace(sp.get(), sp);
 		}
 		void ResourceWindow::Draw() {

@@ -31,7 +31,7 @@ namespace rev {
 					}
 				}
 			}
-			using St = StateStorage<std::weak_ptr<IDebugGui>>;
+			using St = StateStorage<WDbg>;
 			template <class T, class A>
 			bool _Edit(spi::ResMgr<T,A>& m) {
 				const auto c = ColumnPush(2);
