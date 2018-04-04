@@ -1,13 +1,10 @@
 #include "resource_view.hpp"
 #include "../../imgui/imgui.h"
-#include "../../camera2d.hpp"
 #include "../../gl_resource.hpp"
-#include "../../debug_gui/types/resmgr.hpp"
 #include "../../debug_gui/types/resmgr_named.hpp"
 #include "../../debug_gui/menu.hpp"
 #include "../../debug_gui/window.hpp"
 #include "../../scene_mgr.hpp"
-#include "../../updgroup_if.hpp"
 
 namespace rev {
 	ResourceView::ResourceView():
