@@ -1,1 +1,8 @@
-./beat/.gitignore
+.clang
+*.cbp
+*.user*
+__pycache__
+*.pyc
+*.kdev4
+*~
+imgui.ini
