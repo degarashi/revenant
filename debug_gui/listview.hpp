@@ -50,7 +50,9 @@ namespace rev::debug {
 			{
 				const auto idp = debug::IdPush("Right");
 				if(cur) {
-					cur->property(false);
+					if(const auto _ = ChildPush("Right", {0,0})) {
+						cur->property(false);
+					}
 				}
 			}
 		}
