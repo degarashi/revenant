@@ -3,8 +3,8 @@
 
 namespace rev {
 	namespace debug {
-		TreePush::TreePush(const char* label) {
-			_valid = ImGui::TreeNode(label);
+		TreePush::TreePush(const char* label, const ImGuiTreeNodeFlags flag) {
+			_valid = ImGui::TreeNodeEx(label, flag);
 		}
 		TreePush::TreePush(TreePush&& t):
 			_valid(t._valid)
