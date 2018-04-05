@@ -41,6 +41,7 @@ aux_source_directory(lua_define LIBSRC_LUADEF)
 aux_source_directory(lua LIBSRC_LUA)
 aux_source_directory(glwrapper LIBSRC_GLWRAPPER)
 aux_source_directory(parse LIBSRC_GLXPARSE)
+aux_source_directory(backup LIBSRC_BACKUP)
 aux_source_directory(imgui LIBSRC_MAIN)
 list(REMOVE_ITEM LIBSRC_MAIN ${OS_DEPENDANT_SRC} ${SOUND_DEPENDANT_SRC})
 
@@ -120,6 +121,7 @@ MakeLib(revenant_luadef LIBSRC_LUADEF)
 MakeLib(revenant_lua LIBSRC_LUA)
 MakeLib(revenant_glwrapper LIBSRC_GLWRAPPER)
 MakeLib(revenant_glxparse LIBSRC_GLXPARSE)
+MakeLib(revenant_backup LIBSRC_BACKUP)
 
 # ------ テストコード生成 ------
 find_package(GTest REQUIRED)
@@ -130,6 +132,7 @@ set(TESTEXE_LIB
 	revenant_lua
 	revenant_glwrapper
 	revenant_glxparse
+	revenant_backup
 	${GTEST_MAIN_LIBRARIES}
 	${GTEST_LIBRARIES}
 )
