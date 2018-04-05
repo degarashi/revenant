@@ -79,6 +79,8 @@ namespace rev {
 			void _Show(IDebugGui& g);
 			template <class TAG, class V>
 			void _Show(const frea::Angle<TAG,V>& a);
+			template <class T, ENABLE_IF(frea::is_quaternion<T>{})>
+			void _Show(const T& t);
 
 			template <class V, ENABLE_IF(frea::is_vector<V>{})>
 			void _Show(const V& v) {
@@ -190,6 +192,8 @@ namespace rev {
 				}
 			}
 
+			template <class T, ENABLE_IF(frea::is_quaternion<T>{})>
+			bool _Edit(T& t);
 			template <class V, ENABLE_IF_I( frea::is_vector<V>{} && (!V::align && ValueCnvB_t<typename V::value_t>{}))>
 			bool _Edit(V& v) {
 				return _EditVector(v);
