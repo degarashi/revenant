@@ -40,11 +40,13 @@ namespace rev::debug {
 				std::size_t idx = 0;
 				while(_TreeView(q, selecting, bSelect, idx++));
 				q.onUp();
-			}
+			} else
+				clicked = ImGui::IsItemClicked();
 		}
 		if(!bSelect && clicked) {
 			selecting = cur;
 			bSelect = true;
+			std::cout << "HIT" << std::endl;
 		}
 		return q.onSibling();
 	}
