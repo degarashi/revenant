@@ -30,16 +30,16 @@ set(SOUND_DEPENDANT_SRC ${DEPENDANT_OPENSL} ${DEPENDANT_OPENAL})
 
 if(${WITH_DEBUGGUI})
 	add_definitions(-DDEBUGGUI_ENABLED)
-	aux_source_directory(debug_gui LIBSRC_FILE)
-	aux_source_directory(debug_gui/types LIBSRC_FILE)
+	aux_source_directory(debug_gui LIBSRC_GUI)
+	aux_source_directory(debug_gui/types LIBSRC_GUI)
 endif()
 # 依存ファイル以外のソースファイルを収集
-aux_source_directory(. LIBSRC_FILE)
-aux_source_directory(drawtoken LIBSRC_FILE)
-aux_source_directory(util LIBSRC_FILE)
-aux_source_directory(lua_define LIBSRC_FILE)
-aux_source_directory(imgui LIBSRC_FILE)
-list(REMOVE_ITEM LIBSRC_FILE ${OS_DEPENDANT_SRC} ${SOUND_DEPENDANT_SRC})
+aux_source_directory(. LIBSRC_MAIN)
+aux_source_directory(drawtoken LIBSRC_MAIN)
+aux_source_directory(util LIBSRC_MAIN)
+aux_source_directory(lua_define LIBSRC_MAIN)
+aux_source_directory(imgui LIBSRC_MAIN)
+list(REMOVE_ITEM LIBSRC_MAIN ${OS_DEPENDANT_SRC} ${SOUND_DEPENDANT_SRC})
 
 # サウンド依存ファイルの設定
 if(SOUND_API STREQUAL "openal")
@@ -63,7 +63,7 @@ elseif(${UNIX})
 else()
 	message(FATAL_ERROR "couldn't detect OS type")
 endif()
-set(LIBSRC_FILE ${LIBSRC_FILE} ${DEPSRC_FILE})
+set(LIBSRC_MAIN ${LIBSRC_MAIN} ${DEPSRC_FILE})
 
 find_package(Boost 1.55 REQUIRED)
 find_package(Freetype 2.0 REQUIRED)
@@ -83,6 +83,7 @@ include_directories(
 	${LUA_INCLUDE_DIR}
 	.
 )
+
 # Linux環境
 add_definitions(-DINCLUDE_OPENGL_1_X
 				-DINCLUDE_OPENGL_2_X
@@ -90,27 +91,34 @@ add_definitions(-DINCLUDE_OPENGL_1_X
 				-DINCLUDE_OPENGL_FRAMEBUFFER
 				-DINCLUDE_OPENGL_SYNC
 				-DINCLUDE_OPENGL_TIMER_QUERY)
-add_library(revenant SHARED ${LIBSRC_FILE})
-target_link_libraries(revenant
-	${SDL2_IMAGE_LIBRARY}
-	${SDL2_LIBRARY}
-	${FREETYPE_LIBRARIES}
-	${Boost_LIBRARIES}
-	${VORBISFILE_LIBRARY}
-	${VORBIS_LIBRARY}
-	${OGG_LIBRARY}
-	${OPENAL_LIBRARY}
-	${LUA_LIBRARIES}
-	GL
-	beat
-)
-set_target_properties(revenant PROPERTIES VERSION 1.0.0 SOVERSION 1)
-install(TARGETS revenant LIBRARY DESTINATION lib)
+
+function(MakeLib NAME SRC)
+	add_library(${NAME} SHARED ${${SRC}})
+	target_link_libraries(${NAME}
+		${SDL2_IMAGE_LIBRARY}
+		${SDL2_LIBRARY}
+		${FREETYPE_LIBRARIES}
+		${Boost_LIBRARIES}
+		${VORBISFILE_LIBRARY}
+		${VORBIS_LIBRARY}
+		${OGG_LIBRARY}
+		${OPENAL_LIBRARY}
+		${LUA_LIBRARIES}
+		GL
+		beat
+	)
+	set_target_properties(${NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
+	install(TARGETS ${NAME} LIBRARY DESTINATION lib)
+endfunction()
+
+MakeLib(revenant LIBSRC_MAIN)
+MakeLib(revenant_gui LIBSRC_GUI)
 
 # ------ テストコード生成 ------
 find_package(GTest REQUIRED)
 set(TESTEXE_LIB
 	revenant
+	revenant_gui
 	${GTEST_MAIN_LIBRARIES}
 	${GTEST_LIBRARIES}
 )
