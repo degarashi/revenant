@@ -37,7 +37,7 @@ endif()
 aux_source_directory(. LIBSRC_MAIN)
 aux_source_directory(drawtoken LIBSRC_MAIN)
 aux_source_directory(util LIBSRC_MAIN)
-aux_source_directory(lua_define LIBSRC_MAIN)
+aux_source_directory(lua_define LIBSRC_LUADEF)
 aux_source_directory(imgui LIBSRC_MAIN)
 list(REMOVE_ITEM LIBSRC_MAIN ${OS_DEPENDANT_SRC} ${SOUND_DEPENDANT_SRC})
 
@@ -113,12 +113,14 @@ endfunction()
 
 MakeLib(revenant LIBSRC_MAIN)
 MakeLib(revenant_gui LIBSRC_GUI)
+MakeLib(revenant_luadef LIBSRC_LUADEF)
 
 # ------ テストコード生成 ------
 find_package(GTest REQUIRED)
 set(TESTEXE_LIB
 	revenant
 	revenant_gui
+	revenant_luadef
 	${GTEST_MAIN_LIBRARIES}
 	${GTEST_LIBRARIES}
 )
