@@ -1,21 +1,22 @@
 #include "textfilter.hpp"
-#include "state_storage.hpp"
 #include "lubee/meta/countof.hpp"
 #include <cstring>
 
-namespace rev {
-	namespace debug {
-		TextFilter::TextFilter(const ImGuiID id):
-			ImGuiTextFilter(St::GetDefault(id)->data()),
-			_buff(*St::GetDefault(id))
-		{
-			if(Draw()) {
-				std::strncpy(
-					_buff.data(),
-					InputBuf,
-					std::min<int>(countof(InputBuf), 256)
-				);
-			}
+namespace rev::debug {
+	namespace {
+		constexpr std::size_t BufferLen = 256;
+	}
+
+	TextFilter::TextFilter(const ImGuiID id):
+		TextBuffer(id, BufferLen),
+		ImGuiTextFilter(buffer().data())
+	{
+		if(Draw()) {
+			std::strncpy(
+				buffer().data(),
+				InputBuf,
+				std::min<int>(countof(InputBuf), BufferLen)
+			);
 		}
 	}
 }
