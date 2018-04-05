@@ -19,6 +19,9 @@ namespace beat {
 	namespace g2 {
 		class Pose;
 	}
+	namespace g3 {
+		class Pose;
+	}
 }
 namespace spi {
 	template <class T, class A>
@@ -76,6 +79,7 @@ namespace rev {
 			void _Show(const lubee::SizeI& s);
 			void _Show(const lubee::SizeF& s);
 			void _Show(const beat::g2::Pose& p);
+			void _Show(const beat::g3::Pose& p);
 			void _Show(IDebugGui& g);
 			template <class TAG, class V>
 			void _Show(const frea::Angle<TAG,V>& a);
@@ -134,6 +138,7 @@ namespace rev {
 			bool _Edit(lubee::SizeF& s);
 			bool _Edit(IDebugGui& g);
 			bool _Edit(beat::g2::Pose& p);
+			bool _Edit(beat::g3::Pose& p);
 			template <class TAG, class V>
 			bool _Edit(frea::Angle<TAG,V>& a);
 
