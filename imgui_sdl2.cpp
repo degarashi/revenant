@@ -126,19 +126,16 @@ namespace rev {
 		if(const auto itr = cur.ptrToId.find(t.get());
 			itr != cur.ptrToId.end())
 		{
-			std::cout << "cur" << itr->second << std::endl;
 			// 今のフレームで使用された
 			return reinterpret_cast<ImTextureID>(itr->second);
 		}
 		if(const auto itr = prev.ptrToId.find(t.get());
 			itr != prev.ptrToId.end())
 		{
-			std::cout << "prev" << itr->second << std::endl;
 			// 前のフレームで使用された
 			prev.idToHdl.at(itr->second).used = true;
 			return reinterpret_cast<ImTextureID>(cur.add(t, itr->second));
 		}
-		std::cout << "new" << std::endl;
 		// 新しくIDを生成
 		return reinterpret_cast<ImTextureID>(cur.add(t, _idStack.get()));
 	}
