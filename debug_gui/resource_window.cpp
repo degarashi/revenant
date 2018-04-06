@@ -29,10 +29,9 @@ namespace rev {
 			auto itr = s_set.begin();
 			while(itr != s_set.end()) {
 				if(const auto sp = itr->wp.lock()) {
-					s << sp.get() << '\t' << sp->summary_str();
+					s << sp.get() << '\t' << sp->getDebugName();
 					bool opened = true;
 					if(const auto w = WindowPush(s.output().c_str(), &opened, 640,480)) {
-						ImGui::Text("reference-count = %ld", sp.use_count());
 						sp->property(true);
 					}
 					if(!opened) {
