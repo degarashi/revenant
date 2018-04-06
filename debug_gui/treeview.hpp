@@ -46,7 +46,6 @@ namespace rev::debug {
 		if(!bSelect && clicked) {
 			selecting = cur;
 			bSelect = true;
-			std::cout << "HIT" << std::endl;
 		}
 		return q.onSibling();
 	}
