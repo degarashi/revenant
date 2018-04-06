@@ -1,6 +1,7 @@
 #include "print.hpp"
 #include "../imgui/imgui.h"
 #include "frea/vector.hpp"
+#include <cstring>
 
 namespace rev {
 	namespace debug {
@@ -43,6 +44,15 @@ namespace rev {
 			}
 			bool _Edit(int32_t& i) {
 				return ImGui::InputInt("", &i, 1, 100, ImGuiInputTextFlags_EnterReturnsTrue);
+			}
+			bool _Edit(std::string& s) {
+				auto buff = s;
+				buff.resize(s.size()+256);
+				if(ImGui::InputText("", buff.data(), buff.size(), ImGuiInputTextFlags_EnterReturnsTrue)) {
+					s.assign(buff.cbegin(), buff.cbegin()+std::strlen(buff.c_str()));
+					return true;
+				}
+				return false;
 			}
 			template <class T, ENABLE_IF_I(std::is_integral<T>{})>
 			bool _Edit(T& i) {

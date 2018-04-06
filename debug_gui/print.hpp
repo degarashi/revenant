@@ -130,6 +130,7 @@ namespace rev {
 			bool _Edit(bool& b);
 			bool _Edit(float& f);
 			bool _Edit(int32_t& i);
+			bool _Edit(std::string& s);
 			template <class T, ENABLE_IF(std::is_integral<T>{})>
 			bool _Edit(T& t);
 			template <class T, ENABLE_IF(std::is_floating_point<T>{})>
