@@ -17,6 +17,7 @@ namespace rev::debug {
 		virtual HDbg getNode() const = 0;
 		virtual bool isLeaf() const = 0;
 		virtual bool isOpened() const = 0;
+		virtual bool isSelected() const = 0;
 	};
 	bool _TreeView(TreeView_Query& q, HDbg& selecting, bool& bSelect, const std::size_t id) {
 		const auto _ = IdPush(id);
@@ -25,23 +26,30 @@ namespace rev::debug {
 		ImGuiTreeNodeFlags flag = ImGuiTreeNodeFlags_OpenOnArrow |
 								ImGuiTreeNodeFlags_OpenOnDoubleClick;
 		bool clicked = false;
+		const auto chkClick = [&q, &clicked](){
+			if(q.isSelected()) {
+				ImGui::SetItemDefaultFocus();
+				clicked = true;
+			} else
+				clicked = ImGui::IsItemClicked();
+		};
 		if(cur == selecting)
 			flag |= ImGuiTreeNodeFlags_Selected;
 		if(q.isLeaf()) {
 			flag |= ImGuiTreeNodeFlags_Leaf;
 			TreePush(str.c_str(), flag);
-			clicked = ImGui::IsItemClicked();
+			chkClick();
 		} else {
 			if(q.isOpened())
 				ImGui::SetNextTreeNodeOpen(true);
 			if(const auto _ = TreePush(str.c_str(), flag)) {
-				clicked = ImGui::IsItemClicked();
+				chkClick();
 				q.onDown();
 				std::size_t idx = 0;
 				while(_TreeView(q, selecting, bSelect, idx++));
 				q.onUp();
 			} else
-				clicked = ImGui::IsItemClicked();
+				chkClick();
 		}
 		if(!bSelect && clicked) {
 			selecting = cur;
