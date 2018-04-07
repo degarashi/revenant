@@ -15,7 +15,8 @@ namespace rev::debug::inner {
 		auto tmp = t.asVec4();
 		if(_Edit(tmp)) {
 			for(std::size_t i=0 ; i<4 ; i++)
-			t.m[i] = tmp.m[i];
+				t.m[i] = tmp.m[i];
+			return true;
 		}
 		return false;
 	}
