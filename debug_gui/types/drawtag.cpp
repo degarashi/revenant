@@ -4,7 +4,7 @@
 #include "../../tech_if.hpp"
 #include "../../gl_texture.hpp"
 #include "../resource_window.hpp"
-#include "../indent.hpp"
+#include "../header.hpp"
 
 namespace rev {
 	const char* DrawTag::getDebugName() const noexcept {
@@ -12,17 +12,11 @@ namespace rev {
 	}
 	bool DrawTag::property(const bool edit) {
 		bool mod = false;
-		if(technique) {
-			if(ImGui::CollapsingHeader("Technique")) {
-				const auto _ = debug::IndentPush();
-				mod |= technique->property(edit);
-			}
+		if(const auto _ = debug::Header("Technique", !technique)) {
+			mod |= technique->property(edit);
 		}
-		if(primitive) {
-			if(ImGui::CollapsingHeader("Primitive")) {
-				const auto _ = debug::IndentPush();
-				mod |= primitive->property(edit);
-			}
+		if(const auto _ = debug::Header("Primitive", !primitive)) {
+			mod |= primitive->property(edit);
 		}
 		ImGui::Spacing();
 
