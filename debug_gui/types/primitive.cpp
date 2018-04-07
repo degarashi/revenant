@@ -8,8 +8,8 @@
 #include "../tree.hpp"
 #include "../child.hpp"
 #include "../sstream.hpp"
-#include "../indent.hpp"
 #include "lubee/meta/countof.hpp"
+#include "../header.hpp"
 
 namespace rev {
 	bool Primitive::property(const bool edit) {
@@ -17,12 +17,9 @@ namespace rev {
 		f.show("DrawMode", drawMode);
 		ImGui::Columns(1);
 		bool mod = false;
-		if(vdecl) {
-			if(ImGui::CollapsingHeader("Vertex-Decl")) {
-				const auto _ = debug::IndentPush();
-				const auto idp = debug::IdPush("Vertex-Decl");
-				vdecl->property();
-			}
+		if(const auto _ = debug::Header("Vertex-Decl", !vdecl)) {
+			const auto idp = debug::IdPush("Vertex-Decl");
+			vdecl->property();
 		}
 		StringStream s;
 		for(std::size_t i=0 ; i<countof(vb) ; i++) {
