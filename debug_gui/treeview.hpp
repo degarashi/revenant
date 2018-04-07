@@ -57,7 +57,7 @@ namespace rev::debug {
 		}
 		return q.onSibling();
 	}
-	void TreeView(TreeView_Query& q) {
+	void TreeView(TreeView_Query& q, const bool edit) {
 		if(const auto _ = debug::ChildPush("treeview", {0,0}, false)) {
 			const auto clm = debug::ColumnPush(2);
 			const auto id = ImGui::GetID("Left");
@@ -76,7 +76,7 @@ namespace rev::debug {
 				const auto idp = debug::IdPush("Right");
 				if(cur) {
 					if(const auto _ = ChildPush("Right", {0,0})) {
-						cur->property(false);
+						cur->property(edit);
 					}
 				}
 			}
