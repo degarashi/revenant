@@ -7,6 +7,7 @@
 #include "../child.hpp"
 #include "../group.hpp"
 #include "../tree.hpp"
+#include "../header.hpp"
 
 namespace rev {
 	const char* GLProgram::getDebugName() const noexcept {
@@ -61,11 +62,12 @@ namespace rev {
 		ImGui::Separator();
 
 		bool mod = false;
-		for(int i=0 ; i<ShType::_Num ; i++) {
+		for(std::size_t i=0 ; i<ShType::_Num ; i++) {
 			const auto _ = debug::IdPush(i);
-			if(_shader[i]) {
-				const auto* name = ShType::ToStr(i);
-				if(ImGui::CollapsingHeader(name)) {
+			const auto* name = ShType::ToStr(i);
+			if(const auto _ = debug::Header(name, !_shader[i], false, true)) {
+				{
+					const auto group = debug::GroupPush();
 					const auto _ = debug::ChildPush(name, ImGui::GetTextLineHeight()*20);
 					mod |= _shader[i]->property(edit);
 				}
