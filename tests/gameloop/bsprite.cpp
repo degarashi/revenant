@@ -43,7 +43,6 @@ struct BoundingSprite::St : StateT<St> {
 		// ZOffset = y
 		self.setZOffset(ofs.y);
 		self.outputDrawTag(self._dtag);
-		self._dtag.technique = Sprite2D::GetDefaultTech();
 	}
 	void onConnected(BoundingSprite& self, const rev::HGroup&) override {
 		self._dg->addObj(self.shared_from_this());

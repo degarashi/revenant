@@ -11,22 +11,22 @@ namespace vertex {
 		frea::Vec3	pos;
 		frea::Vec2	uv;
 
-		const static rev::SingletonDataLazy<rev::VDecl, sprite, 0>	s_vdecl;
 		static rev::HVDecl MakeData(lubee::IConst<0>);
 	};
+	extern const rev::SingletonData<rev::VDecl, sprite, 0> sprite_vdecl;
 }
 
 namespace rev {
-	class GLEffect_2D;
 	struct DrawTag;
 }
 //! 表示テスト用のスプライト
 class Sprite2D : public beat::g2::Pose {
 	private:
+		using Tech = rev::SingletonData<rev::ITech, Sprite2D, 1>;
 		using Prim = rev::SingletonData<rev::Primitive, Sprite2D, 0>;
-		Prim				_primitive;
-		using DefaultTech = rev::SingletonData<rev::ITech, Sprite2D, 1>;
-		static DefaultTech	s_defaultTech;
+		Prim	_primitive;
+		Tech	_tech;
+
 		rev::HTex			_hTex;
 		lubee::RangeF		_zRange;
 		float				_zOffset,
@@ -35,7 +35,7 @@ class Sprite2D : public beat::g2::Pose {
 	public:
 		static rev::HPrim MakeData(lubee::IConst<0>);
 		static rev::HTech MakeData(lubee::IConst<1>);
-		static rev::HTech GetDefaultTech();
+
 		Sprite2D(const rev::HTex& t, float z);
 		void draw(rev::IEffect& e) const;
 		void setZOffset(float z);

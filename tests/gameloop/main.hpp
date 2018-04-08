@@ -9,7 +9,6 @@
 namespace rev {
 	namespace test {
 		struct UserShare {
-			HTech spriteTech;
 			HTech	textTech;
 		};
 		extern SpinLock<UserShare> g_shared;

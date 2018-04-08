@@ -23,7 +23,7 @@ rev::HPrim Sprite2D::MakeData(lubee::IConst<0>) {
 	const GLushort idx[] = {0,1,2, 2,3,0};
 	ret->ib = mgr_gl.makeIBuffer(rev::DrawType::Static);
 	ret->ib->initData(idx, countof(idx));
-	ret->vdecl = vertex::sprite::s_vdecl.GetData();
+	ret->vdecl = vertex::sprite_vdecl;
 	ret->drawMode = rev::DrawMode::Triangles;
 	auto& info = ret->withIndex;
 	info.count = 6;
@@ -32,9 +32,6 @@ rev::HPrim Sprite2D::MakeData(lubee::IConst<0>) {
 }
 rev::HTech Sprite2D::MakeData(lubee::IConst<1>) {
 	return mgr_gl.loadTechPass("sprite2d.glx")->getTechnique("Sprite|Default");
-}
-rev::HTech Sprite2D::GetDefaultTech() {
-	return s_defaultTech.GetData();
 }
 
 Sprite2D::Sprite2D(const rev::HTex& t, const float z) {
@@ -58,10 +55,7 @@ void Sprite2D::setZRange(const lubee::RangeF& r) {
 #include "../../tech_pass.hpp"
 #include "main.hpp"
 void Sprite2D::draw(rev::IEffect& e) const {
-	{
-		auto lk = rev::test::g_shared.lock();
-		e.setTechnique(lk->spriteTech);
-	}
+	e.setTechnique(_tech);
 	auto& u = e.refUniformEnt();
 	u.setUniform(rev::unif2d::texture::Diffuse, [this](){ return rev::draw::MakeUniform(_hTex); });
 	u.setUniform(rev::unif::Alpha, [this](){ return rev::draw::MakeUniform(_alpha); });
@@ -72,18 +66,21 @@ void Sprite2D::draw(rev::IEffect& e) const {
 void Sprite2D::outputDrawTag(rev::DrawTag& d) const {
 	d.idTex[0] = _hTex;
 	d.primitive = _primitive;
+	d.technique = _tech;
 	d.zOffset = _zOffset;
 }
 
 // ---------------------- Sprite頂点宣言 ----------------------
-const rev::SingletonDataLazy<rev::VDecl, vertex::sprite, 0> vertex::sprite::s_vdecl;
-rev::HVDecl vertex::sprite::MakeData(lubee::IConst<0>) {
-	return rev::HVDecl{
-		new rev::VDecl({
-			{0,0, GL_FLOAT, GL_FALSE, 3, {rev::VSemEnum::POSITION, 0}},
-			{0,12, GL_FLOAT, GL_FALSE, 2, {rev::VSemEnum::TEXCOORD, 0}}
-		})
-	};
+namespace vertex {
+	rev::HVDecl sprite::MakeData(lubee::IConst<0>) {
+		return rev::HVDecl{
+			new rev::VDecl({
+				{0,0, GL_FLOAT, GL_FALSE, 3, {rev::VSemEnum::POSITION, 0}},
+				{0,12, GL_FLOAT, GL_FALSE, 2, {rev::VSemEnum::TEXCOORD, 0}}
+			})
+		};
+	}
+	const rev::SingletonData<rev::VDecl, sprite, 0> sprite_vdecl;
 }
 
 // ----------------------- Sprite2DObj -----------------------
