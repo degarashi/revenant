@@ -7,13 +7,15 @@
 #include "spine/resmgr.hpp"
 #include "spine/singleton.hpp"
 #include "resource.hpp"
+#include "debuggui_if.hpp"
 
 namespace rev {
 	/*! 姿勢の保持はPoseクラスが行い，カメラ固有の変数だけを持つ */
 	class Camera3D :
 		public lubee::CheckAlign<Camera3D>,
 		public lubee::AAllocator<Camera3D>,
-		public Resource
+		public Resource,
+		public IDebugGui
 	{
 		private:
 			using AMat4 = frea::AMat4;
@@ -69,6 +71,9 @@ namespace rev {
 			bool operator == (const Camera3D& c) const noexcept;
 			bool operator != (const Camera3D& c) const noexcept;
 			DEF_RESOURCE_EQUAL
+
+			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
 	};
 }
 #include "luaimport.hpp"

@@ -18,7 +18,7 @@ namespace rev {
 			// 回転を一端quatに変換
 			const Quat& q = ps.getRotation();
 			m = AMat4::Identity();
-			m.getRow<3>() = -ps.getOffset().convert<4>();
+			m.getRow<3>() = (-ps.getOffset()).convertI<4,3>(1);
 
 			const Quat tq = q.inversion();
 			m *= tq.asMat33().convertI<4,4>(1);
