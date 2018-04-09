@@ -42,7 +42,7 @@ DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	TPos2D, TPos2D,
 	LUAIMPLEMENT_BASE,
 	NOTHING,
-	(bTouch)(absPos)(relPos)(pressure),
+	(absPos)(relPos)(pressure),
 	(setNewAbs)(setNewRel)
 )
 DEF_LUAIMPLEMENT_PTR_NOCTOR(

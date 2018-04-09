@@ -27,7 +27,6 @@ namespace rev {
 	const TPos2D::tagClean TPos2D::Clean;
 	// ----------------- TPos2D -----------------
 	TPos2D::TPos2D(tagClean) noexcept:
-		bTouch(false),
 		absPos{0},
 		relPos{0},
 		pressure(0)

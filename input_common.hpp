@@ -8,7 +8,6 @@
 
 namespace rev {
 	struct TPos2D : Resource {
-		bool		bTouch;
 		// 画面に対する0〜1の比率で記録する
 		frea::Vec2	absPos,
 					relPos;
