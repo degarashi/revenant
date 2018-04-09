@@ -13,6 +13,7 @@ namespace rev {
 			void setDrawPriority(Priority p) noexcept;
 			DEF_DEBUGGUI_NAME
 			DEF_DEBUGGUI_PROP
+			DEF_DEBUGGUI_SUMMARYSTR
 	};
 	// Object::PriorityはUpdateObjと兼用の場合に使われる
 	template <class T>
