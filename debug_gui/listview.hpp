@@ -16,7 +16,7 @@ namespace rev::debug {
 		((Filter)(0x02))
 	);
 	template <class Itr>
-	void ListView(Itr itr, const Itr itrE, const ListViewFlag::value_t flag={}) {
+	void ListView(Itr itr, const Itr itrE, const bool edit, const ListViewFlag::value_t flag={}) {
 		if(const auto _ = debug::ChildPush("listview", {0,0}, false)) {
 			const auto clm = debug::ColumnPush(2);
 			if(flag & ListViewFlag::NarrowColumn) {
@@ -51,7 +51,7 @@ namespace rev::debug {
 				const auto idp = debug::IdPush("Right");
 				if(cur) {
 					if(const auto _ = ChildPush("Right", {0,0})) {
-						cur->property(false);
+						cur->property(edit);
 					}
 				}
 			}
