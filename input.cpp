@@ -278,6 +278,9 @@ namespace rev {
 	int Action::getValue() const {
 		return _value;
 	}
+	float Action::getValueAsFloat() const noexcept {
+		return float(getValue()) / InputRange;
+	}
 	int Action::getKeyValueSimplified() const {
 		const auto v = getValue();
 		if(v >= InputRangeHalf)

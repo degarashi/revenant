@@ -217,6 +217,7 @@ namespace rev {
 			void remLink(HInput hI, InputFlag::e inF, int num);
 			int getState() const;
 			int getValue() const;
+			float getValueAsFloat() const noexcept;
 			//! getValueの結果を使いやすいように加工(-1〜1)して返す
 			/*! \retval 1	getValueの値がInputRangeHalf以上
 						-1	getValueの値が-InputRangeHalf以下
