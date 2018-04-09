@@ -18,6 +18,8 @@ namespace rev {
 
 	void DSort::apply(const DrawTag& /*d*/, IEffect& /*e*/) {}
 	void DSort::DoSort(const DSort_V& alg, int cursor, typename DLObj_V::iterator itr0, typename DLObj_V::iterator itr1) {
+		if(itr0 == itr1)
+			return;
 		if(cursor == int(alg.size()))
 			return;
 		auto* pAlg = alg[cursor].get();
