@@ -362,6 +362,7 @@ namespace rev {
 				--i;
 			}
 		}
+		_aset.resize(n);
 		_text = TextInputDep::GetText();
 	}
 	const std::string& InputMgr::getTextInput() const noexcept {
