@@ -4,6 +4,8 @@
 #include "../../handle/input.hpp"
 #include "../../handle/camera.hpp"
 #include "../../fppose.hpp"
+#include "../../handle/model.hpp"
+#include "../../dc/animation.hpp"
 
 namespace rev::test {
 	class MyScene : public Scene<MyScene> {
@@ -16,7 +18,7 @@ namespace rev::test {
 			HObj					_gui;
 			std::size_t				_sceneId;
 
-			constexpr static std::size_t NState = 2;
+			constexpr static std::size_t NState = 3;
 			struct St_Base : StateT<St_Base> {
 				void onUpdate(MyScene& self) override;
 				void onDraw(const MyScene& self, IEffect& e) const override;
@@ -48,6 +50,20 @@ namespace rev::test {
 				HDObj	_cube;
 				void onEnter(MyScene& self, ObjTypeId_OP) override;
 				void onExit(MyScene& self, ObjTypeId_OP) override;
+			};
+			struct St_glTF : StateT<St_glTF, St_3D> {
+				StrV	_fileList,
+						_fileFullPath;
+				mutable HMdl	_model;
+				using AnimM = std::unordered_map<Name, dc::Animation>;
+				mutable AnimM	_anim;
+				mutable float	_animLen,
+								_animCur;
+				mutable bool	_dirtyFlag=false;
+
+				void _loadModel(const std::string& path) const;
+				void onEnter(MyScene& self, ObjTypeId_OP) override;
+				void onDraw(const MyScene& self, IEffect& e) const override;
 			};
 			void _setSceneById(std::size_t id);
 			void _makeGui();

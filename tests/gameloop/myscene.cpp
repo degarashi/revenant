@@ -12,7 +12,7 @@
 
 namespace rev::test {
 	MyScene::MyScene():
-		_sceneId(0)
+		_sceneId(2)
 	{
 		{
 			// フォント初期化
@@ -42,8 +42,10 @@ namespace rev::test {
 	void MyScene::_setSceneById(const std::size_t id) {
 		if(id == 0)
 			setStateNew<St_Sprite>();
-		else
+		else if(id == 1)
 			setStateNew<St_Cube>();
+		else
+			setStateNew<St_glTF>();
 	}
 	void MyScene::_checkQuit() {
 		if(_act[Act::Quit]->isKeyPressed())
