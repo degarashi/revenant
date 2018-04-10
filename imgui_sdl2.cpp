@@ -74,7 +74,8 @@ namespace rev {
 		_keyboard(keyboard),
 		_mouse(mouse),
 		_idStack(cs_fontId, 0),
-		_storeSw(0)
+		_storeSw(0),
+		_pointerOnGUI(false)
 	{
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
@@ -204,36 +205,39 @@ namespace rev {
 			io.KeySuper = aux.super;
 		}
 
-		const frea::Vec2 mpos = _mouse->getPointer().lock()->absPos;
 		for(int i=0 ; i<3 ; i++)
 			io.MouseDown[i] = static_cast<bool>(_mouse->getButton(i));
-		{
+		if(_mouse->getMouseMode() == MouseMode::Absolute) {
+			const frea::Vec2 mpos = _mouse->getPointer().lock()->absPos;
 			io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
-			// We need to use SDL_CaptureMouse() to easily retrieve mouse coordinates outside of the client area. This is only supported from SDL 2.0.4 (released Jan 2016)
-			const auto wflag = window.getSDLFlag();
-			#if (SDL_MAJOR_VERSION >= 2) && (SDL_MINOR_VERSION >= 0) && (SDL_PATCHLEVEL >= 4)
-				if (wflag & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_MOUSE_CAPTURE))
-					io.MousePos = ImVec2(mpos.x, mpos.y);
-				bool any_mouse_button_down = false;
-				for (int n = 0; n < IM_ARRAYSIZE(io.MouseDown); n++)
-					any_mouse_button_down |= io.MouseDown[n];
-				if (any_mouse_button_down && !(wflag & SDL_WINDOW_MOUSE_CAPTURE))
-					SDL_CaptureMouse(SDL_TRUE);
-				if (!any_mouse_button_down && (wflag & SDL_WINDOW_MOUSE_CAPTURE))
-					SDL_CaptureMouse(SDL_FALSE);
-			#else
-				if ((wflag & SDL_WINDOW_INPUT_FOCUS) != 0)
-					io.MousePos = ImVec2(mpos.x, mpos.y);
-			#endif
+			{
+				// We need to use SDL_CaptureMouse() to easily retrieve mouse coordinates outside of the client area. This is only supported from SDL 2.0.4 (released Jan 2016)
+				const auto wflag = window.getSDLFlag();
+				#if (SDL_MAJOR_VERSION >= 2) && (SDL_MINOR_VERSION >= 0) && (SDL_PATCHLEVEL >= 4)
+					if (wflag & (SDL_WINDOW_MOUSE_FOCUS | SDL_WINDOW_MOUSE_CAPTURE))
+						io.MousePos = ImVec2(mpos.x, mpos.y);
+					bool any_mouse_button_down = false;
+					for (int n = 0; n < IM_ARRAYSIZE(io.MouseDown); n++)
+						any_mouse_button_down |= io.MouseDown[n];
+					if (any_mouse_button_down && !(wflag & SDL_WINDOW_MOUSE_CAPTURE))
+						SDL_CaptureMouse(SDL_TRUE);
+					if (!any_mouse_button_down && (wflag & SDL_WINDOW_MOUSE_CAPTURE))
+						SDL_CaptureMouse(SDL_FALSE);
+				#else
+					if ((wflag & SDL_WINDOW_INPUT_FOCUS) != 0)
+						io.MousePos = ImVec2(mpos.x, mpos.y);
+				#endif
+			}
+			// Hide OS mouse cursor if ImGui is drawing it
+			SDL_ShowCursor(io.MouseDrawCursor ? SDL_DISABLE : SDL_ENABLE);
 		}
-		// Hide OS mouse cursor if ImGui is drawing it
-		SDL_ShowCursor(io.MouseDrawCursor ? SDL_DISABLE : SDL_ENABLE);
 		// Start the frame. This call will update the io.WantCaptureMouse, io.WantCaptureKeyboard flag that you can use to dispatch inputs (or not) to your application.
 		ImGui::NewFrame();
 	}
 	void ImGui_SDL2::endFrame() {
 		ImGui::Render();
 		_switchResource();
+		_pointerOnGUI = ImGui::IsAnyWindowHovered() | ImGui::IsAnyItemHovered();
 	}
 	void ImGui_SDL2::_initFontsTexture() {
 		// Build texture atlas
@@ -326,5 +330,8 @@ namespace rev {
 		if(prev_tech)
 			e.setTechnique(prev_tech);
 		e.setViewport(prev_vp);
+	}
+	bool ImGui_SDL2::pointerOnGUI() const noexcept {
+		return _pointerOnGUI;
 	}
 }

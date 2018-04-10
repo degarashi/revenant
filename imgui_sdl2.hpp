@@ -54,6 +54,8 @@ namespace rev {
 			Store& _prevStore();
 			Store& _currentStore();
 
+			bool _pointerOnGUI;
+
 			HTexC _getTexture(uintptr_t id) const;
 			void _switchResource();
 			void _initFontsTexture();
@@ -65,5 +67,6 @@ namespace rev {
 			void newFrame(const HFx& fx, const Window& window, Duration delta);
 			void endFrame();
 			ImTextureID storeTexture(const HTexC& t);
+			bool pointerOnGUI() const noexcept;
 	};
 }
