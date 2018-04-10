@@ -30,7 +30,7 @@ namespace rev {
 			return Text::draw(
 					e,
 					[d, &u=e.refUniformEnt(), &su2d, &m, bR=bRefresh](auto&){
-						u.setUniform(unif2d::Depth, [d](){ return draw::MakeUniform(d); });
+						u.setUniform(unif2d::Depth, d);
 						su2d.setWorld(m);
 						if(bR) {
 							su2d.outputUniforms(u);

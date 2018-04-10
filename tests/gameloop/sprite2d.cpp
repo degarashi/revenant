@@ -57,8 +57,8 @@ void Sprite2D::setZRange(const lubee::RangeF& r) {
 void Sprite2D::draw(rev::IEffect& e) const {
 	e.setTechnique(_tech);
 	auto& u = e.refUniformEnt();
-	u.setUniform(rev::unif2d::texture::Diffuse, [this](){ return rev::draw::MakeUniform(_hTex); });
-	u.setUniform(rev::unif::Alpha, [this](){ return rev::draw::MakeUniform(_alpha); });
+	u.setUniform(rev::unif2d::texture::Diffuse, _hTex);
+	u.setUniform(rev::unif::Alpha, _alpha);
 	e.ref2D().setWorld(getToWorld().convert<3,3>());
 	e.setPrimitive(_primitive);
 	e.draw();

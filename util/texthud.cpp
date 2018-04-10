@@ -59,8 +59,8 @@ namespace rev {
 						e,
 						[d, this](auto& e){
 							auto& u = e.refUniformEnt();
-							u.setUniform(unif2d::Depth, [d](){ return draw::MakeUniform(d); });
-							u.setUniform(U_Text, [this](){ return draw::MakeUniform(_makeMatrix()); });
+							u.setUniform(unif2d::Depth, d);
+							u.setUniform(U_Text, _makeMatrix());
 						}
 					);
 		}

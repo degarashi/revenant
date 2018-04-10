@@ -28,16 +28,15 @@ namespace rev {
 		const SetF c_systagF[] = {
 			[](const SystemUniform& s, UniformEnt& u) {
 				auto& ss = s.getScreenSize();
-				u.setUniform(sysunif::screen::Size, [&ss](){
-					return draw::MakeUniform(
-								frea::Vec4(
-									ss.width,
-									ss.height,
-									1.f/ss.width,
-									1.f/ss.height
-								)
-							);
-				});
+				u.setUniform(
+					sysunif::screen::Size,
+					frea::Vec4(
+						ss.width,
+						ss.height,
+						1.f/ss.width,
+						1.f/ss.height
+					)
+				);
 			}
 		};
 	}

@@ -63,9 +63,7 @@ namespace rev {
 			getText();
 
 			cbPre(e);
-			e.refUniformEnt().setUniform(unif::Color, [this](){
-				return draw::MakeUniform(_color.asVec4());
-			});
+			e.refUniformEnt().setUniform(unif::Color, _color.asVec4());
 			_hText->draw(e);
 			return _hText->getSize().width;
 		}

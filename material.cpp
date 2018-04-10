@@ -10,7 +10,7 @@ namespace rev {
 		dst.copyFrom(getBase()->getDefaultValue());
 		auto& ent = getM_Uniform().getIdEntry();
 		for(auto& e : ent)
-			dst.setUniform(e.first, e.second);
+			dst.setUniformToken(e.first, e.second);
 		return true;
 	}
 	bool Material::_refresh(F_Setting::value_t& dst, F_Setting*) const {

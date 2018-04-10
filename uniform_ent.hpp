@@ -3,6 +3,7 @@
 #include "drawtoken/tokenml.hpp"
 #include "handle/opengl.hpp"
 #include "gl_program.hpp"
+#include "drawtoken/make_uniform.hpp"
 
 namespace rev {
 	namespace draw {
@@ -31,14 +32,25 @@ namespace rev {
 			#undef SEQ
 
 			template <class T, class Make, ENABLE_IF(!std::is_integral_v<T>)>
-			bool setUniform(const T& name, Make&& make) {
+			bool setUniformWithMake(const T& name, Make&& make) {
 				if(const auto id = getProgram()->getUniformId(name)) {
-					setUniform(*id, make());
+					setUniformToken(*id, make());
 					return true;
 				}
 				return false;
 			}
-			void setUniform(const int id, const draw::Token_SP& t);
+			template <class T, class... Ts, ENABLE_IF(!std::is_integral_v<T>)>
+			bool setUniform(const T& name, Ts&&... ts) {
+				return setUniformWithMake(name, [&ts...](){
+					return draw::MakeUniform(std::forward<Ts>(ts)...);
+				});
+			}
+			void setUniformToken(const int id, const draw::Token_SP& t);
+			template <class... Ts>
+			void setUniform(const int id, Ts&&... ts) {
+				setUniformToken(id, draw::MakeUniform(std::forward<Ts>(ts)...));
+			}
+
 			void copyFrom(const UniformEnt& e);
 			void clearValue();
 

@@ -221,7 +221,7 @@ namespace rev {
 			template <class T, ENABLE_IF(frea::is_vector<T>{})>
 			void operator()(const T& t) {
 				if(id) {
-					ent.setUniform(*id, draw::MakeUniform(t));
+					ent.setUniform(*id, t);
 				}
 			}
 		};

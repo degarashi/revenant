@@ -89,7 +89,7 @@ namespace rev {
 	}
 	void SystemUniform3D::outputUniforms(UniformEnt& u) const {
 		#define DEF_SETUNIF(name, func) \
-			u.setUniform(sysunif3d::matrix::name, [&](){ \
+			u.setUniformWithMake(sysunif3d::matrix::name, [&](){ \
 				return draw::MakeUniform(spi::UnwrapAcValue(func##name())); \
 			});
 		DEF_SETUNIF(World, get)
@@ -104,10 +104,10 @@ namespace rev {
 			DEF_SETUNIF(ViewProjInv, cd.get)
 
 			auto& ps = cd.getPose();
-			u.setUniform(sysunif3d::matrix::EyePos, [&ps](){
+			u.setUniformWithMake(sysunif3d::matrix::EyePos, [&ps](){
 				return draw::MakeUniform(ps.getOffset());
 			});
-			u.setUniform(sysunif3d::matrix::EyeDir, [&ps](){
+			u.setUniformWithMake(sysunif3d::matrix::EyeDir, [&ps](){
 				return draw::MakeUniform(ps.getRotation().getZAxis());
 			});
 		}

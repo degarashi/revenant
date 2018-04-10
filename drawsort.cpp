@@ -106,7 +106,7 @@ namespace rev {
 		auto& u = e.refUniformEnt();
 		for(int i=0 ; i<length ; i++) {
 			if(id[i] >= 0)
-				u.setUniform(id[i], draw::MakeUniform(d.idTex[i]));
+				u.setUniform(id[i], d.idTex[i]);
 		}
 	}
 

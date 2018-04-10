@@ -223,8 +223,9 @@ namespace rev {
 		return _faceName;
 	}
 	void TextObj::draw(IEffect& e) const {
+		auto& u = e.refUniformEnt();
 		for(auto& ds : _drawSet) {
-			e.refUniformEnt().setUniform(unif::texture::Diffuse, [&ds](){ return draw::MakeUniform(ds.hTex); });
+			u.setUniform(unif::texture::Diffuse, ds.hTex);
 			e.setPrimitive(ds.primitive);
 			e.draw();
 		}

@@ -27,7 +27,7 @@ namespace rev {
 	void UniformEnt::clearValue() {
 		refIdEntry().clear();
 	}
-	void UniformEnt::setUniform(const int id, const draw::Token_SP& t) {
+	void UniformEnt::setUniformToken(const int id, const draw::Token_SP& t) {
 		getIdEntry();
 		refIdEntry()[id] = t;
 	}

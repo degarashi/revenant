@@ -62,7 +62,7 @@ namespace rev {
 	}
 	void SystemUniform2D::outputUniforms(UniformEnt& u) const {
 		#define DEF_SETUNIF(name, func) \
-			u.setUniform(sysunif2d::matrix::name, [&](){ \
+			u.setUniformWithMake(sysunif2d::matrix::name, [&](){ \
 				return draw::MakeUniform(spi::UnwrapAcValue(func##name())); \
 			});
 		DEF_SETUNIF(World, get)
