@@ -1,4 +1,5 @@
-#include "main.hpp"
+#include "shared.hpp"
+#include "param.hpp"
 #include "../test.hpp"
 #include "../../guithread.hpp"
 

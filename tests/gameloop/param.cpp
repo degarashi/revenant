@@ -1,4 +1,5 @@
-#include "main.hpp"
+#include "param.hpp"
+#include "myscene.hpp"
 #include "../../uri.hpp"
 #include "../../glx.hpp"
 #include "../../gl_resource.hpp"

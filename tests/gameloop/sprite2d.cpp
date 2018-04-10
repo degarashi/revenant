@@ -53,7 +53,6 @@ void Sprite2D::setZRange(const lubee::RangeF& r) {
 #include "../../sys_uniform_value.hpp"
 #include "../../output.hpp"
 #include "../../tech_pass.hpp"
-#include "main.hpp"
 void Sprite2D::draw(rev::IEffect& e) const {
 	e.setTechnique(_tech);
 	auto& u = e.refUniformEnt();

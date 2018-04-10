@@ -1,0 +1,34 @@
+attribute CubeAttr {
+	highp vec3 a_pos : POSITION;
+	mediump vec3 a_normal : NORMAL;
+}
+varying CubeVary {
+	mediump vec3 v_normal;
+}
+uniform CubeUnif {
+	highp mat4	sys_mTrans;
+}
+vertexshader(400) CubeVS() {
+	gl_Position = vec4(a_pos, 1) * sys_mTrans;
+	v_normal = a_normal;
+}
+fragmentshader(400) CubeFS() {
+	gl_FragColor.xyz = v_normal;
+	gl_FragColor.w = 1;
+}
+technique Cube {
+	PolygonMode = Fill;
+	CullFace = true;
+	FrontFace = cw;
+	Blend = false;
+	DepthTest = true;
+	DepthMask = true;
+	DepthFunc = LessEqual;
+	Attribute = CubeAttr;
+	Varying = CubeVary;
+	Uniform = CubeUnif;
+	pass Default {
+		VertexShader = CubeVS();
+		FragmentShader = CubeFS();
+	}
+}

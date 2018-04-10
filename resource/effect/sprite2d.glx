@@ -1,4 +1,4 @@
-varying CubeVary {
+varying SpriteVary {
 	mediump vec2 varTex;
 	mediump vec3 varNormal;
 	highp vec3 varPos;
@@ -36,7 +36,7 @@ technique Sprite {
 	DepthMask = false;
 	DepthFunc = LessEqual;
 	Attribute = SpriteAttr;
-	Varying = CubeVary;
+	Varying = SpriteVary;
 	Uniform = SpriteUnif;
 	pass Default {
 		VertexShader = SpriteVS();

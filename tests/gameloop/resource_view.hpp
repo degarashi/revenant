@@ -2,8 +2,7 @@
 #include "spine/singleton.hpp"
 
 namespace rev {
-	#define dg_resview (::rev::debug::ResourceView::ref())
-	class ResourceView : public spi::Singleton<ResourceView> {
+	class ResourceView {
 		private:
 			struct {
 				bool	gl,
