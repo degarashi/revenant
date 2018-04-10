@@ -213,6 +213,7 @@ namespace rev {
 			bool isKeyPressed() const;
 			bool isKeyReleased() const;
 			bool isKeyPressing() const;
+			void cancelPressed();
 			void addLink(HInput hI, InputFlag::e inF, int num);
 			void remLink(HInput hI, InputFlag::e inF, int num);
 			int getState() const;

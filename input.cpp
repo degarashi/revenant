@@ -260,6 +260,10 @@ namespace rev {
 	bool Action::isKeyPressing() const {
 		return getState() > 0;
 	}
+	void Action::cancelPressed() {
+		if(_state == 1)
+			++_state;
+	}
 	void Action::addLink(const HInput hI, const InputFlag::e inF, const int num) {
 		const Link link{hI, inF, num};
 		const auto itr = std::find(_link.begin(), _link.end(), link);
