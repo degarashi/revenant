@@ -11,7 +11,9 @@
 #include <boost/format.hpp>
 
 namespace rev::test {
-	void MyScene::St_Sprite::onEnter(MyScene& self, ObjTypeId_OP) {
+	void MyScene::St_Sprite::onEnter(MyScene& self, ObjTypeId_OP id) {
+		St_Base::onEnter(self, id);
+
 		_camera = Camera2D::NewS();
 		const auto scr = mgr_info.getScreenSize();
 		_camera->setAspectRatio(scr.width / scr.height);
@@ -39,19 +41,15 @@ namespace rev::test {
 			_sprite[i] = obj;
 		}
 	}
-	void MyScene::St_Sprite::onExit(MyScene&, ObjTypeId_OP) {
+	void MyScene::St_Sprite::onExit(MyScene& self, ObjTypeId_OP id) {
 		for(std::size_t i=0 ; i<NSprite ; i++) {
 			_sprite[i]->destroy();
 		}
-	}
-	void MyScene::St_Sprite::onUpdate(MyScene& self) {
-		self._checkQuit();
-		self._checkPause();
-		self._checkSwitch();
+		St_Base::onExit(self, id);
 	}
 	void MyScene::St_Sprite::onDraw(const MyScene& self, IEffect& e) const {
-		self._clearBg(e);
-		self._showFPS(e);
+		St_Base::onDraw(self, e);
+
 		auto& e2 = e.ref2D();
 		e2.setCamera(_camera);
 	}

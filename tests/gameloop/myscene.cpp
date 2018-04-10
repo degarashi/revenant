@@ -79,4 +79,14 @@ namespace rev::test {
 			ug.addObj(std::make_shared<MyGUI>(getDrawGroup()));
 		#endif
 	}
+
+	void MyScene::St_Base::onUpdate(MyScene& self) {
+		self._checkQuit();
+		self._checkPause();
+		self._checkSwitch();
+	}
+	void MyScene::St_Base::onDraw(const MyScene& self, IEffect& e) const {
+		self._clearBg(e);
+		self._showFPS(e);
+	}
 }
