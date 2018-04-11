@@ -357,7 +357,7 @@ namespace rev {
 			if(const auto p = _aset[i].lock()) {
 				p->update();
 			} else {
-				_aset[i] = _aset.back();
+				_aset[i] = _aset[n-1];
 				--n;
 				--i;
 			}
