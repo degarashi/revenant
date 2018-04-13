@@ -9,6 +9,9 @@ namespace rev {
 		class Buffer;
 		class Stream;
 	}
+	namespace debug {
+		class VBView;
+	}
 	class GLBufferCore {
 		private:
 			template <class T>
@@ -68,6 +71,9 @@ namespace rev {
 				_pBuffer = rt->data();
 				_buff = SPBuff(static_cast<void*>(rt), deleter);
 			}
+			#ifdef DEBUGGUI_ENABLED
+				friend class debug::VBView;
+			#endif
 		protected:
 			void* _getBufferPtr() const noexcept;
 			std::size_t _getBufferSize() const noexcept;
