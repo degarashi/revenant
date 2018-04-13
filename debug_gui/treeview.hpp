@@ -57,7 +57,8 @@ namespace rev::debug {
 		}
 		return q.onSibling();
 	}
-	void TreeView(TreeView_Query& q, const bool edit) {
+	template <class QItr>
+	void TreeViewRange(QItr q0, const QItr q1, const bool edit) {
 		if(const auto _ = debug::ChildPush("treeview", {0,0}, false)) {
 			const auto clm = debug::ColumnPush(2);
 			const auto id = ImGui::GetID("Left");
@@ -65,9 +66,13 @@ namespace rev::debug {
 			auto cur = St::Get(id);
 			if(const auto _ = debug::ChildPush("Left", {0,0}, false, ImGuiWindowFlags_HorizontalScrollbar)) {
 				std::size_t idx = 0;
-				if(q.getNode()) {
-					bool select = false;
-					while(_TreeView(q, cur, select, idx++));
+				while(q0 != q1) {
+					auto& q = *q0;
+					if(q.getNode()) {
+						bool select = false;
+						while(_TreeView(q, cur, select, idx++));
+					}
+					++q0;
 				}
 			}
 			St::Set(id, cur);
@@ -81,5 +86,8 @@ namespace rev::debug {
 				}
 			}
 		}
+	}
+	void TreeView(TreeView_Query& q, const bool edit) {
+		TreeViewRange(&q, (&q)+1, edit);
 	}
 }
