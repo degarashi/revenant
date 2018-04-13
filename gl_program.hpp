@@ -16,6 +16,8 @@ namespace rev {
 			struct GLParamInfo : GLSLFormatDesc {
 				Name	name;
 				GLuint	id;
+				GLsizei	length;
+
 				GLParamInfo() = default;
 				GLParamInfo(const GLParamInfo&) = default;
 				GLParamInfo(const GLSLFormatDesc& desc);

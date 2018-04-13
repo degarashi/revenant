@@ -14,17 +14,25 @@ namespace rev {
 
 	// ---------------------- GLProgram ----------------------
 	namespace {
-		// GLSL変数名の最大がよくわからない (ので、数は適当)
-		constexpr int MaxGLSLName = 0x100;
+		// GLSL変数名の最大値
+		constexpr int MaxGLSLName = GL_ACTIVE_UNIFORM_MAX_LENGTH;
+		GLchar g_buff[MaxGLSLName];
+
+		const std::regex re_array(R"(([\w_]+)\[0\])");
 	}
 	GLProgram::GLParamInfo GLProgram::_getActiveParam(const std::size_t n, const InfoF infoF) const {
-		GLchar buff[MaxGLSLName];
 		GLsizei len;
 		GLint sz;
 		GLenum typ;
-		(GL.*infoF)(getProgramId(), n, countof(buff), &len, &sz, &typ, buff);
+		(GL.*infoF)(getProgramId(), n, countof(g_buff), &len, &sz, &typ, g_buff);
 		GLParamInfo ret = *GLFormat::QueryGLSLInfo(typ);
-		ret.name = buff;
+		ret.length = sz;
+		ret.name = g_buff;
+
+		std::smatch m;
+		if(std::regex_match(ret.name, m, re_array)) {
+			ret.name = m[1].str();
+		}
 		return ret;
 	}
 	std::size_t GLProgram::_getNumParam(const GLenum flag) const {
@@ -42,6 +50,9 @@ namespace rev {
 			GLParamInfo info = _getActiveParam(i, &IGL::glGetActiveAttrib);
 			info.id = GL.glGetAttribLocation(_idProg, info.name.c_str());
 			D_Assert0(info.id >= 0);
+			if(info.length > 1) {
+				_amap.emplace(info.name + "[0]", info);
+			}
 			_amap.emplace(info.name, std::move(info));
 		}
 	}
@@ -51,6 +62,18 @@ namespace rev {
 			GLParamInfo info = _getActiveParam(i, &IGL::glGetActiveUniform);
 			info.id = GL.glGetUniformLocation(_idProg, info.name.c_str());
 			D_Assert0(info.id >= 0);
+			if(info.length > 1) {
+				GLParamInfo info2 = info;
+				info2.length = 1;
+				for(decltype(info.length) i=0 ; i<info.length ; i++) {
+					info2.name = info.name;
+					info2.name += "[";
+					info2.name += std::to_string(i);
+					info2.name += "]";
+					_umap.emplace(info2.name, info2);
+					++info2.id;
+				}
+			}
 			_umap.emplace(info.name, std::move(info));
 		}
 	}
