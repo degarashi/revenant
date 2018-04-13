@@ -13,6 +13,9 @@ namespace rev {
 			friend void save(Ar&, const VDecl&);
 			template <class Ar>
 			friend void load(Ar&, const VDecl&);
+			#ifdef DEBUGGUI_ENABLED
+				friend struct Primitive;
+			#endif
 		public:
 			struct VDInfo {
 				template <class Ar>
@@ -60,7 +63,8 @@ namespace rev {
 			bool operator == (const VDecl& vd) const;
 			bool operator != (const VDecl& vd) const;
 			#ifdef DEBUGGUI_ENABLED
-				void property() const;
+				using CBProp = std::function<void (const VDInfo&)>;
+				void property(const CBProp& cb) const;
 			#endif
 	};
 }

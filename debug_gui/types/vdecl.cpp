@@ -6,34 +6,45 @@
 
 namespace rev {
 	void VDecl::VDInfo::showAsRow() const {
+		const auto next = [](){
+			ImGui::NextColumn();
+		};
 		{
 			StringStream s;
 			s << sem.sem.toStr() << "[" << sem.index << "]";
 			debug::Show(nullptr, s.output());
-			ImGui::NextColumn();
+			next();
 		}
 		debug::Show(nullptr, streamId);
-		ImGui::NextColumn();
+		next();
 		debug::Show(nullptr, offset);
-		ImGui::NextColumn();
+		next();
 		debug::Show(nullptr, GLFormat::QueryEnumString(elemFlag));
-		ImGui::NextColumn();
+		next();
 		debug::Show(nullptr, bNormalize);
-		ImGui::NextColumn();
+		next();
 		debug::Show(nullptr, elemSize);
-		ImGui::NextColumn();
+		next();
 	}
-	void VDecl::property() const {
-		const int n = _vdInfo.size();
+	void VDecl::property(const CBProp& cb) const {
+		constexpr char popup_id[] = "VDecl";
+		const std::size_t n = _vdInfo.size();
 		{
 			auto f = debug::EntryField("VDecl", false, 7);
 			ImGui::Separator();
 			f.show("Id", "Semantic", "StreamId", "Offset", "Format", "Normalize", "Size");
 			ImGui::Separator();
-			for(int i=0 ; i<n ; i++) {
-				debug::Show(nullptr, i);
+			for(std::size_t i=0 ; i<n ; i++) {
+				const auto _ = debug::IdPush(i);
+				const auto& vd = _vdInfo[i];
+				ImGui::Selectable(std::to_string(i).c_str(), false, ImGuiSelectableFlags_SpanAllColumns);
+				ImGui::OpenPopupOnItemClick(popup_id);
 				ImGui::NextColumn();
-				_vdInfo[i].showAsRow();
+				vd.showAsRow();
+				if(ImGui::BeginPopup(popup_id)) {
+					cb(vd);
+					ImGui::EndPopup();
+				}
 			}
 		}
 		ImGui::Separator();
