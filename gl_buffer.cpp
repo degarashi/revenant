@@ -70,6 +70,11 @@ namespace rev {
 			D_GLWarn(glBufferData, _buffType, _buffSize, _pBuffer, _drawType);
 		}
 	}
+	void GLBuffer::initData(const void* src, const std::size_t size) {
+		ByteBuff b(size);
+		std::memcpy(b.data(), src, size);
+		initData(std::move(b), 0);
+	}
 	void GLBuffer::initData(const void* src, const std::size_t nElem, const GLuint stride) {
 		std::size_t sz = nElem*stride;
 		ByteBuff b(sz);

@@ -78,6 +78,7 @@ namespace rev {
 
 			// 全域を書き換え
 			void initData(const void* src, std::size_t nElem, GLuint stride);
+			void initData(const void* src, std::size_t size);
 			template <class T, class = ChkIfVector<T>>
 			void initData(T&& src, GLuint stride=sizeof(typename Decay<T>::value_type)) {
 				_setVec(std::forward<T>(src), stride);
