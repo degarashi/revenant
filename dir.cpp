@@ -119,24 +119,28 @@ namespace rev {
 		if(itr == itrE)
 			return;
 
-		size_t pl = lpath.size();
-		DirDep::EnumEntry(lpath, [=, &lpath, &cb](const PathCh* name, bool) {
+		const size_t pl = lpath.size();
+		DirDep::EnumEntry(lpath, [=, &lpath, &cb](const PathCh* name, const bool dir_flag) {
+			// . と .. は無視する
 			if(name[0]==PathCh(DOT)) {
 				if(name[1]==PathCh(EOS) || name[1]==PathCh(DOT))
 					return;
 			}
-			std::string s(To8Str(name).moveTo());
+			const std::string s(To8Str(name).moveTo());
 			std::smatch m;
 			if(std::regex_match(s, m, *itr)) {
+				if(!dir_flag && itr+1 != itrE)
+					return;
+
 				if(lpath.back() != SC)
 					lpath += SC;
 				lpath += s;
-				if(DirDep::IsDirectory(ToPathStr(lpath))) {
+				if(dir_flag) {
 					if(itr+1 != itrE)
 						_EnumEntryRegEx(itr+1, itrE, lpath, baseLen, cb);
 					else
 						cb(Dir(lpath));
-				} else
+				} else if(itr+1 == itrE)
 					cb(Dir(lpath));
 				lpath.resize(pl);
 			}
