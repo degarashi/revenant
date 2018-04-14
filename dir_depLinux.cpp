@@ -94,10 +94,16 @@ namespace rev {
 				::closedir(dir);
 			}
 		};
-		std::unique_ptr<DIR, DIR_Rel> dir(::opendir(path.getStringPtr()));
+		PathStr tpath = path.moveTo();
+		std::unique_ptr<DIR, DIR_Rel> dir(::opendir(tpath.c_str()));
 		if(dir) {
-			while(dirent* ent = ::readdir(dir.get()))
-				cb(ent->d_name, S_ISDIR(ent->d_type));
+			while(dirent* ent = ::readdir(dir.get())) {
+				const std::size_t plen = tpath.size();
+				tpath.append("/");
+				tpath.append(ent->d_name);
+				cb(ent->d_name, IsDirectory(tpath));
+				tpath.resize(plen);
+			}
 		}
 	}
 	FStatus Dir_depLinux::Status(ToPathStr path) {
