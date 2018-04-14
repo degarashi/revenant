@@ -126,7 +126,7 @@ namespace rev {
 			uri = std::make_shared<FileURI>(d.plain_utf8());
 			return false;
 		});
-		if(uri->path().empty())
+		if(!uri || uri->path().empty())
 			throw ResourceNotFound(name);
 		auto& ent = cache.second[name];
 		ent = std::move(uri);
