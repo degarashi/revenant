@@ -69,8 +69,8 @@ namespace rev {
 				_buff = SPBuff(static_cast<void*>(rt), deleter);
 			}
 		protected:
-			void* _getBufferPtr() const;
-
+			void* _getBufferPtr() const noexcept;
+			std::size_t _getBufferSize() const noexcept;
 		public:
 			GLBuffer(BufferType typ, DrawType dtype);
 			GLBuffer(const GLBuffer&) = delete;

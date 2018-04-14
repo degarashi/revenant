@@ -95,8 +95,11 @@ namespace rev {
 		Assert0(getBuffId() > 0);
 		return draw::Buffer(*this, const_cast<GLBuffer*>(this)->shared_from_this());
 	}
-	void* GLBuffer::_getBufferPtr() const {
+	void* GLBuffer::_getBufferPtr() const noexcept {
 		return _pBuffer;
+	}
+	std::size_t GLBuffer::_getBufferSize() const noexcept {
+		return _buffSize;
 	}
 
 	// --------------------------- GLVBuffer ---------------------------
