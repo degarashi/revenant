@@ -24,9 +24,9 @@ namespace rev {
 			if(n > 0) {
 				ImGui::TextUnformatted(name);
 				{
-					auto f = EF(name, edit, 6);
+					auto f = EF(name, edit, 7);
 					ImGui::Separator();
-					f.show("Id", "Name", "Type", "Dim", "Unsigned", "Cubed");
+					f.show("Index", "UniformId", "Name", "Type", "Dim", "Unsigned", "Cubed");
 					ImGui::Separator();
 					for(std::size_t i=0 ; i<n ; i++) {
 						debug::Show(nullptr, i);
@@ -85,6 +85,8 @@ namespace rev {
 	}
 
 	void GLProgram::GLParamInfo::showAsRow() const {
+		debug::Show(nullptr, id);
+		ImGui::NextColumn();
 		debug::Show(nullptr, name);
 		ImGui::NextColumn();
 		GLSLFormatDesc::showAsRow();
