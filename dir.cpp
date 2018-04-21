@@ -1,4 +1,5 @@
 #include "dir.hpp"
+#include "ovr_functor.hpp"
 
 namespace rev {
 	Dir::PathReset::PathReset(): cwd(DirDep::Getcwd()) {}
@@ -73,10 +74,69 @@ namespace rev {
 	void Dir::EnumEntryWildCard(const std::string& s, EnumCB cb) {
 		EnumEntryRegEx(ToRegEx(s), cb);
 	}
+	namespace {
+		template <class Itr>
+		bool FindChar(Itr itr, const Itr itrE, const char target, const std::size_t n) {
+			D_Assert0(n >= 1);
+			std::size_t cur = 0;
+			std::size_t remain = itrE-itr;
+			while(remain >= n) {
+				const auto c = *itr;
+				if(c == target) {
+					if(++cur == n)
+						return true;
+				} else
+					cur = 0;
+				++itr;
+				--remain;
+			}
+			return false;
+		}
+		// とりあえず確実に非Regexだろうと言える物はfalse, 他はtrue
+		template <class Itr>
+		bool HasRegex(Itr itr, const Itr itrE) {
+			while(itr != itrE) {
+				const auto c = *itr;
+				if(c == '[') {
+					if(itrE-itr >= 4) {
+						if(*(itr+1) == '[') {
+							if(FindChar(itr+2, itrE, ']', 2)) {
+								// found [[ ]]
+								return true;
+							}
+						}
+					}
+					if(FindChar(itr+1, itrE, ']', 1)) {
+						// found [ ]
+						return true;
+					}
+				} else if(c == '+')
+					return true;
+				else if(c == '*')
+					return true;
+				else if(c == '|')
+					return true;
+				else if(c == '\\')
+					return true;
+				++itr;
+			}
+			return false;
+		}
+	}
 	// TODO Assertを例外送出に置き替え
 	Dir::RegexL Dir::_ParseRegEx(const std::string& r) {
 		Log(Error, r.c_str());
 		RegexL rl;
+		const auto push = [&rl](const auto from, const auto to) {
+			Log(Error, std::string(from, to).c_str());
+			if(HasRegex(from, to)) {
+				rl.emplace_back(std::regex(from, to));
+				Log(Error, "RegEx");
+			} else {
+				rl.emplace_back(std::string(from, to));
+				Log(Error, "String");
+			}
+		};
 		auto segEnd = r.begin(),
 			segBegin = segEnd;
 		const auto itrE = r.end();
@@ -84,10 +144,10 @@ namespace rev {
 		while(segEnd != itrE) {
 			const auto c = *segEnd;
 			if(lb_skip) {
+				// [ があったら次の ] まで読み飛ばす
 				if(c == RBK)
 					lb_skip = false;
 			} else {
-				// [ があったら次の ] まで読み飛ばす
 				if(c == LBK)
 					lb_skip = true;
 				else if(c == SC) {
@@ -99,11 +159,11 @@ namespace rev {
 					} else if(len >= 2) {
 						if(*segBegin == '\\' && *(segBegin+1) == '.') {
 							if(len == 2) {
-								// [先頭が . である場合]
+								// [. である場合]
 								// セグメントをスキップ
 								ignore = true;
 							} else if(len == 4 && (*(segBegin+2) == '\\' && *(segBegin+3) == '.')) {
-								// [先頭が .. である場合]
+								// [.. である場合]
 								// セグメントを1つ戻す
 								Assert0(!rl.empty());
 								rl.pop_back();
@@ -113,8 +173,7 @@ namespace rev {
 					}
 					if(!ignore) {
 						// 正常なセグメントが取得できたのでpush_back
-						rl.emplace_back(segBegin, segEnd);
-						Log(Error, std::string(segBegin, segEnd).c_str());
+						push(segBegin, segEnd);
 					}
 					segBegin = ++segEnd;
 					continue;
@@ -123,13 +182,12 @@ namespace rev {
 			++segEnd;
 		}
 		if(segBegin != segEnd) {
-			rl.emplace_back(segBegin, segEnd);
-			Log(Error, std::string(segBegin, segEnd).c_str());
+			push(segBegin, segEnd);
 		}
 		Assert0(!lb_skip);
 		return rl;
 	}
-	void Dir::_EnumEntryRegEx(RegexItr itr, RegexItr itrE, std::string& lpath, const std::size_t baseLen, EnumCB cb) {
+	void Dir::_EnumEntryRegEx(RegexItr itr, const RegexItr itrE, std::string& lpath, const std::size_t baseLen, EnumCB cb) {
 		if(itr == itrE)
 			return;
 
@@ -140,15 +198,20 @@ namespace rev {
 				if(name[1]==PathCh(EOS) || name[1]==PathCh(DOT))
 					return;
 			}
-			const std::string s(To8Str(name).moveTo());
-			std::smatch m;
-			if(std::regex_match(s, m, *itr)) {
+			const std::string seg(To8Str(name).moveTo());
+			const auto pushSeg = [&lpath, &seg](){
+				if(lpath.back() != SC)
+					lpath += SC;
+				lpath += seg;
+			};
+			const auto popSeg = [&lpath, pl](){
+				lpath.resize(pl);
+			};
+			const auto procLower = [&](){
 				if(!dir_flag && itr+1 != itrE)
 					return;
 
-				if(lpath.back() != SC)
-					lpath += SC;
-				lpath += s;
+				pushSeg();
 				if(dir_flag) {
 					if(itr+1 != itrE)
 						_EnumEntryRegEx(itr+1, itrE, lpath, baseLen, cb);
@@ -156,8 +219,21 @@ namespace rev {
 						cb(Dir(lpath));
 				} else if(itr+1 == itrE)
 					cb(Dir(lpath));
-				lpath.resize(pl);
-			}
+				popSeg();
+			};
+			boost::apply_visitor(OVR_Functor{
+				[&](const std::string& s){
+					if(s == seg) {
+						procLower();
+					}
+				},
+				[&](const std::regex& r){
+					std::smatch m;
+					if(std::regex_match(seg, m, r)) {
+						procLower();
+					}
+				}
+			}, *itr);
 		});
 	}
 	void Dir::_EnumEntry(const std::string& /*s*/, const std::string& path, EnumCB cb) {

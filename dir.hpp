@@ -7,6 +7,7 @@
 	#error "unknown OS"
 #endif
 #include <regex>
+#include <boost/variant.hpp>
 
 namespace rev {
 	//! ディレクトリ管理
@@ -21,7 +22,7 @@ namespace rev {
 		private:
 			const static char SC, DOT, EOS, *SC_P, LBK, RBK;
 
-			using RegexL = std::vector<std::regex>;
+			using RegexL = std::vector<boost::variant<std::regex, std::string>>;
 			using RegexItr = RegexL::const_iterator;
 			using StrList = std::vector<std::string>;
 			using EnumCB = std::function<void (const Dir&)>;
