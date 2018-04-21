@@ -12,3 +12,5 @@ resource/sys_script
 resource/script
 [value]
 resource/script/value
+[gltf]
+resource/gltf_sample/1.0

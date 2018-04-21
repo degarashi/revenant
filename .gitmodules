@@ -1,3 +1,6 @@
 [submodule "beat"]
 	path = beat
 	url = ../beat
+[submodule "resource/gltf_sample"]
+	path = resource/gltf_sample
+	url = https://github.com/KhronosGroup/glTF-Sample-Models
