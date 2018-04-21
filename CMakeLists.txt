@@ -32,6 +32,7 @@ if(${WITH_DEBUGGUI})
 	add_definitions(-DDEBUGGUI_ENABLED)
 	aux_source_directory(debug_gui LIBSRC_GUI)
 	aux_source_directory(debug_gui/types LIBSRC_GUI)
+	aux_source_directory(debug_gui/gltf LIBSRC_GLTF)
 endif()
 # 依存ファイル以外のソースファイルを収集
 aux_source_directory(. LIBSRC_MAIN)
@@ -43,6 +44,7 @@ aux_source_directory(glwrapper LIBSRC_GLWRAPPER)
 aux_source_directory(parse LIBSRC_GLXPARSE)
 aux_source_directory(backup LIBSRC_BACKUP)
 aux_source_directory(imgui LIBSRC_MAIN)
+aux_source_directory(gltf LIBSRC_GLTF)
 list(REMOVE_ITEM LIBSRC_MAIN ${OS_DEPENDANT_SRC} ${SOUND_DEPENDANT_SRC})
 
 # サウンド依存ファイルの設定
@@ -122,6 +124,7 @@ MakeLib(revenant_lua LIBSRC_LUA)
 MakeLib(revenant_glwrapper LIBSRC_GLWRAPPER)
 MakeLib(revenant_glxparse LIBSRC_GLXPARSE)
 MakeLib(revenant_backup LIBSRC_BACKUP)
+MakeLib(revenant_gltf LIBSRC_GLTF)
 
 # ------ テストコード生成 ------
 find_package(GTest REQUIRED)
@@ -133,6 +136,7 @@ set(TESTEXE_LIB
 	revenant_glwrapper
 	revenant_glxparse
 	revenant_backup
+	revenant_gltf
 	${GTEST_MAIN_LIBRARIES}
 	${GTEST_LIBRARIES}
 )

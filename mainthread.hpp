@@ -33,6 +33,9 @@ namespace rev {
 	class ObjMgr;
 	class SceneMgr;
 	class ImGui_SDL2;
+	namespace gltf {
+		class GLTFMgr;
+	}
 	//! メインスレッド
 	class MainThread : public spi::Singleton<MainThread>,
 						public ThreadL<void (const Looper_SP&)>
@@ -63,6 +66,7 @@ namespace rev {
 				SPtr<ObjMgr>				obj;
 				SPtr<SceneMgr>				scene;
 				SPtr<ImGui_SDL2>			imgui;
+				SPtr<gltf::GLTFMgr>			gltf;
 			};
 			struct FxReload {
 				HFx	curFx, prevFx;
