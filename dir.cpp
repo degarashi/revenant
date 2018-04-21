@@ -38,13 +38,15 @@ namespace rev {
 		DirDep::SetCurrentDir(ps);
 	}
 	namespace {
+		#define DIR_SEGMENT R"([\-_ \.\w/])"
 		// ワイルドカード記述の置き換え
 		const std::pair<std::regex, std::string> RE[4] = {
 			{std::regex(R"(\\)"), R"(/)"},					// \ -> /
-			{std::regex(R"(\*)"), R"([\-_ \.\w/]+?)"},		// * -> [_ \.\-\w/]+?
-			{std::regex(R"(\?)"), R"([\-_ \.\w])"},			// ? -> [_ \.\-\w]
+			{std::regex(R"(\*)"), DIR_SEGMENT R"(+?)"},		// * -> [_ \.\-\w/]+?
+			{std::regex(R"(\?)"), DIR_SEGMENT},				// ? -> [_ \.\-\w]
 			{std::regex(R"(\.)"), R"(\.)"}					// . -> \.
 		};
+		#undef DIR_SEGMENT
 	}
 	std::string Dir::ToRegEx(const std::string& s) {
 		std::string s2 = std::regex_replace(s, RE[0].first, RE[0].second);
@@ -71,48 +73,60 @@ namespace rev {
 	void Dir::EnumEntryWildCard(const std::string& s, EnumCB cb) {
 		EnumEntryRegEx(ToRegEx(s), cb);
 	}
+	// TODO Assertを例外送出に置き替え
 	Dir::RegexL Dir::_ParseRegEx(const std::string& r) {
+		Log(Error, r.c_str());
 		RegexL rl;
-		auto itr = r.begin(),
-			itrE = r.end(),
-			itr0 = itr;
-		bool bSkip = false;
-		while(itr != itrE) {
-			auto c = *itr;
-			if(bSkip) {
+		auto segEnd = r.begin(),
+			segBegin = segEnd;
+		const auto itrE = r.end();
+		bool lb_skip = false;
+		while(segEnd != itrE) {
+			const auto c = *segEnd;
+			if(lb_skip) {
 				if(c == RBK)
-					bSkip = false;
+					lb_skip = false;
 			} else {
+				// [ があったら次の ] まで読み飛ばす
 				if(c == LBK)
-					bSkip = true;
+					lb_skip = true;
 				else if(c == SC) {
-					auto diff = itr - itr0;
-					bool bIgnore = false;
-					if(diff == 0)
-						bIgnore = true;
-					else if(diff >= 2) {
-						if(*itr0 == '\\' && *(itr0+1) == '.') {
-							if(diff == 2) {
+					const auto len = segEnd - segBegin;
+					bool ignore = false;
+					if(len == 0) {
+						// スラッシュが2つ続けてあった場合
+						ignore = true;
+					} else if(len >= 2) {
+						if(*segBegin == '\\' && *(segBegin+1) == '.') {
+							if(len == 2) {
+								// [先頭が . である場合]
 								// セグメントをスキップ
-								bIgnore = true;
-							} else if(diff == 4 && (*(itr0+2) == '\\' && *(itr0+3) == '.')) {
+								ignore = true;
+							} else if(len == 4 && (*(segBegin+2) == '\\' && *(segBegin+3) == '.')) {
+								// [先頭が .. である場合]
 								// セグメントを1つ戻す
 								Assert0(!rl.empty());
 								rl.pop_back();
-								bIgnore = true;
+								ignore = true;
 							}
 						}
 					}
-					if(!bIgnore)
-						rl.emplace_back(itr0, itr);
-					itr0 = ++itr;
+					if(!ignore) {
+						// 正常なセグメントが取得できたのでpush_back
+						rl.emplace_back(segBegin, segEnd);
+						Log(Error, std::string(segBegin, segEnd).c_str());
+					}
+					segBegin = ++segEnd;
 					continue;
 				}
 			}
-			++itr;
+			++segEnd;
 		}
-		if(itr0 != itr)
-			rl.emplace_back(itr0, itr);
+		if(segBegin != segEnd) {
+			rl.emplace_back(segBegin, segEnd);
+			Log(Error, std::string(segBegin, segEnd).c_str());
+		}
+		Assert0(!lb_skip);
 		return rl;
 	}
 	void Dir::_EnumEntryRegEx(RegexItr itr, RegexItr itrE, std::string& lpath, const std::size_t baseLen, EnumCB cb) {
