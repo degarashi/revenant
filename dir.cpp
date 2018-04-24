@@ -2,12 +2,14 @@
 #include "ovr_functor.hpp"
 
 namespace rev {
+	// ----------------- Dir::PathReset -----------------
 	Dir::PathReset::PathReset(): cwd(DirDep::Getcwd()) {}
 	Dir::PathReset::~PathReset() {
 		if(!std::uncaught_exception())
 			DirDep::Chdir(cwd);
 	}
 
+	// ----------------- Dir -----------------
 	const char Dir::SC('/'),
 				Dir::DOT('.'),
 				Dir::EOS('\0'),
@@ -38,156 +40,69 @@ namespace rev {
 			ps = ToPathStr(path).moveTo();
 		DirDep::SetCurrentDir(ps);
 	}
-	namespace {
-		#define DIR_SEGMENT R"([\-_ \.\w/])"
-		// ワイルドカード記述の置き換え
-		const std::pair<std::regex, std::string> RE[4] = {
-			{std::regex(R"(\\)"), R"(/)"},					// \ -> /
-			{std::regex(R"(\*)"), DIR_SEGMENT R"(+?)"},		// * -> [_ \.\-\w/]+?
-			{std::regex(R"(\?)"), DIR_SEGMENT},				// ? -> [_ \.\-\w]
-			{std::regex(R"(\.)"), R"(\.)"}					// . -> \.
-		};
-		#undef DIR_SEGMENT
+
+	Dir::SearchL Dir::_WildcardToSegment(const char* s) {
+		SearchL ret;
+		_ExtractSegment(s, [&ret](const char* s0, const char* s1){
+			ret.emplace_back(_SegmentRead(s0, s1));
+		});
+		return ret;
 	}
-	std::string Dir::ToRegEx(const std::string& s) {
-		std::string s2 = std::regex_replace(s, RE[0].first, RE[0].second);
-		s2 = std::regex_replace(s2, RE[3].first, RE[3].second);
-		s2 = std::regex_replace(s2, RE[2].first, RE[2].second);
-		s2 = std::regex_replace(s2, RE[1].first, RE[1].second);
-		return s2;
+	namespace {
+		namespace seg {
+			const std::string Dir(R"([-_ .\w*])"),
+								Star(Dir + "+"),
+								Question(Dir);
+		}
+	}
+	Dir::SearchSeg Dir::_SegmentRead(const char* s0, const char* s1) {
+		if(s0 == s1) {
+			return {std::string(), false};
+		}
+		std::string s;
+		bool recursive = false,
+			 regex = false;
+		do {
+			const auto c = *s0++;
+			if(c == '*') {
+				regex = true;
+				s += seg::Star;
+				if(s0 != s1 && *s0 == '*') {
+					++s0;
+					recursive = true;
+				}
+			} else if(c == '?') {
+				regex = true;
+				s += seg::Question;
+			} else
+				s += c;
+		} while(s0 != s1);
+
+		if(regex)
+			return {std::regex(s), recursive};
+		return {s, false};
+	}
+	void Dir::_ExtractSegment(const char* s, const SegCB& cb) {
+		const char* s0 = s;
+		for(;;) {
+			const auto c = *s;
+			if(c == '\0')
+				break;
+			else if(c == SC) {
+				cb(s0, s);
+				s0 = ++s;
+			}
+			++s;
+		}
+		if(s0 != s)
+			cb(s0, s);
 	}
 	std::string Dir::setCurrentDir() const {
 		std::string prev = GetCurrentDir();
 		SetCurrentDir(plain_utf8());
 		return prev;
 	}
-	Dir::StrList Dir::EnumEntryRegEx(const std::string& r) {
-		StrList res;
-		EnumEntryRegEx(r, [&res](const Dir& dir){
-			res.push_back(dir.plain_utf8());
-		});
-		return res;
-	}
-	Dir::StrList Dir::EnumEntryWildCard(const std::string& s) {
-		return EnumEntryRegEx(ToRegEx(s));
-	}
-	void Dir::EnumEntryWildCard(const std::string& s, EnumCB cb) {
-		EnumEntryRegEx(ToRegEx(s), cb);
-	}
-	namespace {
-		template <class Itr>
-		bool FindChar(Itr itr, const Itr itrE, const char target, const std::size_t n) {
-			D_Assert0(n >= 1);
-			std::size_t cur = 0;
-			std::size_t remain = itrE-itr;
-			while(remain >= n) {
-				const auto c = *itr;
-				if(c == target) {
-					if(++cur == n)
-						return true;
-				} else
-					cur = 0;
-				++itr;
-				--remain;
-			}
-			return false;
-		}
-		// とりあえず確実に非Regexだろうと言える物はfalse, 他はtrue
-		template <class Itr>
-		bool HasRegex(Itr itr, const Itr itrE) {
-			while(itr != itrE) {
-				const auto c = *itr;
-				if(c == '[') {
-					if(itrE-itr >= 4) {
-						if(*(itr+1) == '[') {
-							if(FindChar(itr+2, itrE, ']', 2)) {
-								// found [[ ]]
-								return true;
-							}
-						}
-					}
-					if(FindChar(itr+1, itrE, ']', 1)) {
-						// found [ ]
-						return true;
-					}
-				} else if(c == '+')
-					return true;
-				else if(c == '*')
-					return true;
-				else if(c == '|')
-					return true;
-				else if(c == '\\')
-					return true;
-				++itr;
-			}
-			return false;
-		}
-	}
-	// TODO Assertを例外送出に置き替え
-	Dir::RegexL Dir::_ParseRegEx(const std::string& r) {
-		Log(Error, r.c_str());
-		RegexL rl;
-		const auto push = [&rl](const auto from, const auto to) {
-			Log(Error, std::string(from, to).c_str());
-			if(HasRegex(from, to)) {
-				rl.emplace_back(std::regex(from, to));
-				Log(Error, "RegEx");
-			} else {
-				rl.emplace_back(std::string(from, to));
-				Log(Error, "String");
-			}
-		};
-		auto segEnd = r.begin(),
-			segBegin = segEnd;
-		const auto itrE = r.end();
-		bool lb_skip = false;
-		while(segEnd != itrE) {
-			const auto c = *segEnd;
-			if(lb_skip) {
-				// [ があったら次の ] まで読み飛ばす
-				if(c == RBK)
-					lb_skip = false;
-			} else {
-				if(c == LBK)
-					lb_skip = true;
-				else if(c == SC) {
-					const auto len = segEnd - segBegin;
-					bool ignore = false;
-					if(len == 0) {
-						// スラッシュが2つ続けてあった場合
-						ignore = true;
-					} else if(len >= 2) {
-						if(*segBegin == '\\' && *(segBegin+1) == '.') {
-							if(len == 2) {
-								// [. である場合]
-								// セグメントをスキップ
-								ignore = true;
-							} else if(len == 4 && (*(segBegin+2) == '\\' && *(segBegin+3) == '.')) {
-								// [.. である場合]
-								// セグメントを1つ戻す
-								Assert0(!rl.empty());
-								rl.pop_back();
-								ignore = true;
-							}
-						}
-					}
-					if(!ignore) {
-						// 正常なセグメントが取得できたのでpush_back
-						push(segBegin, segEnd);
-					}
-					segBegin = ++segEnd;
-					continue;
-				}
-			}
-			++segEnd;
-		}
-		if(segBegin != segEnd) {
-			push(segBegin, segEnd);
-		}
-		Assert0(!lb_skip);
-		return rl;
-	}
-	void Dir::_EnumEntryRegEx(RegexItr itr, const RegexItr itrE, std::string& lpath, const std::size_t baseLen, EnumCB cb) {
+	void Dir::_EnumEntry(SearchItr itr, const SearchItr itrE, std::string& lpath, const EnumCB& cb) {
 		if(itr == itrE)
 			return;
 
@@ -208,20 +123,24 @@ namespace rev {
 				lpath.resize(pl);
 			};
 			const auto procLower = [&](){
+				// ファイルに付き当たった場合は終了
 				if(!dir_flag && itr+1 != itrE)
 					return;
 
 				pushSeg();
 				if(dir_flag) {
-					if(itr+1 != itrE)
-						_EnumEntryRegEx(itr+1, itrE, lpath, baseLen, cb);
-					else
+					if(itr+1 != itrE) {
+						_EnumEntry(itr+1, itrE, lpath, cb);
+						if(itr->recursive)
+							_EnumEntry(itr, itrE, lpath, cb);
+					} else
 						cb(Dir(lpath));
 				} else if(itr+1 == itrE)
 					cb(Dir(lpath));
 				popSeg();
 			};
 			boost::apply_visitor(OVR_Functor{
+				[&](boost::blank){},
 				[&](const std::string& s){
 					if(s == seg) {
 						procLower();
@@ -233,51 +152,8 @@ namespace rev {
 						procLower();
 					}
 				}
-			}, *itr);
+			}, itr->var);
 		});
-	}
-	void Dir::_EnumEntry(const std::string& /*s*/, const std::string& path, EnumCB cb) {
-		DirDep::EnumEntry(path, [&cb](const PathCh* name, bool /*bDir*/) {
-			PathStr s(ToPathStr(name).moveTo());
-			if(s == name)
-				cb(Dir(s));
-		});
-	}
-	void Dir::EnumEntryRegEx(const std::string& r, EnumCB cb) {
-		if(r.empty())
-			return;
-		std::string path;
-		// 絶対パスの時は内部パスを無視する
-		int ofs = 0;
-		bool bAbs = false;
-		if(r[0] == '/') {
-			#ifdef WIN32
-				Assert(false, "invalid absolute path");
-			#endif
-			path += '/';
-			ofs = 1;
-			bAbs = true;
-		} else if(auto letter = _GetDriveLetter(&r[0], &r[0] + r.length())) {
-			// windowsの場合のみドライブ文字を出力
-			#ifdef WIN32
-				path += *letter;
-				path += ':';
-			#else
-				path += '/';
-			#endif
-			ofs = 2;
-			bAbs = true;
-		}
-		if(!bAbs)
-			path += "./";
-
-		try {
-			RegexL rl = _ParseRegEx(r.substr(ofs));
-			_EnumEntryRegEx(rl.begin(), rl.end(), path, path.size()+1, cb);
-		} catch(const std::regex_error& e) {
-			// 正規表現に何かエラーがある時は単純に文字列比較とする
-			_EnumEntry(r, path, cb);
-		}
 	}
 	bool Dir::isFile() const noexcept {
 		return DirDep::IsFile(plain_utf32());
@@ -300,7 +176,7 @@ namespace rev {
 			DirDep::Chdir(SC_P);
 		mode |= FStatus::UserRWX;
 
-		int nsg = segments();
+		const int nsg = segments();
 		std::string ns;
 		int i;
 		// 最初のパスから1つずつ存在確認
@@ -322,7 +198,7 @@ namespace rev {
 			ns = getSegment_utf8(i,i+1);
 		}
 	}
-	void Dir::_chmod(PathBlock& lpath, ModCB cb) {
+	void Dir::_chmod(PathBlock& lpath, const ModCB& cb) {
 		DirDep::EnumEntry(lpath.plain_utf32(), [&lpath, this, cb](const PathCh* name, bool) {
 			lpath <<= name;
 			if(ChMod(lpath, cb))
@@ -392,5 +268,61 @@ namespace rev {
 			}
 		}
 		return PathBlock::plain_utf32(true);
+	}
+
+	std::pair<std::string, int> Dir::_CalcOfs(const std::string& r) {
+		std::string path;
+		// 絶対パスの時は内部パスを無視する
+		int ofs = 0;
+		bool bAbs = false;
+		if(r[0] == '/') {
+			// Linux環境でのAbsolute path
+			#ifdef WIN32
+				AssertF("invalid absolute path");
+			#endif
+			path += '/';
+			ofs = 1;
+			bAbs = true;
+		} else if(const auto letter = PathBlock::_GetDriveLetter(r.data(), r.data()+r.length())) {
+			// Windows環境でのAbsolute path
+			#ifdef WIN32
+				path += *letter;
+				path += ":\\";
+			#else
+				AssertF("invalid absolute path");
+			#endif
+			ofs = 3;
+			bAbs = true;
+		}
+		if(!bAbs)
+			path += "./";
+
+		return {path, ofs};
+	}
+	void Dir::EnumEntryWildCard(const std::string& r, const EnumCB& cb) {
+		if(r.empty())
+			return;
+
+		auto path_ofs = _CalcOfs(r);
+		const auto sl = _WildcardToSegment(r.data() + path_ofs.second);
+		_EnumEntry(sl.begin(), sl.end(), path_ofs.first, cb);
+	}
+	Dir::StrList Dir::EnumEntryWildCard(const std::string& s) {
+		StrList ret;
+		EnumEntryWildCard(s, [&ret](const Dir& dir){
+			ret.push_back(dir.plain_utf8());
+		});
+		return ret;
+	}
+	void Dir::EnumEntry(const SearchL& s, const EnumCB& cb) {
+		std::string path;
+		_EnumEntry(s.begin(), s.end(), path, cb);
+	}
+	Dir::StrList Dir::EnumEntry(const SearchL& s) {
+		StrList res;
+		EnumEntry(s, [&res](const Dir& dir){
+			res.push_back(dir.plain_utf8());
+		});
+		return res;
 	}
 }
