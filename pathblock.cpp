@@ -15,24 +15,23 @@ namespace rev {
 			++c;
 		}
 	}
+	// Windows環境におけるファイルパスのドライブレターを取得
 	template <class Itr>
-	auto  PathBlock::_GetDriveLetter(Itr from, Itr to) -> spi::Optional<typename std::decay_t<decltype(*from)>> {
-		using CH = typename std::decay_t<decltype(*from)>;
-		const auto cnvToCh = [](char c) {
-			char32_t c2 = static_cast<char32_t>(c);
-			return text::UTFToN<CH>(reinterpret_cast<const char*>(&c2)).code;
-		};
-		Itr tmp_from = from;
+	auto  PathBlock::_GetDriveLetter(Itr from, const Itr to) -> spi::Optional<typename std::decay_t<decltype(*from)>> {
+		const Itr tmp_from = from;
 		if(to - from >= 3) {
-			auto c = *from;
-			CH cA = cnvToCh('A'),
-				cZ = cnvToCh('Z'),
-				ca = cnvToCh('a'),
-				cz = cnvToCh('z'),
-				col = cnvToCh(':');
-			if((c >= cA && c <= cZ) ||
-					(c >= ca && c <= cz))
-			{
+			using CH = typename std::decay_t<decltype(*from)>;
+			const auto cnvToCh = [](const char c) {
+				const auto c2 = static_cast<char32_t>(c);
+				return text::UTFToN<CH>(reinterpret_cast<const char*>(&c2)).code;
+			};
+			const CH cA = cnvToCh('A'),
+					cZ = cnvToCh('Z'),
+					ca = cnvToCh('a'),
+					cz = cnvToCh('z'),
+					col = cnvToCh(':');
+			const auto c = *from;
+			if((c >= cA && c <= cZ) || (c >= ca && c <= cz)) {
 				if(*(++from) == col &&
 					_IsSC(text::UTFToN<char32_t>(&*(++from)).code))
 					return *tmp_from;
