@@ -1,11 +1,5 @@
 #pragma once
-#if defined(UNIX)
-	#include "dir_depLinux.hpp"
-#elif defined(WIN32)
-	#include "dir_depWin.hpp"
-#else
-	#error "unknown OS"
-#endif
+#include DIR_HEADER
 #include <regex>
 #include <boost/variant.hpp>
 
