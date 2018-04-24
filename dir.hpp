@@ -12,14 +12,13 @@
 namespace rev {
 	//! ディレクトリ管理
 	class Dir : public PathBlock {
-		public:
+		private:
 			struct PathReset {
 				PathStr 		cwd;
 
 				PathReset();
 				~PathReset();
 			};
-		private:
 			const static char SC, DOT, EOS, *SC_P, LBK, RBK;
 
 			using RegexL = std::vector<boost::variant<std::regex, std::string>>;
