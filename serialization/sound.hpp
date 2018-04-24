@@ -1,6 +1,6 @@
 #pragma once
 #include "sound.hpp"
-#include "serialization/sound_depAL.hpp"
+#include SOUND_HEADER
 #include "serialization/sound_common.hpp"
 #include "serialization/resmgr_app.hpp"
 #include "serialization/sdl_rw.hpp"

@@ -1,5 +1,5 @@
 #pragma once
-#include "sound_depAL.hpp"
+#include SOUND_HEADER
 #include "clock.hpp"
 #include "handle/sound.hpp"
 #include "apppath.hpp"
