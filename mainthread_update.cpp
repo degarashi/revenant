@@ -11,11 +11,12 @@
 #include "handler.hpp"
 #include "sys_message.hpp"
 #include "sound.hpp"
+#include "profiler.hpp"
 
 namespace rev {
 	bool MainThread::_updateFrame(MainProc* mp, DrawThread& dth, Handler& drawHandler, const Duration delta) {
 		// プロファイラのフレーム切り替え
-		// spn::profiler.onFrame();
+		profiler.checkIntervalSwitch();
 		try {
 			// ゲーム進行
 			++getInfo()->accumUpd;
