@@ -60,6 +60,17 @@ namespace rev {
 			mainHandler.postMessageNow(msg::DrawInit());
 			DrawProc_UP up(g_system_shared.lock()->param->makeDrawProc());
 
+			const auto setInterval = [](){
+				// Adaptive vsyncを試す
+				if(!GL.setSwapInterval(-1)) {
+					// 通常のvsync
+					GL.setSwapInterval(1);
+					LogR(Verbose, "Adaptive VSync is not supported. Using normal VSync");
+				} else {
+					LogR(Verbose, "using Adaptive VSync");
+				}
+			};
+			setInterval();
 			LogR(Verbose, "Entering loop.");
 			bool bLoop = true;
 			for(;;) {
@@ -71,7 +82,6 @@ namespace rev {
 						// ステート値をDrawingへ変更
 						_info.lock()->state = State::Drawing;
 						// 1フレーム分の描画処理
-						GL.setSwapInterval(0);
 						const bool draw = up->runU(p->id);
 						{
 							// FPSカウンタを更新
@@ -104,6 +114,7 @@ namespace rev {
 						fnMakeContext(false);
 						// OpenGLリソースの再確保
 						mgr_gl.onDeviceReset();
+						setInterval();
 					} else if(static_cast<msg::DestroyContext*>(*m)) {
 						LogR(Verbose, "DestroyContext");
 						// -- OpenGLコンテキストを破棄 --
