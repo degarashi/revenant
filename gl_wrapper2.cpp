@@ -21,13 +21,15 @@ namespace rev {
 	bool GLWrap::isGLFuncLoaded() {
 		return g_bglfuncInit;
 	}
-	void IGL_Draw::setSwapInterval(int n) {
-		SDL_GL_SetSwapInterval(n);
+	bool IGL_Draw::setSwapInterval(const int n) {
+		return SDL_GL_SetSwapInterval(n) == 0;
 	}
-	void IGL_OtherSingle::setSwapInterval(int n) {
-		GLW.getDrawHandler().postExec([=](){
-			IGL_Draw().setSwapInterval(n);
+	bool IGL_OtherSingle::setSwapInterval(const int n) {
+		bool ret;
+		GLW.getDrawHandler().postExec([&ret, n](){
+			ret = IGL_Draw().setSwapInterval(n);
 		});
+		return ret;
 	}
 
 	// OpenGL関数ロード

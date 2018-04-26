@@ -20,7 +20,7 @@ namespace rev {
 		#undef DEF_GLMETHOD
 		#undef DEF_GLMETHOD2
 		#undef DEF_GLCONST
-		virtual void setSwapInterval(int n) = 0;
+		virtual bool setSwapInterval(int n) = 0;
 		virtual void stencilFuncFront(int func, int ref, int mask) = 0;
 		virtual void stencilFuncBack(int func, int ref, int mask) = 0;
 		virtual void stencilOpFront(int sfail, int dpfail, int dppass) = 0;
@@ -39,7 +39,7 @@ namespace rev {
 
 		#include REV_OPENGL_INCLUDE
 
-		void setSwapInterval(int n) override;
+		bool setSwapInterval(int n) override;
 		void stencilFuncFront(int func, int ref, int mask)  override;
 		void stencilFuncBack(int func, int ref, int mask)  override;
 		void stencilOpFront(int sfail, int dpfail, int dppass)  override;
@@ -56,7 +56,7 @@ namespace rev {
 		#undef DEF_GLMETHOD2
 		#undef DEF_GLCONST
 
-		void setSwapInterval(int n) override;
+		bool setSwapInterval(int n) override;
 		void stencilFuncFront(int func, int ref, int mask)  override;
 		void stencilFuncBack(int func, int ref, int mask)  override;
 		void stencilOpFront(int sfail, int dpfail, int dppass)  override;
