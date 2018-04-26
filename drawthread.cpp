@@ -7,6 +7,7 @@
 #include "gameloopparam.hpp"
 #include "sdl_glctx.hpp"
 #include "handler.hpp"
+#include "profiler_global.hpp"
 
 namespace rev {
 	// --------------------- DrawThread ---------------------
@@ -77,6 +78,10 @@ namespace rev {
 				// メインスレッドから描画開始の指示が来るまで待機
 				// AndroidではContextSharingが出来ないのでメインスレッドからロードするタスクを受け取ってここで処理
 				while(auto m = getLooper()->wait()) {
+					// プロファイラのフレーム切り替え
+					if(profiler.checkIntervalSwitch()) {
+						prof::PreserveThreadInfo();
+					}
 					if(msg::DrawReq* p = *m) {
 						// -- 描画リクエスト --
 						// ステート値をDrawingへ変更
