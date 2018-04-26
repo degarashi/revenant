@@ -3,6 +3,18 @@
 namespace rev {
 	thread_local prof::Profiler profiler;
 	namespace prof {
+		const Duration Parameter::DefaultInterval = std::chrono::seconds(1);
+		Parameter::Parameter() {
+			setInterval(DefaultInterval);
+			setAccum(0);
+		}
+		bool Parameter::_refresh(Accum::value_t& a, Accum*) const {
+			getInterval();
+			++a;
+			return true;
+		}
+		SpinLock<Parameter> g_param;
+
 		// -------------------- Block --------------------
 		Block::Block(const Name& name):
 			name(name)
@@ -53,11 +65,16 @@ namespace rev {
 		}
 		// -------------------- Profiler --------------------
 		const std::size_t Profiler::DefaultMaxLayer = 8;
-		const Duration Profiler::DefaultInterval = std::chrono::seconds(1);
 		const Name Profiler::DefaultRootName = "Root";
 
-		bool Profiler::_hasIntervalPassed() const {
-			return (Clock::now() - getCurrent().tmBegin) >= _tInterval;
+		void Profiler::initialize(const Name& rootName, const std::size_t ml) {
+			_param_accum = g_param.lockC()->getAccum();
+			_rootName = rootName;
+			// 計測中だった場合は警告を出す
+			Expect(!accumulating(), "reinitializing when accumulating");
+			Assert(ml > 0, "invalid maxLayer");
+			_maxLayer = ml;
+			clear();
 		}
 		Profiler::Profiler() {
 			initialize();
@@ -83,25 +100,26 @@ namespace rev {
 		bool Profiler::checkIntervalSwitch() {
 			// ルート以外のブロックを全て閉じてない場合は警告を出す
 			Expect(!accumulating(), "profiler block leaked");
-			const bool bf = _hasIntervalPassed();
+			bool b;
+			{
+				auto lk = g_param.lockC();
+				// インターバル時間が変更されていたら履歴をクリア
+				const auto ac = lk->getAccum();
+				if(ac != _param_accum) {
+					_param_accum = ac;
+					clear();
+					return false;
+				}
+				b = (Clock::now() - getCurrent().tmBegin) >= lk->getInterval();
+			}
 			_closeAllBlocks();
-			// インターバル時間が過ぎていたら他にも変数をリセット
-			if(bf) {
+			if(b) {
 				_intervalInfo.advance_clear();
 				_intervalInfo.current().tmBegin = Clock::now();
 				_curBlock = nullptr;
 			}
 			_prepareRootNode();
-			return bf;
-		}
-		void Profiler::_initialize(const Unit it, const Name& rootName, const std::size_t ml) {
-			_rootName = rootName;
-			// 計測中だった場合は警告を出す
-			Expect(!accumulating(), "reinitializing when accumulating");
-			Assert(ml > 0, "invalid maxLayer");
-			_maxLayer = ml;
-			_tInterval = it;
-			clear();
+			return b;
 		}
 		bool Profiler::accumulating() const {
 			// ルートノードの分を加味

@@ -3,6 +3,8 @@
 #include "spine/treenode.hpp"
 #include "dataswitch.hpp"
 #include "clock.hpp"
+#include "spine/rflag.hpp"
+#include "spinlock.hpp"
 
 #ifdef PROFILER_ENABLED
 	#define RevBeginProfile(name)	::rev::profiler.beginBlock(name)
@@ -16,6 +18,22 @@
 
 namespace rev {
 	namespace prof {
+		struct Parameter {
+			const static Duration DefaultInterval;
+			//!< 履歴を更新する間隔
+			#define SEQ \
+				((Interval)(Duration)) \
+				((Accum)(uint32_t)(Interval))
+			RFLAG_DEFINE(Parameter, SEQ)
+			RFLAG_GETMETHOD_DEFINE(SEQ)
+			RFLAG_SETMETHOD_DEFINE(SEQ)
+			RFLAG_SETMETHOD(Accum)
+
+			Parameter();
+			#undef SEQ
+		};
+		extern SpinLock<Parameter>	g_param;
+
 		using Unit = Microseconds;
 		using Name = const char*;
 		struct History {
@@ -54,14 +72,12 @@ namespace rev {
 
 				using TPStk = std::vector<Timepoint>;
 				Name			_rootName;
-				Unit			_tInterval;			//!< 履歴を更新する間隔
+				uint32_t		_param_accum;
 				Block*			_curBlock;			//!< 現在計測中のブロック
 				std::size_t		_maxLayer;			//!< 最大ツリー深度
 				TPStk			_tmBegin;			//!< レイヤー毎の計測開始した時刻
-				bool _hasIntervalPassed() const;
 				//! 閉じられていないブロックを閉じる(ルートノード以外)
 				void _closeAllBlocks();
-				void _initialize(Unit it, const Name& rootName, std::size_t ml);
 				void _prepareRootNode();
 
 				//! スコープを抜けると同時にブロックを閉じる
@@ -78,22 +94,13 @@ namespace rev {
 			public:
 				const static Name DefaultRootName;
 				const static std::size_t DefaultMaxLayer;
-				const static Duration DefaultInterval;
 
 				Profiler();
-				//! 任意のインターバルとレイヤー数で再初期化
-				template <class Interval=Duration>
+				//! 任意のルートノード名とレイヤー数で再初期化
 				void initialize(
-						const Interval interval=DefaultInterval,
-						const Name& rootName = DefaultRootName,
-						const std::size_t ml=DefaultMaxLayer
-				) {
-					_initialize(
-						std::chrono::duration_cast<Unit>(interval),
-						rootName,
-						ml
-					);
-				}
+					const Name& rootName = DefaultRootName,
+					const std::size_t ml=DefaultMaxLayer
+				);
 				//! 何かしらのブロックを開いているか = 計測途中か
 				bool accumulating() const;
 				//! フレーム間の区切りに呼ぶ
