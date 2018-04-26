@@ -39,14 +39,16 @@ namespace rev {
 		using BlockSP = std::shared_ptr<Block>;
 
 		class Profiler {
-			private:
+			public:
 				//! 1インターバル間に集計される情報
 				struct IntervalInfo {
-					Timepoint	tmBegin;
-					BlockSP		root;				//!< ツリー構造ルート
 					using ByName = std::unordered_map<Name, History>;
+
+					Timepoint	tmBegin;			//!< インターバル開始時刻
+					BlockSP		root;				//!< ツリー構造ルート
 					ByName		byName;				//!< 名前ブロック毎の集計(最大レイヤー数を超えた分も含める)
 				};
+			private:
 				using IntervalInfoSW = DataSwitcher<IntervalInfo>;
 				IntervalInfoSW	_intervalInfo;
 
