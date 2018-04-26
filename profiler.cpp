@@ -57,7 +57,7 @@ namespace rev {
 		const Name Profiler::DefaultRootName = "Root";
 
 		bool Profiler::_hasIntervalPassed() const {
-			return (_clock->now() - getCurrent().tmBegin) >= _tInterval;
+			return (Clock::now() - getCurrent().tmBegin) >= _tInterval;
 		}
 		Profiler::Profiler() {
 			initialize();
@@ -65,7 +65,7 @@ namespace rev {
 		void Profiler::clear() {
 			_closeAllBlocks();
 			_intervalInfo.clear();
-			_intervalInfo.current().tmBegin = _clock->now();
+			_intervalInfo.current().tmBegin = Clock::now();
 			_curBlock = nullptr;
 			_prepareRootNode();
 		}
@@ -88,18 +88,16 @@ namespace rev {
 			// インターバル時間が過ぎていたら他にも変数をリセット
 			if(bf) {
 				_intervalInfo.advance_clear();
-				_intervalInfo.current().tmBegin = _clock->now();
+				_intervalInfo.current().tmBegin = Clock::now();
 				_curBlock = nullptr;
 			}
 			_prepareRootNode();
 			return bf;
 		}
-		void Profiler::_initialize(const Unit it, const Name& rootName, const std::size_t ml, const Clock_SP& c) {
+		void Profiler::_initialize(const Unit it, const Name& rootName, const std::size_t ml) {
 			_rootName = rootName;
 			// 計測中だった場合は警告を出す
 			Expect(!accumulating(), "reinitializing when accumulating");
-			Assert(c, "invalid clock");
-			_clock = c;
 			Assert(ml > 0, "invalid maxLayer");
 			_maxLayer = ml;
 			_tInterval = it;
@@ -149,7 +147,7 @@ namespace rev {
 			// エントリを確保
 			ci.byName[name];
 			// 現在のレイヤーの開始時刻を記録
-			_tmBegin.emplace_back(_clock->now());
+			_tmBegin.emplace_back(Clock::now());
 		}
 		Profiler::Scope Profiler::beginScope(const Name& name) {
 			beginBlock(name);
@@ -161,7 +159,7 @@ namespace rev {
 			auto& cur = _curBlock;
 
 			// かかった時間を加算
-			const Unit dur = std::chrono::duration_cast<Unit>(_clock->now() - _tmBegin.back());
+			const Unit dur = std::chrono::duration_cast<Unit>(Clock::now() - _tmBegin.back());
 			{
 				const auto n = _tmBegin.size();
 				if(n <= _maxLayer) {
