@@ -7,9 +7,9 @@
 #include "spinlock.hpp"
 
 #ifdef PROFILER_ENABLED
-	#define RevBeginProfile(name)	::rev::profiler.beginBlock(name)
-	#define	RevEndProfile(name)		::rev::profiler.endBlock(name)
-	#define RevProfile(name)		const auto name##__LINE__ = ::rev::profiler(name)
+	#define RevBeginProfile(name)	::rev::profiler.beginBlock(#name)
+	#define	RevEndProfile(name)		::rev::profiler.endBlock(#name)
+	#define RevProfile(name)		const auto name##__LINE__ = ::rev::profiler(#name)
 #else
 	#define RevBeginProfile(name)
 	#define	RevEndProfile(name)
