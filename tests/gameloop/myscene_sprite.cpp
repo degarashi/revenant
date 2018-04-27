@@ -2,12 +2,12 @@
 #include "bsprite.hpp"
 #include "../../camera2d.hpp"
 #include "../../systeminfo.hpp"
-#include "../../sharedata.hpp"
 #include "../../gl_resource.hpp"
 #include "../../gl_texture.hpp"
 #include "../../glx_if.hpp"
 #include "../../sys_uniform.hpp"
 #include "frea/random/vector.hpp"
+#include "../../tls_data.hpp"
 #include <boost/format.hpp>
 
 namespace rev::test {
@@ -19,9 +19,9 @@ namespace rev::test {
 		_camera->setAspectRatio(scr.width / scr.height);
 		_camera->refPose().identity();
 
-		auto lk = g_system_shared.lock();
-		auto rfi = lk->mt.getUniformF<int>();
-		auto rf = lk->mt.getUniformF<float>();
+		auto& mt = tls_mt.get();
+		auto rfi = mt.getUniformF<int>();
+		auto rf = mt.getUniformF<float>();
 		HTex tex[6];
 		for(uint32_t i=0 ; i<countof(tex) ; i++) {
 			tex[i] = mgr_gl.loadTexture(UserURI((boost::format("spr%1%.png") % i).str()), MipState::MipmapLinear);

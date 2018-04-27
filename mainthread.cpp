@@ -17,6 +17,7 @@
 #include "scene_mgr.hpp"
 #include "watch.hpp"
 #include "drawtoken/task.hpp"
+#include "tls_data.hpp"
 
 namespace rev {
 	TLS<VideoParam> tls_videoParam;
@@ -68,6 +69,8 @@ namespace rev {
 		using UPtr = std::unique_ptr<T>;
 	}
 	void MainThread::runL(const Looper_SP& guiLooper) {
+		tls_mt = lubee::RandomMT::Make<4>();
+
 		const bool MultiContext = g_system_shared.lock()->param->getMultiContext();
 		UPtr<GLWrap>		glw;
 		DrawThread			dth;
