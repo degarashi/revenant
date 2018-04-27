@@ -44,7 +44,6 @@ namespace rev {
 			struct Info {
 				uint64_t	accumUpd;	//!< アップデート累積カウンタ
 				uint64_t	accumDraw;	//!< 描画フレーム累積カウンタ
-				Timepoint	tmBegin;	//!< ゲーム開始時の時刻
 			};
 			SpinLock<Info>		_info;
 

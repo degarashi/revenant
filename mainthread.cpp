@@ -27,7 +27,6 @@ namespace rev {
 	{
 		auto lk = _info.lock();
 		lk->accumUpd = lk->accumDraw = 0;
-		lk->tmBegin = Clock::now();
 	}
 	Timepoint MainThread::_WaitForNextInterval(const Timepoint prevtime, const Duration interval) {
 		auto ntp = prevtime + interval;
