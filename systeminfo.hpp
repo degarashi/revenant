@@ -3,6 +3,7 @@
 #include "lubee/size.hpp"
 
 namespace rev {
+	// メインスレッドからのアクセス専用
 	#define mgr_info (::rev::SystemInfo::ref())
 	class SystemInfo : public spi::Singleton<SystemInfo> {
 		private:
