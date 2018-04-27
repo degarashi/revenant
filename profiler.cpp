@@ -3,7 +3,7 @@
 namespace rev {
 	thread_local prof::Profiler profiler;
 	namespace prof {
-		const Duration Parameter::DefaultInterval = std::chrono::seconds(1);
+		const Duration Parameter::DefaultInterval = Seconds(1);
 		Parameter::Parameter() {
 			setInterval(DefaultInterval);
 			setAccum(0);
@@ -19,15 +19,15 @@ namespace rev {
 		Block::Block(const Name& name):
 			name(name)
 		{}
-		Unit Block::getLowerTime() const {
-			Unit sum(0);
+		Duration Block::getLowerTime() const {
+			Duration sum(0);
 			iterateChild([&sum](const auto& nd){
 				sum += nd->hist.tAccum;
 				return true;
 			});
 			return sum;
 		}
-		Unit Block::getAverageTime(const bool omitLower) const {
+		Duration Block::getAverageTime(const bool omitLower) const {
 			if(omitLower)
 				return (hist.tAccum - getLowerTime()) / hist.nCalled;
 			return hist.getAverageTime();
@@ -35,17 +35,17 @@ namespace rev {
 		// -------------------- History --------------------
 		History::History():
 			nCalled(0),
-			tMax(std::numeric_limits<Unit::rep>::lowest()),
-			tMin(std::numeric_limits<Unit::rep>::max()),
+			tMax(std::numeric_limits<Duration::rep>::lowest()),
+			tMin(std::numeric_limits<Duration::rep>::max()),
 			tAccum(0)
 		{}
-		void History::addTime(Unit t) {
+		void History::addTime(const Duration t) {
 			++nCalled;
 			tMax = std::max(tMax, t);
 			tMin = std::min(tMin, t);
 			tAccum += t;
 		}
-		Unit History::getAverageTime() const {
+		Duration History::getAverageTime() const {
 			return tAccum / nCalled;
 		}
 		// -------------------- Profiler::Scope --------------------
@@ -177,7 +177,7 @@ namespace rev {
 			auto& cur = _curBlock;
 
 			// かかった時間を加算
-			const Unit dur = std::chrono::duration_cast<Unit>(Clock::now() - _tmBegin.back());
+			const Duration dur = Clock::now() - _tmBegin.back();
 			{
 				const auto n = _tmBegin.size();
 				if(n <= _maxLayer) {

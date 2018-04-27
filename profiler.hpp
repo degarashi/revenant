@@ -34,16 +34,15 @@ namespace rev {
 		};
 		extern SpinLock<Parameter>	g_param;
 
-		using Unit = Microseconds;
 		using Name = const char*;
 		struct History {
 			uint_fast32_t		nCalled;	//!< 呼び出し回数
-			Unit				tMax,		//!< 最高値
+			Duration			tMax,		//!< 最高値
 								tMin,		//!< 最低値
 								tAccum;		//!< 累積値
 			History();
-			void addTime(Unit t);
-			Unit getAverageTime() const;
+			void addTime(Duration t);
+			Duration getAverageTime() const;
 		};
 		//! プロファイラブロック
 		struct Block : spi::TreeNode<Block> {
@@ -51,8 +50,8 @@ namespace rev {
 			History			hist;
 
 			Block(const Name& name);
-			Unit getLowerTime() const;			//!< 下層にかかった時間
-			Unit getAverageTime(bool omitLower) const;
+			Duration getLowerTime() const;			//!< 下層にかかった時間
+			Duration getAverageTime(bool omitLower) const;
 		};
 		using BlockSP = std::shared_ptr<Block>;
 
