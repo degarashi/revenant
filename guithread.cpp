@@ -8,6 +8,7 @@
 #include "pooled_output.hpp"
 #include "output.hpp"
 #include "sharedata.hpp"
+#include "rev_time.hpp"
 #include "handle/sdl.hpp"
 #include <SDL.h>
 #include <SDL_image.h>
@@ -24,6 +25,8 @@ namespace rev {
 		SDLInitializer	sdlI(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_JOYSTICK | SDL_INIT_TIMER);
 		IMGInitializer	imgI(IMG_INIT_JPG | IMG_INIT_PNG);
 		HWin window;
+		// アプリケーション開始時刻を記録
+		RecordApplicationBeginTime();
 		tls_threadID = SDL_GetThreadID(nullptr);
 		tls_threadName = "GuiThread";
 		#ifdef ANDROID
