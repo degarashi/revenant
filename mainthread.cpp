@@ -13,15 +13,12 @@
 #include "sound.hpp"
 #include <SDL_timer.h>
 #include <SDL_events.h>
-#include "videoparam.hpp"
 #include "scene_mgr.hpp"
 #include "watch.hpp"
 #include "drawtoken/task.hpp"
 #include "tls_data.hpp"
 
 namespace rev {
-	TLS<VideoParam> tls_videoParam;
-
 	// ---------------- MainThread ----------------
 	MainThread::MainThread():
 		ThreadL("MainThread")

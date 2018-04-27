@@ -1,6 +1,6 @@
 #include "texture.hpp"
 #include "../gl_if.hpp"
-#include "../videoparam.hpp"
+#include "../tls_data.hpp"
 
 namespace rev::draw {
 	// ------------------------- draw::Texture -------------------------
