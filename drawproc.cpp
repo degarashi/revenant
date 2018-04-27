@@ -6,8 +6,12 @@
 namespace rev {
 	// ---------------- DrawProc ----------------
 	bool DrawProc::runU(const uint64_t /*accum*/) {
-		auto lk = g_system_shared.lock();
-		if(auto fx = lk->fx.lock()) {
+		HFx fx;
+		{
+			auto lk = g_system_shared.lock();
+			fx = lk->fx.lock();
+		}
+		if(fx) {
 			fx->execTask();
 			return true;
 		}
