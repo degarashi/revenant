@@ -4,7 +4,6 @@
 #include "spine/rflag.hpp"
 #include "handle/camera.hpp"
 #include "frea/matrix.hpp"
-#include <unordered_map>
 
 namespace rev {
 	class UniformEnt;
