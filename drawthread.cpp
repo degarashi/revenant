@@ -98,7 +98,6 @@ namespace rev {
 							if(draw)
 								lk->ctxDrawThread->swapWindow();
 						}
-						GL.glFlush();
 						{
 							// ステート値をIdleへ戻し、累積描画フレーム数を更新
 							auto lk = _info.lock();
