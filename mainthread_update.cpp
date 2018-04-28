@@ -11,14 +11,9 @@
 #include "handler.hpp"
 #include "sys_message.hpp"
 #include "sound.hpp"
-#include "profiler_global.hpp"
 
 namespace rev {
 	bool MainThread::_updateFrame(MainProc* mp, DrawThread& dth, Handler& drawHandler, const Duration delta) {
-		// プロファイラのフレーム切り替え
-		if(profiler.checkIntervalSwitch()) {
-			prof::PreserveThreadInfo();
-		}
 		try {
 			// ゲーム進行
 			++getInfo()->accumUpd;

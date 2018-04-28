@@ -17,6 +17,7 @@
 #include "watch.hpp"
 #include "drawtoken/task.hpp"
 #include "tls_data.hpp"
+#include "profiler_global.hpp"
 
 namespace rev {
 	// ---------------- MainThread ----------------
@@ -27,6 +28,7 @@ namespace rev {
 		lk->accumUpd = lk->accumDraw = 0;
 	}
 	Timepoint MainThread::_WaitForNextInterval(const Timepoint prevtime, const Duration interval) {
+		RevProfile(Sleep);
 		auto ntp = prevtime + interval;
 		const auto tp = Clock::now();
 		if(ntp <= tp)
@@ -143,6 +145,7 @@ namespace rev {
 					// ゲームの進行や更新タイミングを図って描画など
 					bool bLoop = true;
 					do {
+						RevBeginProfile(Aux);
 						// 必要に応じてシェーダーファイルのリロード処理
 						_checkFxReload(ntf, rel);
 
@@ -210,9 +213,15 @@ namespace rev {
 								} while(bLoop);
 							}
 						}
+						RevEndProfile(Aux);
 						const auto prev2 = prevtime;
 						// 次のフレーム開始時刻を待つ
 						prevtime = _WaitForNextInterval(prevtime, Microseconds(16666));
+						// プロファイラのフレーム切り替え
+						if(profiler.checkIntervalSwitch()) {
+							prof::PreserveThreadInfo();
+						}
+						RevProfile(Main);
 						// 1フレーム分の処理を行う
 						if(_updateFrame(mp.get(), dth, drawHandler, Clock::now() - prev2))
 							break;
