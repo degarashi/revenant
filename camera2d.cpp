@@ -31,8 +31,12 @@ namespace rev {
 		return true;
 	}
 	bool Camera2D::_refresh(ViewProj::value_t& m, ViewProj*) const {
-		m = getView() * getProj();
-		return true;
+		const auto cache = _rflag.getAsTuple<View, Proj>(this);
+		if(cache) {
+			m = *std::get<0>(cache) * *std::get<1>(cache);
+			return true;
+		}
+		return false;
 	}
 	bool Camera2D::_refresh(ViewProjInv::value_t& m, ViewProjInv*) const {
 		m = getViewProj().inversion();
