@@ -61,17 +61,32 @@ namespace rev {
 			mainHandler.postMessageNow(msg::DrawInit());
 			DrawProc_UP up(g_system_shared.lock()->param->makeDrawProc());
 
-			const auto setInterval = [](){
-				// Adaptive vsyncを試す
-				if(!GL.setSwapInterval(-1)) {
-					// 通常のvsync
-					GL.setSwapInterval(1);
-					LogR(Verbose, "Adaptive VSync is not supported. Using normal VSync");
-				} else {
-					LogR(Verbose, "using Adaptive VSync");
+			bool cur_vsync;
+			const auto checkVSync = [&cur_vsync, this](const bool force){
+				spi::Optional<bool> vsync;
+				{
+					auto op = getInfo();
+					if(force || cur_vsync != op->vsync) {
+						vsync = cur_vsync = op->vsync;
+					}
+				}
+				if(vsync) {
+					if(*vsync) {
+						// Adaptive vsyncを試す
+						if(!GL.setSwapInterval(-1)) {
+							// 通常のvsync
+							GL.setSwapInterval(1);
+							LogR(Verbose, "Adaptive VSync is not supported. Using normal VSync");
+						} else {
+							LogR(Verbose, "using Adaptive VSync");
+						}
+					} else {
+						GL.setSwapInterval(0);
+						LogR(Verbose, "VSync disabled");
+					}
 				}
 			};
-			setInterval();
+			checkVSync(true);
 			LogR(Verbose, "Entering loop.");
 			bool bLoop = true;
 			for(;;) {
@@ -83,6 +98,8 @@ namespace rev {
 						if(profiler.checkIntervalSwitch()) {
 							prof::PreserveThreadInfo();
 						}
+						// VSyncフラグが変化していたらSDLのVSync関数を呼ぶ
+						checkVSync(false);
 						// -- 描画リクエスト --
 						// ステート値をDrawingへ変更
 						_info.lock()->state = State::Drawing;
@@ -118,7 +135,7 @@ namespace rev {
 						fnMakeContext(false);
 						// OpenGLリソースの再確保
 						mgr_gl.onDeviceReset();
-						setInterval();
+						checkVSync(true);
 					} else if(static_cast<msg::DestroyContext*>(*m)) {
 						LogR(Verbose, "DestroyContext");
 						// -- OpenGLコンテキストを破棄 --

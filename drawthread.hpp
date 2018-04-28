@@ -30,6 +30,7 @@ namespace rev {
 								ctxMainThread;			//!< メインスレッド用のGLコンテキスト
 				Timepoint		prevTp = Clock::now();
 				FPSCounter		fps;
+				bool			vsync = false;
 			};
 			SpinLock<Info>		_info;
 			DrawProc_UP			_dproc;
