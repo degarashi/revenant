@@ -11,6 +11,12 @@ namespace rev::prof {
 			name_hist.emplace_back(nh.first, nh.second);
 		}
 	}
+	Timepoint Interval::getEndTime() const {
+		auto node = root;
+		if(node->getSibling())
+			node = node->getSibling();
+		return beginTime + node->hist.tAccum;
+	}
 
 	namespace {
 		struct Shared {

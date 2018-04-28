@@ -20,6 +20,7 @@ namespace rev::prof {
 
 		Interval() = default;
 		Interval(const Profiler::IntervalInfo&);
+		Timepoint getEndTime() const;
 	};
 	using IntervalV = std::vector<Interval>;
 	struct IntervalEnt {
