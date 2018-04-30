@@ -49,22 +49,13 @@ namespace rev::dc {
 	{
 		private:
 			using HTfNodeV = std::vector<HTfNode>;
-			struct Name_Node {
-				const Name*		name;
-				const TfNode*	node;
-			};
-			using Name_NodeV = std::vector<Name_Node>;
-
-			struct Id_Node {
-				JointId			id;
-				const TfNode*	node;
-			};
-			using Id_NodeV = std::vector<Id_Node>;
+			using NameMap = std::unordered_map<Name, const TfNode*>;
+			using IdMap = std::unordered_map<JointId, const TfNode*>;
 
 			#define SEQ \
 				((Node)(HTfNodeV)) \
-				((NameToNode)(Name_NodeV)(Node)) \
-				((IdToNode)(Id_NodeV)(Node))
+				((NameToNode)(NameMap)(Node)) \
+				((IdToNode)(IdMap)(Node))
 			RFLAG_DEFINE(TfRoot, SEQ)
 			RFLAG_GETMETHOD_DEFINE(SEQ)
 		public:

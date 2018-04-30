@@ -7,7 +7,7 @@ namespace rev::dc {
 		for(auto& n : node) {
 			n->iterateDepthFirst<true>([&dst](auto& n, int){
 				if(const auto& name = n.jointName)
-					dst.emplace_back(Name_Node{name.get(), &n});
+					dst.emplace(*name, &n);
 				return spi::Iterate::StepIn;
 			});
 		}
@@ -18,7 +18,7 @@ namespace rev::dc {
 		const auto& node = getNode();
 		for(auto& n : node) {
 			n->iterateDepthFirst<true>([&dst](auto& n, int){
-				dst.emplace_back(Id_Node{n.id, &n});
+				dst.emplace(n.id, &n);
 				return spi::Iterate::StepIn;
 			});
 		}
@@ -39,21 +39,17 @@ namespace rev::dc {
 	}
 	const TfNode* TfRoot::find(const JointId id) const {
 		auto& idton = getIdToNode();
-		const auto itr = std::find_if(idton.begin(), idton.end(), [id](const auto& n){
-			return n.id == id;
-		});
+		const auto itr = idton.find(id);
 		if(itr != idton.end()) {
-			return itr->node;
+			return itr->second;
 		}
 		return nullptr;
 	}
 	const TfNode* TfRoot::find(const Name& name) const {
 		auto& nton = getNameToNode();
-		const auto itr = std::find_if(nton.begin(), nton.end(), [&name](const auto& n){
-			return *n.name == name;
-		});
+		const auto itr = nton.find(name);
 		if(itr != nton.end()) {
-			return itr->node;
+			return itr->second;
 		}
 		return nullptr;
 	}
