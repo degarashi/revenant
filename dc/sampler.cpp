@@ -6,43 +6,40 @@ namespace rev::dc {
 	std::size_t T_Sampler::numKey() const {
 		return value->size();
 	}
-	void T_Sampler::sample(Pose3& dst, const std::size_t idx0, const std::size_t idx1, const float t) const {
-		D_Assert0(idx0 <= idx1);
+	void T_Sampler::sample(Pose3& dst, const std::size_t idx, const float t) const {
 		D_Assert0(lubee::IsInRange(t, 0.f, 1.f));
 		auto& val = *value;
 		frea::Vec3 v;
-		if(idx0 == idx1)
-			v = val[idx0];
+		if(t == 0.f)
+			v = val[idx];
 		else
-			v = frea::Lerp(val[idx0], val[idx1], t);
+			v = frea::Lerp(val[idx], val[idx+1], t);
 		dst.setOffset(v);
 	}
 	std::size_t R_Sampler::numKey() const {
 		return value->size();
 	}
-	void R_Sampler::sample(Pose3& dst, const std::size_t idx0, const std::size_t idx1, const float t) const {
-		D_Assert0(idx0 <= idx1);
+	void R_Sampler::sample(Pose3& dst, const std::size_t idx, const float t) const {
 		D_Assert0(lubee::IsInRange(t, 0.f, 1.f));
 		auto& val = *value;
 		frea::Quat q;
-		if(idx0 == idx1)
-			q = val[idx0];
+		if(t == 0.f)
+			q = val[idx];
 		else
-			q = frea::Lerp(val[idx0], val[idx1], t);
+			q = frea::Lerp(val[idx], val[idx+1], t);
 		dst.setRotation(q);
 	}
 	std::size_t S_Sampler::numKey() const {
 		return value->size();
 	}
-	void S_Sampler::sample(Pose3& dst, const std::size_t idx0, const std::size_t idx1, const float t) const {
-		D_Assert0(idx0 <= idx1);
+	void S_Sampler::sample(Pose3& dst, const std::size_t idx, const float t) const {
 		D_Assert0(lubee::IsInRange(t, 0.f, 1.f));
 		auto& val = *value;
 		frea::Vec3 s;
-		if(idx0 == idx1)
-			s = val[idx0];
+		if(t == 0.f)
+			s = val[idx];
 		else
-			s = frea::Lerp(val[idx0], val[idx1], t);
+			s = frea::Lerp(val[idx], val[idx+1], t);
 		dst.setScaling(s);
 	}
 }

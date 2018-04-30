@@ -11,21 +11,21 @@ namespace rev::dc {
 	PosSampler::PosP PosSampler::position(const float t) const {
 		if(pos->size() < 2) {
 			return PosP {
-				{0, 0},
-				0
+				.idx = 0,
+				.time = 0
 			};
 		}
 		if(t <= pos->front()) {
 			return PosP {
-				{0, 0},
-				0
+				.idx = 0,
+				.time = 0
 			};
 		}
 		const auto len = pos->size();
 		if(t >= pos->back()) {
 			return PosP {
-				{len-1, len-1},
-				0
+				.idx = len-1,
+				.time = 0
 			};
 		}
 
@@ -45,22 +45,14 @@ namespace rev::dc {
 			if(beg != pos->begin())
 				--beg;
 		}
-		auto end = std::upper_bound(beg, pos->end(), t, [](const auto t, const auto p){
-			return t < p;
-		});
-		if(end == pos->end())
-			--end;
+		D_Assert0(beg+1 != pos->end());
 
 		const std::size_t idx0 = beg-pos->begin(),
-							idx1 = end-pos->begin();
-		D_Assert0(idx1-idx0 <= 1);
-		if(idx0 == idx1) {
-			D_Assert0(idx0 == 0 || idx0 == len-1);
-		}
+							idx1 = idx0+1;
 		const float time =  (idx0 != idx1) ? ((t-(*pos)[idx0]) / ((*pos)[idx1] - (*pos)[idx0])) : 0;
 		return PosP{
-			{idx0, idx1},
-			time
+			.idx = idx0,
+			.time = time
 		};
 	}
 }

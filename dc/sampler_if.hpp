@@ -11,11 +11,11 @@ namespace rev::dc {
 	};
 	struct ISampler : IFrame {
 		virtual ~ISampler() {}
-		virtual void sample(Pose3& dst, std::size_t idx0, std::size_t idx1, float t) const = 0;
+		virtual void sample(Pose3& dst, std::size_t idx, float t) const = 0;
 	};
 	struct IPosSampler : IFrame {
 		struct PosP {
-			std::size_t	idx[2];
+			std::size_t	idx;
 			float		time;
 		};
 		virtual ~IPosSampler() {}

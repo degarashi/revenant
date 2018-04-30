@@ -12,6 +12,6 @@ namespace rev::dc {
 		D_Assert0(_position->numKey() == _sampler->numKey());
 		const auto pos = _position->position(t);
 		auto& node = _jat->findJoint(q);
-		_sampler->sample(node.refPose(), pos.idx[0], pos.idx[1], pos.time);
+		_sampler->sample(node.refPose(), pos.idx, pos.time);
 	}
 }
