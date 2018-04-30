@@ -98,6 +98,7 @@ namespace rev {
 						if(profiler.checkIntervalSwitch()) {
 							prof::PreserveThreadInfo();
 						}
+						RevProfile(Main);
 						// VSyncフラグが変化していたらSDLのVSync関数を呼ぶ
 						checkVSync(false);
 						// -- 描画リクエスト --
@@ -112,8 +113,10 @@ namespace rev {
 							const auto diff = cur - lk->prevTp;
 							lk->prevTp = cur;
 							lk->fps.update(draw, diff);
-							if(draw)
+							if(draw) {
+								RevProfile(Swap);
 								lk->ctxDrawThread->swapWindow();
+							}
 						}
 						{
 							// ステート値をIdleへ戻し、累積描画フレーム数を更新

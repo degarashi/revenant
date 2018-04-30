@@ -1,5 +1,6 @@
 #include "task.hpp"
 #include "../gl_if.hpp"
+#include "../profiler.hpp"
 
 namespace rev {
 	namespace draw {
@@ -17,6 +18,7 @@ namespace rev {
 			return _entry[_curRead % NUM_TASK];
 		}
 		void Task::beginTask(HFx hFx) {
+			RevProfile(BeginTask);
 			UniLock lk(_mutex);
 			// 読み込みカーソルが追いついてない時は追いつくまで待つ
 			auto diff = _curWrite - _curRead;
@@ -47,6 +49,7 @@ namespace rev {
 			_curWrite = _curRead = 0;
 		}
 		void Task::execTask() {
+			RevProfile(ExecTask);
 			spi::Optional<UniLock> lk(_mutex);
 			auto diff = _curWrite - _curRead;
 			Assert0(diff >= 0);

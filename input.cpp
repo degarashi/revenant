@@ -1,6 +1,7 @@
 #include "input.hpp"
 #include "lubee/compare.hpp"
 #include "frea/constant.hpp"
+#include "profiler.hpp"
 
 namespace rev {
 	// ------------------ DZone ------------------
@@ -349,6 +350,7 @@ namespace rev {
 		}
 	}
 	void InputMgr::update() {
+		RevProfile(InputMgr_Update);
 		CallFunction<Keyboard, Mouse, Joypad, Touchpad, TextInputDep, KeyLogDep>(CallUpdate());
 		for(auto h : *this)
 			h->scan();

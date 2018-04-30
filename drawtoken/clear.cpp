@@ -1,5 +1,6 @@
 #include "clear.hpp"
 #include "../gl_if.hpp"
+#include "../profiler.hpp"
 
 namespace rev {
 	namespace draw {
@@ -7,6 +8,7 @@ namespace rev {
 			_param(p)
 		{}
 		void Clear::exec() {
+			RevProfile(Framebuffer_Clear);
 			GLenum flag = 0;
 			if(_param.color) {
 				flag |= GL_COLOR_BUFFER_BIT;
