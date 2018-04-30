@@ -15,4 +15,11 @@ namespace rev::dc {
 		PosP position(float t) const override;
 		PosP position(std::size_t idx, float t) const override;
 	};
+	struct PosSampler_cached : PosSampler {
+		mutable std::size_t		_prevFrame;
+
+		PosSampler_cached();
+		using PosSampler::position;
+		PosP position(float t) const override;
+	};
 }

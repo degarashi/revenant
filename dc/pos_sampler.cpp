@@ -86,4 +86,14 @@ namespace rev::dc {
 			.time = p.second
 		};
 	}
+
+	// ----------------- PosSampler_cached -----------------
+	PosSampler_cached::PosSampler_cached():
+		_prevFrame(0)
+	{}
+	PosSampler_cached::PosP PosSampler_cached::position(const float t) const {
+		const auto ret = position(_prevFrame, t);
+		_prevFrame = ret.idx;
+		return ret;
+	}
 }
