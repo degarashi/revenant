@@ -171,7 +171,7 @@ namespace rev::gltf {
 			}
 			// Sampler(input) -> PosSampler
 			{
-				auto isamp = std::make_shared<dc::PosSampler>();
+				auto isamp = std::make_shared<dc::PosSampler_cached>();
 				isamp->pos = c.sampler->input->template getDataAs<float>();
 				ch->_position = isamp;
 			}
