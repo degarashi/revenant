@@ -21,5 +21,6 @@ namespace rev::dc {
 		virtual ~IPosSampler() {}
 		virtual float length() const = 0;
 		virtual PosP position(float t) const = 0;
+		virtual PosP position(std::size_t idx, float t) const = 0;
 	};
 }

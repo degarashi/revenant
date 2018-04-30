@@ -13,5 +13,6 @@ namespace rev::dc {
 		float length() const override;
 		std::size_t numKey() const override;
 		PosP position(float t) const override;
+		PosP position(std::size_t idx, float t) const override;
 	};
 }
