@@ -10,6 +10,7 @@
 #include "../../drawgroup.hpp"
 #include "../../gl_resource.hpp"
 #include "../../gpu.hpp"
+#include "../../debug_gui/profiler.hpp"
 
 namespace rev {
 	namespace test {
@@ -25,6 +26,7 @@ namespace rev {
 						ImGui::MenuItem("GPU-Info", nullptr, &self._show.gpu);
 						ImGui::MenuItem("Log", nullptr, &self._show.log);
 						ImGui::MenuItem("Demo", nullptr, &self._show.demo);
+						ImGui::MenuItem("Profiler", nullptr, &self._show.profile);
 					}
 				}
 				if(self._show.demo)
@@ -35,6 +37,11 @@ namespace rev {
 				if(self._show.gpu) {
 					if(const auto w = debug::WindowPush("GPU-Info", &self._show.gpu, {640, 480})) {
 						debug::Show("", self._gpu);
+					}
+				}
+				if(self._show.profile) {
+					if(const auto _ = debug::WindowPush("Profiler")) {
+						self._profiler->draw();
 					}
 				}
 				debug::ResourceWindow::Draw();
@@ -50,8 +57,10 @@ namespace rev {
 		MyGUI::MyGUI(const HDGroup& dg):
 			_dg(dg),
 			_gpu(mgr_gl.makeResource<GPUInfo>()),
-			_resview(std::make_shared<ResourceView>())
+			_resview(std::make_shared<ResourceView>()),
+			_profiler(std::make_shared<debug::Profiler>())
 		{
+			prof::g_param.lock()->setInterval(Seconds(0));
 			setStateNew<St>();
 		}
 		const char* MyGUI::getDebugName() const noexcept {

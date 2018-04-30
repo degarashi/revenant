@@ -5,6 +5,9 @@
 namespace rev {
 	class GPUInfo;
 	class ResourceView;
+	namespace debug {
+		class Profiler;
+	}
 	namespace test {
 		class MyGUI :
 			public DrawableObjT<MyGUI>,
@@ -17,10 +20,12 @@ namespace rev {
 				Logger						_logger;
 				SP<GPUInfo>					_gpu;
 				SP<ResourceView>		_resview;
+				SP<debug::Profiler>		_profiler;
 				mutable struct {
 					bool demo = false;
 					bool log = false;
 					bool gpu = false;
+					bool profile = false;
 				} _show;
 
 				struct St;
