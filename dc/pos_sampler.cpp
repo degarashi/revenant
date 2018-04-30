@@ -29,15 +29,6 @@ namespace rev::dc {
 			};
 		}
 
-		// std::size_t lc = 0;
-		// while(lc < len && (*pos)[lc] < t)
-			// ++lc;
-		// std::size_t rc = lc;
-		// while(rc < len && (*pos)[rc] < t)
-			// ++rc;
-		// auto idx0 = lc,
-			 // idx1 = rc;
-
 		auto beg = std::lower_bound(pos->begin(), pos->end(), t, [](const auto p, const auto t){
 			return p < t;
 		});
