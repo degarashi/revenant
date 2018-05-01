@@ -8,8 +8,9 @@ namespace rev::dc {
 		_tf(tf)
 	{}
 	void Model::draw(IEffect& e) const {
+		const rev::dc::NodeParam_cached npc(*_tf);
 		for(auto& m : _mesh) {
-			m->draw(e, *_tf);
+			m->draw(e, npc);
 		}
 	}
 	const HTf& Model::getNode() const noexcept {

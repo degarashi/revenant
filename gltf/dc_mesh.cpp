@@ -5,6 +5,7 @@
 #include "sys_uniform.hpp"
 #include "fbrect.hpp"
 #include "systeminfo.hpp"
+#include "../dc/node.hpp"
 
 namespace rev::gltf {
 	// ------------ GLTFMesh ------------

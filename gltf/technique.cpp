@@ -252,13 +252,8 @@ namespace rev::gltf {
 	draw::Token_SP Technique::UnifParam_JointMat::makeToken(const HCam3&, const lubee::RectF&, const dc::JointId currentId,
 			const dc::SkinBindV_SP& bind, const frea::Mat4& bsm, const dc::NodeParam& np) const
 	{
-		const auto nodeMat_t = np.getGlobal(currentId).transposition();
 		Assert0(bind && bind->size() == count);
-		std::vector<frea::Mat4> m;
-		for(auto& b : *bind) {
-			m.emplace_back(nodeMat_t * np.getGlobal(*b.jointName).transposition() * b.invmat * bsm);
-		}
-		return draw::MakeUniform(m);
+		return draw::MakeUniform(np.getJointMat(np.getGlobal(currentId), bind, bsm));
 	}
 
 	// ---------------------------- Technique::UnifParam_NodeSem ----------------------------
