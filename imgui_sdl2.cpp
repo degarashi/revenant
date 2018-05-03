@@ -287,7 +287,7 @@ namespace rev {
 		auto& u = e.refUniformEnt();
 		const auto prev_sci = e.setScissor({false, {0,1,0,1}});
 		u.setUniform(_unif.projMat, ortho_projection);
-		e.ref2D().setWorld(frea::Mat3::Identity());
+		dynamic_cast<SystemUniform2D&>(e).setWorld(frea::Mat3::Identity());
 		for (int n=0; n < draw_data->CmdListsCount; n++) {
 			const ImDrawList* cmd_list = draw_data->CmdLists[n];
 			const ImDrawIdx* idx_buffer_offset = 0;

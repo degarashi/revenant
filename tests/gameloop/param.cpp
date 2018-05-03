@@ -3,9 +3,12 @@
 #include "../../uri.hpp"
 #include "../../glx.hpp"
 #include "../../gl_resource.hpp"
-#include "../../util/sys_unif.hpp"
+#include "../../util/gle_nest.hpp"
 #include "../../mainproc.hpp"
 #include "../../drawproc.hpp"
+#include "../../sys_uniform.hpp"
+#include "../../sys_uniform2d.hpp"
+#include "../../sys_uniform3d.hpp"
 
 namespace rev {
 	namespace test {
@@ -28,7 +31,7 @@ namespace rev {
 			return uri;
 		}
 		HFx Param::makeEffect() const {
-			return mgr_gl.template makeResource<util::GLEffect_2D3D>();
+			return mgr_gl.template makeResource<util::GLE_Nest<SystemUniform, SystemUniform2D, SystemUniform3D>>();
 		}
 		::rev::MainProc* Param::makeMainProc() const {
 			return new MainProc();

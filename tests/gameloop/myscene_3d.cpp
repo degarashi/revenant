@@ -65,7 +65,7 @@ namespace rev::test {
 	void MyScene::St_3D::onDraw(const MyScene& self, IEffect& e) const {
 		St_Base::onDraw(self, e);
 
-		auto& e3 = e.ref3D();
+		auto& e3 = dynamic_cast<SystemUniform3D&>(e);
 		e3.setCamera(_camera);
 		_camera->setPose(_fp);
 	}

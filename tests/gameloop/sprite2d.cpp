@@ -2,7 +2,8 @@
 #include "../../gl_resource.hpp"
 #include "../../gl_buffer.hpp"
 #include "lubee/meta/countof.hpp"
-#include "../../util/sys_unif.hpp"
+#include "../../glx_if.hpp"
+#include "../../uniform_ent.hpp"
 #include "../../vdecl.hpp"
 #include "../../drawtoken/make_uniform.hpp"
 #include "../../tech_pass.hpp"
@@ -53,12 +54,13 @@ void Sprite2D::setZRange(const lubee::RangeF& r) {
 #include "../../sys_uniform_value.hpp"
 #include "../../output.hpp"
 #include "../../tech_pass.hpp"
+#include "../../sys_uniform.hpp"
 void Sprite2D::draw(rev::IEffect& e) const {
 	e.setTechnique(_tech);
 	auto& u = e.refUniformEnt();
 	u.setUniform(rev::unif2d::texture::Diffuse, _hTex);
 	u.setUniform(rev::unif::Alpha, _alpha);
-	e.ref2D().setWorld(getToWorld().convert<3,3>());
+	dynamic_cast<rev::SystemUniform2D&>(e).setWorld(getToWorld().convert<3,3>());
 	e.setPrimitive(_primitive);
 	e.draw();
 }

@@ -50,7 +50,7 @@ namespace rev::test {
 	void MyScene::St_Sprite::onDraw(const MyScene& self, IEffect& e) const {
 		St_Base::onDraw(self, e);
 
-		auto& e2 = e.ref2D();
+		auto& e2 = dynamic_cast<SystemUniform2D&>(e);
 		e2.setCamera(_camera);
 	}
 }

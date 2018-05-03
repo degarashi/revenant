@@ -1,6 +1,7 @@
 #include "text3d.hpp"
-#include "sys_unif.hpp"
+#include "gle_nest.hpp"
 #include "../camera3d.hpp"
+#include "../sys_uniform.hpp"
 
 namespace rev {
 	namespace util {
@@ -16,7 +17,7 @@ namespace rev {
 			_bBillboard = b;
 		}
 		int Text3D::draw(IEffect& e, const bool bRefresh) const {
-			auto& su3d = e.ref3D();
+			auto& su3d = dynamic_cast<SystemUniform3D&>(e);
 			const auto cid = getCCoreId();
 			const float s = float(_lineHeight) / cid.at<CCoreID::Height>();
 			auto mScale = frea::AMat4::Scaling({s, s, s, 1});

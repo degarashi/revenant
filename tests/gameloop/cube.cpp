@@ -185,7 +185,7 @@ void Cube::outputDrawTag(rev::DrawTag& d) const {
 }
 void Cube::draw(rev::IEffect& e) const {
 	e.setTechnique(_tech);
-	e.ref3D().setWorld(getToWorld().convertI<4,4>(1));
+	dynamic_cast<rev::SystemUniform3D&>(e).setWorld(getToWorld().convertI<4,4>(1));
 	e.setPrimitive(_getPrimitive());
 	e.draw();
 }
