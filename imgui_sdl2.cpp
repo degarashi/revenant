@@ -14,7 +14,7 @@
 #include "glx_if.hpp"
 #include "uniform_ent.hpp"
 #include "drawtoken/make_uniform.hpp"
-#include "sys_uniform.hpp"
+#include "sys_uniform2d.hpp"
 #include "fbrect.hpp"
 #include "primitive.hpp"
 #include "singleton_data_lazy.hpp"

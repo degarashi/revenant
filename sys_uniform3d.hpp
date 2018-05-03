@@ -1,0 +1,37 @@
+#pragma once
+#include "spine/rflag.hpp"
+#include "handle/camera.hpp"
+#include "frea/matrix.hpp"
+#include "lubee/alignedalloc.hpp"
+
+namespace rev {
+	class UniformEnt;
+	class SystemUniform3D : public lubee::CheckAlign<SystemUniform3D> {
+		private:
+			struct Camera;
+			struct Getter : spi::RFlag_Getter<uint32_t> {
+				using RFlag_Getter::operator();
+				counter_t operator()(const HCam3& c, Camera*, const SystemUniform3D&) const;
+			};
+			using Transform_t = spi::AcCheck<frea::AMat4, Getter>;
+			#define SEQ_SYSUNI3D \
+				((World)(frea::AMat4)) \
+				((WorldInv)(frea::AMat4)(World)) \
+				((Camera)(HCam3)) \
+				((ViewInv)(Transform_t)(Camera)) \
+				((ProjInv)(Transform_t)(Camera)) \
+				((Transform)(Transform_t)(World)(Camera)) \
+				((TransformInv)(frea::AMat4)(Transform))
+			RFLAG_DEFINE(SystemUniform3D, SEQ_SYSUNI3D)
+			RFLAG_SETMETHOD(Transform)
+		public:
+			RFLAG_GETMETHOD_DEFINE(SEQ_SYSUNI3D)
+			RFLAG_REFMETHOD_DEFINE(SEQ_SYSUNI3D)
+			RFLAG_SETMETHOD_DEFINE(SEQ_SYSUNI3D)
+			#undef SEQ_SYSUNI3D
+
+			SystemUniform3D();
+			void outputUniforms(UniformEnt& u) const;
+			void moveFrom(SystemUniform3D& prev);
+	};
+}

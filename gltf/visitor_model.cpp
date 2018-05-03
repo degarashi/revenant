@@ -4,7 +4,7 @@
 #include "../dc/model.hpp"
 #include "gltf/node_cached.hpp"
 #include "glx_if.hpp"
-#include "sys_uniform.hpp"
+#include "sys_uniform3d.hpp"
 #include "fbrect.hpp"
 #include "systeminfo.hpp"
 

@@ -5,7 +5,7 @@
 #include "../../gl_resource.hpp"
 #include "../../gl_texture.hpp"
 #include "../../glx_if.hpp"
-#include "../../sys_uniform.hpp"
+#include "../../sys_uniform2d.hpp"
 #include "frea/random/vector.hpp"
 #include "../../tls_data.hpp"
 #include <boost/format.hpp>

@@ -5,7 +5,7 @@
 #include "../sys_uniform_value.hpp"
 #include "gle_nest.hpp"
 #include "drawtoken/make_uniform.hpp"
-#include "../sys_uniform.hpp"
+#include "../sys_uniform2d.hpp"
 
 namespace rev {
 	namespace util {

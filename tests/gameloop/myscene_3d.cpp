@@ -3,7 +3,7 @@
 #include "../../camera3d.hpp"
 #include "../../input.hpp"
 #include "../../imgui_sdl2.hpp"
-#include "../../sys_uniform.hpp"
+#include "../../sys_uniform3d.hpp"
 #include "../../glx_if.hpp"
 
 namespace rev::test {

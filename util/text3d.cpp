@@ -1,7 +1,7 @@
 #include "text3d.hpp"
 #include "gle_nest.hpp"
 #include "../camera3d.hpp"
-#include "../sys_uniform.hpp"
+#include "../sys_uniform3d.hpp"
 
 namespace rev {
 	namespace util {

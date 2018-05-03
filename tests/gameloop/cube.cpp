@@ -4,7 +4,7 @@
 #include "lubee/meta/countof.hpp"
 #include "../../tech_pass.hpp"
 #include "../../glx.hpp"
-#include "../../sys_uniform.hpp"
+#include "../../sys_uniform3d.hpp"
 
 // ---------------------- Cube頂点宣言 ----------------------
 rev::HVDecl vertex::cube::MakeData(lubee::IConst<0>) {

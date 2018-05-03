@@ -1,4 +1,4 @@
-#include "sys_uniform.hpp"
+#include "sys_uniform3d.hpp"
 #include "sys_uniform_value.hpp"
 #include "camera3d.hpp"
 #include "glx_if.hpp"
