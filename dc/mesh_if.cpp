@@ -16,4 +16,7 @@ namespace rev::dc {
 	void IMesh::_applyTech(IEffect& e) const {
 		e.setTechnique(_tech);
 	}
+	const HTech& IMesh::getTech() const noexcept {
+		return _tech;
+	}
 }

@@ -22,6 +22,7 @@ namespace rev::dc {
 		public:
 			virtual ~IMesh();
 			virtual void draw(IEffect& e, const NodeParam& np) const = 0;
+			const HTech& getTech() const noexcept;
 
 			DEF_DEBUGGUI_PROP
 	};
