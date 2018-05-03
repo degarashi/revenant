@@ -8,6 +8,7 @@
 #include "../gl_vstate.hpp"
 #include "../camera3d.hpp"
 #include "../ovr_functor.hpp"
+#include "gltf/node_cached_if.hpp"
 
 namespace rev::gltf {
 	namespace {
@@ -178,80 +179,22 @@ namespace rev::gltf {
 		const char* sem = Required<String>(v, "semantic");
 		semantic = *U_Semantic::FromString(sem);
 	}
-	draw::Token_SP MakeSemanticToken(const HCam3& c, const lubee::RectF& vp, const dc::JointId id, const dc::NodeParam& np, const USemantic semantic) {
-		using draw::MakeUniform;
-		using frea::Mat4;
-		using frea::Mat3;
-		const auto local = [&np, id](){ return np.getLocal(id); };
-		const auto global = [&np, id](){ return np.getGlobal(id); };
-		const auto view = [&c]() { return static_cast<Mat4>(c->getView() * Mat4::Scaling({1,1,-1,1})); };
-		const auto proj = [&c]() { return static_cast<Mat4>(Mat4::Scaling({1,1,-1,1}) * c->getProj()); };
-		const auto makeM4 = [](const Mat4& m){
-			return MakeUniform(m.transposition());
-		};
-		const auto makeM3 = [](const Mat3& m){
-			return MakeUniform(m.transposition());
-		};
-		switch(semantic) {
-			case USemantic::Local:
-				// This is the node's matrix property
-				return makeM4(local());
-			case USemantic::Model:
-				// Transforms from model to world coordinates using the transform's node and all of its ancestors
-				return makeM4(global());
-			case USemantic::View:
-				// Transforms from world to view coordinates using the active camera node
-				return makeM4(view());
-			case USemantic::Projection:
-				// Transforms from view to clip coordinates using the active camera node
-				return makeM4(proj());
-			case USemantic::ModelView:
-				// Combined MODEL and VIEW
-				return makeM4(global() * view());
-			case USemantic::ModelViewProjection:
-				// Combined MODEL, VIEW, and PROJECTION
-				return makeM4(global() * view() * proj());
-			case USemantic::ModelInverse:
-				// Inverse of MODEL
-				return makeM4(global().inversion());
-			case USemantic::ViewInverse:
-				// Inverse of VIEW
-				return makeM4(view().inversion());
-			case USemantic::ProjectionInverse:
-				// Inverse of PROJECTION
-				return makeM4(proj().inversion());
-			case USemantic::ModelViewInverse:
-				// Inverse of MODELVIEW
-				return makeM4((global() * view()).inversion());
-			case USemantic::ModelViewProjectionInverse:
-				// Inverse of MODELVIEWPROJECTION
-				return makeM4((global() * view() * proj()).inversion());
-			case USemantic::ModelInverseTranspose:
-				// This translates normals in model coordinates to world coordinates
-				return makeM3(global().convert<3,3>());
-			case USemantic::ModelViewInverseTranspose:
-				// This translates normals in model coordinates to eye coordinates
-				return makeM3((global() * view()).convert<3,3>());
-			case USemantic::Viewport:
-				return MakeUniform(frea::Vec4{vp.x0, vp.y0, vp.width(), vp.height()});
-			default:
-				Assert0(false);
+	namespace {
+		draw::Token_SP MakeSemanticToken(const dc::JointId id, const NodeParam_USem& np, const USemantic semantic) {
+			if(semantic == USemantic::Viewport)
+				return np.getViewport();
+			return np.getSemantic(id, semantic);
 		}
-		return nullptr;
 	}
-	draw::Token_SP Technique::UnifParam_Sem::makeToken(const HCam3& c, const lubee::RectF& vp, const dc::JointId currentId,
-			const dc::SkinBindV_SP&, const frea::Mat4&, const dc::NodeParam& np) const
-	{
-		return MakeSemanticToken(c, vp, currentId, np, semantic);
+	draw::Token_SP Technique::UnifParam_Sem::makeToken(const dc::JointId currentId, const dc::SkinBindV_SP&, const frea::Mat4&, const NodeParam_USem& np) const {
+		return MakeSemanticToken(currentId, np, semantic);
 	}
 
 	// ---------------------------- Technique::UnifParam_JointMat ----------------------------
 	Technique::UnifParam_JointMat::UnifParam_JointMat(const JValue& v):
 		count(Required<Integer>(v, "count"))
 	{}
-	draw::Token_SP Technique::UnifParam_JointMat::makeToken(const HCam3&, const lubee::RectF&, const dc::JointId currentId,
-			const dc::SkinBindV_SP& bind, const frea::Mat4& bsm, const dc::NodeParam& np) const
-	{
+	draw::Token_SP Technique::UnifParam_JointMat::makeToken(const dc::JointId currentId, const dc::SkinBindV_SP& bind, const frea::Mat4& bsm, const NodeParam_USem& np) const {
 		Assert0(bind && bind->size() == count);
 		return draw::MakeUniform(np.getJointMat(np.getGlobal(currentId), bind, bsm));
 	}
@@ -267,10 +210,8 @@ namespace rev::gltf {
 	void Technique::UnifParam_NodeSem::resolve(const ITagQuery& q) {
 		node.resolve(q);
 	}
-	draw::Token_SP Technique::UnifParam_NodeSem::makeToken(const HCam3& c, const lubee::RectF& vp, const dc::JointId,
-			const dc::SkinBindV_SP&, const frea::Mat4&, const dc::NodeParam& np) const
-	{
-		return MakeSemanticToken(c, vp, node.data()->jointId, np, semantic);
+	draw::Token_SP Technique::UnifParam_NodeSem::makeToken(const dc::JointId, const dc::SkinBindV_SP&, const frea::Mat4&, const NodeParam_USem& np) const {
+		return MakeSemanticToken(node.data()->jointId, np, semantic);
 	}
 	// ---------------------------- Technique::State ----------------------------
 	Technique::State::State(const JValue& v) {

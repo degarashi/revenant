@@ -6,6 +6,7 @@
 #include "gltf/uniform_value.hpp"
 #include "../handle/opengl.hpp"
 #include "gltf/rt_uniform.hpp"
+#include "../handle/camera.hpp"
 
 namespace rev::gltf {
 	struct Technique : Resource, IResolvable {
@@ -39,7 +40,7 @@ namespace rev::gltf {
 			// count == 1
 
 			UnifParam_Sem(const JValue& v);
-			draw::Token_SP makeToken(const HCam3& c, const lubee::RectF& vp, dc::JointId currentId, const dc::SkinBindV_SP& bind, const frea::Mat4& bsm, const dc::NodeParam& param) const override;
+			draw::Token_SP makeToken(dc::JointId currentId, const dc::SkinBindV_SP& bind, const frea::Mat4& bsm, const NodeParam_USem& param) const override;
 			DEF_DEBUGGUI_NAME
 			DEF_DEBUGGUI_PROP
 		};
@@ -48,7 +49,7 @@ namespace rev::gltf {
 			std::size_t		count;
 
 			UnifParam_JointMat(const JValue& v);
-			draw::Token_SP makeToken(const HCam3& c, const lubee::RectF& vp, dc::JointId currentId, const dc::SkinBindV_SP& bind, const frea::Mat4& bsm, const dc::NodeParam& param) const override;
+			draw::Token_SP makeToken(dc::JointId currentId, const dc::SkinBindV_SP& bind, const frea::Mat4& bsm, const NodeParam_USem& param) const override;
 			DEF_DEBUGGUI_NAME
 			DEF_DEBUGGUI_PROP
 		};
@@ -61,7 +62,7 @@ namespace rev::gltf {
 
 			UnifParam_NodeSem(const JValue& v);
 			void resolve(const ITagQuery& q) override;
-			draw::Token_SP makeToken(const HCam3& c, const lubee::RectF& vp, dc::JointId currentId, const dc::SkinBindV_SP& bind, const frea::Mat4& bsm, const dc::NodeParam& param) const override;
+			draw::Token_SP makeToken(dc::JointId currentId, const dc::SkinBindV_SP& bind, const frea::Mat4& bsm, const NodeParam_USem& param) const override;
 			DEF_DEBUGGUI_NAME
 			DEF_DEBUGGUI_PROP
 		};

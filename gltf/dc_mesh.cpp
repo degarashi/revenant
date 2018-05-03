@@ -2,10 +2,8 @@
 #include "gltf/rt_uniform.hpp"
 #include "glx_if.hpp"
 #include "uniform_ent.hpp"
-#include "sys_uniform.hpp"
-#include "fbrect.hpp"
-#include "systeminfo.hpp"
 #include "../dc/node.hpp"
+#include "gltf/node_cached.hpp"
 
 namespace rev::gltf {
 	// ------------ GLTFMesh ------------
@@ -21,15 +19,15 @@ namespace rev::gltf {
 	{}
 	void GLTFMesh::draw(IEffect& e, const dc::NodeParam& np) const {
 		IMesh::_applyTech(e);
-		auto& u = e.refUniformEnt();
-		auto& td = e.ref3D();
-		const auto cam = td.getCamera();
-		const auto vp = e.getViewport().resolve([](){ return mgr_info.getScreenSize(); });
 
-		for(auto& rt : *_rtParams) {
-			u.setUniformWithMake(rt.first, [&](){
-				return rt.second->makeToken(cam, vp, _jointId, _bind, _bsm, np);
-			});
+		auto& npu = dynamic_cast<const NodeParam_USem&>(np);
+		auto& u = e.refUniformEnt();
+		{
+			for(auto& rt : *_rtParams) {
+				u.setUniformWithMake(rt.first, [&](){
+					return rt.second->makeToken(_jointId, _bind, _bsm, npu);
+				});
+			}
 		}
 		IMesh::_draw(e);
 	}
