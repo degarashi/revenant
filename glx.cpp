@@ -54,6 +54,8 @@ namespace rev {
 		return _uniformEnt;
 	}
 	HTech GLEffect::setTechnique(const HTech& tech) {
+		if(tech == _tech_sp)
+			return tech;
 		_clean_drawvalue();
 
 		const auto prev_tech = _tech_sp;
