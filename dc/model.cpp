@@ -3,14 +3,19 @@
 #include "dc/node.hpp"
 
 namespace rev::dc {
-	Model::Model(const MeshV& mesh, const HTf& tf):
+	NodeParam_UP Model::DefaultCache(const IEffect&, const NodeParam& np) {
+		return std::make_unique<NodeParam_cached>(np);
+	}
+
+	Model::Model(const MeshV& mesh, const HTf& tf, const MakeCacheF mc):
 		_mesh(mesh),
-		_tf(tf)
+		_tf(tf),
+		_mc(mc)
 	{}
 	void Model::draw(IEffect& e) const {
-		const rev::dc::NodeParam_cached npc(*_tf);
+		const auto npc = _mc(e, *_tf);
 		for(auto& m : _mesh) {
-			m->draw(e, npc);
+			m->draw(e, *npc);
 		}
 	}
 	const HTf& Model::getNode() const noexcept {
