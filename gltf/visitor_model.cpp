@@ -39,6 +39,11 @@ namespace rev::gltf {
 		}
 	}
 	HMdl Visitor_Model::result() const {
+		auto* self = const_cast<Visitor_Model*>(this);
+		// メッシュをTechでソート
+		std::sort(self->_mesh.begin(), self->_mesh.end(), [](const auto& m0, const auto& m1){
+			return m0->getTech().get() < m1->getTech().get();
+		});
 		return std::make_shared<dc::Model>(_mesh, _tfRoot, &MakeCache);
 	}
 }
