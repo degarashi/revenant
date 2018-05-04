@@ -15,7 +15,7 @@ namespace rev {
 		public:
 			const lubee::SizeI& getScreenSize() const;
 			void setScreenSize(const lubee::SizeI& s);
-			void outputUniforms(UniformEnt& u) const override;
+			void extractUniform(UniformSetF_V& dst, const GLProgram& prog) const override;
 			void moveFrom(ISystemUniform& prev) override;
 	};
 }

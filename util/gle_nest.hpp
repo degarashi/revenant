@@ -8,11 +8,11 @@ namespace rev::util {
 		public Base...
 	{
 		private:
-			void _outputUniforms(UniformEnt&) const {}
+			void _extractUniform(UniformSetF_V&, const GLProgram&) const {}
 			template <class T0, class... Ts>
-			void _outputUniforms(UniformEnt& u, T0*, const Ts*... ts) const {
-				this->T0::outputUniforms(u);
-				_outputUniforms(u, ts...);
+			void _extractUniform(UniformSetF_V& dst, const GLProgram& prog, T0*, const Ts*... ts) const {
+				this->T0::extractUniform(dst, prog);
+				_extractUniform(dst, prog, ts...);
 			}
 
 			void _moveFrom(ISystemUniform&) {}
@@ -23,8 +23,8 @@ namespace rev::util {
 			}
 
 		public:
-			void outputUniforms(UniformEnt& u) const override {
-				_outputUniforms(u, (Base*)nullptr...);
+			void extractUniform(UniformSetF_V& dst, const GLProgram& prog) const override {
+				_extractUniform(dst, prog, (Base*)nullptr...);
 			}
 			void moveFrom(ISystemUniform& prev) override {
 				_moveFrom(prev, (Base*)nullptr...);

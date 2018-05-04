@@ -135,7 +135,11 @@ namespace rev {
 		mgr_drawtask.refWriteEnt().append(std::move(_tokenML));
 	}
 	void GLEffect::draw() {
-		outputUniforms(_uniformEnt);
+		{
+			auto& uv = _tech_sp->getProgram()->extractSystemUniform(*this);
+			for(auto& u : uv)
+				u(this, _uniformEnt);
+		}
 		{
 			auto& u = _uniformEnt;
 			auto& res = u.getResult().token;

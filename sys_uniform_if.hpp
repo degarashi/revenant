@@ -1,10 +1,15 @@
 #pragma once
+#include <vector>
+#include <functional>
 
 namespace rev {
 	class UniformEnt;
+	class GLProgram;
+	using UniformSetF = std::function<void (const void*, UniformEnt&)>;
+	using UniformSetF_V = std::vector<UniformSetF>;
 	struct ISystemUniform {
 		virtual ~ISystemUniform() {}
-		virtual void outputUniforms(UniformEnt&) const {}
+		virtual void extractUniform(UniformSetF_V&, const GLProgram&) const {}
 		virtual void moveFrom(ISystemUniform&) {}
 	};
 }

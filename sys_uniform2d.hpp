@@ -33,7 +33,7 @@ namespace rev {
 			#undef SEQ_SYSUNI2D
 
 			SystemUniform2D();
-			void outputUniforms(UniformEnt& u) const override;
+			void extractUniform(UniformSetF_V& dst, const GLProgram& prog) const override;
 			void moveFrom(ISystemUniform& prev) override;
 	};
 }

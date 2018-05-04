@@ -23,23 +23,6 @@ namespace rev {
 	}
 
 	// --------------------- SystemUniform ---------------------
-	namespace {
-		using SetF = std::function<void (const SystemUniform&, UniformEnt&)>;
-		const SetF c_systagF[] = {
-			[](const SystemUniform& s, UniformEnt& u) {
-				auto& ss = s.getScreenSize();
-				u.setUniform(
-					sysunif::screen::Size,
-					frea::Vec4(
-						ss.width,
-						ss.height,
-						1.f/ss.width,
-						1.f/ss.height
-					)
-				);
-			}
-		};
-	}
 	void SystemUniform::moveFrom(ISystemUniform& prev) {
 		auto& p = dynamic_cast<SystemUniform&>(prev);
 		_screenSize = p._screenSize;
@@ -50,8 +33,20 @@ namespace rev {
 	void SystemUniform::setScreenSize(const lubee::SizeI& s) {
 		_screenSize = s;
 	}
-	void SystemUniform::outputUniforms(UniformEnt& u) const {
-		for(auto& f : c_systagF)
-			f(*this, u);
+	void SystemUniform::extractUniform(UniformSetF_V& dst, const GLProgram& prog) const {
+		if(const auto id = prog.getUniformId(sysunif::screen::Size)) {
+			dst.emplace_back([id=*id](const void* p, UniformEnt& u){
+				auto& ss = static_cast<const SystemUniform*>(p)->getScreenSize();
+				u.setUniform(
+					id,
+					frea::Vec4(
+						ss.width,
+						ss.height,
+						1.f/ss.width,
+						1.f/ss.height
+					)
+				);
+			});
+		}
 	}
 }

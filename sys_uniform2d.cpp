@@ -61,23 +61,32 @@ namespace rev {
 		auto& p = dynamic_cast<SystemUniform2D&>(prev);
 		_rflag = p._rflag;
 	}
-	void SystemUniform2D::outputUniforms(UniformEnt& u) const {
-		#define DEF_SETUNIF(name, func) \
-			u.setUniformWithMake(sysunif2d::matrix::name, [&](){ \
-				return draw::MakeUniform(spi::UnwrapAcValue(func##name())); \
-			});
-		DEF_SETUNIF(World, get)
-		DEF_SETUNIF(WorldInv, get)
-		if(auto& hc = getCamera()) {
-			auto& cd = *hc;
-			DEF_SETUNIF(View, cd.get)
-			DEF_SETUNIF(ViewInv, cd.get)
-			DEF_SETUNIF(Proj, cd.get)
-			DEF_SETUNIF(ViewProj, cd.get)
-			DEF_SETUNIF(ViewProjInv, cd.get)
-		}
-		DEF_SETUNIF(Transform, get)
-		DEF_SETUNIF(TransformInv, get)
+	void SystemUniform2D::extractUniform(UniformSetF_V& dst, const GLProgram& prog) const {
+		#define DEF_SETUNIF(name) \
+			if(const auto id = prog.getUniformId(sysunif2d::matrix::name)) { \
+				dst.emplace_back([id=*id](const void* p, UniformEnt& u){ \
+					auto* self = static_cast<const SystemUniform2D*>(p); \
+					u.setUniform(id, spi::UnwrapAcValue(self->get##name())); \
+				}); \
+			}
+		DEF_SETUNIF(World)
+		DEF_SETUNIF(WorldInv)
+		DEF_SETUNIF(Transform)
+		DEF_SETUNIF(TransformInv)
+		#undef DEF_SETUNIF
+
+		#define DEF_SETUNIF(name) \
+			if(const auto id = prog.getUniformId(sysunif2d::matrix::name)) { \
+				dst.emplace_back([id=*id](const void* p, UniformEnt& u){ \
+					auto* self = static_cast<const SystemUniform2D*>(p); \
+					u.setUniform(id, spi::UnwrapAcValue(self->getCamera()->get##name())); \
+				}); \
+			}
+		DEF_SETUNIF(View)
+		DEF_SETUNIF(ViewInv)
+		DEF_SETUNIF(Proj)
+		DEF_SETUNIF(ViewProj)
+		DEF_SETUNIF(ViewProjInv)
 		#undef DEF_SETUNIF
 	}
 }

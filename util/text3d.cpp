@@ -16,7 +16,7 @@ namespace rev {
 		void Text3D::setBillboard(const bool b) {
 			_bBillboard = b;
 		}
-		int Text3D::draw(IEffect& e, const bool bRefresh) const {
+		int Text3D::draw(IEffect& e) const {
 			auto& su3d = dynamic_cast<SystemUniform3D&>(e);
 			const auto cid = getCCoreId();
 			const float s = float(_lineHeight) / cid.at<CCoreID::Height>();
@@ -24,7 +24,7 @@ namespace rev {
 			mScale *= getToWorld().convert<4,4>();
 			return Text::draw(
 					e,
-					[&,bRefresh](auto&){
+					[&](auto&){
 						frea::AMat4 m;
 						if(_bBillboard) {
 							// Poseの位置とスケーリングだけ取って
@@ -39,8 +39,6 @@ namespace rev {
 						} else
 							m = mScale * getToWorld().convert<4,4>();
 						su3d.setWorld(m);
-						if(bRefresh)
-							su3d.outputUniforms(e.refUniformEnt());
 					}
 			);
 		}

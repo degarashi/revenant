@@ -88,33 +88,49 @@ namespace rev {
 		auto& p = dynamic_cast<SystemUniform3D&>(prev);
 		_rflag = p._rflag;
 	}
-	void SystemUniform3D::outputUniforms(UniformEnt& u) const {
-		#define DEF_SETUNIF(name, func) \
-			u.setUniformWithMake(sysunif3d::matrix::name, [&](){ \
-				return draw::MakeUniform(spi::UnwrapAcValue(func##name())); \
-			});
-		DEF_SETUNIF(World, get)
-		DEF_SETUNIF(WorldInv, get)
-		if(auto& hc = getCamera()) {
-			auto& cd = *hc;
-			DEF_SETUNIF(View, cd.get)
-			DEF_SETUNIF(ViewInv, get)
-			DEF_SETUNIF(Proj, cd.get)
-			DEF_SETUNIF(ProjInv, get)
-			DEF_SETUNIF(ViewProj, cd.get)
-			DEF_SETUNIF(ViewProjInv, cd.get)
+	void SystemUniform3D::extractUniform(UniformSetF_V& dst, const GLProgram& prog) const {
+		#define DEF_SETUNIF(name) \
+			if(const auto id = prog.getUniformId(sysunif3d::matrix::name)) { \
+				dst.emplace_back([id=*id](const void* p, UniformEnt& u){ \
+					auto* self = static_cast<const SystemUniform3D*>(p); \
+					u.setUniform(id, spi::UnwrapAcValue(self->get##name())); \
+				}); \
+			}
+		DEF_SETUNIF(World)
+		DEF_SETUNIF(WorldInv)
+		DEF_SETUNIF(Transform)
+		DEF_SETUNIF(TransformInv)
+		DEF_SETUNIF(ViewInv)
+		DEF_SETUNIF(ProjInv)
+		#undef DEF_SETUNIF
 
-			auto& ps = cd.getPose();
-			u.setUniformWithMake(sysunif3d::matrix::EyePos, [&ps](){
-				return draw::MakeUniform(ps.getOffset());
-			});
-			u.setUniformWithMake(sysunif3d::matrix::EyeDir, [&ps](){
-				return draw::MakeUniform(ps.getRotation().getZAxis());
+		#define DEF_SETUNIF(name) \
+			if(const auto id = prog.getUniformId(sysunif3d::matrix::name)) { \
+				dst.emplace_back([id=*id](const void* p, UniformEnt& u){ \
+					auto* self = static_cast<const SystemUniform3D*>(p); \
+					u.setUniform(id, spi::UnwrapAcValue(self->getCamera()->get##name())); \
+				}); \
+			}
+		DEF_SETUNIF(View)
+		DEF_SETUNIF(Proj)
+		DEF_SETUNIF(ViewProj)
+		DEF_SETUNIF(ViewProjInv)
+		#undef DEF_SETUNIF
+
+		if(const auto id = prog.getUniformId(sysunif3d::matrix::EyePos)) {
+			dst.emplace_back([id=*id](const void* p, UniformEnt& u){
+				auto* self = static_cast<const SystemUniform3D*>(p);
+				auto& ps = self->getCamera()->getPose();
+				u.setUniform(id, ps.getOffset());
 			});
 		}
-		DEF_SETUNIF(Transform, get)
-		DEF_SETUNIF(TransformInv, get)
-		#undef DEF_SETUNIF
+		if(const auto id = prog.getUniformId(sysunif3d::matrix::EyePos)) {
+			dst.emplace_back([id=*id](const void* p, UniformEnt& u){
+				auto* self = static_cast<const SystemUniform3D*>(p);
+				auto& ps = self->getCamera()->getPose();
+				u.setUniform(id, ps.getRotation().getZAxis());
+			});
+		}
 	}
 }
 

@@ -15,7 +15,7 @@ namespace rev {
 				Text2D(float lh);
 				void setLineHeight(float lh);
 				void setDepth(float d);
-				int draw(IEffect& e, bool bRefresh=false) const;
+				int draw(IEffect& e) const;
 		};
 	}
 }

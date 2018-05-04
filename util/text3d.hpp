@@ -13,7 +13,7 @@ namespace rev {
 				Text3D(float lh, bool bBillboard);
 				void setLineHeight(float lh);
 				void setBillboard(bool b);
-				int draw(IEffect& e, bool bRefresh=false) const;
+				int draw(IEffect& e) const;
 		};
 	}
 }

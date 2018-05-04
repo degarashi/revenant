@@ -7,6 +7,10 @@
 
 namespace rev {
 	using Name = std::string;
+	class UniformEnt;
+	using UniformSetF = std::function<void (const void*, UniformEnt&)>;
+	using UniformSetF_V = std::vector<UniformSetF>;
+
 	//! GLSLプログラムクラス
 	class GLProgram :
 		public IGLResource,
@@ -60,6 +64,11 @@ namespace rev {
 			void _makeAttribMap();
 			void _makeTexIndex();
 
+			// SystemUniformに対応する変数のリスト
+			// [typeid(SystemUniform).hash_code()] -> vector<UniformSetF>
+			using SysUSetF_M = std::unordered_map<std::size_t, UniformSetF_V>;
+			SysUSetF_M		_sysUniform;
+
 		public:
 			template <class... Shader>
 			GLProgram(const Shader&... shader) {
@@ -95,6 +104,17 @@ namespace rev {
 			const AttribMap& getAttrib() const noexcept;
 			void use() const;
 			GLint_OP getTexIndex(GLint id) const;
+
+			template <class S>
+			const UniformSetF_V& extractSystemUniform(const S& s) {
+				const auto hash = typeid(s).hash_code();
+				const auto itr = _sysUniform.find(hash);
+				if(itr != _sysUniform.end())
+					return itr->second;
+				UniformSetF_V res;
+				s.extractUniform(res, *this);
+				return _sysUniform.emplace(hash, std::move(res)).first->second;
+			}
 
 			// デバッグ用(線形探索なので遅い)
 			const char* getUniformName(GLint id) const;
