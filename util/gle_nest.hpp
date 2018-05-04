@@ -1,31 +1,33 @@
 #pragma once
 #include "../glx.hpp"
+#include "../sys_uniform_if.hpp"
 
-namespace rev {
-	namespace util {
-		template <class... Base>
-		class GLE_Nest :
-			public GLEffect,
-			public Base...
-		{
-			protected:
-				void _prepareUniforms() override {
-					const auto dummy = [](auto...){};
-					auto& u = refUniformEnt();
-					const auto fn = [&u](auto& self){
-						self.outputUniforms(u);
-					};
-					dummy((fn(static_cast<Base&>(*this)), 0)...);
-					GLEffect::_prepareUniforms();
-				}
-				void moveFrom(IEffect& prev) override {
-					const auto dummy = [](auto...){};
-					const auto fn = [&prev](auto& self){
-						using Type = std::decay_t<decltype(self)>;
-						self.moveFrom(dynamic_cast<Type&>(prev));
-					};
-					dummy((fn(static_cast<Base&>(*this)), 0)...);
-				}
-		};
-	}
+namespace rev::util {
+	template <class... Base>
+	class GLE_Nest :
+		public Base...
+	{
+		private:
+			void _outputUniforms(UniformEnt&) const {}
+			template <class T0, class... Ts>
+			void _outputUniforms(UniformEnt& u, T0*, const Ts*... ts) const {
+				this->T0::outputUniforms(u);
+				_outputUniforms(u, ts...);
+			}
+
+			void _moveFrom(ISystemUniform&) {}
+			template <class T0, class... Ts>
+			void _moveFrom(ISystemUniform& prev, T0*, const Ts*... ts) {
+				this->T0::moveFrom(prev);
+				_moveFrom(prev, ts...);
+			}
+
+		public:
+			void outputUniforms(UniformEnt& u) const override {
+				_outputUniforms(u, (Base*)nullptr...);
+			}
+			void moveFrom(ISystemUniform& prev) override {
+				_moveFrom(prev, (Base*)nullptr...);
+			}
+	};
 }

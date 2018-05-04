@@ -57,8 +57,9 @@ namespace rev {
 		setWorld(im);
 		setTransform(im);
 	}
-	void SystemUniform2D::moveFrom(SystemUniform2D& prev) {
-		_rflag = prev._rflag;
+	void SystemUniform2D::moveFrom(ISystemUniform& prev) {
+		auto& p = dynamic_cast<SystemUniform2D&>(prev);
+		_rflag = p._rflag;
 	}
 	void SystemUniform2D::outputUniforms(UniformEnt& u) const {
 		#define DEF_SETUNIF(name, func) \

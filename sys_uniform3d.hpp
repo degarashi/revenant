@@ -3,10 +3,13 @@
 #include "handle/camera.hpp"
 #include "frea/matrix.hpp"
 #include "lubee/alignedalloc.hpp"
+#include "sys_uniform_if.hpp"
 
 namespace rev {
-	class UniformEnt;
-	class SystemUniform3D : public lubee::CheckAlign<SystemUniform3D> {
+	class SystemUniform3D :
+		public lubee::CheckAlign<SystemUniform3D>,
+		public ISystemUniform
+	{
 		private:
 			struct Camera;
 			struct Getter : spi::RFlag_Getter<uint32_t> {
@@ -31,7 +34,7 @@ namespace rev {
 			#undef SEQ_SYSUNI3D
 
 			SystemUniform3D();
-			void outputUniforms(UniformEnt& u) const;
-			void moveFrom(SystemUniform3D& prev);
+			void outputUniforms(UniformEnt& u) const override;
+			void moveFrom(ISystemUniform& prev) override;
 	};
 }

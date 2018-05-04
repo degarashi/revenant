@@ -33,8 +33,6 @@ namespace rev {
 			void _clean_drawvalue();
 			void _outputFramebuffer();
 			void _clearFramebuffer(draw::TokenML& ml);
-		protected:
-			virtual void _prepareUniforms();
 		public:
 			GLEffect();
 			HTech setTechnique(const HTech& tech) override;

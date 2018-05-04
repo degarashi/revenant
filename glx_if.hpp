@@ -1,6 +1,7 @@
 #pragma once
 #include "differential.hpp"
 #include "gl_types.hpp"
+#include "sys_uniform_if.hpp"
 #include "handle/opengl.hpp"
 #include <unordered_map>
 
@@ -17,7 +18,8 @@ namespace rev {
 	class UniformEnt;
 	class FBRect;
 	class IEffect :
-		public IGLResource
+		public IGLResource,
+		public ISystemUniform
 	{
 		public:
 			virtual UniformEnt& refUniformEnt() noexcept = 0;
@@ -36,7 +38,5 @@ namespace rev {
 			virtual void endTask() = 0;
 			virtual void execTask() = 0;
 			virtual diff::Effect getDifference() const = 0;
-
-			virtual void moveFrom(IEffect& /*prev*/) {}
 	};
 }

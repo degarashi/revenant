@@ -2,15 +2,15 @@
 #include "spine/rflag.hpp"
 #include "handle/camera.hpp"
 #include "frea/matrix.hpp"
+#include "sys_uniform_if.hpp"
 
 namespace rev {
-	class UniformEnt;
 	//! システムuniform変数をセットする(2D)
 	/*!
 		変数リスト:
 		mat3 sys_mTrans2D;		// scale * rotation * offset
 	*/
-	class SystemUniform2D {
+	class SystemUniform2D : public ISystemUniform {
 		private:
 			struct Camera;
 			struct Getter : spi::RFlag_Getter<uint32_t> {
@@ -33,7 +33,7 @@ namespace rev {
 			#undef SEQ_SYSUNI2D
 
 			SystemUniform2D();
-			void outputUniforms(UniformEnt& u) const;
-			void moveFrom(SystemUniform2D& prev);
+			void outputUniforms(UniformEnt& u) const override;
+			void moveFrom(ISystemUniform& prev) override;
 	};
 }

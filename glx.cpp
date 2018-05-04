@@ -135,7 +135,15 @@ namespace rev {
 		mgr_drawtask.refWriteEnt().append(std::move(_tokenML));
 	}
 	void GLEffect::draw() {
-		_prepareUniforms();
+		outputUniforms(_uniformEnt);
+		{
+			auto& u = _uniformEnt;
+			auto& res = u.getResult().token;
+			res.iterateC([&dst = _tokenML](const auto* t){
+				t->clone(dst);
+			});
+			u.clearValue();
+		}
 		_outputFramebuffer();
 		_diffCount.buffer += _getDifference();
 		// set V/IBuffer(VDecl)
@@ -203,12 +211,5 @@ namespace rev {
 	}
 	diff::Effect GLEffect::getDifference() const {
 		return _diffCount;
-	}
-	void GLEffect::_prepareUniforms() {
-		auto& res = _uniformEnt.getResult().token;
-		res.iterateC([&dst = _tokenML](const auto* t){
-			t->clone(dst);
-		});
-		_uniformEnt.clearValue();
 	}
 }

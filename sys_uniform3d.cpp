@@ -84,8 +84,9 @@ namespace rev {
 		setWorld(im);
 		setTransform(im);
 	}
-	void SystemUniform3D::moveFrom(SystemUniform3D& prev) {
-		_rflag = prev._rflag;
+	void SystemUniform3D::moveFrom(ISystemUniform& prev) {
+		auto& p = dynamic_cast<SystemUniform3D&>(prev);
+		_rflag = p._rflag;
 	}
 	void SystemUniform3D::outputUniforms(UniformEnt& u) const {
 		#define DEF_SETUNIF(name, func) \
