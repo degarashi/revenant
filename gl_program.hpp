@@ -4,9 +4,11 @@
 #include "gl_if.hpp"
 #include "handle/opengl.hpp"
 #include "drawtoken/token.hpp"
+#include "spine/flyweight_item.hpp"
 
 namespace rev {
 	using Name = std::string;
+	using SName = spi::FlyweightItem<std::string>;
 	class UniformEnt;
 	using UniformSetF = std::function<void (const void*, UniformEnt&)>;
 	using UniformSetF_V = std::vector<UniformSetF>;
@@ -18,7 +20,7 @@ namespace rev {
 	{
 		private:
 			struct GLParamInfo : GLSLFormatDesc {
-				Name	name;
+				SName	name;
 				GLuint	id;
 				GLsizei	length;
 

@@ -30,7 +30,7 @@ namespace rev {
 		ret.name = g_buff;
 
 		std::smatch m;
-		if(std::regex_match(ret.name, m, re_array)) {
+		if(std::regex_match(*ret.name, m, re_array)) {
 			ret.name = m[1].str();
 		}
 		return ret;
@@ -48,10 +48,10 @@ namespace rev {
 		const std::size_t n = _getNumParam(GL_ACTIVE_ATTRIBUTES);
 		for(std::size_t i=0 ; i<n ; i++) {
 			GLParamInfo info = _getActiveParam(i, &IGL::glGetActiveAttrib);
-			info.id = GL.glGetAttribLocation(_idProg, info.name.c_str());
+			info.id = GL.glGetAttribLocation(_idProg, info.name->c_str());
 			D_Assert0(info.id >= 0);
 			if(info.length > 1) {
-				_amap.emplace(info.name + "[0]", info);
+				_amap.emplace(*info.name + "[0]", info);
 			}
 			_amap.emplace(info.name, std::move(info));
 		}
@@ -60,16 +60,19 @@ namespace rev {
 		const std::size_t n = _getNumParam(GL_ACTIVE_UNIFORMS);
 		for(std::size_t i=0 ; i<n ; i++) {
 			GLParamInfo info = _getActiveParam(i, &IGL::glGetActiveUniform);
-			info.id = GL.glGetUniformLocation(_idProg, info.name.c_str());
+			info.id = GL.glGetUniformLocation(_idProg, info.name->c_str());
 			D_Assert0(info.id >= 0);
 			if(info.length > 1) {
 				GLParamInfo info2 = info;
 				info2.length = 1;
 				for(decltype(info.length) i=0 ; i<info.length ; i++) {
 					info2.name = info.name;
-					info2.name += "[";
-					info2.name += std::to_string(i);
-					info2.name += "]";
+					{
+						auto tmp = info2.name.ref();
+						*tmp += "[";
+						*tmp += std::to_string(i);
+						*tmp += "]";
+					}
 					_umap.emplace(info2.name, info2);
 					++info2.id;
 				}
