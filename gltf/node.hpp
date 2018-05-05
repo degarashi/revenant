@@ -24,7 +24,7 @@ namespace rev::gltf {
 		using Pose3 = beat::g3::Pose;
 		Pose3				pose;
 		TagNodeV			child;
-		Name_SP				jointName;
+		SName				jointName;
 		dc::JointId			jointId;
 		static dc::JointId	s_id;
 

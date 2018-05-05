@@ -9,9 +9,15 @@ namespace rev::gltf {
 	Skin::Skin(const JValue& v):
 		Resource(v),
 		bindShapeMat(Optional<Mat4>(v, "bindShapeMatrix", c_defaultMat)),
-		invBindMat(Required<TagAccessor>(v, "inverseBindMatrices")),
-		jointName(Required<Array<Shared<StdString>>>(v, "jointNames"))
-	{}
+		invBindMat(Required<TagAccessor>(v, "inverseBindMatrices"))
+	{
+		const auto names = Required<Array<StdString>>(v, "jointNames");
+		const auto len = names.size();
+		jointName.resize(len);
+		for(std::size_t i=0 ; i<len ; i++) {
+			jointName[i] = names[i];
+		}
+	}
 	Resource::Type Skin::getType() const noexcept {
 		return Type::Skin;
 	}

@@ -3,7 +3,7 @@
 
 namespace rev::dc {
 	struct Jat_Name : IJointAt {
-		Name	name;
+		SName	name;
 		TfNode& findJoint(const IJointQuery& q) const override;
 	};
 	struct Jat_Id : IJointAt {

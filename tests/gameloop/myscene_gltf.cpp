@@ -34,7 +34,7 @@ namespace rev::test {
 			auto sc = *(*dsc);
 			gltf::Visitor_Model visitor;
 			{
-				auto node = std::make_shared<dc::TfNode>(0, nullptr, "RootNode");
+				auto node = std::make_shared<dc::TfNode>(0, "", "RootNode");
 				node->refPose().identity();
 				node->refPose().setScaling(Vec3{1,1,-1});
 				visitor.addNode(node);

@@ -11,7 +11,7 @@ namespace rev::gltf {
 	{
 		frea::Mat4		bindShapeMat;
 		TagAccessor		invBindMat;
-		Name_SPV		jointName;
+		SName_V			jointName;
 
 		mutable dc::SkinBindV_SP	bind_cached;
 

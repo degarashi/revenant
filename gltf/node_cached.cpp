@@ -126,10 +126,10 @@ namespace rev::gltf {
 	dc::Mat4 NodeParam_USemCached::getGlobal(const JointId id) const  {
 		return base_t::getGlobal(id);
 	}
-	dc::Mat4 NodeParam_USemCached::getLocal(const dc::Name& name) const  {
+	dc::Mat4 NodeParam_USemCached::getLocal(const dc::SName& name) const  {
 		return base_t::getLocal(name);
 	}
-	dc::Mat4 NodeParam_USemCached::getGlobal(const dc::Name& name) const  {
+	dc::Mat4 NodeParam_USemCached::getGlobal(const dc::SName& name) const  {
 		return base_t::getGlobal(name);
 	}
 	const dc::Mat4V& NodeParam_USemCached::getJointMat(const dc::Mat4& node_m, const dc::SkinBindV_SP& bind, const dc::Mat4& bs_m) const {

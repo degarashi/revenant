@@ -7,6 +7,7 @@ namespace rev {
 	class IEffect;
 }
 namespace rev::dc {
+	using Name = std::string;
 	class IMesh :
 		public IDebugGui
 	{
@@ -28,9 +29,9 @@ namespace rev::dc {
 	};
 	class Mesh : public IMesh {
 		private:
-			Name_SP			_jointName;
+			SName			_jointName;
 		public:
-			Mesh(const HPrim& p, const HTech& t, const Name& userName, const Name_SP& jointName);
+			Mesh(const HPrim& p, const HTech& t, const Name& userName, const SName& jointName);
 			void draw(IEffect& e, const NodeParam& np) const override;
 
 			DEF_DEBUGGUI_SUMMARYSTR

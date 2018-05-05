@@ -7,6 +7,7 @@
 #include "jat_if.hpp"
 
 namespace rev::dc {
+	using Name = std::string;
 	class TfNode :
 		public lubee::CheckAlign<TfNode>,
 		public lubee::AAllocator<TfNode>,
@@ -30,10 +31,10 @@ namespace rev::dc {
 
 		public:
 			JointId		id;
-			Name_SP		jointName;
+			SName		jointName;
 			Name		userName;
 
-			TfNode(JointId id, const Name_SP& jointName, const Name& userName);
+			TfNode(JointId id, const SName& jointName, const Name& userName);
 			static void OnParentChange(spi::TreeNode<TfNode>* self, const HTfNode& node);
 			RFLAG_GETMETHOD_DEFINE(SEQ)
 			RFLAG_SETMETHOD_DEFINE(SEQ)
@@ -49,7 +50,7 @@ namespace rev::dc {
 	{
 		private:
 			using HTfNodeV = std::vector<HTfNode>;
-			using NameMap = std::unordered_map<Name, const TfNode*>;
+			using NameMap = std::unordered_map<SName, const TfNode*>;
 			using IdMap = std::unordered_map<JointId, const TfNode*>;
 
 			#define SEQ \
@@ -63,16 +64,16 @@ namespace rev::dc {
 			RFLAG_SETMETHOD_DEFINE(SEQ)
 			#undef SEQ
 			const TfNode* find(JointId id) const;
-			const TfNode* find(const Name& name) const;
+			const TfNode* find(const SName& name) const;
 
 			Mat4 getLocal(JointId id) const override;
 			Mat4 getGlobal(JointId id) const override;
-			Mat4 getLocal(const Name& name) const override;
-			Mat4 getGlobal(const Name& name) const override;
+			Mat4 getLocal(const SName& name) const override;
+			Mat4 getGlobal(const SName& name) const override;
 			const Mat4V& getJointMat(const Mat4& node_m, const SkinBindV_SP& bind, const Mat4& bs_m) const override;
 
 			TfNode& query(JointId id) const override;
-			TfNode& query(const Name& name) const override;
+			TfNode& query(const SName& name) const override;
 
 			DEF_DEBUGGUI_NAME
 			DEF_DEBUGGUI_PROP
@@ -119,8 +120,8 @@ namespace rev::dc {
 			NodeParam_cached(const NodeParam& np);
 			Mat4 getLocal(JointId id) const override;
 			Mat4 getGlobal(JointId id) const override;
-			Mat4 getLocal(const Name& name) const override;
-			Mat4 getGlobal(const Name& name) const override;
+			Mat4 getLocal(const SName& name) const override;
+			Mat4 getGlobal(const SName& name) const override;
 			const Mat4V& getJointMat(const Mat4& node_m, const SkinBindV_SP& bind, const Mat4& bs_m) const override;
 	};
 }

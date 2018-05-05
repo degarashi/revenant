@@ -11,8 +11,8 @@ namespace rev::dc {
 		const auto& node = getNode();
 		for(auto& n : node) {
 			n->iterateDepthFirst<true>([&dst](auto& n, int){
-				if(const auto& name = n.jointName)
-					dst.emplace(*name, &n);
+				if(!n.jointName->empty())
+					dst.emplace(n.jointName, &n);
 				return spi::Iterate::StepIn;
 			});
 		}
@@ -36,10 +36,10 @@ namespace rev::dc {
 	frea::Mat4 TfRoot::getGlobal(const JointId id) const {
 		return find(id)->getTransform();
 	}
-	frea::Mat4 TfRoot::getLocal(const Name& name) const {
+	frea::Mat4 TfRoot::getLocal(const SName& name) const {
 		return find(name)->getPose().getToWorld().convertI<4,4>(1);
 	}
-	frea::Mat4 TfRoot::getGlobal(const Name& name) const {
+	frea::Mat4 TfRoot::getGlobal(const SName& name) const {
 		return find(name)->getTransform();
 	}
 	const TfNode* TfRoot::find(const JointId id) const {
@@ -50,7 +50,7 @@ namespace rev::dc {
 		}
 		return nullptr;
 	}
-	const TfNode* TfRoot::find(const Name& name) const {
+	const TfNode* TfRoot::find(const SName& name) const {
 		auto& nton = getNameToNode();
 		const auto itr = nton.find(name);
 		if(itr != nton.end()) {
@@ -62,7 +62,7 @@ namespace rev::dc {
 	TfNode& TfRoot::query(const JointId id) const {
 		return *const_cast<TfNode*>(find(id));
 	}
-	TfNode& TfRoot::query(const Name& name) const {
+	TfNode& TfRoot::query(const SName& name) const {
 		return *const_cast<TfNode*>(find(name));
 	}
 	const Mat4V& TfRoot::getJointMat(const Mat4&, const SkinBindV_SP&, const Mat4&) const {
@@ -127,10 +127,10 @@ namespace rev::dc {
 	Mat4 NodeParam_cached::getGlobal(const JointId id) const {
 		return _np.getGlobal(id);
 	}
-	Mat4 NodeParam_cached::getLocal(const Name& name) const {
+	Mat4 NodeParam_cached::getLocal(const SName& name) const {
 		return _np.getLocal(name);
 	}
-	Mat4 NodeParam_cached::getGlobal(const Name& name) const {
+	Mat4 NodeParam_cached::getGlobal(const SName& name) const {
 		return _np.getGlobal(name);
 	}
 }

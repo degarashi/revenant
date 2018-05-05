@@ -13,7 +13,7 @@ namespace rev::dc {
 			dst = p.getToWorld().convertI<4,4>(1);
 		return true;
 	}
-	TfNode::TfNode(const JointId id, const Name_SP& jointName, const Name& userName):
+	TfNode::TfNode(const JointId id, const SName& jointName, const Name& userName):
 		id(id),
 		jointName(jointName),
 		userName(userName)

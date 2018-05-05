@@ -14,7 +14,7 @@ namespace rev::gltf {
 		Resource(v),
 		pose(loader::Pose3(v)),
 		child(loader::Optional<loader::Array<TagNode>>(v, "children", {})),
-		jointName(loader::Optional<loader::Shared<loader::StdString>>(v, "jointName", nullptr)),
+		jointName(loader::Optional<loader::StdString>(v, "jointName", SName())),
 		jointId(s_id++)
 	{}
 	Resource::Type Node::getType() const noexcept {
@@ -25,8 +25,7 @@ namespace rev::gltf {
 			c.resolve(q);
 	}
 	void Node::_visit(Visitor& v) const {
-		auto node = std::make_shared<dc::TfNode>(jointId, jointName,
-				username ? *username : Name());
+		auto node = std::make_shared<dc::TfNode>(jointId, jointName, username ? *username : Name());
 		node->setPose(pose);
 		v.addNode(node);
 	}

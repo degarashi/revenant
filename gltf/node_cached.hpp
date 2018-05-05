@@ -46,8 +46,8 @@ namespace rev::gltf {
 
 			dc::Mat4 getLocal(JointId id) const override;
 			dc::Mat4 getGlobal(JointId id) const override;
-			dc::Mat4 getLocal(const dc::Name& name) const override;
-			dc::Mat4 getGlobal(const dc::Name& name) const override;
+			dc::Mat4 getLocal(const dc::SName& name) const override;
+			dc::Mat4 getGlobal(const dc::SName& name) const override;
 			const dc::Mat4V& getJointMat(const dc::Mat4& node_m, const dc::SkinBindV_SP& bind, const dc::Mat4& bs_m) const override;
 	};
 }
