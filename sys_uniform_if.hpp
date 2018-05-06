@@ -9,6 +9,7 @@ namespace rev {
 	using UniformSetF_V = std::vector<UniformSetF>;
 	struct ISystemUniform {
 		virtual ~ISystemUniform() {}
+		virtual void applyUniform(UniformEnt&, const GLProgram&) const {}
 		virtual void extractUniform(UniformSetF_V&, const GLProgram&) const {}
 		virtual void moveFrom(ISystemUniform&) {}
 	};

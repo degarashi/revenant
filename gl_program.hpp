@@ -69,7 +69,7 @@ namespace rev {
 			// SystemUniformに対応する変数のリスト
 			// [typeid(SystemUniform).hash_code()] -> vector<UniformSetF>
 			using SysUSetF_M = std::unordered_map<std::size_t, UniformSetF_V>;
-			SysUSetF_M		_sysUniform;
+			mutable SysUSetF_M		_sysUniform;
 
 		public:
 			template <class... Shader>
@@ -108,7 +108,7 @@ namespace rev {
 			GLint_OP getTexIndex(GLint id) const;
 
 			template <class S>
-			const UniformSetF_V& extractSystemUniform(const S& s) {
+			const UniformSetF_V& extractSystemUniform(const S& s) const {
 				const auto hash = typeid(s).hash_code();
 				const auto itr = _sysUniform.find(hash);
 				if(itr != _sysUniform.end())
