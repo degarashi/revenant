@@ -5,6 +5,7 @@
 #include "handle/opengl.hpp"
 #include "drawtoken/token.hpp"
 #include "spine/flyweight_item.hpp"
+#include <typeindex>
 
 namespace rev {
 	using Name = std::string;
@@ -67,8 +68,8 @@ namespace rev {
 			void _makeTexIndex();
 
 			// SystemUniformに対応する変数のリスト
-			// [typeid(SystemUniform).hash_code()] -> vector<UniformSetF>
-			using SysUSetF_M = std::unordered_map<std::size_t, UniformSetF_V>;
+			// [typeid(SystemUniform)] -> vector<UniformSetF>
+			using SysUSetF_M = std::unordered_map<std::type_index, UniformSetF_V>;
 			mutable SysUSetF_M		_sysUniform;
 
 		public:
@@ -109,13 +110,13 @@ namespace rev {
 
 			template <class S>
 			const UniformSetF_V& extractSystemUniform(const S& s) const {
-				const auto hash = typeid(s).hash_code();
-				const auto itr = _sysUniform.find(hash);
+				const auto idx = std::type_index(typeid(s));
+				const auto itr = _sysUniform.find(idx);
 				if(itr != _sysUniform.end())
 					return itr->second;
 				UniformSetF_V res;
 				s.extractUniform(res, *this);
-				return _sysUniform.emplace(hash, std::move(res)).first->second;
+				return _sysUniform.emplace(idx, std::move(res)).first->second;
 			}
 
 			// デバッグ用(線形探索なので遅い)
