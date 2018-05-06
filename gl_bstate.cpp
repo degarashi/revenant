@@ -1,29 +1,31 @@
 #include "gl_bstate.hpp"
+#include "lubee/hash_combine.hpp"
 
 namespace rev {
 	namespace {
-		const GL_BState::Func cs_func[] = {
+		using BFunc = decltype(&IGL::glEnable);
+		const BFunc cs_func[] = {
 			&IGL::glDisable, &IGL::glEnable
 		};
 	}
 	GL_BState::GL_BState(const bool enable, const GLenum flag):
-		_flag(flag),
-		_func(cs_func[static_cast<int>(enable)])
+		_enable(enable),
+		_flag(flag)
 	{}
 	GLState::Type GL_BState::getType() const noexcept {
 		return Type::Boolean;
 	}
 	std::size_t GL_BState::getHash() const noexcept {
-		return _flag ^ reinterpret_cast<intptr_t>(&_func);
+		return lubee::hash_combine_implicit(_enable, _flag);
 	}
 	void GL_BState::apply() const {
-		(GL.*_func)(_flag);
+		(GL.*cs_func[static_cast<std::size_t>(_enable)])(_flag);
 	}
 	bool GL_BState::operator == (const GLState& s) const noexcept {
 		return _Compare(*this, s);
 	}
 	bool GL_BState::operator == (const GL_BState& bs) const noexcept {
-		return _flag == bs._flag &&
-				_func == bs._func;
+		return _enable == bs._enable &&
+				_flag == bs._flag;
 	}
 }

@@ -5,11 +5,9 @@
 namespace rev {
 	//! OpenGLのBoolステート値設定
 	class GL_BState : public GLState {
-		public:
-			using Func = decltype(&IGL::glEnable);
 		private:
+			bool		_enable;
 			GLenum		_flag;
-			Func		_func;
 		public:
 			GL_BState(bool enable, GLenum flag);
 			Type getType() const noexcept override;

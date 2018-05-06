@@ -10,9 +10,7 @@ namespace rev {
 	}
 	bool GL_BState::property(const bool edit) {
 		auto f = debug::EntryField(getDebugName(), edit);
-		bool enable = (_func == &IGL::glEnable);
-		if(f.entry(GLFormat::QueryEnumString(_flag).c_str(), enable))
-			*this = GL_BState(enable, _flag);
+		f.entry(GLFormat::QueryEnumString(_flag).c_str(), _enable);
 		return f.modified();
 	}
 }
