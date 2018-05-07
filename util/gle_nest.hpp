@@ -19,12 +19,6 @@ namespace rev::util {
 				});
 				_extractUniform(dst, prog, ts...);
 			}
-			void _moveFrom(ISystemUniform&) {}
-			template <class T0, class... Ts>
-			void _moveFrom(ISystemUniform& prev, T0*, const Ts*... ts) {
-				this->T0::moveFrom(prev);
-				_moveFrom(prev, ts...);
-			}
 			void _applyUniform(const UniformSetF*, UniformEnt&) const {}
 			template <class T0, class... Ts>
 			void _applyUniform(const UniformSetF* unif, UniformEnt& u, T0*, const Ts*... ts) const {
@@ -39,9 +33,6 @@ namespace rev::util {
 			}
 			void extractUniform(UniformSetF_V& dst, const GLProgram& prog) const override {
 				_extractUniform(dst, prog, (Base*)nullptr...);
-			}
-			void moveFrom(ISystemUniform& prev) override {
-				_moveFrom(prev, (Base*)nullptr...);
 			}
 	};
 }

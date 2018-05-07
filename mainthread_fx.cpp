@@ -55,7 +55,8 @@ namespace rev {
 				rel.curFx = lk->param->makeEffect();
 				lk->fx = rel.curFx;
 				// ユーザー側で何か移動する変数があればそれをする
-				rel.curFx->moveFrom(static_cast<IEffect&>(*rel.prevFx));
+				// (現状、Effectを作り直す事に意味がないのでコメントアウトしておく)
+				// rel.curFx->moveFrom(static_cast<IEffect&>(*rel.prevFx));
 				// DrawTaskのバッファ数だけ待ってから削除
 				rel.prevFxCounter = draw::Task::NUM_TASK;
 			} catch(const std::exception& e) {

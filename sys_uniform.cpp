@@ -23,10 +23,6 @@ namespace rev {
 	}
 
 	// --------------------- SystemUniform ---------------------
-	void SystemUniform::moveFrom(ISystemUniform& prev) {
-		auto& p = dynamic_cast<SystemUniform&>(prev);
-		_screenSize = p._screenSize;
-	}
 	const lubee::SizeI& SystemUniform::getScreenSize() const {
 		return _screenSize;
 	}

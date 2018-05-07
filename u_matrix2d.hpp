@@ -34,6 +34,5 @@ namespace rev {
 
 			U_Matrix2D();
 			void extractUniform(UniformSetF_V& dst, const GLProgram& prog) const override;
-			void moveFrom(ISystemUniform& prev) override;
 	};
 }

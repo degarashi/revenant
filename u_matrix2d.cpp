@@ -57,10 +57,6 @@ namespace rev {
 		setWorld(im);
 		setTransform(im);
 	}
-	void U_Matrix2D::moveFrom(ISystemUniform& prev) {
-		auto& p = dynamic_cast<U_Matrix2D&>(prev);
-		_rflag = p._rflag;
-	}
 	void U_Matrix2D::extractUniform(UniformSetF_V& dst, const GLProgram& prog) const {
 		#define DEF_SETUNIF(name) \
 			if(const auto id = prog.getUniformId(s2d::name)) { \
