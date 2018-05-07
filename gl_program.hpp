@@ -62,8 +62,8 @@ namespace rev {
 			void _makeTexIndex();
 
 			// SystemUniformに対応する変数のリスト
-			// [typeid(SystemUniform)] -> vector<UniformSetF>
-			using SysUSetF_M = std::unordered_map<std::type_index, UniformSetF_V>;
+			// [typeid(SystemUniform)] -> UniformSetF
+			using SysUSetF_M = std::unordered_map<std::type_index, UniformSetF>;
 			mutable SysUSetF_M		_sysUniform;
 
 		public:
@@ -90,14 +90,12 @@ namespace rev {
 			GLint_OP getTexIndex(GLint id) const;
 
 			template <class S>
-			const UniformSetF_V& extractSystemUniform(const S& s) const {
+			const UniformSetF& getUniformF(const S& s) const {
 				const auto idx = std::type_index(typeid(s));
 				const auto itr = _sysUniform.find(idx);
 				if(itr != _sysUniform.end())
 					return itr->second;
-				UniformSetF_V res;
-				s.extractUniform(res, *this);
-				return _sysUniform.emplace(idx, std::move(res)).first->second;
+				return _sysUniform.emplace(idx, s.getUniformF(*this)).first->second;
 			}
 
 			// デバッグ用(線形探索なので遅い)

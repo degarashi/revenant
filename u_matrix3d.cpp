@@ -85,10 +85,12 @@ namespace rev {
 		setWorld(im);
 		setTransform(im);
 	}
-	void U_Matrix3D::extractUniform(UniformSetF_V& dst, const GLProgram& prog) const {
+	UniformSetF U_Matrix3D::getUniformF(const GLProgram& prog) const {
+		UniformSetF_V fv;
+
 		#define DEF_SETUNIF(name) \
 			if(const auto id = prog.getUniformId(s3d::name)) { \
-				dst.emplace_back([id=*id](const void* p, UniformEnt& u){ \
+				fv.emplace_back([id=*id](const void* p, UniformEnt& u){ \
 					auto* self = static_cast<const U_Matrix3D*>(p); \
 					u.setUniform(id, spi::UnwrapAcValue(self->get##name())); \
 				}); \
@@ -103,7 +105,7 @@ namespace rev {
 
 		#define DEF_SETUNIF(name) \
 			if(const auto id = prog.getUniformId(s3d::name)) { \
-				dst.emplace_back([id=*id](const void* p, UniformEnt& u){ \
+				fv.emplace_back([id=*id](const void* p, UniformEnt& u){ \
 					auto* self = static_cast<const U_Matrix3D*>(p); \
 					u.setUniform(id, spi::UnwrapAcValue(self->getCamera()->get##name())); \
 				}); \
@@ -115,19 +117,27 @@ namespace rev {
 		#undef DEF_SETUNIF
 
 		if(const auto id = prog.getUniformId(s3d::EyePos)) {
-			dst.emplace_back([id=*id](const void* p, UniformEnt& u){
+			fv.emplace_back([id=*id](const void* p, UniformEnt& u){
 				auto* self = static_cast<const U_Matrix3D*>(p);
 				auto& ps = self->getCamera()->getPose();
 				u.setUniform(id, ps.getOffset());
 			});
 		}
 		if(const auto id = prog.getUniformId(s3d::EyePos)) {
-			dst.emplace_back([id=*id](const void* p, UniformEnt& u){
+			fv.emplace_back([id=*id](const void* p, UniformEnt& u){
 				auto* self = static_cast<const U_Matrix3D*>(p);
 				auto& ps = self->getCamera()->getPose();
 				u.setUniform(id, ps.getRotation().getZAxis());
 			});
 		}
+
+		if(!fv.empty()) {
+			return [fv = std::move(fv)](const void* p, UniformEnt& u){
+				for(auto& f : fv)
+					f(p, u);
+			};
+		}
+		return nullptr;
 	}
 }
 

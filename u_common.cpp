@@ -26,10 +26,12 @@ namespace rev {
 		color{1,1,1,1},
 		depth(1)
 	{}
-	void U_Common::extractUniform(UniformSetF_V& dst, const GLProgram& prog) const {
+	UniformSetF U_Common::getUniformF(const GLProgram& prog) const {
+		UniformSetF_V fv;
+
 		#define DEF_UNIF(name, cname) \
 			if(const auto id = prog.getUniformId(cname)) { \
-				dst.emplace_back([id=*id](const void* p, UniformEnt& u){ \
+				fv.emplace_back([id=*id](const void* p, UniformEnt& u){ \
 					auto& self = *static_cast<const U_Common*>(p); \
 					u.setUniform(id, self.name); \
 				}); \
@@ -42,5 +44,13 @@ namespace rev {
 		DEF_UNIF(texture.normal, unif::texture::Normal)
 		DEF_UNIF(texture.emissive, unif::texture::Emissive)
 		#undef DEF_UNIF
+
+		if(!fv.empty()) {
+			return [fv = std::move(fv)](const void* p, UniformEnt& u) {
+				for(auto& f : fv)
+					f(p,u);
+			};
+		}
+		return nullptr;
 	}
 }

@@ -17,6 +17,6 @@ namespace rev {
 			} texture;
 
 			U_Common();
-			void extractUniform(UniformSetF_V& dst, const GLProgram& prog) const override;
+			UniformSetF getUniformF(const GLProgram& prog) const override;
 	};
 }

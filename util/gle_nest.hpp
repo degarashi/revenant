@@ -8,16 +8,18 @@ namespace rev::util {
 		public Base...
 	{
 		private:
-			void _extractUniform(UniformSetF_V&, const GLProgram&) const {}
+			using this_t = GLE_Nest<Base...>;
+			void _getUniformF(UniformSetF_V&, const GLProgram&) const {}
 			template <class T0, class... Ts>
-			void _extractUniform(UniformSetF_V& dst, const GLProgram& prog, T0*, const Ts*... ts) const {
-				UniformSetF_V tmp;
-				this->T0::extractUniform(tmp, prog);
-				dst.emplace_back([tmp = std::move(tmp)](const void* self, UniformEnt& u){
-					for(auto& e : tmp)
-						e(static_cast<const T0*>(self), u);
-				});
-				_extractUniform(dst, prog, ts...);
+			void _getUniformF(UniformSetF_V& dst, const GLProgram& prog, T0*, const Ts*... ts) const {
+				if(auto f = this->T0::getUniformF(prog)) {
+					dst.emplace_back([f = std::move(f)](const void* p, UniformEnt& u) {
+						auto* self = static_cast<const this_t*>(p);
+						auto* selfL = static_cast<const T0*>(self);
+						f(selfL, u);
+					});
+				}
+				_getUniformF(dst, prog, ts...);
 			}
 			void _applyUniform(const UniformSetF*, UniformEnt&) const {}
 			template <class T0, class... Ts>
@@ -28,11 +30,16 @@ namespace rev::util {
 
 		public:
 			void applyUniform(UniformEnt& u, const GLProgram& prog) const override {
-				auto& unif = prog.extractSystemUniform(*this);
-				_applyUniform(unif.data(), u, (Base*)nullptr...);
+				auto& f = prog.getUniformF(*this);
+				f(this, u);
 			}
-			void extractUniform(UniformSetF_V& dst, const GLProgram& prog) const override {
-				_extractUniform(dst, prog, (Base*)nullptr...);
+			UniformSetF getUniformF(const GLProgram& prog) const override {
+				UniformSetF_V fv;
+				_getUniformF(fv, prog, (Base*)nullptr...);
+				return [fv = std::move(fv)](const void* p, UniformEnt& u){
+					for(auto& f : fv)
+						f(p, u);
+				};
 			}
 	};
 }

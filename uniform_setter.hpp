@@ -10,6 +10,6 @@ namespace rev {
 	struct IUniformSetter {
 		virtual ~IUniformSetter() {}
 		virtual void applyUniform(UniformEnt&, const GLProgram&) const {}
-		virtual void extractUniform(UniformSetF_V&, const GLProgram&) const {}
+		virtual UniformSetF getUniformF(const GLProgram&) const { return nullptr; }
 	};
 }

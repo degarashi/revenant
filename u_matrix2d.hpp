@@ -33,6 +33,6 @@ namespace rev {
 			#undef SEQ_SYSUNI2D
 
 			U_Matrix2D();
-			void extractUniform(UniformSetF_V& dst, const GLProgram& prog) const override;
+			UniformSetF getUniformF(const GLProgram& prog) const override;
 	};
 }

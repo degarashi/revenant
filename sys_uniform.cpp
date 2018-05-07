@@ -21,9 +21,9 @@ namespace rev {
 	void SystemUniform::setScreenSize(const lubee::SizeI& s) {
 		_screenSize = s;
 	}
-	void SystemUniform::extractUniform(UniformSetF_V& dst, const GLProgram& prog) const {
+	UniformSetF SystemUniform::getUniformF(const GLProgram& prog) const {
 		if(const auto id = prog.getUniformId(su::Size)) {
-			dst.emplace_back([id=*id](const void* p, UniformEnt& u){
+			return [id=*id](const void* p, UniformEnt& u){
 				auto& ss = static_cast<const SystemUniform*>(p)->getScreenSize();
 				u.setUniform(
 					id,
@@ -34,7 +34,8 @@ namespace rev {
 						1.f/ss.height
 					)
 				);
-			});
+			};
 		}
+		return nullptr;
 	}
 }

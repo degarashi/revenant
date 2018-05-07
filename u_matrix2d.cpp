@@ -58,10 +58,12 @@ namespace rev {
 		setWorld(im);
 		setTransform(im);
 	}
-	void U_Matrix2D::extractUniform(UniformSetF_V& dst, const GLProgram& prog) const {
+	UniformSetF U_Matrix2D::getUniformF(const GLProgram& prog) const {
+		UniformSetF_V fv;
+
 		#define DEF_SETUNIF(name) \
 			if(const auto id = prog.getUniformId(s2d::name)) { \
-				dst.emplace_back([id=*id](const void* p, UniformEnt& u){ \
+				fv.emplace_back([id=*id](const void* p, UniformEnt& u){ \
 					auto* self = static_cast<const U_Matrix2D*>(p); \
 					u.setUniform(id, spi::UnwrapAcValue(self->get##name())); \
 				}); \
@@ -74,7 +76,7 @@ namespace rev {
 
 		#define DEF_SETUNIF(name) \
 			if(const auto id = prog.getUniformId(s2d::name)) { \
-				dst.emplace_back([id=*id](const void* p, UniformEnt& u){ \
+				fv.emplace_back([id=*id](const void* p, UniformEnt& u){ \
 					auto* self = static_cast<const U_Matrix2D*>(p); \
 					u.setUniform(id, spi::UnwrapAcValue(self->getCamera()->get##name())); \
 				}); \
@@ -85,5 +87,13 @@ namespace rev {
 		DEF_SETUNIF(ViewProj)
 		DEF_SETUNIF(ViewProjInv)
 		#undef DEF_SETUNIF
+
+		if(!fv.empty()) {
+			return [fv = std::move(fv)](const void* p, UniformEnt& u) {
+				for(auto& f : fv)
+					f(p, u);
+			};
+		}
+		return nullptr;
 	}
 }
