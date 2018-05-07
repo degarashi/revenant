@@ -6,10 +6,16 @@ namespace rev::gltf {
 	using namespace loader;
 	Program::Program(const JValue& v):
 		Resource(v),
-		attribute(Optional<Array<StdString>>(v, "attributes", {})),
 		vshader(Required<TagShader>(v, "vertexShader")),
 		fshader(Required<TagShader>(v, "fragmentShader"))
-	{}
+	{
+		auto attr = Optional<Array<StdString>>(v, "attributes", {});
+		const auto len = attr.size();
+		attribute.resize(len);
+		for(std::size_t i=0 ; i<len ; i++) {
+			attribute[i] = std::move(attr[i]);
+		}
+	}
 	Resource::Type Program::getType() const noexcept {
 		return Type::Program;
 	}

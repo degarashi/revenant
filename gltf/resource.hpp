@@ -7,10 +7,10 @@
 #include <vector>
 
 namespace rev::gltf {
-	using GLSLName = std::string;
-	using GLSLNameV = std::vector<GLSLName>;
 	using Name = std::string;
 	using SName = spi::FlyweightItem<std::string>;
+	using GLSLName = SName;
+	using GLSLNameV = std::vector<GLSLName>;
 	using SName_V = std::vector<SName>;
 	using ByteV = std::vector<uint8_t>;
 	using ByteV_OP = spi::Optional<ByteV>;
