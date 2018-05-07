@@ -13,8 +13,8 @@ namespace rev {
 		return 0;
 	}
 
-	namespace sysunif3d {
-		namespace matrix {
+	namespace {
+		namespace s3d {
 			const UniformName
 							Transform("sys_mTrans"),
 							TransformInv("sys_mTransInv"),
@@ -90,7 +90,7 @@ namespace rev {
 	}
 	void SystemUniform3D::extractUniform(UniformSetF_V& dst, const GLProgram& prog) const {
 		#define DEF_SETUNIF(name) \
-			if(const auto id = prog.getUniformId(sysunif3d::matrix::name)) { \
+			if(const auto id = prog.getUniformId(s3d::name)) { \
 				dst.emplace_back([id=*id](const void* p, UniformEnt& u){ \
 					auto* self = static_cast<const SystemUniform3D*>(p); \
 					u.setUniform(id, spi::UnwrapAcValue(self->get##name())); \
@@ -105,7 +105,7 @@ namespace rev {
 		#undef DEF_SETUNIF
 
 		#define DEF_SETUNIF(name) \
-			if(const auto id = prog.getUniformId(sysunif3d::matrix::name)) { \
+			if(const auto id = prog.getUniformId(s3d::name)) { \
 				dst.emplace_back([id=*id](const void* p, UniformEnt& u){ \
 					auto* self = static_cast<const SystemUniform3D*>(p); \
 					u.setUniform(id, spi::UnwrapAcValue(self->getCamera()->get##name())); \
@@ -117,14 +117,14 @@ namespace rev {
 		DEF_SETUNIF(ViewProjInv)
 		#undef DEF_SETUNIF
 
-		if(const auto id = prog.getUniformId(sysunif3d::matrix::EyePos)) {
+		if(const auto id = prog.getUniformId(s3d::EyePos)) {
 			dst.emplace_back([id=*id](const void* p, UniformEnt& u){
 				auto* self = static_cast<const SystemUniform3D*>(p);
 				auto& ps = self->getCamera()->getPose();
 				u.setUniform(id, ps.getOffset());
 			});
 		}
-		if(const auto id = prog.getUniformId(sysunif3d::matrix::EyePos)) {
+		if(const auto id = prog.getUniformId(s3d::EyePos)) {
 			dst.emplace_back([id=*id](const void* p, UniformEnt& u){
 				auto* self = static_cast<const SystemUniform3D*>(p);
 				auto& ps = self->getCamera()->getPose();
