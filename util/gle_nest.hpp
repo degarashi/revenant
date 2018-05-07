@@ -36,10 +36,13 @@ namespace rev::util {
 			UniformSetF getUniformF(const GLProgram& prog) const override {
 				UniformSetF_V fv;
 				_getUniformF(fv, prog, (Base*)nullptr...);
-				return [fv = std::move(fv)](const void* p, UniformEnt& u){
-					for(auto& f : fv)
-						f(p, u);
-				};
+				if(!fv.empty()) {
+					return [fv = std::move(fv)](const void* p, UniformEnt& u){
+						for(auto& f : fv)
+							f(p, u);
+					};
+				}
+				return [](const void*, UniformEnt&) {};
 			}
 	};
 }
