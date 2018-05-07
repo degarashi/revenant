@@ -135,8 +135,6 @@ namespace rev {
 				D_GLWarn(glDeleteProgram, buffId);
 			});
 			_idProg = 0;
-			_literalUmap.clear();
-			_literalAmap.clear();
 			_umap.clear();
 			_amap.clear();
 			_texIndex.clear();
@@ -164,27 +162,13 @@ namespace rev {
 			return itr->second;
 		return spi::none;
 	}
-	GLint_OP GLProgram::getUniformId_Literal(const char* name) const {
-		auto itr = _literalUmap.find(name);
-		if(itr == _literalUmap.end()) {
-			itr = _literalUmap.emplace(name, getUniformId(name)).first;
-		}
-		return itr->second;
-	}
-	GLint_OP GLProgram::getAttributeId_Literal(const char* name) const {
-		auto itr = _literalAmap.find(name);
-		if(itr == _literalAmap.end()) {
-			itr = _literalAmap.emplace(name, getAttribId(name)).first;
-		}
-		return itr->second;
-	}
-	GLint_OP GLProgram::getUniformId(const Name& name) const {
+	GLint_OP GLProgram::getUniformId(const SName& name) const {
 		if(const auto itr = _umap.find(name);
 			itr != _umap.end())
 			return itr->second.id;
 		return spi::none;
 	}
-	GLint_OP GLProgram::getAttribId(const Name& name) const {
+	GLint_OP GLProgram::getAttribId(const SName& name) const {
 		if(const auto itr = _amap.find(name);
 			itr != _amap.end())
 			return itr->second.id;
@@ -211,7 +195,7 @@ namespace rev {
 			}
 		);
 		if(itr != _umap.cend())
-			return itr->first.c_str();
+			return itr->first->c_str();
 		return nullptr;
 	}
 }
