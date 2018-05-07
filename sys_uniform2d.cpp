@@ -14,12 +14,12 @@ namespace rev {
 	}
 
 	namespace unif2d {
-		const LiteralStr
+		const UniformName
 							Depth("u_depth");
 	}
 	namespace sysunif2d {
 		namespace matrix {
-			const LiteralStr
+			const UniformName
 							World("sys_mWorld2d"),
 							WorldInv("sys_mWorld2dInv"),
 							View("sys_mView2d"),
