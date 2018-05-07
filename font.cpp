@@ -9,11 +9,11 @@
 #include <boost/lexical_cast.hpp>
 #include "glx_if.hpp"
 #include "vdecl.hpp"
-#include "sys_uniform_value.hpp"
 #include "primitive.hpp"
 #include "drawtoken/make_uniform.hpp"
 #include "uniform_ent.hpp"
 #include "tech_pass.hpp"
+#include "u_common.hpp"
 
 namespace rev {
 	namespace {
@@ -223,9 +223,9 @@ namespace rev {
 		return _faceName;
 	}
 	void TextObj::draw(IEffect& e) const {
-		auto& u = e.refUniformEnt();
+		auto& c = dynamic_cast<U_Common&>(e);
 		for(auto& ds : _drawSet) {
-			u.setUniform(unif::texture::Diffuse, ds.hTex);
+			c.texture.diffuse = ds.hTex;
 			e.setPrimitive(ds.primitive);
 			e.draw();
 		}

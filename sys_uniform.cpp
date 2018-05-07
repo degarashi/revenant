@@ -6,15 +6,6 @@
 #include "uniform_ent.hpp"
 
 namespace rev {
-	namespace unif {
-		const UniformName
-					Alpha("u_alpha"),
-					Color("u_color");
-		namespace texture {
-			const UniformName
-					Diffuse("u_texDiffuse");
-		}
-	}
 	namespace {
 		namespace su {
 			const UniformName

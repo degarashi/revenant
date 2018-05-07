@@ -51,15 +51,17 @@ void Sprite2D::setAlpha(const float a) {
 void Sprite2D::setZRange(const lubee::RangeF& r) {
 	_zRange = r;
 }
-#include "../../sys_uniform_value.hpp"
 #include "../../output.hpp"
 #include "../../tech_pass.hpp"
 #include "../../u_matrix2d.hpp"
+#include "../../u_common.hpp"
 void Sprite2D::draw(rev::IEffect& e) const {
 	e.setTechnique(_tech);
-	auto& u = e.refUniformEnt();
-	u.setUniform(rev::unif2d::texture::Diffuse, _hTex);
-	u.setUniform(rev::unif::Alpha, _alpha);
+	{
+		auto& c = dynamic_cast<rev::U_Common&>(e);
+		c.texture.diffuse = _hTex;
+		c.alpha = _alpha;
+	}
 	dynamic_cast<rev::U_Matrix2D&>(e).setWorld(getToWorld().convert<3,3>());
 	e.setPrimitive(_primitive);
 	e.draw();

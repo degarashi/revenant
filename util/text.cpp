@@ -1,9 +1,9 @@
 #include "text.hpp"
 #include "../font.hpp"
 #include "../glx_if.hpp"
-#include "../sys_uniform_value.hpp"
 #include "../drawtoken/make_uniform.hpp"
 #include "uniform_ent.hpp"
+#include "../u_common.hpp"
 
 namespace rev {
 	namespace util {
@@ -63,7 +63,8 @@ namespace rev {
 			getText();
 
 			cbPre(e);
-			e.refUniformEnt().setUniform(unif::Color, _color.asVec4());
+			auto& c = dynamic_cast<U_Common&>(e);
+			c.color = _color.asVec4();
 			_hText->draw(e);
 			return _hText->getSize().width;
 		}
