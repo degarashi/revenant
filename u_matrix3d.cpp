@@ -1,10 +1,10 @@
 #include "u_matrix3d.hpp"
-#include "sys_uniform_value.hpp"
 #include "camera3d.hpp"
 #include "glx_if.hpp"
 #include "gl_program.hpp"
 #include "drawtoken/make_uniform.hpp"
 #include "uniform_ent.hpp"
+#include "spine/flyweight_item.hpp"
 
 namespace rev {
 	U_Matrix3D::Getter::counter_t U_Matrix3D::Getter::operator()(const HCam3& c, Camera*, const U_Matrix3D&) const {
@@ -13,6 +13,7 @@ namespace rev {
 		return 0;
 	}
 
+	using UniformName = spi::FlyweightItem<std::string>;
 	namespace {
 		namespace s3d {
 			const UniformName

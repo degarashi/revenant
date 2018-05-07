@@ -1,11 +1,12 @@
 #include "sys_uniform.hpp"
-#include "sys_uniform_value.hpp"
 #include "glx_if.hpp"
 #include "gl_program.hpp"
 #include "drawtoken/make_uniform.hpp"
 #include "uniform_ent.hpp"
+#include "spine/flyweight_item.hpp"
 
 namespace rev {
+	using UniformName = spi::FlyweightItem<std::string>;
 	namespace {
 		namespace su {
 			const UniformName

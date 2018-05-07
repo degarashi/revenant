@@ -1,10 +1,10 @@
 #include "u_matrix2d.hpp"
-#include "sys_uniform_value.hpp"
 #include "glx_if.hpp"
 #include "camera2d.hpp"
 #include "gl_program.hpp"
 #include "drawtoken/make_uniform.hpp"
 #include "uniform_ent.hpp"
+#include "spine/flyweight_item.hpp"
 
 namespace rev {
 	U_Matrix2D::Getter::counter_t U_Matrix2D::Getter::operator()(const HCam2& c, Camera*, const U_Matrix2D&) const {
@@ -13,6 +13,7 @@ namespace rev {
 		return 0;
 	}
 
+	using UniformName = spi::FlyweightItem<std::string>;
 	namespace unif2d {
 		const UniformName
 							Depth("u_depth");
