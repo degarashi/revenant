@@ -17,8 +17,8 @@ namespace rev {
 		const UniformName
 							Depth("u_depth");
 	}
-	namespace sysunif2d {
-		namespace matrix {
+	namespace {
+		namespace s2d {
 			const UniformName
 							World("sys_mWorld2d"),
 							WorldInv("sys_mWorld2dInv"),
@@ -63,7 +63,7 @@ namespace rev {
 	}
 	void SystemUniform2D::extractUniform(UniformSetF_V& dst, const GLProgram& prog) const {
 		#define DEF_SETUNIF(name) \
-			if(const auto id = prog.getUniformId(sysunif2d::matrix::name)) { \
+			if(const auto id = prog.getUniformId(s2d::name)) { \
 				dst.emplace_back([id=*id](const void* p, UniformEnt& u){ \
 					auto* self = static_cast<const SystemUniform2D*>(p); \
 					u.setUniform(id, spi::UnwrapAcValue(self->get##name())); \
@@ -76,7 +76,7 @@ namespace rev {
 		#undef DEF_SETUNIF
 
 		#define DEF_SETUNIF(name) \
-			if(const auto id = prog.getUniformId(sysunif2d::matrix::name)) { \
+			if(const auto id = prog.getUniformId(s2d::name)) { \
 				dst.emplace_back([id=*id](const void* p, UniformEnt& u){ \
 					auto* self = static_cast<const SystemUniform2D*>(p); \
 					u.setUniform(id, spi::UnwrapAcValue(self->getCamera()->get##name())); \

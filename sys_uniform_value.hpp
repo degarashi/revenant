@@ -34,22 +34,6 @@ namespace rev {
 									Size;			// "sys_vScreenSize"
 		}
 	}
-	namespace sysunif2d {
-		using namespace sysunif;
-		namespace matrix {
-			extern const UniformName
-									World,			// "sys_mWorld2d"
-									WorldInv,		// "sys_mWorld2dInv"
-									View,			// "sys_mView2d"
-									ViewInv,		// "sys_mView2dInv"
-									Proj,			// "sys_mProj2d"
-									ProjInv,		// "sys_mProj2dInv"
-									ViewProj,		// "sys_mProj2d"
-									ViewProjInv,	// "sys_mProj2dInv"
-									Transform,		// "sys_mTrans2"
-									TransformInv;	// "sys_mTrans2Inv
-		}
-	}
 	namespace sysunif3d {
 		using namespace sysunif;
 		namespace matrix {
