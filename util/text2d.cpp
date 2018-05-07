@@ -5,7 +5,7 @@
 #include "../sys_uniform_value.hpp"
 #include "gle_nest.hpp"
 #include "drawtoken/make_uniform.hpp"
-#include "../sys_uniform2d.hpp"
+#include "../u_matrix2d.hpp"
 
 namespace rev {
 	namespace util {
@@ -32,7 +32,7 @@ namespace rev {
 					[d, &e, &m](auto&){
 						auto& u = e.refUniformEnt();
 						u.setUniform(unif2d::Depth, d);
-						dynamic_cast<SystemUniform2D&>(e).setWorld(m);
+						dynamic_cast<U_Matrix2D&>(e).setWorld(m);
 					}
 			);
 		}

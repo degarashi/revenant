@@ -14,7 +14,7 @@
 #include "glx_if.hpp"
 #include "uniform_ent.hpp"
 #include "drawtoken/make_uniform.hpp"
-#include "sys_uniform2d.hpp"
+#include "u_matrix2d.hpp"
 #include "fbrect.hpp"
 #include "primitive.hpp"
 #include "singleton_data_lazy.hpp"
@@ -287,7 +287,7 @@ namespace rev {
 		auto& u = e.refUniformEnt();
 		const auto prev_sci = e.setScissor({false, {0,1,0,1}});
 		u.setUniform(_unif.projMat, ortho_projection);
-		dynamic_cast<SystemUniform2D&>(e).setWorld(frea::Mat3::Identity());
+		dynamic_cast<U_Matrix2D&>(e).setWorld(frea::Mat3::Identity());
 		for (int n=0; n < draw_data->CmdListsCount; n++) {
 			const ImDrawList* cmd_list = draw_data->CmdLists[n];
 			const ImDrawIdx* idx_buffer_offset = 0;

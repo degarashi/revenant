@@ -1,4 +1,4 @@
-#include "sys_uniform2d.hpp"
+#include "u_matrix2d.hpp"
 #include "sys_uniform_value.hpp"
 #include "glx_if.hpp"
 #include "camera2d.hpp"
@@ -7,7 +7,7 @@
 #include "uniform_ent.hpp"
 
 namespace rev {
-	SystemUniform2D::Getter::counter_t SystemUniform2D::Getter::operator()(const HCam2& c, Camera*, const SystemUniform2D&) const {
+	U_Matrix2D::Getter::counter_t U_Matrix2D::Getter::operator()(const HCam2& c, Camera*, const U_Matrix2D&) const {
 		if(c)
 			return c->getAccum();
 		return 0;
@@ -32,11 +32,11 @@ namespace rev {
 							TransformInv("sys_mTrans2dInv");
 		}
 	}
-	bool SystemUniform2D::_refresh(frea::Mat3& m, WorldInv*) const {
+	bool U_Matrix2D::_refresh(frea::Mat3& m, WorldInv*) const {
 		m = getWorld().inversion();
 		return true;
 	}
-	bool SystemUniform2D::_refresh(typename Transform::value_t& m, Transform*) const {
+	bool U_Matrix2D::_refresh(typename Transform::value_t& m, Transform*) const {
 		auto ret = _rflag.getWithCheck(this, m);
 		auto& cam = *std::get<1>(ret);
 		const bool b = ret.flag;
@@ -47,25 +47,25 @@ namespace rev {
 		}
 		return b;
 	}
-	bool SystemUniform2D::_refresh(frea::Mat3& m, TransformInv*) const {
+	bool U_Matrix2D::_refresh(frea::Mat3& m, TransformInv*) const {
 		m = getTransform().inversion();
 		return true;
 	}
 
-	SystemUniform2D::SystemUniform2D() {
+	U_Matrix2D::U_Matrix2D() {
 		auto im = frea::Mat3::Identity();
 		setWorld(im);
 		setTransform(im);
 	}
-	void SystemUniform2D::moveFrom(ISystemUniform& prev) {
-		auto& p = dynamic_cast<SystemUniform2D&>(prev);
+	void U_Matrix2D::moveFrom(ISystemUniform& prev) {
+		auto& p = dynamic_cast<U_Matrix2D&>(prev);
 		_rflag = p._rflag;
 	}
-	void SystemUniform2D::extractUniform(UniformSetF_V& dst, const GLProgram& prog) const {
+	void U_Matrix2D::extractUniform(UniformSetF_V& dst, const GLProgram& prog) const {
 		#define DEF_SETUNIF(name) \
 			if(const auto id = prog.getUniformId(s2d::name)) { \
 				dst.emplace_back([id=*id](const void* p, UniformEnt& u){ \
-					auto* self = static_cast<const SystemUniform2D*>(p); \
+					auto* self = static_cast<const U_Matrix2D*>(p); \
 					u.setUniform(id, spi::UnwrapAcValue(self->get##name())); \
 				}); \
 			}
@@ -78,7 +78,7 @@ namespace rev {
 		#define DEF_SETUNIF(name) \
 			if(const auto id = prog.getUniformId(s2d::name)) { \
 				dst.emplace_back([id=*id](const void* p, UniformEnt& u){ \
-					auto* self = static_cast<const SystemUniform2D*>(p); \
+					auto* self = static_cast<const U_Matrix2D*>(p); \
 					u.setUniform(id, spi::UnwrapAcValue(self->getCamera()->get##name())); \
 				}); \
 			}

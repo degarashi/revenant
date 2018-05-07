@@ -5,7 +5,7 @@
 #include "../../gl_resource.hpp"
 #include "../../gl_texture.hpp"
 #include "../../glx_if.hpp"
-#include "../../sys_uniform2d.hpp"
+#include "../../u_matrix2d.hpp"
 #include "frea/random/vector.hpp"
 #include "../../tls_data.hpp"
 #include <boost/format.hpp>
@@ -50,7 +50,7 @@ namespace rev::test {
 	void MyScene::St_Sprite::onDraw(const MyScene& self, IEffect& e) const {
 		St_Base::onDraw(self, e);
 
-		auto& e2 = dynamic_cast<SystemUniform2D&>(e);
+		auto& e2 = dynamic_cast<U_Matrix2D&>(e);
 		e2.setCamera(_camera);
 	}
 }
