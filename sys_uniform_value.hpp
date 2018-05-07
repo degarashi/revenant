@@ -28,10 +28,4 @@ namespace rev {
 									Emissive;		// "u_texEmissive"
 		}
 	}
-	namespace sysunif {
-		namespace screen {
-			extern const UniformName
-									Size;			// "sys_vScreenSize"
-		}
-	}
 }

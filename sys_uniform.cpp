@@ -15,8 +15,8 @@ namespace rev {
 					Diffuse("u_texDiffuse");
 		}
 	}
-	namespace sysunif {
-		namespace screen {
+	namespace {
+		namespace su {
 			const UniformName
 					Size("sys_vScreenSize");
 		}
@@ -34,7 +34,7 @@ namespace rev {
 		_screenSize = s;
 	}
 	void SystemUniform::extractUniform(UniformSetF_V& dst, const GLProgram& prog) const {
-		if(const auto id = prog.getUniformId(sysunif::screen::Size)) {
+		if(const auto id = prog.getUniformId(su::Size)) {
 			dst.emplace_back([id=*id](const void* p, UniformEnt& u){
 				auto& ss = static_cast<const SystemUniform*>(p)->getScreenSize();
 				u.setUniform(
