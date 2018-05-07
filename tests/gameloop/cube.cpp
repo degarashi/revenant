@@ -4,7 +4,7 @@
 #include "lubee/meta/countof.hpp"
 #include "../../tech_pass.hpp"
 #include "../../glx.hpp"
-#include "../../sys_uniform3d.hpp"
+#include "../../u_matrix3d.hpp"
 
 // ---------------------- Cube頂点宣言 ----------------------
 rev::HVDecl vertex::cube::MakeData(lubee::IConst<0>) {
@@ -185,7 +185,7 @@ void Cube::outputDrawTag(rev::DrawTag& d) const {
 }
 void Cube::draw(rev::IEffect& e) const {
 	e.setTechnique(_tech);
-	dynamic_cast<rev::SystemUniform3D&>(e).setWorld(getToWorld().convertI<4,4>(1));
+	dynamic_cast<rev::U_Matrix3D&>(e).setWorld(getToWorld().convertI<4,4>(1));
 	e.setPrimitive(_getPrimitive());
 	e.draw();
 }

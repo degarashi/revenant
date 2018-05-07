@@ -4,7 +4,7 @@
 #include "../dc/model.hpp"
 #include "gltf/node_cached.hpp"
 #include "glx_if.hpp"
-#include "sys_uniform3d.hpp"
+#include "u_matrix3d.hpp"
 #include "fbrect.hpp"
 #include "systeminfo.hpp"
 
@@ -32,7 +32,7 @@ namespace rev::gltf {
 	void Visitor_Model::addCamera(const HCam3&) {}
 	namespace {
 		dc::NodeParam_UP MakeCache(const IEffect& e, const dc::NodeParam& np) {
-			const auto cam = dynamic_cast<const SystemUniform3D&>(e).getCamera();
+			const auto cam = dynamic_cast<const U_Matrix3D&>(e).getCamera();
 			const auto vp = e.getViewport().resolve([](){ return mgr_info.getScreenSize(); });
 			auto* ret = static_cast<dc::NodeParam*>(static_cast<NodeParam_USem*>(new NodeParam_USemCached(cam, vp, np)));
 			return dc::NodeParam_UP(ret);

@@ -1,4 +1,4 @@
-#include "sys_uniform3d.hpp"
+#include "u_matrix3d.hpp"
 #include "sys_uniform_value.hpp"
 #include "camera3d.hpp"
 #include "glx_if.hpp"
@@ -7,7 +7,7 @@
 #include "uniform_ent.hpp"
 
 namespace rev {
-	SystemUniform3D::Getter::counter_t SystemUniform3D::Getter::operator()(const HCam3& c, Camera*, const SystemUniform3D&) const {
+	U_Matrix3D::Getter::counter_t U_Matrix3D::Getter::operator()(const HCam3& c, Camera*, const U_Matrix3D&) const {
 		if(c)
 			return c->getAccum();
 		return 0;
@@ -39,7 +39,7 @@ namespace rev {
 		}
 	}
 
-	bool SystemUniform3D::_refresh(typename ViewInv::value_t& m, ViewInv*) const {
+	bool U_Matrix3D::_refresh(typename ViewInv::value_t& m, ViewInv*) const {
 		auto ret = _rflag.getWithCheck(this, m);
 		auto& cam = *std::get<0>(ret);
 		const bool b = ret.flag;
@@ -49,7 +49,7 @@ namespace rev {
 		}
 		return true;
 	}
-	bool SystemUniform3D::_refresh(typename ProjInv::value_t& m, ProjInv*) const {
+	bool U_Matrix3D::_refresh(typename ProjInv::value_t& m, ProjInv*) const {
 		auto ret = _rflag.getWithCheck(this, m);
 		auto& cam = *std::get<0>(ret);
 		const bool b = ret.flag;
@@ -59,7 +59,7 @@ namespace rev {
 		}
 		return true;
 	}
-	bool SystemUniform3D::_refresh(typename Transform::value_t& m, Transform*) const {
+	bool U_Matrix3D::_refresh(typename Transform::value_t& m, Transform*) const {
 		auto ret = _rflag.getWithCheck(this, m);
 		auto& cam = *std::get<1>(ret);
 		const bool b = ret.flag;
@@ -70,29 +70,29 @@ namespace rev {
 		}
 		return true;
 	}
-	bool SystemUniform3D::_refresh(frea::AMat4& m, TransformInv*) const {
+	bool U_Matrix3D::_refresh(frea::AMat4& m, TransformInv*) const {
 		m = getTransform().inversion();
 		return true;
 	}
-	bool SystemUniform3D::_refresh(frea::AMat4& m, WorldInv*) const {
+	bool U_Matrix3D::_refresh(frea::AMat4& m, WorldInv*) const {
 		m = getWorld().inversion();
 		return true;
 	}
 
-	SystemUniform3D::SystemUniform3D() {
+	U_Matrix3D::U_Matrix3D() {
 		const auto im = frea::AMat4::Identity();
 		setWorld(im);
 		setTransform(im);
 	}
-	void SystemUniform3D::moveFrom(ISystemUniform& prev) {
-		auto& p = dynamic_cast<SystemUniform3D&>(prev);
+	void U_Matrix3D::moveFrom(ISystemUniform& prev) {
+		auto& p = dynamic_cast<U_Matrix3D&>(prev);
 		_rflag = p._rflag;
 	}
-	void SystemUniform3D::extractUniform(UniformSetF_V& dst, const GLProgram& prog) const {
+	void U_Matrix3D::extractUniform(UniformSetF_V& dst, const GLProgram& prog) const {
 		#define DEF_SETUNIF(name) \
 			if(const auto id = prog.getUniformId(s3d::name)) { \
 				dst.emplace_back([id=*id](const void* p, UniformEnt& u){ \
-					auto* self = static_cast<const SystemUniform3D*>(p); \
+					auto* self = static_cast<const U_Matrix3D*>(p); \
 					u.setUniform(id, spi::UnwrapAcValue(self->get##name())); \
 				}); \
 			}
@@ -107,7 +107,7 @@ namespace rev {
 		#define DEF_SETUNIF(name) \
 			if(const auto id = prog.getUniformId(s3d::name)) { \
 				dst.emplace_back([id=*id](const void* p, UniformEnt& u){ \
-					auto* self = static_cast<const SystemUniform3D*>(p); \
+					auto* self = static_cast<const U_Matrix3D*>(p); \
 					u.setUniform(id, spi::UnwrapAcValue(self->getCamera()->get##name())); \
 				}); \
 			}
@@ -119,14 +119,14 @@ namespace rev {
 
 		if(const auto id = prog.getUniformId(s3d::EyePos)) {
 			dst.emplace_back([id=*id](const void* p, UniformEnt& u){
-				auto* self = static_cast<const SystemUniform3D*>(p);
+				auto* self = static_cast<const U_Matrix3D*>(p);
 				auto& ps = self->getCamera()->getPose();
 				u.setUniform(id, ps.getOffset());
 			});
 		}
 		if(const auto id = prog.getUniformId(s3d::EyePos)) {
 			dst.emplace_back([id=*id](const void* p, UniformEnt& u){
-				auto* self = static_cast<const SystemUniform3D*>(p);
+				auto* self = static_cast<const U_Matrix3D*>(p);
 				auto& ps = self->getCamera()->getPose();
 				u.setUniform(id, ps.getRotation().getZAxis());
 			});

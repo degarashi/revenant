@@ -8,7 +8,7 @@
 #include "../../drawproc.hpp"
 #include "../../sys_uniform.hpp"
 #include "../../u_matrix2d.hpp"
-#include "../../sys_uniform3d.hpp"
+#include "../../u_matrix3d.hpp"
 
 namespace rev {
 	namespace test {
@@ -31,7 +31,7 @@ namespace rev {
 			return uri;
 		}
 		HFx Param::makeEffect() const {
-			return mgr_gl.template makeResource<util::GLE_Nest<SystemUniform, U_Matrix2D, SystemUniform3D, GLEffect>>();
+			return mgr_gl.template makeResource<util::GLE_Nest<SystemUniform, U_Matrix2D, U_Matrix3D, GLEffect>>();
 		}
 		::rev::MainProc* Param::makeMainProc() const {
 			return new MainProc();
