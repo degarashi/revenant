@@ -1,6 +1,6 @@
 #pragma once
 #include "../glx.hpp"
-#include "../sys_uniform_if.hpp"
+#include "../uniform_setter.hpp"
 
 namespace rev::util {
 	template <class... Base>

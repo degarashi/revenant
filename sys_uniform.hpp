@@ -1,5 +1,5 @@
 #pragma once
-#include "sys_uniform_if.hpp"
+#include "uniform_setter.hpp"
 #include "lubee/size.hpp"
 
 namespace rev {
@@ -9,7 +9,7 @@ namespace rev {
 		固定変数リスト:
 		vec4 sys_screen;		// x=ScreenSizeX, y=ScreenSizeY, z=1DotSizeX, w=1DotSizeY
 	*/
-	class SystemUniform : public ISystemUniform {
+	class SystemUniform : public IUniformSetter {
 		private:
 			lubee::SizeI	_screenSize;
 		public:

@@ -3,12 +3,12 @@
 #include "handle/camera.hpp"
 #include "frea/matrix.hpp"
 #include "lubee/alignedalloc.hpp"
-#include "sys_uniform_if.hpp"
+#include "uniform_setter.hpp"
 
 namespace rev {
 	class U_Matrix3D :
 		public lubee::CheckAlign<U_Matrix3D>,
-		public ISystemUniform
+		public IUniformSetter
 	{
 		private:
 			struct Camera;

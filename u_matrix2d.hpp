@@ -2,7 +2,7 @@
 #include "spine/rflag.hpp"
 #include "handle/camera.hpp"
 #include "frea/matrix.hpp"
-#include "sys_uniform_if.hpp"
+#include "uniform_setter.hpp"
 
 namespace rev {
 	//! システムuniform変数をセットする(2D)
@@ -10,7 +10,7 @@ namespace rev {
 		変数リスト:
 		mat3 sys_mTrans2D;		// scale * rotation * offset
 	*/
-	class U_Matrix2D : public ISystemUniform {
+	class U_Matrix2D : public IUniformSetter {
 		private:
 			struct Camera;
 			struct Getter : spi::RFlag_Getter<uint32_t> {

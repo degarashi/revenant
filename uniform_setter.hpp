@@ -7,8 +7,8 @@ namespace rev {
 	class GLProgram;
 	using UniformSetF = std::function<void (const void*, UniformEnt&)>;
 	using UniformSetF_V = std::vector<UniformSetF>;
-	struct ISystemUniform {
-		virtual ~ISystemUniform() {}
+	struct IUniformSetter {
+		virtual ~IUniformSetter() {}
 		virtual void applyUniform(UniformEnt&, const GLProgram&) const {}
 		virtual void extractUniform(UniformSetF_V&, const GLProgram&) const {}
 	};

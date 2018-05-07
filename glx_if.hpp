@@ -1,7 +1,7 @@
 #pragma once
 #include "differential.hpp"
 #include "gl_types.hpp"
-#include "sys_uniform_if.hpp"
+#include "uniform_setter.hpp"
 #include "handle/opengl.hpp"
 #include <unordered_map>
 
@@ -19,7 +19,7 @@ namespace rev {
 	class FBRect;
 	class IEffect :
 		public IGLResource,
-		public ISystemUniform
+		public IUniformSetter
 	{
 		public:
 			virtual UniformEnt& refUniformEnt() noexcept = 0;
