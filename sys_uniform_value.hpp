@@ -1,5 +1,4 @@
 #pragma once
-#include "lubee/wrapper.hpp"
 #include "spine/flyweight_item.hpp"
 
 namespace rev {
