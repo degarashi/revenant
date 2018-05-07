@@ -18,6 +18,7 @@
 #include "drawtoken/task.hpp"
 #include "tls_data.hpp"
 #include "profiler_global.hpp"
+#include "glx_if.hpp"
 
 namespace rev {
 	// ---------------- MainThread ----------------
@@ -128,7 +129,7 @@ namespace rev {
 						auto& param = lk->param;
 						mp.reset(param->makeMainProc());
 						// デフォルトエフェクトファイルを読み込み
-						lk->fx = param->makeEffect();
+						lk->fx = _fx = param->makeEffect();
 						// 最初のシーンを作成
 						mgr_scene.setPushScene(param->makeFirstScene(), false);
 					}
@@ -188,7 +189,11 @@ namespace rev {
 											// ユーザーに通知(Stop)
 											mp->onStop();
 											// 描画キューに入っているOpenGLリソースは無効になるのでここで削除
-											mgr_drawtask.clear();
+											{
+												auto lk = g_system_shared.lock();
+												if(const auto& fx = lk->fx.lock())
+													fx->clearTask();
+											}
 											// MultiContext環境ではContextの関連付けを解除
 											if(MultiContext)
 												dth.getInfo()->ctxMainThread->makeCurrent();

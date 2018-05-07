@@ -16,9 +16,6 @@ namespace rev {
 	class FNotify;
 	class InputMgr;
 	class SystemInfo;
-	namespace draw {
-		class Task;
-	}
 	class LSysFunc;
 	class RWMgr;
 	class AppPath;
@@ -54,7 +51,6 @@ namespace rev {
 				SPtr<SystemInfo>			info;
 				SPtr<AppPath>				appPath;
 				SPtr<GLRes>					glr;
-				SPtr<draw::Task>			dtask;
 				SPtr<SoundMgr>				snd;
 				SPtr<RWMgr>					rwm;
 				SPtr<FontFamily>			font;
@@ -65,6 +61,8 @@ namespace rev {
 				SPtr<ImGui_SDL2>			imgui;
 				SPtr<gltf::GLTFMgr>			gltf;
 			};
+			HFx		_fx;
+
 			static void _InitManagers(Manager& m, const GameloopParam& param, const Window& w);
 			//! AppPathの場所に置かれたフォントファイルを列挙し、読み込む
 			static void _LoadFonts();

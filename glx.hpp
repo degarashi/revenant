@@ -4,6 +4,7 @@
 #include "resmgr_app.hpp"
 #include "drawtoken/viewport.hpp"
 #include "drawtoken/tokenml.hpp"
+#include "drawtoken/task.hpp"
 
 namespace rev {
 	//! GLXエフェクト管理クラス
@@ -24,6 +25,7 @@ namespace rev {
 			HTech				_tech_sp;		//!< 現在使用中のTech
 			UniformEnt			_uniformEnt;
 			draw::TokenML		_tokenML;		//!< 描画スレッドに渡す予定のコマンド
+			draw::Task			_task;
 
 			//! 前回とのバッファの差異
 			/*! Vertex, Indexバッファ情報を一時的にバックアップして差異の検出に備える */
@@ -75,6 +77,8 @@ namespace rev {
 			void beginTask() override;
 			//! OpenGLコマンドをFlushする
 			void endTask() override;
+			//! ウィンドウ非アクティブ時、描画タスクをクリア
+			void clearTask() override;
 			// ---- from DrawThread ----
 			void execTask() override;
 			//! 1フレームあたりのドローコール回数など

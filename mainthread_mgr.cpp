@@ -11,7 +11,6 @@
 #include "camera3d.hpp"
 #include "input.hpp"
 #include "input_sdlvalue.hpp"
-#include "drawtoken/task.hpp"
 #include "gl_resource.hpp"
 #include "glx.hpp"
 #include "font.hpp"
@@ -28,7 +27,6 @@ namespace rev {
 		m.info = std::make_shared<SystemInfo>();
 		// 初回はここで情報をセットする (以降はIMainProc::runUにて)
 		m.info->setInfo(param.getScreenSize(), 0);
-		m.dtask = std::make_shared<draw::Task>();
 		m.rwm = std::make_shared<RWMgr>(param.getOrgName(), param.getAppName());
 		// デフォルトでルートディレクトリからの探索パスを追加
 		m.rwm->addHandler(0x00, std::make_shared<URI_File>(u8"/"));

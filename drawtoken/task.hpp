@@ -6,12 +6,11 @@
 
 namespace rev {
 	namespace draw {
-		#define mgr_drawtask (::rev::draw::Task::ref())
 		/*!
 			PreFuncとして(TPStructR::applySettingsを追加)
 			[Program, FrameBuff, RenderBuff]
 		*/
-		class Task : public spi::Singleton<Task> {
+		class Task {
 			public:
 				constexpr static int NUM_TASK = 3;
 			private:

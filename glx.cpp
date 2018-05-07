@@ -132,7 +132,7 @@ namespace rev {
 	void GLEffect::clearFramebuffer(const draw::ClearParam& param) {
 		_outputFramebuffer();
 		_tokenML.allocate<draw::Clear>(param);
-		mgr_drawtask.refWriteEnt().append(std::move(_tokenML));
+		_task.refWriteEnt().append(std::move(_tokenML));
 	}
 	void GLEffect::draw() {
 		applyUniform(_uniformEnt, *_tech_sp->getProgram());
@@ -169,18 +169,21 @@ namespace rev {
 			);
 			++_diffCount.drawIndexed;
 		}
-		mgr_drawtask.refWriteEnt().append(std::move(_tokenML));
+		_task.refWriteEnt().append(std::move(_tokenML));
 	}
 	void GLEffect::beginTask() {
-		mgr_drawtask.beginTask(shared_from_this());
+		_task.beginTask(shared_from_this());
 		_reset();
 		TupleZeroFill(_diffCount);
 	}
 	void GLEffect::endTask() {
-		mgr_drawtask.endTask();
+		_task.endTask();
 	}
 	void GLEffect::execTask() {
-		mgr_drawtask.execTask();
+		_task.execTask();
+	}
+	void GLEffect::clearTask() {
+		_task.clear();
 	}
 	void GLEffect::setFramebuffer(const HFb& fb) {
 		_hFb = fb;

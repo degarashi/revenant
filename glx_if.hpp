@@ -37,6 +37,7 @@ namespace rev {
 			virtual void beginTask() = 0;
 			virtual void endTask() = 0;
 			virtual void execTask() = 0;
+			virtual void clearTask() = 0;
 			virtual diff::Effect getDifference() const = 0;
 	};
 }
