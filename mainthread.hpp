@@ -26,7 +26,6 @@ namespace rev {
 	class SoundMgr;
 	class FontFamily;
 	class FontGen;
-	struct UnifPool;
 	namespace parse {
 		class FxBlock;
 	}
@@ -61,7 +60,6 @@ namespace rev {
 				SPtr<FontFamily>			font;
 				SPtr<FontGen>				fgen;
 				SPtr<parse::FxBlock>		block;
-				SPtr<UnifPool>				unifPool;
 				SPtr<ObjMgr>				obj;
 				SPtr<SceneMgr>				scene;
 				SPtr<ImGui_SDL2>			imgui;

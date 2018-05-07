@@ -16,16 +16,12 @@
 #include "glx.hpp"
 #include "font.hpp"
 #include "scene_mgr.hpp"
-#include "uniform_pool.hpp"
 #include "glx_block.hpp"
 #include "imgui_sdl2.hpp"
 #include "object_mgr.hpp"
 #include "gltf/mgr.hpp"
 
 namespace rev {
-	namespace {
-		const int DefaultUnifPoolSize = 0x100;
-	}
 	void MainThread::_InitManagers(Manager& m, const GameloopParam& param, const Window& w) {
 		m.lsys = std::make_shared<LSysFunc>();
 		m.inpm = std::make_shared<InputMgr>();
@@ -50,7 +46,6 @@ namespace rev {
 		m.snd = std::make_shared<SoundMgr>(44100);
 		m.snd->makeCurrent();
 		m.block = std::make_shared<parse::FxBlock>();
-		m.unifPool = std::make_shared<UnifPool>(DefaultUnifPoolSize);
 		m.obj = std::make_shared<ObjMgr>();
 		m.scene = std::make_shared<SceneMgr>();
 		m.imgui = std::make_shared<ImGui_SDL2>(
