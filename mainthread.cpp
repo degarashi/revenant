@@ -110,7 +110,6 @@ namespace rev {
 			{
 				// 各種リソースマネージャの初期化
 				Manager mgr;
-				FxReload rel;
 				try {
 					auto lk = g_system_shared.lock();
 					const auto w = lk->window.lock();
@@ -129,8 +128,7 @@ namespace rev {
 						auto& param = lk->param;
 						mp.reset(param->makeMainProc());
 						// デフォルトエフェクトファイルを読み込み
-						rel.curFx = param->makeEffect();
-						lk->fx = rel.curFx;
+						lk->fx = param->makeEffect();
 						// 最初のシーンを作成
 						mgr_scene.setPushScene(param->makeFirstScene(), false);
 					}
@@ -147,7 +145,7 @@ namespace rev {
 					do {
 						RevBeginProfile(Aux);
 						// 必要に応じてシェーダーファイルのリロード処理
-						_checkFxReload(ntf, rel);
+						_checkFxReload(ntf);
 
 						if(!dth.isRunning()) {
 							// 何らかの原因で描画スレッドが終了していた時

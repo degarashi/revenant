@@ -65,12 +65,6 @@ namespace rev {
 				SPtr<ImGui_SDL2>			imgui;
 				SPtr<gltf::GLTFMgr>			gltf;
 			};
-			struct FxReload {
-				HFx	curFx, prevFx;
-				int	prevFxCounter = 0;
-				using PathSet = std::unordered_set<Dir>;
-				PathSet updatePath;
-			};
 			static void _InitManagers(Manager& m, const GameloopParam& param, const Window& w);
 			//! AppPathの場所に置かれたフォントファイルを列挙し、読み込む
 			static void _LoadFonts();
@@ -79,7 +73,7 @@ namespace rev {
 			static void _Backup(Manager& m, std::ostream& os);
 			static void _Restore(Manager& m, std::istream& is);
 			void _setupFxNotify(FNotify& ntf);
-			void _checkFxReload(FNotify& ntf, FxReload& rel);
+			void _checkFxReload(FNotify& ntf);
 			static Timepoint _WaitForNextInterval(Timepoint prevtime, Duration interval);
 			bool _updateFrame(MainProc* mp, DrawThread& dth, Handler& drawHandler, Duration delta);
 		protected:
