@@ -61,7 +61,6 @@ namespace rev {
 				SPtr<ImGui_SDL2>			imgui;
 				SPtr<gltf::GLTFMgr>			gltf;
 			};
-			HFx		_fx;
 
 			static void _InitManagers(Manager& m, const GameloopParam& param, const Window& w);
 			//! AppPathの場所に置かれたフォントファイルを列挙し、読み込む

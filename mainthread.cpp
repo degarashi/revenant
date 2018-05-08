@@ -111,6 +111,7 @@ namespace rev {
 			{
 				// 各種リソースマネージャの初期化
 				Manager mgr;
+				HFx		hFx;
 				try {
 					auto lk = g_system_shared.lock();
 					const auto w = lk->window.lock();
@@ -129,7 +130,7 @@ namespace rev {
 						auto& param = lk->param;
 						mp.reset(param->makeMainProc());
 						// デフォルトエフェクトファイルを読み込み
-						lk->fx = _fx = param->makeEffect();
+						lk->fx = hFx = param->makeEffect();
 						// 最初のシーンを作成
 						mgr_scene.setPushScene(param->makeFirstScene(), false);
 					}
