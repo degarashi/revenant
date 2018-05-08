@@ -4,10 +4,6 @@
 
 namespace rev {
 	namespace draw {
-		/*!
-			PreFuncとして(TPStructR::applySettingsを追加)
-			[Program, FrameBuff, RenderBuff]
-		*/
 		class Task {
 			private:
 				constexpr static int NUM_TASK = 3;
