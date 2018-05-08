@@ -9,15 +9,15 @@ namespace rev {
 			_curWrite(0),
 			_curRead(0)
 		{}
-		TokenML& Task::refWriteEnt() {
+		TokenML& Task::_refWriteEnt() {
 			UniLock lk(_mutex);
 			return _entry[_curWrite % NUM_TASK];
 		}
-		TokenML& Task::refReadEnt() {
+		TokenML& Task::_refReadEnt() {
 			UniLock lk(_mutex);
 			return _entry[_curRead % NUM_TASK];
 		}
-		void Task::beginTask() {
+		TokenML& Task::beginTask() {
 			RevProfile(BeginTask);
 			UniLock lk(_mutex);
 			// 読み込みカーソルが追いついてない時は追いつくまで待つ
@@ -28,9 +28,10 @@ namespace rev {
 				diff = _curWrite - _curRead;
 				Assert0(diff >= 0);
 			}
-			auto& we = refWriteEnt();
+			auto& we = _refWriteEnt();
 			lk.unlock();
 			we.clear();
+			return we;
 		}
 		void Task::endTask() {
 			GL.glFlush();
@@ -51,7 +52,7 @@ namespace rev {
 			auto diff = _curWrite - _curRead;
 			Assert0(diff >= 0);
 			if(diff > 0) {
-				auto& readent = refReadEnt();
+				auto& readent = _refReadEnt();
 				lk = spi::none;
 				// MThとアクセスするエントリが違うから同期をとらなくて良い
 				readent.exec();

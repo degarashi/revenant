@@ -26,6 +26,7 @@ namespace rev {
 			UniformEnt			_uniformEnt;
 			draw::TokenML		_tokenML;		//!< 描画スレッドに渡す予定のコマンド
 			draw::Task			_task;
+			draw::TokenML*		_writeEnt;
 
 			//! 前回とのバッファの差異
 			/*! Vertex, Indexバッファ情報を一時的にバックアップして差異の検出に備える */

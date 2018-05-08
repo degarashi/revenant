@@ -14,12 +14,13 @@ namespace rev {
 				Mutex		_mutex;
 				CondV		_cond;
 
+				TokenML& _refWriteEnt();
+				TokenML& _refReadEnt();
+
 			public:
 				Task();
-				draw::TokenML& refWriteEnt();
-				draw::TokenML& refReadEnt();
 				// -------------- from MainThread --------------
-				void beginTask();
+				TokenML& beginTask();
 				void endTask();
 				void clear();
 				// -------------- from DrawThread --------------

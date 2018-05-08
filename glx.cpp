@@ -38,6 +38,7 @@ namespace rev {
 	}
 	void GLEffect::_reset() {
 		_primitive = _primitive_prev = c_invalidPrimitive;
+		_writeEnt = nullptr;
 
 		_clean_drawvalue();
 		_hFb = HFb();
@@ -129,7 +130,7 @@ namespace rev {
 	void GLEffect::clearFramebuffer(const draw::ClearParam& param) {
 		_outputFramebuffer();
 		_tokenML.allocate<draw::Clear>(param);
-		_task.refWriteEnt().append(std::move(_tokenML));
+		_writeEnt->append(std::move(_tokenML));
 	}
 	void GLEffect::draw() {
 		applyUniform(_uniformEnt, *_tech_sp->getProgram());
@@ -166,15 +167,16 @@ namespace rev {
 			);
 			++_diffCount.drawIndexed;
 		}
-		_task.refWriteEnt().append(std::move(_tokenML));
+		_writeEnt->append(std::move(_tokenML));
 	}
 	void GLEffect::beginTask() {
-		_task.beginTask();
 		_reset();
+		_writeEnt = &_task.beginTask();
 		TupleZeroFill(_diffCount);
 	}
 	void GLEffect::endTask() {
 		_task.endTask();
+		_writeEnt = nullptr;
 	}
 	void GLEffect::execTask() {
 		_task.execTask();
