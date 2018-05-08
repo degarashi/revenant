@@ -9,75 +9,69 @@
 #include "chunk.hpp"
 
 namespace rev {
+	struct TextureBase {
+		void use_begin() const;
+		void use_end() const;
+
+		//! [mipLevel][Nearest / Linear]
+		const static GLuint cs_Filter[3][2];
+
+		GLuint		_idTex;
+		int			_iLinearMag,	//!< Linearの場合は1, Nearestは0
+					_iLinearMin;
+		WrapState	_wrapS,
+					_wrapT;
+		MipState	_mipLevel;
+		GLuint		_actId;		//!< セットしようとしているActiveTextureId (for Use())
+		GLuint		_texFlag;	//!< TEXTURE_2D or TEXTURE_CUBE_MAP
+		float		_coeff;
+
+		GLuint getTexFlag() const;
+		//! テクスチャユニット番号を指定してBind
+		void setActiveId(GLuint n);
+		GLint getTextureId() const;
+		static bool IsMipmap(MipState level);
+		bool isMipmap() const;
+		bool isCubemap() const;
+		void setFilter(bool bLinearMag, bool bLinearMin);
+		void setMagMinFilter(bool bLinear);
+		void setAnisotropicCoeff(float coeff);
+		void setUVWrap(WrapState s, WrapState t);
+		void setWrap(WrapState st);
+	};
 	class PathBlock;
 	using ByteBuff = std::vector<uint8_t>;
-	namespace draw {
-		class Texture;
-		class TextureA;
-	}
-	class Texture_URI;
-	using Size_Fmt = std::pair<lubee::SizeI, GLInCompressedFmt>;
 	//! OpenGLテクスチャインタフェース
 	/*!	フィルターはNEARESTとLINEARしか無いからboolで管理 */
 	class IGLTexture :
+		public TextureBase,
 		public IGLResource,
 		public std::enable_shared_from_this<IGLTexture>
 	{
-		public:
-			friend class RUser<IGLTexture>;
-			friend class draw::Texture;
-			friend class draw::TextureA;
-
-			void use_begin() const;
-			void use_end() const;
 		protected:
-			GLuint		_idTex;
-			int			_iLinearMag,	//!< Linearの場合は1, Nearestは0
-						_iLinearMin;
-			WrapState	_wrapS,
-						_wrapT;
-			GLuint		_actId;		//!< セットしようとしているActiveTextureId (for Use())
-			//! [mipLevel][Nearest / Linear]
-			const static GLuint cs_Filter[3][2];
-			const MipState		_mipLevel;
-			GLuint				_texFlag,	//!< TEXTURE_2D or TEXTURE_CUBE_MAP
-								_faceFlag;	//!< TEXTURE_2D or TEXTURE_CUBE_MAP_POSITIVE_X
-			float				_coeff;
+			GLuint				_faceFlag;	//!< TEXTURE_2D or TEXTURE_CUBE_MAP_POSITIVE_X
 			lubee::SizeI		_size;
 			InCompressedFmt_OP	_format;	//!< 値が無効 = 不定
 
 			bool _onDeviceReset();
 			IGLTexture(MipState miplevel, InCompressedFmt_OP fmt, const lubee::SizeI& sz, bool bCube);
-			IGLTexture(const IGLTexture& t);
 
 		public:
-			IGLTexture(IGLTexture&& t);
 			virtual ~IGLTexture();
+			IGLTexture(IGLTexture&& t);
 
-			void setFilter(bool bLinearMag, bool bLinearMin);
-			void setMagMinFilter(bool bLinear);
-			void setAnisotropicCoeff(float coeff);
-			void setUVWrap(WrapState s, WrapState t);
-			void setWrap(WrapState st);
 			const char* getResourceName() const noexcept override;
 
 			const lubee::SizeI& getSize() const;
-			GLint getTextureId() const;
 			const InCompressedFmt_OP& getFormat() const;
-			GLenum getTexFlag() const;
 			GLenum getFaceFlag(CubeFace face=CubeFace::PositiveX) const;
 			void onDeviceLost() override;
-			//! テクスチャユニット番号を指定してBind
-			void setActiveId(GLuint n);
 
-			static bool IsMipmap(MipState level);
-			bool isMipmap() const;
 			//! 内容をファイルに保存 (主にデバッグ用)
 			void save(const PathBlock& path, CubeFace face=CubeFace::PositiveX);
 			DEF_DEBUGGUI_PROP
 			DEF_DEBUGGUI_SUMMARY
 
-			bool isCubemap() const;
 			bool operator == (const IGLTexture& t) const;
 			ByteBuff readData(GLInFmt internalFmt, GLTypeFmt elem, int level=0, CubeFace face=CubeFace::PositiveX) const;
 			ByteBuff readRect(GLInFmt internalFmt, GLTypeFmt elem, const lubee::RectI& rect, CubeFace face=CubeFace::PositiveX) const;
@@ -119,6 +113,7 @@ namespace rev {
 			void writeRect(AB_Byte buff, const lubee::RectI& rect, GLTypeFmt srcFmt, CubeFace face=CubeFace::PositiveX);
 			DEF_DEBUGGUI_NAME
 	};
+	using Size_Fmt = std::pair<lubee::SizeI, GLInCompressedFmt>;
 	Size_Fmt LoadTextureFromBuffer(const IGLTexture& tex, GLenum tflag, GLenum format, const lubee::SizeI& size, const ByteBuff& buff, bool bP2, bool bMip);
 
 	//! URIから2Dテクスチャを読む

@@ -9,40 +9,75 @@
 #include "drawtoken/texture.hpp"
 
 namespace rev {
-	// ------------------------- IGLTexture -------------------------
-	const GLuint IGLTexture::cs_Filter[3][2] = {
+	// ------------------------- TextureBase -------------------------
+	const GLuint TextureBase::cs_Filter[3][2] = {
 		{GL_NEAREST, GL_LINEAR},
 		{GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_NEAREST},
 		{GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR}
 	};
-	IGLTexture::IGLTexture(const MipState miplevel, const InCompressedFmt_OP fmt, const lubee::SizeI& sz, const bool bCube):
-		_idTex(0), _iLinearMag(0), _iLinearMin(0), _wrapS(WrapState::ClampToEdge), _wrapT(WrapState::ClampToEdge),
-		_actId(0), _mipLevel(miplevel), _texFlag(bCube ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D),
-		_faceFlag(bCube ? GL_TEXTURE_CUBE_MAP_POSITIVE_X : GL_TEXTURE_2D), _coeff(0), _size(sz), _format(fmt)
-	{
-		Assert0(!bCube || (_size.width==_size.height));
-	}
-	#define FUNC_COPY(z, data, elem)	(elem(data.elem))
-	#define FUNC_MOVE(z, data, elem)	(elem(std::move(data.elem)))
-	#define SEQ_TEXTURE (_idTex)(_iLinearMag)(_iLinearMin)(_wrapS)(_wrapT)(_actId)\
-						(_mipLevel)(_texFlag)(_faceFlag)(_coeff)(_size)(_format)
-	IGLTexture::IGLTexture(IGLTexture&& t):
-		BOOST_PP_SEQ_ENUM(BOOST_PP_SEQ_FOR_EACH(FUNC_MOVE, t, SEQ_TEXTURE))
-	{
-		t._idTex = 0;
-	}
-	IGLTexture::IGLTexture(const IGLTexture& t):
-		BOOST_PP_SEQ_ENUM(BOOST_PP_SEQ_FOR_EACH(FUNC_COPY, t, SEQ_TEXTURE))
-	{}
-
-	void IGLTexture::use_begin() const {
+	void TextureBase::use_begin() const {
 		D_GLAssert(glActiveTexture, GL_TEXTURE0 + _actId);
-		D_GLAssert(glBindTexture, getTexFlag(), _idTex);
+		D_GLAssert(glBindTexture, _texFlag, _idTex);
 		D_GLAssert0();
 	}
-	void IGLTexture::use_end() const {
+	void TextureBase::use_end() const {
 		D_GLAssert0();
 		D_GLAssert(glBindTexture, _texFlag, 0);
+	}
+	GLuint TextureBase::getTexFlag() const {
+		return _idTex;
+	}
+	void TextureBase::setActiveId(GLuint n) {
+		_actId = n;
+	}
+	GLint TextureBase::getTextureId() const {
+		return _idTex;
+	}
+	bool TextureBase::isMipmap() const {
+		return  IsMipmap(_mipLevel);
+	}
+	bool TextureBase::isCubemap() const {
+		return _texFlag != GL_TEXTURE_2D;
+	}
+	bool TextureBase::IsMipmap(const MipState level) {
+		return level >= MipState::MipmapNear;
+	}
+	void TextureBase::setAnisotropicCoeff(float coeff) {
+		_coeff = coeff;
+	}
+	void TextureBase::setFilter(bool bLinearMag, bool bLinearMin) {
+		_iLinearMag = bLinearMag ? 1 : 0;
+		_iLinearMin = bLinearMin ? 1 : 0;
+	}
+	void TextureBase::setMagMinFilter(bool bLinear) {
+		setFilter(bLinear, bLinear);
+	}
+	void TextureBase::setUVWrap(WrapState s, WrapState t) {
+		_wrapS = s;
+		_wrapT = t;
+	}
+	void TextureBase::setWrap(WrapState st) {
+		setUVWrap(st, st);
+	}
+
+	// ------------------------- IGLTexture -------------------------
+	IGLTexture::IGLTexture(const MipState miplevel, const InCompressedFmt_OP fmt, const lubee::SizeI& sz, const bool bCube):
+		TextureBase {
+			._idTex = 0,
+			._iLinearMag = 0,
+			._iLinearMin = 0,
+			._wrapS = WrapState::ClampToEdge,
+			._wrapT = WrapState::ClampToEdge,
+			._mipLevel = miplevel,
+			._actId = 0,
+			._texFlag = GLuint(bCube ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D),
+			._coeff = 0,
+		},
+		_faceFlag(bCube ? GL_TEXTURE_CUBE_MAP_POSITIVE_X : GL_TEXTURE_2D),
+		_size(sz),
+		_format(fmt)
+	{
+		Assert0(!bCube || (_size.width==_size.height));
 	}
 
 	bool IGLTexture::_onDeviceReset() {
@@ -51,9 +86,6 @@ namespace rev {
 			return true;
 		}
 		return false;
-	}
-	GLenum IGLTexture::getTexFlag() const {
-		return _texFlag;
 	}
 	GLenum IGLTexture::getFaceFlag(CubeFace face) const {
 		if(isCubemap())
@@ -66,13 +98,8 @@ namespace rev {
 	IGLTexture::~IGLTexture() {
 		onDeviceLost();
 	}
-	const lubee::SizeI& IGLTexture::getSize() const { return _size; }
-	GLint IGLTexture::getTextureId() const { return _idTex; }
-	void IGLTexture::setActiveId(GLuint n) { _actId = n; }
-	bool IGLTexture::isMipmap() const { return  IsMipmap(_mipLevel); }
-	bool IGLTexture::isCubemap() const { return _texFlag != GL_TEXTURE_2D; }
-	bool IGLTexture::IsMipmap(const MipState level) {
-		return level >= MipState::MipmapNear;
+	const lubee::SizeI& IGLTexture::getSize() const {
+		return _size;
 	}
 	void IGLTexture::save(const PathBlock& path, CubeFace face) {
 		auto buff = readData(GL_BGRA, GL_UNSIGNED_BYTE, 0, face);
@@ -134,16 +161,6 @@ namespace rev {
 		GL.glBindFramebuffer(flag, id);
 		return buff;
 	}
-	void IGLTexture::setAnisotropicCoeff(float coeff) {
-		_coeff = coeff;
-	}
-	void IGLTexture::setFilter(bool bLinearMag, bool bLinearMin) {
-		_iLinearMag = bLinearMag ? 1 : 0;
-		_iLinearMin = bLinearMin ? 1 : 0;
-	}
-	void IGLTexture::setMagMinFilter(bool bLinear) {
-		setFilter(bLinear, bLinear);
-	}
 	void IGLTexture::onDeviceLost() {
 		if(_idTex != 0) {
 			GLW.getDrawHandler().postExecNoWait([buffId=getTextureId()](){
@@ -153,13 +170,6 @@ namespace rev {
 			_idTex = 0;
 			D_GLWarn0();
 		}
-	}
-	void IGLTexture::setUVWrap(WrapState s, WrapState t) {
-		_wrapS = s;
-		_wrapT = t;
-	}
-	void IGLTexture::setWrap(WrapState st) {
-		setUVWrap(st, st);
 	}
 	bool IGLTexture::operator == (const IGLTexture& t) const {
 		return getTextureId() == t.getTextureId();

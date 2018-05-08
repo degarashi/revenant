@@ -15,24 +15,18 @@ namespace rev::draw {
 	}
 	// --------------- Texture ---------------
 	Texture::Texture(const HTexC& hTex):
-		IGLTexture(*hTex),
-		_hTex(hTex),
-		_actId(-1)
+		TextureBase(*hTex),
+		_hTex(hTex)
 	{}
-	Texture::~Texture() {
-		// IGLTextureのdtorでリソースを開放されないように0にセットしておく
-		_idTex = 0;
-	}
 	void Texture::setIds(const GLint id, const int activeTexId) const {
 		idUnif = id;
-		_actId = activeTexId;
+		const_cast<Texture*>(this)->_actId = activeTexId;
 	}
 	void Texture::exportToken(TokenDst& dst, const GLint id, const int activeTexId) const {
-		_actId = activeTexId;
+		const_cast<Texture*>(this)->_actId = activeTexId;
 		Uniform::exportToken(dst, id);
 	}
 	void Texture::exec() {
-		setActiveId(_actId);
 		// 最後にBindは解除しない
 		use_begin();
 		{

@@ -6,17 +6,16 @@
 namespace rev::draw {
 	// 連番テクスチャはUniformId + Indexとして設定
 	class Texture :
-		public IGLTexture,
+		public TextureBase,
 		public Uniform<Texture>
 	{
 		private:
 			HTexC			_hTex;
-			mutable int		_actId;
 		public:
 			Texture(const HTexC& hTex);
+			virtual ~Texture() {}
 			void exportToken(TokenDst& dst, GLint id, int activeTexId) const override;
 			void setIds(GLint id, int activeTexId) const;
-			virtual ~Texture();
 			void exec() override;
 			bool isArray() const noexcept override;
 			#ifdef DEBUGGUI_ENABLED
