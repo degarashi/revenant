@@ -17,7 +17,7 @@ namespace rev {
 			UniLock lk(_mutex);
 			return _entry[_curRead % NUM_TASK];
 		}
-		void Task::beginTask(HFx hFx) {
+		void Task::beginTask() {
 			RevProfile(BeginTask);
 			UniLock lk(_mutex);
 			// 読み込みカーソルが追いついてない時は追いつくまで待つ
@@ -30,7 +30,6 @@ namespace rev {
 			}
 			auto& we = refWriteEnt();
 			lk.unlock();
-			_hFx[_curWrite % NUM_TASK] = hFx;
 			we.clear();
 		}
 		void Task::endTask() {
@@ -44,8 +43,6 @@ namespace rev {
 			GL.glFinish();
 			for(auto& e : _entry)
 				e.clear();
-			for(auto& h : _hFx)
-				h.reset();
 			_curWrite = _curRead = 0;
 		}
 		void Task::execTask() {

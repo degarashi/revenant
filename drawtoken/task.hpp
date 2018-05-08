@@ -16,7 +16,6 @@ namespace rev {
 			private:
 				//! 描画エントリのリングバッファ
 				draw::TokenML	_entry[NUM_TASK];
-				HFx	 			_hFx[NUM_TASK];
 				//! 読み書きカーソル位置
 				int			_curWrite, _curRead;
 				Mutex		_mutex;
@@ -27,7 +26,7 @@ namespace rev {
 				draw::TokenML& refWriteEnt();
 				draw::TokenML& refReadEnt();
 				// -------------- from MainThread --------------
-				void beginTask(HFx hFx);
+				void beginTask();
 				void endTask();
 				void clear();
 				// -------------- from DrawThread --------------

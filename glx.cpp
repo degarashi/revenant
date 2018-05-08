@@ -172,7 +172,7 @@ namespace rev {
 		_task.refWriteEnt().append(std::move(_tokenML));
 	}
 	void GLEffect::beginTask() {
-		_task.beginTask(shared_from_this());
+		_task.beginTask();
 		_reset();
 		TupleZeroFill(_diffCount);
 	}
