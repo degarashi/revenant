@@ -12,7 +12,6 @@ namespace rev {
 		struct Token {
 			virtual ~Token() {}
 			virtual void exec() = 0;
-			virtual void takeout(TokenDst& dst) = 0;
 			virtual void clone(TokenDst& dst) const = 0;
 			virtual void exportToken(TokenDst& dst, const GLint id=-1, const int activeTexId=-1) const = 0;
 			virtual std::size_t getSize() const = 0;
@@ -33,10 +32,6 @@ namespace rev {
 			}
 			void exportToken(TokenDst& dst, const GLint /*id*/ = -1, const int /*activeTexId*/ = -1) const override {
 				clone(dst);
-			}
-			// 引数のバッファへ中身をmoveする
-			void takeout(TokenDst& dst) override {
-				new(dst.allocate_memory(getSize(), CalcTokenOffset<T>())) T(std::move(static_cast<T&>(*this)));
 			}
 			std::size_t getSize() const override {
 				return sizeof(T);
