@@ -1,8 +1,6 @@
 #pragma once
-#include "spine/singleton.hpp"
 #include "tokenml.hpp"
 #include "../sdl_mutex.hpp"
-#include "handle/opengl.hpp"
 
 namespace rev {
 	namespace draw {
