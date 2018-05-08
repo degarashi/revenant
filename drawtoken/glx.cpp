@@ -23,13 +23,6 @@ namespace rev {
 			if(ibuff)
 				ibuff->use_end();
 		}
-		// -------------- UserFunc --------------
-		UserFunc::UserFunc(const Func& f):
-			_func(f)
-		{}
-		void UserFunc::exec() {
-			_func();
-		}
 		// -------------- Tag_Draw --------------
 		Draw::Draw(Stream&& vs, const GLenum mode, const GLint first, const GLsizei count):
 			_stream(std::move(vs)),

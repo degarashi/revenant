@@ -6,15 +6,6 @@
 
 namespace rev {
 	namespace draw {
-		class UserFunc : public TokenT<UserFunc> {
-			public:
-				using Func = std::function<void ()>;
-			private:
-				Func	_func;
-			public:
-				UserFunc(const Func& f);
-				void exec() override;
-		};
 		//MEMO: ソースの改変を経ている為、少し実装が回りくどいと思われる
 		//! 頂点インプットに関するOpenGLコール
 		/*! 頂点バッファ, インデックスバッファ, 頂点フォーマットが対象 */
