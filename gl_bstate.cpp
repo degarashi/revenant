@@ -1,5 +1,6 @@
 #include "gl_bstate.hpp"
 #include "lubee/hash_combine.hpp"
+#include "drawtoken/bstate.hpp"
 
 namespace rev {
 	namespace {
@@ -20,6 +21,10 @@ namespace rev {
 	}
 	void GL_BState::apply() const {
 		(GL.*cs_func[static_cast<std::size_t>(_enable)])(_flag);
+	}
+	void GL_BState::getDrawToken(draw::TokenDst& dst) const {
+		using UT = draw::BState;
+		new(dst.allocate_memory(sizeof(UT), draw::CalcTokenOffset<UT>())) UT(_flag, _enable);
 	}
 	bool GL_BState::operator == (const GLState& s) const noexcept {
 		return _Compare(*this, s);

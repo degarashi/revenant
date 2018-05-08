@@ -63,12 +63,9 @@ namespace rev {
 		_uniformEnt.setProgram(tech->getProgram());
 		// 各種セッティングをするTokenをリストに追加
 		_tech_sp->getProgram()->getDrawToken(_tokenML);
-		// MEMO: Techにマルチスレッドでアクセスしてしまってるので要改善
-		_tokenML.allocate<draw::UserFunc>([t = _tech_sp](){
-			auto& sv = t->getSetting();
-			for(auto& s : sv)
-				s->apply();
-		});
+		auto& sv = _tech_sp->getSetting();
+		for(auto& s : sv)
+			s->getDrawToken(_tokenML);
 		// Uniformデフォルト値読み込み
 		_uniformEnt.copyFrom(_tech_sp->getDefaultValue());
 		return prev_tech;

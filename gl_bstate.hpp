@@ -12,6 +12,7 @@ namespace rev {
 			GL_BState(bool enable, GLenum flag);
 			Type getType() const noexcept override;
 			void apply() const override;
+			void getDrawToken(draw::TokenDst& dst) const override;
 			std::size_t getHash() const noexcept override;
 			bool operator == (const GLState& s) const noexcept override;
 			bool operator == (const GL_BState& s) const noexcept;

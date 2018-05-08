@@ -3,6 +3,7 @@
 #include "gl_if.hpp"
 #include "lubee/logical.hpp"
 #include "lubee/tuplehash.hpp"
+#include "drawtoken/vstate.hpp"
 
 namespace rev {
 	void GL_VState_Gui(const char* func, int n, ...);
@@ -52,6 +53,10 @@ namespace rev {
 				_args{args...},
 				_func(f)
 			{}
+			void getDrawToken(draw::TokenDst& dst) const override {
+				using UT = draw::VState<Func, Args...>;
+				new(dst.allocate_memory(sizeof(UT), draw::CalcTokenOffset<UT>())) UT(_func, _args);
+			}
 			std::size_t getHash() const noexcept override {
 				// 適当実装だがとりあえず、これで。
 				auto* ptr = (const intptr_t*)(&_func);
