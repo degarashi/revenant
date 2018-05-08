@@ -9,9 +9,8 @@ namespace rev {
 			[Program, FrameBuff, RenderBuff]
 		*/
 		class Task {
-			public:
-				constexpr static int NUM_TASK = 3;
 			private:
+				constexpr static int NUM_TASK = 3;
 				//! 描画エントリのリングバッファ
 				draw::TokenML	_entry[NUM_TASK];
 				//! 読み書きカーソル位置
