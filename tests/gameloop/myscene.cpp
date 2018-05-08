@@ -14,6 +14,7 @@ namespace rev::test {
 	MyScene::MyScene():
 		_sceneId(2)
 	{
+		_textTech = rev::TextObj::GetDefaultTech();
 		{
 			// フォント初期化
 			CCoreID cid(16, 0, CCoreID::CharFlag_AA, false, 100, CCoreID::SizeType_Pixel);
@@ -67,7 +68,7 @@ namespace rev::test {
 	}
 	void MyScene::_showFPS(IEffect& e) const {
 		// FPSを左上に表示
-		e.setTechnique(rev::TextObj::GetDefaultTech());
+		e.setTechnique(_textTech);
 		_fps.setText((boost::format("FPS: %1%") % mgr_info.getFPS()).str().c_str());
 		_fps.draw(e);
 	}

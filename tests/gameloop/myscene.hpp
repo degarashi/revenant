@@ -16,6 +16,7 @@ namespace rev::test {
 			mutable util::TextHUD	_fps;
 			HAct					_act[Act::_Num];
 			HObj					_gui;
+			HTech					_textTech;
 			std::size_t				_sceneId;
 
 			constexpr static std::size_t NState = 3;
