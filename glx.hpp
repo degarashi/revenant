@@ -2,18 +2,58 @@
 #include "glx_if.hpp"
 #include "glx_tech.hpp"
 #include "resmgr_app.hpp"
-#include "drawtoken/viewport.hpp"
-#include "drawtoken/tokenml.hpp"
-#include "drawtoken/task.hpp"
+#include "clear.hpp"
+#include "fbrect.hpp"
+#include "drawcmd/cmd.hpp"
+#include "drawcmd/task.hpp"
 
 namespace rev {
 	//! GLXエフェクト管理クラス
 	class GLEffect : public IEffect, public std::enable_shared_from_this<GLEffect> {
-		public:
+		private:
+			//! Draw token (without index)
+			struct DCmd_Draw {
+				GLenum		mode;
+				GLint		first;
+				GLsizei		count;
+
+				static void Command(const void* p);
+			};
+			//! Draw token (with index)
+			struct DCmd_DrawIndexed {
+				//! 描画モードフラグ(OpenGL)
+				GLenum			mode;
+				//! 描画に使用される要素数
+				GLsizei			count;
+				//! 1要素のサイズを表すフラグ
+				GLenum			sizeF;
+				//! オフセットバイト数
+				GLuint			offset;
+
+				static void Command(const void* p);
+			};
+			struct DCmd_Clear {
+				bool			bColor,
+								bDepth,
+								bStencil;
+				frea::Vec4		color;
+				float			depth;
+				uint32_t		stencil;
+				static void Command(const void* p);
+			};
+			struct DCmd_Scissor {
+				FBRect		rect;
+				static void Command(const void* p);
+			};
+			struct DCmd_Viewport {
+				FBRect		rect;
+				static void Command(const void* p);
+			};
+
 			bool			_bInit = false;		//!< deviceLost/Resetの状態区別
 			diff::Effect	_diffCount;			/*!< バッファのカウントクリアはclearTask()かbeginTask()の呼び出しタイミング */
 
-			HPrim	_primitive,
+			HPrim			_primitive,
 							_primitive_prev;
 			using HFb_OP = spi::Optional<HFb>;
 			HFb_OP				_hFb;			//!< 描画対象のフレームバッファ (無効ならデフォルトターゲット)
@@ -24,9 +64,9 @@ namespace rev {
 								_bScissor;
 			HTech				_tech_sp;		//!< 現在使用中のTech
 			UniformEnt			_uniformEnt;
-			draw::TokenML		_tokenML;		//!< 描画スレッドに渡す予定のコマンド
+			draw::CommandVec	_cmdvec;		//!< 描画スレッドに渡す予定のコマンド
 			draw::Task			_task;
-			draw::TokenML*		_writeEnt;
+			draw::IQueue*		_writeEnt;
 
 			//! 前回とのバッファの差異
 			/*! Vertex, Indexバッファ情報を一時的にバックアップして差異の検出に備える */
@@ -35,7 +75,6 @@ namespace rev {
 			//! Tech/Passの切り替えで無効になる変数をリセット
 			void _clean_drawvalue();
 			void _outputFramebuffer();
-			void _clearFramebuffer(draw::TokenML& ml);
 		public:
 			GLEffect();
 			HTech setTechnique(const HTech& tech) override;
@@ -67,7 +106,7 @@ namespace rev {
 			void setPrimitive(const HPrim& p) noexcept override;
 
 			// ----------------- Buffer Clear -----------------
-			void clearFramebuffer(const draw::ClearParam& param) override;
+			void clearFramebuffer(const ClearParam& param) override;
 			// ----------------- Draw call -----------------
 			void draw() override;
 

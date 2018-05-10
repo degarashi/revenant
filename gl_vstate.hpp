@@ -3,7 +3,7 @@
 #include "gl_if.hpp"
 #include "lubee/logical.hpp"
 #include "lubee/tuplehash.hpp"
-#include "drawtoken/vstate.hpp"
+#include "drawcmd/queue_if.hpp"
 
 namespace rev {
 	void GL_VState_Gui(const char* func, int n, ...);
@@ -33,10 +33,6 @@ namespace rev {
 			Args_t	_args;
 			Func	_func;
 			template <std::size_t... Idx>
-			void _apply(std::index_sequence<Idx...>) const {
-				(GL.*_func)(std::get<Idx>(_args)...);
-			}
-			template <std::size_t... Idx>
 			bool _compare(const GL_VState& s, std::index_sequence<Idx...>) const {
 				return lubee::And_L((std::get<Idx>(_args) == std::get<Idx>(s._args))...);
 			}
@@ -48,14 +44,27 @@ namespace rev {
 					GL_VState_ToStr(std::get<Idx>(_args)).c_str()...
 				);
 			}
+
+			struct DCmd_Apply {
+				Args_t	args;
+				Func	func;
+
+				template <std::size_t... Idx>
+				void _apply(std::index_sequence<Idx...>) const {
+					(GL.*func)(std::get<Idx>(args)...);
+				}
+				static void Command(const void* p) {
+					auto& self = *static_cast<const DCmd_Apply*>(p);
+					self._apply(std::make_index_sequence<NArgs>{});
+				}
+			};
 		public:
 			GL_VState(const Func f, const Args&... args):
 				_args{args...},
 				_func(f)
 			{}
-			void getDrawToken(draw::TokenDst& dst) const override {
-				using UT = draw::VState<Func, Args...>;
-				new(dst.allocate_memory(sizeof(UT), draw::CalcTokenOffset<UT>())) UT(_func, _args);
+			void dcmd_apply(draw::IQueue& q) const override {
+				q.add(DCmd_Apply{_args, _func});
 			}
 			std::size_t getHash() const noexcept override {
 				// 適当実装だがとりあえず、これで。
@@ -64,9 +73,6 @@ namespace rev {
 			}
 			Type getType() const noexcept override {
 				return Type::Value;
-			}
-			void apply() const override {
-				_apply(std::make_index_sequence<NArgs>{});
 			}
 			bool operator == (const GLState& s) const noexcept override {
 				return _Compare(*this, s);

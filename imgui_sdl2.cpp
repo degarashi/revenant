@@ -13,7 +13,6 @@
 #include "tech_if.hpp"
 #include "glx_if.hpp"
 #include "uniform_ent.hpp"
-#include "drawtoken/make_uniform.hpp"
 #include "u_matrix2d.hpp"
 #include "fbrect.hpp"
 #include "primitive.hpp"
@@ -286,7 +285,7 @@ namespace rev {
 		const auto prev_tech = e.setTechnique(_tech);
 		auto& u = e.refUniformEnt();
 		const auto prev_sci = e.setScissor({false, {0,1,0,1}});
-		u.setUniform(_unif.projMat, ortho_projection);
+		u.setUniformById(_unif.projMat, ortho_projection);
 		dynamic_cast<U_Matrix2D&>(e).setWorld(frea::Mat3::Identity());
 		for (int n=0; n < draw_data->CmdListsCount; n++) {
 			const ImDrawList* cmd_list = draw_data->CmdLists[n];
@@ -304,7 +303,7 @@ namespace rev {
 					pcmd->UserCallback(cmd_list, pcmd);
 				}
 				else {
-					u.setUniform(_unif.texture, _getTexture(reinterpret_cast<uintptr_t>(pcmd->TextureId)));
+					u.setUniformById(_unif.texture, _getTexture(reinterpret_cast<uintptr_t>(pcmd->TextureId)));
 					e.setScissor({true, {
 						(int)pcmd->ClipRect.x,
 						(int)pcmd->ClipRect.z,

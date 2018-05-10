@@ -6,7 +6,8 @@
 #include "gl_resource.hpp"
 #include "gl_framebuffer.hpp"
 #include "handler.hpp"
-#include "drawtoken/texture.hpp"
+#include "drawcmd/queue_if.hpp"
+#include "tls_data.hpp"
 
 namespace rev {
 	// ------------------------- TextureBase -------------------------
@@ -174,10 +175,14 @@ namespace rev {
 	bool IGLTexture::operator == (const IGLTexture& t) const {
 		return getTextureId() == t.getTextureId();
 	}
-	void IGLTexture::getDrawToken(draw::TokenDst& dst) {
-		using UT = draw::Texture;
-		auto* ptr = dst.allocate_memory(sizeof(UT), draw::CalcTokenOffset<UT>());
-		new(ptr) UT(const_cast<IGLTexture*>(this)->shared_from_this());
+	void IGLTexture::dcmd_uniform(draw::IQueue& q, const GLint id, const int actId) const {
+		auto cmd = DCmd_Uniform{
+			static_cast<const TextureBase&>(*this),
+			.unifId = id
+		};
+		cmd.setActiveId(actId);
+		q.add(cmd);
+		q.stockResource(shared_from_this());
 	}
 	const char* IGLTexture::getResourceName() const noexcept {
 		return "IGLTexture";
@@ -395,5 +400,35 @@ namespace rev {
 					std::tie(_size, _format) = size_fmt;
 			}
 		}
+	}
+
+	namespace {
+		const GLenum cs_wrap[WrapState::_Num] = {
+			GL_CLAMP_TO_EDGE,
+			GL_CLAMP_TO_BORDER,
+			GL_MIRRORED_REPEAT,
+			GL_REPEAT,
+			GL_MIRROR_CLAMP_TO_EDGE
+		};
+	}
+	void IGLTexture::DCmd_Uniform::Command(const void* p) {
+		auto& self = *static_cast<const DCmd_Uniform*>(p);
+		// 最後にBindは解除しない
+		self.use_begin();
+		{
+			if(tls_videoParam.get().bAnisotropic) {
+				// setAnisotropic
+				GLfloat aMax;
+				GL.glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aMax);
+				GL.glTexParameteri(self._texFlag, GL_TEXTURE_MAX_ANISOTROPY_EXT, std::max(aMax * self._coeff, 1.f));
+			}
+			// setUVWrap
+			GL.glTexParameteri(self._texFlag, GL_TEXTURE_WRAP_S, cs_wrap[self._wrapS]);
+			GL.glTexParameteri(self._texFlag, GL_TEXTURE_WRAP_T, cs_wrap[self._wrapT]);
+			// setFilter
+			GL.glTexParameteri(self._texFlag, GL_TEXTURE_MAG_FILTER, cs_Filter[0][self._iLinearMag]);
+			GL.glTexParameteri(self._texFlag, GL_TEXTURE_MIN_FILTER, cs_Filter[self._mipLevel][self._iLinearMin]);
+		}
+		GL.glUniform1i(self.unifId, self._actId);
 	}
 }

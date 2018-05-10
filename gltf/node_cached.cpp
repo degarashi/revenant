@@ -1,6 +1,6 @@
 #include "node_cached.hpp"
 #include "../camera3d.hpp"
-#include "../drawtoken/make_uniform.hpp"
+#include "../uniform_ent.hpp"
 
 namespace rev::gltf {
 	std::size_t NodeParam_USemCached::USemKey::operator()(const USemKey& k) const noexcept {
@@ -18,9 +18,6 @@ namespace rev::gltf {
 		_view = _camera->getView() * Mat4::Scaling({1,1,-1,1});
 		_proj = Mat4::Scaling({1,1,-1,1}) * _camera->getProj();
 		_viewProj = _view * _proj;
-		using draw::MakeUniform;
-		_token.view = MakeUniform(_view.transposition());
-		_token.proj = MakeUniform(_proj.transposition());
 	}
 	NodeParam_USemCached::Mat4 NodeParam_USemCached::_calcMat(const JointId id, const USemantic sem) const {
 		if(sem == USemantic::View) {
@@ -82,43 +79,27 @@ namespace rev::gltf {
 		}
 		return itr->second;
 	}
-	draw::Token_SP NodeParam_USemCached::getSemantic(const JointId id, const USemantic sem) const {
+	void NodeParam_USemCached::exportSemantic(UniformEnt& u, const SName& uname, const JointId id, const USemantic sem) const {
 		if(sem == USemantic::View) {
 			// Transforms from world to view coordinates using the active camera node
-			return _token.view;
+			u.setUniform(uname, Mat4(_view.transposition()));
+			return;
 		}
 		if(sem == USemantic::Projection) {
 			// Transforms from view to clip coordinates using the active camera node
-			return _token.proj;
+			u.setUniform(uname, Mat4(_proj.transposition()));
+			return;
 		}
 
-		const auto makeToken = [this, id, sem]() -> draw::Token_SP {
-			using draw::MakeUniform;
-			const auto makeM4 = [](const Mat4& m){
-				return MakeUniform(m.transposition());
-			};
-			const auto makeM3 = [](const frea::Mat3& m){
-				return MakeUniform(m.transposition());
-			};
-
-			const auto m = _calcMat(id, sem);
-			if(sem == USemantic::ModelInverseTranspose ||
-				sem == USemantic::ModelViewInverseTranspose)
-				return makeM3(m.convert<3,3>());
-			return makeM4(m);
-		};
-		const USemKey key{
-			.jointId = id,
-			.sem = sem
-		};
-		auto itr = _semantic.find(key);
-		if(itr == _semantic.end()) {
-			itr = _semantic.emplace(key, makeToken()).first;
-		}
-		return itr->second;
+		const auto m = _calcMat(id, sem);
+		if(sem == USemantic::ModelInverseTranspose ||
+			sem == USemantic::ModelViewInverseTranspose)
+			u.setUniform(uname, frea::Mat3(m.convert<3,3>().transposition()));
+		else
+			u.setUniform(uname, frea::Mat4(m.transposition()));
 	}
-	draw::Token_SP NodeParam_USemCached::getViewport() const {
-		return draw::MakeUniform(_viewport);
+	void NodeParam_USemCached::exportViewport(UniformEnt& u, const SName& uname) const {
+		u.setUniform(uname, _viewport);
 	}
 	dc::Mat4 NodeParam_USemCached::getLocal(const JointId id) const {
 		return base_t::getLocal(id);

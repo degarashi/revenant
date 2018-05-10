@@ -1,7 +1,6 @@
 #include "sys_uniform.hpp"
 #include "glx_if.hpp"
 #include "gl_program.hpp"
-#include "drawtoken/make_uniform.hpp"
 #include "uniform_ent.hpp"
 #include "spine/flyweight_item.hpp"
 
@@ -25,7 +24,7 @@ namespace rev {
 		if(const auto id = prog.getUniformId(su::Size)) {
 			return [id=*id](const void* p, UniformEnt& u){
 				auto& ss = static_cast<const SystemUniform*>(p)->getScreenSize();
-				u.setUniform(
+				u.setUniformById(
 					id,
 					frea::Vec4(
 						ss.width,

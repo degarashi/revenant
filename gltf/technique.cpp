@@ -2,13 +2,13 @@
 #include "gltf/check.hpp"
 #include "gltf/dc_common.hpp"
 #include "gltf/node.hpp"
-#include "../drawtoken/make_uniform.hpp"
 #include "../gl_if.hpp"
 #include "../gl_bstate.hpp"
 #include "../gl_vstate.hpp"
 #include "../camera3d.hpp"
 #include "../ovr_functor.hpp"
 #include "gltf/node_cached_if.hpp"
+#include "../uniform_ent.hpp"
 
 namespace rev::gltf {
 	namespace {
@@ -180,23 +180,24 @@ namespace rev::gltf {
 		semantic = *U_Semantic::FromString(sem);
 	}
 	namespace {
-		draw::Token_SP MakeSemanticToken(const dc::JointId id, const NodeParam_USem& np, const USemantic semantic) {
+		void ExportSemantic(UniformEnt& u, const SName& uname, const dc::JointId id, const NodeParam_USem& np, const USemantic semantic) {
 			if(semantic == USemantic::Viewport)
-				return np.getViewport();
-			return np.getSemantic(id, semantic);
+				np.exportViewport(u, uname);
+			else
+				np.exportSemantic(u, uname, id, semantic);
 		}
 	}
-	draw::Token_SP Technique::UnifParam_Sem::makeToken(const dc::JointId currentId, const dc::SkinBindV_SP&, const frea::Mat4&, const NodeParam_USem& np) const {
-		return MakeSemanticToken(currentId, np, semantic);
+	void Technique::UnifParam_Sem::exportUniform(UniformEnt& u, const SName& uname, const dc::JointId currentId, const dc::SkinBindV_SP&, const frea::Mat4&, const NodeParam_USem& np) const {
+		ExportSemantic(u, uname, currentId, np, semantic);
 	}
 
 	// ---------------------------- Technique::UnifParam_JointMat ----------------------------
 	Technique::UnifParam_JointMat::UnifParam_JointMat(const JValue& v):
 		count(Required<Integer>(v, "count"))
 	{}
-	draw::Token_SP Technique::UnifParam_JointMat::makeToken(const dc::JointId currentId, const dc::SkinBindV_SP& bind, const frea::Mat4& bsm, const NodeParam_USem& np) const {
+	void Technique::UnifParam_JointMat::exportUniform(UniformEnt& u, const SName& uname, const dc::JointId currentId, const dc::SkinBindV_SP& bind, const frea::Mat4& bsm, const NodeParam_USem& np) const {
 		Assert0(bind && bind->size() == count);
-		return draw::MakeUniform(np.getJointMat(np.getGlobal(currentId), bind, bsm));
+		u.setUniform(uname, np.getJointMat(np.getGlobal(currentId), bind, bsm));
 	}
 
 	// ---------------------------- Technique::UnifParam_NodeSem ----------------------------
@@ -210,8 +211,8 @@ namespace rev::gltf {
 	void Technique::UnifParam_NodeSem::resolve(const ITagQuery& q) {
 		node.resolve(q);
 	}
-	draw::Token_SP Technique::UnifParam_NodeSem::makeToken(const dc::JointId, const dc::SkinBindV_SP&, const frea::Mat4&, const NodeParam_USem& np) const {
-		return MakeSemanticToken(node.data()->jointId, np, semantic);
+	void Technique::UnifParam_NodeSem::exportUniform(UniformEnt& u, const SName& uname, const dc::JointId, const dc::SkinBindV_SP&, const frea::Mat4&, const NodeParam_USem& np) const {
+		ExportSemantic(u, uname, node.data()->jointId, np, semantic);
 	}
 	// ---------------------------- Technique::State ----------------------------
 	Technique::State::State(const JValue& v) {

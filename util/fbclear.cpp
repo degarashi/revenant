@@ -5,7 +5,7 @@ namespace rev {
 	namespace util {
 		// --------------------- FBClear ---------------------
 		FBClear::FBClear(const Priority dprio,
-						const draw::ClearParam& p):
+						const ClearParam& p):
 			base_t(dprio),
 			_param(p)
 		{}

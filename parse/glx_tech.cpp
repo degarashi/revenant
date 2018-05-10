@@ -10,7 +10,6 @@
 #include "glx_if.hpp"
 #include "comment.hpp"
 #include "tech_pair.hpp"
-#include "drawtoken/make_uniform.hpp"
 #include <boost/format.hpp>
 
 namespace rev {
@@ -221,7 +220,7 @@ namespace rev {
 			template <class T, ENABLE_IF(frea::is_vector<T>{})>
 			void operator()(const T& t) {
 				if(id) {
-					ent.setUniform(*id, t);
+					ent.setUniformById(*id, t);
 				}
 			}
 		};

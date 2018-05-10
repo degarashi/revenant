@@ -1,6 +1,6 @@
 #include "primitive.hpp"
 #include "lubee/meta/countof.hpp"
-#include "drawtoken/glx.hpp"
+#include "vdecl.hpp"
 
 namespace rev {
 	// -------------- Primitive --------------
@@ -19,19 +19,22 @@ namespace rev {
 	bool Primitive::indexCmp(const Primitive& p) const noexcept {
 		return ib != p.ib;
 	}
-	draw::Stream Primitive::extractVertexData(const VSemAttrV& vAttrId) const {
-		draw::Stream ret;
-		// vertex
+	void Primitive::dcmd_stream(draw::IQueue& q, const VSemAttrV& vAttr) const {
 		Assert(vdecl, "VDecl is not set");
-		ret.spVDecl = vdecl;
-		for(int i=0 ; i<static_cast<int>(countof(vb)) ; i++) {
-			if(vb[i])
-				ret.vbuff[i] = vb[i]->getDrawToken();
-		}
-		ret.vAttrId = vAttrId;
+		vdecl->dcmd_apply(q, vb, vAttr);
 		if(ib)
-			ret.ibuff = draw::Buffer(ib->getDrawToken());
-		return ret;
+			ib->dcmd_use(q);
+	}
+	void Primitive::dcmd_streamEnd(draw::IQueue& q) const {
+		Assert(vdecl, "VDecl is not set");
+		for(std::size_t i=0 ; i<countof(vb) ; i++) {
+			if(vb[i]) {
+				vb[i]->dcmd_useEnd(q);
+				break;
+			}
+		}
+		if(ib)
+			ib->dcmd_useEnd(q);
 	}
 	void Primitive::getArray(CmpArray& dst) const noexcept {
 		auto add = [p = dst.data()](auto& ptr) mutable {

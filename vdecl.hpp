@@ -3,6 +3,7 @@
 #include "spine/optional.hpp"
 #include "gl_buffer.hpp"
 #include "glx_const.hpp"
+#include "handle/opengl.hpp"
 
 namespace rev {
 	using VSem_AttrV = std::vector<VSem_AttrId>;
@@ -40,7 +41,7 @@ namespace rev {
 			};
 			using VDInfoV = std::vector<VDInfo>;
 		private:
-			using Setter = std::function<void (GLuint, const VSem_AttrV&)>;
+			using Setter = std::function<void (draw::IQueue&, GLuint, const VSem_AttrV&)>;
 			using SetterV = std::vector<Setter>;
 			// ストリーム毎のサイズを1次元配列で格納 = 0番から並べる
 			SetterV		_setter;
@@ -48,6 +49,18 @@ namespace rev {
 			std::size_t	_streamOfs[MaxVStream+1];
 			// 元データ(シリアライズ用)
 			VDInfoV		_vdInfo;
+
+			struct DCmd_VPtr {
+				int			attrId;
+				GLuint		elemSize,
+							elemFlag,
+							stride,
+							bNormalize;
+				const void*	offset;
+				bool		bInteger;
+
+				static void Command(const void* p);
+			};
 
 			static VDInfoV _ToVector(std::initializer_list<VDInfo>& il);
 			void _init();
@@ -58,8 +71,7 @@ namespace rev {
 			//! 入力: {streamId, offset, GLFlag, bNoramalize, semantics}
 			VDecl(std::initializer_list<VDInfo> il);
 			//! OpenGLへ頂点位置を設定
-			// [描画スレッドからの呼び出し]
-			void apply(const GLBufferCore* (&stream)[MaxVStream], const VSem_AttrV& attr) const;
+			void dcmd_apply(draw::IQueue& q, const HVb (&stream)[MaxVStream], const VSem_AttrV& attr) const;
 			bool operator == (const VDecl& vd) const;
 			bool operator != (const VDecl& vd) const;
 			#ifdef DEBUGGUI_ENABLED

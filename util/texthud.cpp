@@ -2,7 +2,6 @@
 #include "../glx_if.hpp"
 #include "../systeminfo.hpp"
 #include "lubee/compare.hpp"
-#include "../drawtoken/make_uniform.hpp"
 #include "../uniform_ent.hpp"
 #include "../u_common.hpp"
 

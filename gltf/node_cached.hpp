@@ -21,18 +21,12 @@ namespace rev::gltf {
 				bool operator == (const USemKey& k) const noexcept;
 			};
 			using USemM = std::unordered_map<USemKey, Mat4, USemKey>;
-			using USemM_T = std::unordered_map<USemKey, draw::Token_SP, USemKey>;
 			mutable USemM	_matrix;
-			mutable USemM_T	_semantic;
 
 			HCam3			_camera;
 			Mat4			_view,
 							_proj,
 							_viewProj;
-			struct {
-				draw::Token_SP	view,
-								proj;
-			} _token;
 			// ----------------- for Viewport -----------------
 			// Viewport
 			Vec4			_viewport;
@@ -41,8 +35,8 @@ namespace rev::gltf {
 		public:
 			NodeParam_USemCached(const HCam3& cam, const lubee::RectF& vp, const NodeParam& np);
 
-			draw::Token_SP getSemantic(JointId id, USemantic sem) const override;
-			draw::Token_SP getViewport() const override;
+			void exportSemantic(UniformEnt& u, const SName& uname, JointId id, USemantic sem) const override;
+			void exportViewport(UniformEnt& u, const SName& uname) const override;
 
 			dc::Mat4 getLocal(JointId id) const override;
 			dc::Mat4 getGlobal(JointId id) const override;

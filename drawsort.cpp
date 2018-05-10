@@ -4,7 +4,6 @@
 #include "primitive.hpp"
 #include "tech_if.hpp"
 #include "gl_program.hpp"
-#include "drawtoken/make_uniform.hpp"
 #include "uniform_ent.hpp"
 
 namespace rev {
@@ -106,7 +105,7 @@ namespace rev {
 		auto& u = e.refUniformEnt();
 		for(int i=0 ; i<length ; i++) {
 			if(id[i] >= 0)
-				u.setUniform(id[i], d.idTex[i]);
+				u.setUniformById(id[i], d.idTex[i]);
 		}
 	}
 

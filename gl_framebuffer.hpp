@@ -2,13 +2,15 @@
 #include "gl_types.hpp"
 #include "lubee/size.hpp"
 #include "lubee/wrapper.hpp"
-#include "drawtoken/token.hpp"
 #include "sdl_tls.hpp"
 #include "handle/opengl.hpp"
 #include "lubee/rect.hpp"
 #include <boost/variant.hpp>
 
 namespace rev {
+	namespace draw {
+		class IQueue;
+	}
 	class GLFBufferCore {
 		public:
 			friend class RUser<GLFBufferCore>;
@@ -53,8 +55,26 @@ namespace rev {
 
 		public:
 			static const lubee::SizeI& GetCurrentFBSize() noexcept;
+			GLFBufferCore() = default;
 			GLFBufferCore(GLuint id);
 			GLuint getBufferId() const;
+	};
+	struct DCmd_Fb : GLFBufferCore {
+		// Pair::ResH
+		struct Pair {
+			bool	bTex;
+			GLuint	resId,		// 0番は無効
+					faceFlag;
+		};
+
+		Pair			ent[Att::NUM_ATTACHMENT];
+		lubee::SizeI	size;	//!< Colo0バッファのサイズ
+
+		using GLFBufferCore::GLFBufferCore;
+		DCmd_Fb() = default;
+		static void Add(draw::IQueue& q, const HFbC& fb, const Res (&att)[Att::NUM_ATTACHMENT]);
+		static void AddTmp(draw::IQueue& q, const GLuint id);
+		static void Command(const void* p);
 	};
 	//! 非ハンドル管理で一時的にFramebufferを使いたい時のヘルパークラス (内部用)
 	class GLFBufferTmp : public GLFBufferCore {
@@ -68,12 +88,16 @@ namespace rev {
 			void attachCubeTexture(Att::Id att, GLuint id, GLuint face);
 			void use_end() const;
 
-			void getDrawToken(draw::TokenDst& dst) const;
+			void dcmd_fb(draw::IQueue& q) const;
 	};
 	using Size_OP = spi::Optional<lubee::SizeI>;
 	class LuaState;
 	//! OpenGL: FrameBufferObjectインタフェース
-	class GLFBuffer : public GLFBufferCore, public IGLResource, public std::enable_shared_from_this<GLFBuffer> {
+	class GLFBuffer :
+		public GLFBufferCore,
+		public IGLResource,
+		public std::enable_shared_from_this<GLFBuffer>
+	{
 		private:
 			// GLuintは内部処理用 = RenderbufferのId
 			Res	_attachment[Att::NUM_ATTACHMENT];
@@ -95,7 +119,7 @@ namespace rev {
 
 			void onDeviceReset() override;
 			void onDeviceLost() override;
-			void getDrawToken(draw::TokenDst& dst) const;
+			void dcmd_fb(draw::IQueue& q) const;
 			const Res& getAttachment(Att::Id att) const;
 			HTex getAttachmentAsTexture(Att::Id id) const;
 			HRb getAttachmentAsRBuffer(Att::Id id) const;

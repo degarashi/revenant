@@ -5,14 +5,13 @@
 
 namespace rev {
 	namespace draw {
-		struct TokenDst;
-	};
+		class IQueue;
+	}
 	struct GLState : IDebugGui {
 		DefineEnum(Type, (Boolean)(Value));
 		virtual Type getType() const noexcept = 0;
-		virtual void apply() const = 0;
 
-		virtual void getDrawToken(draw::TokenDst& dst) const = 0;
+		virtual void dcmd_apply(draw::IQueue& q) const = 0;
 		virtual bool operator == (const GLState& s) const noexcept = 0;
 		virtual std::size_t getHash() const noexcept = 0;
 		template <class Self, class Other>

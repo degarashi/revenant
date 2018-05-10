@@ -1,6 +1,6 @@
 #include "gltf/uniform_value.hpp"
-#include "../drawtoken/make_uniform.hpp"
 #include "gltf/texture.hpp"
+#include "../uniform_ent.hpp"
 
 namespace rev::gltf {
 	UniformValue LoadUniformValue(const JValue& v) {
@@ -39,34 +39,37 @@ namespace rev::gltf {
 		throw 0;
 	}
 
-	using draw::Token_SP, draw::MakeUniform;
 	namespace cnv {
 		struct Base {
 			std::size_t		_count;
-			Base(const std::size_t c):
-				_count(c)
+			UniformEnt&		_u;
+			const SName&	_uname;
+			Base(const std::size_t c, UniformEnt& u, const SName& uname):
+				_count(c),
+				_u(u),
+				_uname(uname)
 			{}
 		};
 		template <class T>
 		struct Single : Base {
 			using Base::Base;
 
-			Token_SP operator()(const TagTexture&) const { Assert0(false); return nullptr; }
-			Token_SP operator()(const std::vector<TagTexture>&) const { Assert0(false); return nullptr; }
+			void operator()(const TagTexture&) const { Assert0(false); }
+			void operator()(const std::vector<TagTexture>&) const { Assert0(false); }
 
 			template <class V>
-			Token_SP operator()(const V& v) const {
+			void operator()(const V& v) const {
 				Assert0(_count == 1);
-				return MakeUniform(T(v));
+				_u.setUniform(_uname, T(v));
 			}
-			Token_SP operator()(const std::vector<T>& v) const {
+			void operator()(const std::vector<T>& v) const {
 				Assert0(_count <= v.size());
-				return MakeUniform(v);
+				_u.setUniform(_uname, v);
 			}
 			template <class V>
-			Token_SP operator()(const std::vector<V>& v) const {
+			void operator()(const std::vector<V>& v) const {
 				Assert0(_count <= v.size());
-				return MakeUniform(v.cbegin(), v.cbegin()+_count);
+				_u.setUniform(_uname, v.cbegin(), v.cbegin()+_count);
 			}
 		};
 		template <class V>
@@ -74,16 +77,16 @@ namespace rev::gltf {
 			using Base::Base;
 
 			template <class T>
-			Token_SP operator()(const T&) const { Assert0(false); return nullptr; }
-			Token_SP operator()(const TagTexture&) const { Assert0(false); return nullptr; }
-			Token_SP operator()(const std::vector<TagTexture>&) const { Assert0(false); return nullptr; }
+			void operator()(const T&) const { Assert0(false); }
+			void operator()(const TagTexture&) const { Assert0(false); }
+			void operator()(const std::vector<TagTexture>&) const { Assert0(false); }
 
 			template <class T, std::size_t... Idx>
 			static V _MakeVec(const T* value, std::index_sequence<Idx...>) {
 				return V(value[Idx]...);
 			}
 			template <class T>
-			Token_SP operator()(const std::vector<T>& v) const {
+			void operator()(const std::vector<T>& v) const {
 				const auto count = _count;
 				constexpr std::size_t S = V::size;
 				Assert0(count*S <= v.size());
@@ -91,10 +94,10 @@ namespace rev::gltf {
 				std::vector<V> vec(count);
 				auto* src = v.data();
 				for(std::size_t i=0 ; i<count ; i++) {
-					vec[i] = _MakeVec(src, std::make_index_sequence<V::size>{});
+					vec[i] = _MakeVec(src, std::make_index_sequence<S>{});
 					src += S;
 				}
-				return MakeUniform(vec);
+				_u.setUniform(_uname, vec);
 			}
 		};
 		template <class M>
@@ -102,16 +105,16 @@ namespace rev::gltf {
 			using Base::Base;
 
 			template <class V>
-			Token_SP operator()(const V&) const { Assert0(false); return nullptr; }
-			Token_SP operator()(const TagTexture&) const { Assert0(false); return nullptr; }
-			Token_SP operator()(const std::vector<TagTexture>&) const { Assert0(false); return nullptr; }
+			void operator()(const V&) const { Assert0(false); }
+			void operator()(const TagTexture&) const { Assert0(false); }
+			void operator()(const std::vector<TagTexture>&) const { Assert0(false); }
 
 			template <class V, std::size_t... Idx>
 			static M _MakeMat(const V* value, std::index_sequence<Idx...>) {
 				return M(value[Idx]...);
 			}
 			template <class V>
-			Token_SP operator()(const std::vector<V>& v) const {
+			void operator()(const std::vector<V>& v) const {
 				const auto count = _count;
 				constexpr std::size_t S = M::dim_m * M::dim_n;
 				Assert0(count*S <= v.size());
@@ -122,77 +125,83 @@ namespace rev::gltf {
 					mat[i] = _MakeMat(src, std::make_index_sequence<S>{});
 					src += S;
 				}
-				return MakeUniform(mat);
+				_u.setUniform(_uname, mat);
 			}
 		};
 		struct Texture : Base {
 			using Base::Base;
 
 			template <class T>
-			Token_SP operator()(const T&) const { D_Assert0(false); return nullptr; }
+			void operator()(const T&) const { D_Assert0(false); }
 
-			Token_SP operator()(const TagTexture& t) const {
-				return MakeUniform(t.data()->getGLResource());
+			void operator()(const TagTexture& t) const {
+				_u.setUniform(_uname, t.data()->getGLResource());
 			}
-			Token_SP operator()(const std::vector<TagTexture>& t) const {
+			void operator()(const std::vector<TagTexture>& t) const {
 				const auto s = std::min(_count, t.size());
 				std::vector<HTexC> tex(s);
 				for(std::size_t i = 0 ; i<s ; i++) {
 					tex[i] = t[i].data()->getGLResource();
 				}
-				return draw::MakeUniform(tex);
+				_u.setUniform(_uname, tex.begin(), tex.end());
 			}
 		};
 	}
-	Token_SP MakeUniformToken(const UniformValue& value, const GLenum type, const std::size_t count) {
+	void SetUniform(UniformEnt& u, const SName& uname, const UniformValue& value, const GLenum type, const std::size_t count) {
 		const GLSLFormatDesc& desc = *GLFormat::QueryGLSLInfo(type);
 		uint32_t dx, dy;
 		DecompDim(desc.dim, dx, dy);
 
-		const auto procVec = [&value, count](const auto dim, auto* type) -> Token_SP {
+		const auto procVec = [&value, count, &u, &uname](const auto dim, auto* type) {
 			using Type = std::remove_pointer_t<decltype(type)>;
 			switch(dim) {
 				case 1:
-					return boost::apply_visitor(cnv::Single<Type>(count), value);
+					boost::apply_visitor(cnv::Single<Type>(count, u, uname), value);
+					break;
 				case 2:
-					return boost::apply_visitor(cnv::Vector<frea::Vec_t<Type,2,false>>(count), value);
+					boost::apply_visitor(cnv::Vector<frea::Vec_t<Type,2,false>>(count, u, uname), value);
+					break;
 				case 3:
-					return boost::apply_visitor(cnv::Vector<frea::Vec_t<Type,3,false>>(count), value);
+					boost::apply_visitor(cnv::Vector<frea::Vec_t<Type,3,false>>(count, u, uname), value);
+					break;
 				case 4:
-					return boost::apply_visitor(cnv::Vector<frea::Vec_t<Type,4,false>>(count), value);
+					boost::apply_visitor(cnv::Vector<frea::Vec_t<Type,4,false>>(count, u, uname), value);
+					break;
 				default:
 					AssertF("invalid value dimension");
 			}
-			return nullptr;
 		};
 
 		if(desc.type == GLSLType::IntT) {
 			Assert(dy == 0, "invalid value dimension");
-			if(desc.bUnsigned)
-				return procVec(dx, (uint32_t*)nullptr);
-			else
-				return procVec(dx, (int32_t*)nullptr);
+			if(desc.bUnsigned) {
+				procVec(dx, (uint32_t*)nullptr);
+			} else {
+				procVec(dx, (int32_t*)nullptr);
+			}
 		} else if(desc.type == GLSLType::FloatT) {
 			Assert(dy == 0, "invalid value dimension");
-			return procVec(dx, (float*)nullptr);
+			procVec(dx, (float*)nullptr);
 		} else if(desc.type == GLSLType::MatrixT) {
 			Assert(dx == dy, "only square matrix is supported");
 			switch(dx) {
 				case 2:
-					return boost::apply_visitor(cnv::Matrix<frea::Mat_t<float, 2,2,false>>(count), value);
+					boost::apply_visitor(cnv::Matrix<frea::Mat_t<float, 2,2,false>>(count, u, uname), value);
+					break;
 				case 3:
-					return boost::apply_visitor(cnv::Matrix<frea::Mat_t<float, 3,3,false>>(count), value);
+					boost::apply_visitor(cnv::Matrix<frea::Mat_t<float, 3,3,false>>(count, u, uname), value);
+					break;
 				case 4:
-					return boost::apply_visitor(cnv::Matrix<frea::Mat_t<float, 4,4,false>>(count), value);
+					boost::apply_visitor(cnv::Matrix<frea::Mat_t<float, 4,4,false>>(count, u, uname), value);
+					break;
 				default:
 					AssertF("invalid value dimension");
 			}
 		} else if(desc.type == GLSLType::TextureT) {
 			// 2Dなのでdx==2
 			Assert(dx==2 && dy==0, "invalid value dimension");
-			return boost::apply_visitor(cnv::Texture(count), value);
+			boost::apply_visitor(cnv::Texture(count, u, uname), value);
 		} else
 			AssertF("unknown value type");
-		return nullptr;
 	}
 }

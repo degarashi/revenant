@@ -2,9 +2,8 @@
 #include <boost/variant.hpp>
 #include "idtag.hpp"
 
-namespace rev::draw {
-	struct Token;
-	using Token_SP = std::shared_ptr<Token>;
+namespace rev {
+	class UniformEnt;
 }
 namespace rev::gltf {
 	using UniformValue = boost::variant<
@@ -14,5 +13,5 @@ namespace rev::gltf {
 	using UniformValueNVP = std::vector<std::pair<GLSLName, UniformValue>>;
 
 	UniformValue LoadUniformValue(const JValue& v);
-	draw::Token_SP MakeUniformToken(const UniformValue& value, GLenum type, std::size_t count);
+	void SetUniform(UniformEnt& u, const SName& uname, const UniformValue& value, GLenum type, std::size_t count);
 }

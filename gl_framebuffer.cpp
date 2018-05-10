@@ -3,9 +3,7 @@
 #include "gl_error.hpp"
 #include "gl_texture.hpp"
 #include "gl_renderbuffer.hpp"
-#include "systeminfo.hpp"
 #include "handler.hpp"
-#include "drawtoken/framebuffer.hpp"
 
 namespace rev {
 	// ------------------------- GLFBufferTmp -------------------------
@@ -35,9 +33,8 @@ namespace rev {
 		#endif
 		_attachCubeTexture(att, face, id);
 	}
-	void GLFBufferTmp::getDrawToken(draw::TokenDst& dst) const {
-		using UT = draw::FrameBuff;
-		new(dst.allocate_memory(sizeof(UT), draw::CalcTokenOffset<UT>())) UT(_idFbo, mgr_info.getScreenSize());
+	void GLFBufferTmp::dcmd_fb(draw::IQueue& q) const {
+		DCmd_Fb::AddTmp(q, getBufferId());
 	}
 
 	// ------------------------- GLFBufferCore -------------------------
@@ -207,10 +204,8 @@ namespace rev {
 	void GLFBuffer::detach(Att::Id att) {
 		_attachment[att] = boost::blank();
 	}
-	void GLFBuffer::getDrawToken(draw::TokenDst& dst) const {
-		using UT = draw::FrameBuff;
-		new(dst.allocate_memory(sizeof(UT), draw::CalcTokenOffset<UT>()))
-			UT(const_cast<GLFBuffer*>(this)->shared_from_this(), _attachment);
+	void GLFBuffer::dcmd_fb(draw::IQueue& q) const {
+		DCmd_Fb::Add(q, shared_from_this(), _attachment);
 	}
 	const GLFBuffer::Res& GLFBuffer::getAttachment(Att::Id att) const {
 		return _attachment[att];

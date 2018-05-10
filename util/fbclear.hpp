@@ -1,16 +1,16 @@
 #pragma once
 #include "../drawable.hpp"
-#include "../drawtoken/clear.hpp"
+#include "../clear.hpp"
 
 namespace rev {
 	namespace util {
 		class FBClear : public DrawableObjT<FBClear> {
 			private:
 				using base_t = DrawableObjT<FBClear>;
-				draw::ClearParam _param;
+				ClearParam _param;
 			public:
 				FBClear(Priority dprio,
-						const draw::ClearParam& p);
+						const ClearParam& p);
 				void onDraw(IEffect& e) const override;
 		};
 	}

@@ -1,10 +1,10 @@
 #pragma once
 #include "../drawable.hpp"
-#include "../drawtoken/clear.hpp"
+#include "../clear.hpp"
 
 namespace rev {
 	namespace util {
-		using ClearParam_OP = spi::Optional<draw::ClearParam>;
+		using ClearParam_OP = spi::Optional<ClearParam>;
 		class FBSwitch : public DrawableObjT<FBSwitch> {
 			private:
 				using base_t = DrawableObjT<FBSwitch>;

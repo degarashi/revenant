@@ -4,10 +4,6 @@
 #include <vector>
 
 namespace rev {
-	namespace draw {
-		struct Token;
-		using Token_SP = std::shared_ptr<Token>;
-	}
 	namespace dc {
 		class TfNode;
 		using JointId = uint32_t;

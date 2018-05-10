@@ -33,7 +33,7 @@ namespace rev {
 			if(const auto id = prog.getUniformId(cname)) { \
 				fv.emplace_back([id=*id](const void* p, UniformEnt& u){ \
 					auto& self = *static_cast<const U_Common*>(p); \
-					u.setUniform(id, self.name); \
+					u.setUniformById(id, self.name); \
 				}); \
 			}
 		DEF_UNIF(alpha, unif::Alpha)

@@ -1,6 +1,5 @@
 #include "../../uniform_ent.hpp"
 #include "../../imgui/imgui.h"
-#include "../../drawtoken/uniform.hpp"
 #include "../../debug_gui/column.hpp"
 #include "../../debug_gui/indent.hpp"
 
@@ -19,9 +18,9 @@ namespace rev {
 				ImGui::TextUnformatted(name);
 				ImGui::NextColumn();
 
-				auto* u = dynamic_cast<const draw::IUniform*>(e.second.get());
-				D_Assert0(u);
-				u->printValue();
+				// auto* u = dynamic_cast<const draw::IUniform*>(e.second.get());
+				// D_Assert0(u);
+				// u->printValue();
 				ImGui::NextColumn();
 			}
 		}

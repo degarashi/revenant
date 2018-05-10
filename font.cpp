@@ -10,7 +10,6 @@
 #include "glx_if.hpp"
 #include "vdecl.hpp"
 #include "primitive.hpp"
-#include "drawtoken/make_uniform.hpp"
 #include "uniform_ent.hpp"
 #include "tech_pass.hpp"
 #include "u_common.hpp"

@@ -2,7 +2,6 @@
 #include "glx_if.hpp"
 #include "camera2d.hpp"
 #include "gl_program.hpp"
-#include "drawtoken/make_uniform.hpp"
 #include "uniform_ent.hpp"
 #include "spine/flyweight_item.hpp"
 
@@ -65,7 +64,7 @@ namespace rev {
 			if(const auto id = prog.getUniformId(s2d::name)) { \
 				fv.emplace_back([id=*id](const void* p, UniformEnt& u){ \
 					auto* self = static_cast<const U_Matrix2D*>(p); \
-					u.setUniform(id, spi::UnwrapAcValue(self->get##name())); \
+					u.setUniformById(id, spi::UnwrapAcValue(self->get##name())); \
 				}); \
 			}
 		DEF_SETUNIF(World)
@@ -78,7 +77,7 @@ namespace rev {
 			if(const auto id = prog.getUniformId(s2d::name)) { \
 				fv.emplace_back([id=*id](const void* p, UniformEnt& u){ \
 					auto* self = static_cast<const U_Matrix2D*>(p); \
-					u.setUniform(id, spi::UnwrapAcValue(self->getCamera()->get##name())); \
+					u.setUniformById(id, spi::UnwrapAcValue(self->getCamera()->get##name())); \
 				}); \
 			}
 		DEF_SETUNIF(View)

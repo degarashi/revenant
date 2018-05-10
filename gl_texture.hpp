@@ -3,7 +3,6 @@
 #include "gl_format.hpp"
 #include "lubee/size.hpp"
 #include "lubee/rect.hpp"
-#include "drawtoken/uniform.hpp"
 #include "abstbuffer.hpp"
 #include "uri.hpp"
 #include "chunk.hpp"
@@ -41,6 +40,10 @@ namespace rev {
 	};
 	class PathBlock;
 	using ByteBuff = std::vector<uint8_t>;
+
+	namespace draw {
+		class IQueue;
+	}
 	//! OpenGLテクスチャインタフェース
 	/*!	フィルターはNEARESTとLINEARしか無いからboolで管理 */
 	class IGLTexture :
@@ -48,6 +51,11 @@ namespace rev {
 		public IGLResource,
 		public std::enable_shared_from_this<IGLTexture>
 	{
+		private:
+			struct DCmd_Uniform : TextureBase {
+				GLint	unifId;
+				static void Command(const void* p);
+			};
 		protected:
 			GLuint				_faceFlag;	//!< TEXTURE_2D or TEXTURE_CUBE_MAP_POSITIVE_X
 			lubee::SizeI		_size;
@@ -75,7 +83,7 @@ namespace rev {
 			bool operator == (const IGLTexture& t) const;
 			ByteBuff readData(GLInFmt internalFmt, GLTypeFmt elem, int level=0, CubeFace face=CubeFace::PositiveX) const;
 			ByteBuff readRect(GLInFmt internalFmt, GLTypeFmt elem, const lubee::RectI& rect, CubeFace face=CubeFace::PositiveX) const;
-			void getDrawToken(draw::TokenDst& dst);
+			void dcmd_uniform(draw::IQueue& q, const GLint id, int actId) const;
 	};
 	//! ユーザー定義の空テクスチャ
 	/*!

@@ -1,42 +1,32 @@
 #pragma once
 #include "gl_types.hpp"
-#include "drawtoken/token.hpp"
 #include "debuggui_if.hpp"
 #include <vector>
 
 namespace rev {
-	namespace draw {
-		class Buffer;
-		class Stream;
-	}
-	namespace debug {
-		class VBView;
-	}
 	class GLBufferCore {
-		private:
-			template <class T>
-			friend class RUser;
-			friend class draw::Buffer;
-			friend class draw::Stream;
-			void use_begin() const;
-			void use_end() const;
 		protected:
 			BufferType	_buffType;			//!< VERTEX_BUFFERなど
 			DrawType	_drawType;			//!< STATIC_DRAWなどのフラグ
 			GLuint		_stride,			//!< 要素1つのバイトサイズ
 						_idBuff;			//!< OpenGLバッファID
 		public:
+			GLBufferCore() = default;
 			GLBufferCore(BufferType typ, DrawType dtype);
-			virtual ~GLBufferCore() {}
 
 			GLuint getBuffId() const;
 			BufferType getBuffType() const;
 			GLuint getStride() const;
-	};
 
-	// バッファのDrawTokenはVDeclとの兼ね合いからそのままリストに積まずに
-	// StreamTagで一旦処理するのでスマートポインタではなく直接出力する
-	//! OpenGLバッファクラス
+			void use_begin() const;
+			void use_end() const;
+	};
+	namespace debug {
+		class VBView;
+	}
+	namespace draw {
+		class IQueue;
+	}
 	class GLBuffer :
 		public IGLResource,
 		public GLBufferCore,
@@ -48,6 +38,13 @@ namespace rev {
 			template <class T>
 			struct is_vector<std::vector<T>> : std::true_type {};
 		private:
+			struct DCmd_Use : GLBufferCore {
+				static void Command(const void* p);
+			};
+			struct DCmd_UseEnd : GLBufferCore {
+				static void Command(const void* p);
+			};
+
 			using SPBuff = std::shared_ptr<void>;
 			SPBuff			_buff;			//!< 再構築の際に必要となるデータ実体(std::vector<T>)
 			void*			_pBuffer;		//!< bufferの先頭ポインタ
@@ -97,7 +94,8 @@ namespace rev {
 
 			void onDeviceLost() override;
 			void onDeviceReset() override;
-			draw::Buffer getDrawToken() const;
+			void dcmd_use(draw::IQueue& q) const;
+			void dcmd_useEnd(draw::IQueue& q) const;
 
 			DEF_DEBUGGUI_PROP
 	};

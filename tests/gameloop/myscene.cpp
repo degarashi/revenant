@@ -4,7 +4,7 @@
 #include "../../scene_mgr.hpp"
 #include "../../glx_if.hpp"
 #include "../../systeminfo.hpp"
-#include "../../drawtoken/clear.hpp"
+#include "../../clear.hpp"
 #include <boost/format.hpp>
 #ifdef DEBUGGUI_ENABLED
 	#include "mygui.hpp"

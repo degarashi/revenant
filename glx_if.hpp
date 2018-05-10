@@ -12,9 +12,7 @@ namespace lubee {
 	using RectF = Rect<float>;
 }
 namespace rev {
-	namespace draw {
-		struct ClearParam;
-	}
+	struct ClearParam;
 	class UniformEnt;
 	class FBRect;
 	class IEffect :
@@ -32,7 +30,7 @@ namespace rev {
 			virtual FBRect setScissor(const FBRect& r) = 0;
 			virtual void resetFramebuffer() = 0;
 			virtual void setPrimitive(const HPrim& p) noexcept = 0;
-			virtual void clearFramebuffer(const draw::ClearParam& param) = 0;
+			virtual void clearFramebuffer(const ClearParam& param) = 0;
 			virtual void draw() = 0;
 			virtual void beginTask() = 0;
 			virtual void endTask() = 0;

@@ -59,9 +59,9 @@ DEF_LUAIMPLEMENT_SPOBJ(
 	NOTHING
 )
 
-#include "../drawtoken/clear.hpp"
+#include "../clear.hpp"
 DEF_LUAIMPLEMENT_PTR(
-	rev::draw::ClearParam, ClearParam,
+	rev::ClearParam, ClearParam,
 	LUAIMPLEMENT_BASE,
 	NOTHING,
 	(color)(depth)(stencil),
@@ -84,7 +84,7 @@ namespace rev {
 		RegisterClass<beat::g3::Pose>(lsc);
 		RegisterClass<Camera2D>(lsc);
 		RegisterClass<Camera3D>(lsc);
-		RegisterClass<draw::ClearParam>(lsc);
+		RegisterClass<ClearParam>(lsc);
 		ImportClass(lsc, "System", "lsys", &mgr_lsys);
 		ImportClass(lsc, "System", "info", &mgr_info);
 	}

@@ -2,7 +2,6 @@
 #include "camera3d.hpp"
 #include "glx_if.hpp"
 #include "gl_program.hpp"
-#include "drawtoken/make_uniform.hpp"
 #include "uniform_ent.hpp"
 #include "spine/flyweight_item.hpp"
 
@@ -92,7 +91,7 @@ namespace rev {
 			if(const auto id = prog.getUniformId(s3d::name)) { \
 				fv.emplace_back([id=*id](const void* p, UniformEnt& u){ \
 					auto* self = static_cast<const U_Matrix3D*>(p); \
-					u.setUniform(id, spi::UnwrapAcValue(self->get##name())); \
+					u.setUniformById(id, spi::UnwrapAcValue(self->get##name())); \
 				}); \
 			}
 		DEF_SETUNIF(World)
@@ -107,7 +106,7 @@ namespace rev {
 			if(const auto id = prog.getUniformId(s3d::name)) { \
 				fv.emplace_back([id=*id](const void* p, UniformEnt& u){ \
 					auto* self = static_cast<const U_Matrix3D*>(p); \
-					u.setUniform(id, spi::UnwrapAcValue(self->getCamera()->get##name())); \
+					u.setUniformById(id, spi::UnwrapAcValue(self->getCamera()->get##name())); \
 				}); \
 			}
 		DEF_SETUNIF(View)
@@ -120,14 +119,14 @@ namespace rev {
 			fv.emplace_back([id=*id](const void* p, UniformEnt& u){
 				auto* self = static_cast<const U_Matrix3D*>(p);
 				auto& ps = self->getCamera()->getPose();
-				u.setUniform(id, ps.getOffset());
+				u.setUniformById(id, ps.getOffset());
 			});
 		}
 		if(const auto id = prog.getUniformId(s3d::EyePos)) {
 			fv.emplace_back([id=*id](const void* p, UniformEnt& u){
 				auto* self = static_cast<const U_Matrix3D*>(p);
 				auto& ps = self->getCamera()->getPose();
-				u.setUniform(id, ps.getRotation().getZAxis());
+				u.setUniformById(id, ps.getRotation().getZAxis());
 			});
 		}
 

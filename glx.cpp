@@ -3,16 +3,11 @@
 #include "systeminfo.hpp"
 #include "gl_error.hpp"
 #include "gl_program.hpp"
-#include "drawtoken/buffer.hpp"
-#include "drawtoken/glx.hpp"
-#include "drawtoken/clear.hpp"
-#include "drawtoken/task.hpp"
-#include "drawtoken/texture.hpp"
-#include "drawtoken/scissor.hpp"
 #include "unituple/operator.hpp"
 #include "tech_if.hpp"
 #include "primitive.hpp"
 #include "gl_state.hpp"
+#include "gl_buffer.hpp"
 
 namespace rev {
 	namespace {
@@ -48,7 +43,7 @@ namespace rev {
 	void GLEffect::_clean_drawvalue() {
 		_tech_sp.reset();
 		// セットされているUniform変数を未セット状態にする
-		_tokenML.clear();
+		_cmdvec.clear();
 		_uniformEnt.clearValue();
 	}
 	UniformEnt& GLEffect::refUniformEnt() noexcept {
@@ -63,12 +58,12 @@ namespace rev {
 		_tech_sp = tech;
 		_uniformEnt.setProgram(tech->getProgram());
 		// 各種セッティングをするTokenをリストに追加
-		_tech_sp->getProgram()->getDrawToken(_tokenML);
+		_tech_sp->getProgram()->dcmd_use(_cmdvec);
 		auto& sv = _tech_sp->getSetting();
 		for(auto& s : sv)
-			s->getDrawToken(_tokenML);
+			s->dcmd_apply(_cmdvec);
 		// Uniformデフォルト値読み込み
-		_uniformEnt.copyFrom(_tech_sp->getDefaultValue());
+		_uniformEnt.assign(_tech_sp->getDefaultValue());
 		return prev_tech;
 	}
 	const HTech& GLEffect::getTechnique() const noexcept {
@@ -76,23 +71,19 @@ namespace rev {
 	}
 	void GLEffect::_outputFramebuffer() {
 		const auto set_viewrect = [this](){
-			using T = draw::Viewport;
-			const draw::Viewport vp(_viewrect);
-			new(_tokenML.allocate_memory(sizeof(T), draw::CalcTokenOffset<T>())) T(vp);
+			_cmdvec.add(DCmd_Viewport{_viewrect});
 			_bView = false;
 		};
 		const auto set_scissorrect = [this](){
-			using T = draw::Scissor;
-			const T sc(_scissorrect);
-			new(_tokenML.allocate_memory(sizeof(T), draw::CalcTokenOffset<T>())) T(sc);
+			_cmdvec.add(DCmd_Scissor{_scissorrect});
 			_bScissor = false;
 		};
 		if(_hFb) {
 			auto& fb = *_hFb;
 			if(fb)
-				fb->getDrawToken(_tokenML);
+				fb->dcmd_fb(_cmdvec);
 			else
-				GLFBufferTmp(0, mgr_info.getScreenSize()).getDrawToken(_tokenML);
+				GLFBufferTmp(0, mgr_info.getScreenSize()).dcmd_fb(_cmdvec);
 			_hFbPrev = fb;
 			_hFb = spi::none;
 			if(!_bView) {
@@ -127,47 +118,51 @@ namespace rev {
 	void GLEffect::setPrimitive(const HPrim& p) noexcept {
 		_primitive = p;
 	}
-	void GLEffect::clearFramebuffer(const draw::ClearParam& param) {
+	void GLEffect::clearFramebuffer(const ClearParam& param) {
 		_outputFramebuffer();
-		_tokenML.allocate<draw::Clear>(param);
-		_writeEnt->append(std::move(_tokenML));
+		_cmdvec.add(DCmd_Clear{
+			.bColor = static_cast<bool>(param.color),
+			.bDepth = static_cast<bool>(param.depth),
+			.bStencil = static_cast<bool>(param.stencil),
+			.color = param.color ? *param.color : frea::Vec4{},
+			.depth = param.depth ? *param.depth : 0.f,
+			.stencil = param.stencil ? *param.stencil : 0u
+		});
+		_writeEnt->append(_cmdvec);
+		_cmdvec.clear();
 	}
 	void GLEffect::draw() {
 		applyUniform(_uniformEnt, *_tech_sp->getProgram());
-		{
-			auto& u = _uniformEnt;
-			auto& res = u.getResult().token;
-			res.iterateC([&dst = _tokenML](const auto* t){
-				t->clone(dst);
-			});
-			u.clearValue();
-		}
+		_uniformEnt.dcmd_output(_cmdvec);
+		_uniformEnt.clearValue();
 		_outputFramebuffer();
 		_diffCount.buffer += _getDifference();
 		// set V/IBuffer(VDecl)
-		draw::Stream vs = _primitive->extractVertexData(_tech_sp->getVAttr());
-		const auto& p = _primitive;
-		if(!p->ib) {
-			_tokenML.allocate<draw::Draw>(
-				std::move(vs),
-				p->drawMode,
-				p->withoutIndex.first,
-				p->withoutIndex.count
-			);
-			++_diffCount.drawNoIndexed;
-		} else {
-			const auto str = p->ib->getStride();
-			const auto szF = GLIBuffer::GetSizeFlag(str);
-			_tokenML.allocate<draw::DrawIndexed>(
-				std::move(vs),
-				p->drawMode,
-				p->withIndex.count,
-				szF,
-				p->withIndex.offsetElem*str
-			);
-			++_diffCount.drawIndexed;
+		_primitive->dcmd_stream(_cmdvec, _tech_sp->getVAttr());
+		{
+			const auto& p = _primitive;
+			if(!p->ib) {
+				_cmdvec.add(DCmd_Draw{
+						.mode = p->drawMode,
+						.first = p->withoutIndex.first,
+						.count = p->withoutIndex.count,
+						});
+				++_diffCount.drawNoIndexed;
+			} else {
+				const auto str = p->ib->getStride();
+				const auto szF = GLIBuffer::GetSizeFlag(str);
+				_cmdvec.add(DCmd_DrawIndexed{
+						.mode = p->drawMode,
+						.count = p->withIndex.count,
+						.sizeF = szF,
+						.offset = p->withIndex.offsetElem*str,
+						});
+				++_diffCount.drawIndexed;
+			}
 		}
-		_writeEnt->append(std::move(_tokenML));
+		_primitive->dcmd_streamEnd(_cmdvec);
+		_writeEnt->append(_cmdvec);
+		_cmdvec.clear();
 	}
 	void GLEffect::beginTask() {
 		_reset();
@@ -204,7 +199,6 @@ namespace rev {
 	const FBRect& GLEffect::getViewport() const noexcept {
 		return _viewrect;
 	}
-	// MEMO: Viewportのコードと重複しているので後でなんとかする
 	FBRect GLEffect::setScissor(const FBRect& r) {
 		const auto prev = _viewrect;
 		_scissorrect = r;

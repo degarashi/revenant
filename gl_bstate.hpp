@@ -8,11 +8,15 @@ namespace rev {
 		private:
 			bool		_enable;
 			GLenum		_flag;
+			struct DCmd_Apply {
+				bool	enable;
+				GLenum	flag;
+				static void Command(const void* p);
+			};
 		public:
 			GL_BState(bool enable, GLenum flag);
 			Type getType() const noexcept override;
-			void apply() const override;
-			void getDrawToken(draw::TokenDst& dst) const override;
+			void dcmd_apply(draw::IQueue& q) const override;
 			std::size_t getHash() const noexcept override;
 			bool operator == (const GLState& s) const noexcept override;
 			bool operator == (const GL_BState& s) const noexcept;

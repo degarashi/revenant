@@ -5,7 +5,6 @@
 #include "../../glx_if.hpp"
 #include "../../uniform_ent.hpp"
 #include "../../vdecl.hpp"
-#include "../../drawtoken/make_uniform.hpp"
 #include "../../tech_pass.hpp"
 
 // ----------------------- Sprite -----------------------

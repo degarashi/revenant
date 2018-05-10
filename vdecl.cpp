@@ -3,7 +3,7 @@
 #include "gl_format.hpp"
 #include "gl_if.hpp"
 #include "lubee/meta/countof.hpp"
-#include "drawtoken/buffer.hpp"
+#include "drawcmd/queue_if.hpp"
 
 namespace rev {
 	// ----------------- VDecl::VDInfo -----------------
@@ -68,8 +68,7 @@ namespace rev {
 		for(std::size_t i=0 ; i<countof(stream) ; i++) {
 			_streamOfs[i] = cur;
 			for(auto& t2 : stream[i]) {
-				// 描画スレッドからの呼び出しとなるのでt2はコピー
-				_setter[cur] = [t2](const GLuint vb_stride, const VSem_AttrV& attr) {
+				_setter[cur] = [t2](draw::IQueue& q, const GLuint vb_stride, const VSem_AttrV& attr) {
 					// Stride-Overrideが0の時はVBufferから提供されたStrideを使う
 					const auto stride = (t2.strideOvr==0) ? vb_stride : t2.strideOvr;
 					D_Assert0(stride > 0);
@@ -85,32 +84,66 @@ namespace rev {
 					if(itr == attr.cend())
 						return;
 					const auto attrId = itr->attrId;
-					GL.glEnableVertexAttribArray(attrId);
 					const auto* ptr = reinterpret_cast<const GLvoid*>(t2.offset);
+					bool bInteger = false;
 					#ifndef USE_OPENGLES2
+					{
 						const auto typ = GLFormat::QueryGLSLInfo(t2.elemFlag)->type;
 						if(typ == GLSLType::BoolT || typ == GLSLType::IntT) {
 							// PCにおけるAMDドライバの場合、Int値はIPointerでセットしないと値が化けてしまう為
-							GL.glVertexAttribIPointer(attrId, t2.elemSize, t2.elemFlag, stride, ptr);
-						} else
+							bInteger = true;
+						}
+					}
 					#endif
-							GL.glVertexAttribPointer(attrId, t2.elemSize, t2.elemFlag, t2.bNormalize, stride, ptr);
+					q.add(DCmd_VPtr{
+						.attrId = attrId,
+						.elemSize = t2.elemSize,
+						.elemFlag = t2.elemFlag,
+						.stride = stride,
+						.offset = ptr,
+						.bInteger = bInteger,
+						.bNormalize = t2.bNormalize,
+					});
 				};
 				++cur;
 			}
 		}
 		_streamOfs[MaxVStream] = _streamOfs[MaxVStream-1];
 	}
-	void VDecl::apply(const GLBufferCore* (&stream)[MaxVStream], const VSem_AttrV& attr) const {
+	void VDecl::DCmd_VPtr::Command(const void* p) {
+		auto& self = *static_cast<const DCmd_VPtr*>(p);
+		GL.glEnableVertexAttribArray(self.attrId);
+		if(self.bInteger) {
+			GL.glVertexAttribIPointer(
+				self.attrId,
+				self.elemSize,
+				self.elemFlag,
+				self.stride,
+				self.offset
+			);
+		} else {
+			GL.glVertexAttribPointer(
+				self.attrId,
+				self.elemSize,
+				self.elemFlag,
+				self.bNormalize,
+				self.stride,
+				self.offset
+			);
+		}
+	}
+	void VDecl::dcmd_apply(draw::IQueue& q, const HVb (&stream)[MaxVStream], const VSem_AttrV& attr) const {
 		for(std::size_t i=0 ; i<countof(stream) ; i++) {
 			// VStreamが設定されていればBindする
-			if(const auto* vb = stream[i]) {
-				const RUser _(*vb);
+			auto& vb = stream[i];
+			if(vb) {
 				const GLuint stride = vb->getStride();
 				const auto from = _streamOfs[i],
 							to = _streamOfs[i+1];
+				vb->dcmd_use(q);
 				for(std::size_t j=from ; j<to ; j++)
-					_setter[j](stride, attr);
+					_setter[j](q, stride, attr);
+				vb->dcmd_useEnd(q);
 			}
 		}
 	}

@@ -68,9 +68,8 @@ namespace rev::gltf {
 					value = v;
 				else
 					value = &fixed.value;
-				draw::Token_SP token = MakeUniformToken(*value, fixed.type, fixed.count);
 				auto& glsl_name = tech.namecnv.uniform.at(name);
-				_uniform.setUniformWithMake(glsl_name, [t=std::move(token)](){ return std::move(t); });
+				SetUniform(_uniform, glsl_name, *value, fixed.type, fixed.count);
 			}
 			// Uniform必須変数
 			for(auto& u : tech.param.typedUniform) {
@@ -79,9 +78,8 @@ namespace rev::gltf {
 
 				const auto* v = mtl.findValue(name);
 				Assert0(v);
-				draw::Token_SP token = MakeUniformToken(*v, typed.type, typed.count);
 				auto& glsl_name = tech.namecnv.uniform.at(name);
-				_uniform.setUniformWithMake(glsl_name, [t=std::move(token)](){ return std::move(t); });
+				SetUniform(_uniform, glsl_name, *v, typed.type, typed.count);
 			}
 			// ---- 頂点アトリビュート ----
 			for(auto& a : tech.param.attribute) {

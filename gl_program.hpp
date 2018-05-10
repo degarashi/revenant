@@ -3,11 +3,13 @@
 #include "gl_types.hpp"
 #include "gl_if.hpp"
 #include "handle/opengl.hpp"
-#include "drawtoken/token.hpp"
 #include "spine/flyweight_item.hpp"
 #include <typeindex>
 
 namespace rev {
+	namespace draw {
+		class IQueue;
+	}
 	using Name = std::string;
 	using SName = spi::FlyweightItem<std::string>;
 	class UniformEnt;
@@ -35,6 +37,10 @@ namespace rev {
 			using UniformMap = std::unordered_map<SName, GLParamInfo>;
 			using AttribMap = UniformMap;
 			using TexIndex = std::unordered_map<GLint, GLint>;
+			struct DCmd_Use {
+				GLuint		progId;
+				static void Command(const void* p);
+			};
 
 			HSh					_shader[ShType::_Num];
 			GLuint				_idProg;
@@ -75,7 +81,7 @@ namespace rev {
 			~GLProgram() override;
 			void onDeviceLost() override;
 			void onDeviceReset() override;
-			void getDrawToken(draw::TokenDst& dst) const;
+			void dcmd_use(draw::IQueue& q) const;
 			const HSh& getShader(ShType type) const noexcept;
 
 			//! 文字列によるUniform-Id検索

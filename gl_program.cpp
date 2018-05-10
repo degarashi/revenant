@@ -4,7 +4,7 @@
 #include "gl_resource.hpp"
 #include "handler.hpp"
 #include "lubee/meta/countof.hpp"
-#include "drawtoken/program.hpp"
+#include "drawcmd/queue_if.hpp"
 
 namespace rev {
 	// ------------------ GLProgram::GLParamInfo ------------------
@@ -177,10 +177,9 @@ namespace rev {
 	void GLProgram::use() const {
 		GL.glUseProgram(getProgramId());
 	}
-	void GLProgram::getDrawToken(draw::TokenDst& dst) const {
-		using UT = draw::Program;
-		new(dst.allocate_memory( sizeof(UT), draw::CalcTokenOffset<UT>()))
-			UT(const_cast<GLProgram*>(this)->shared_from_this());
+	void GLProgram::dcmd_use(draw::IQueue& q) const {
+		q.add(DCmd_Use{getProgramId()});
+		q.stockResource(shared_from_this());
 	}
 	const GLProgram::UniformMap& GLProgram::getUniform() const noexcept {
 		return _umap;
@@ -197,5 +196,10 @@ namespace rev {
 		if(itr != _umap.cend())
 			return itr->first->c_str();
 		return nullptr;
+	}
+
+	void GLProgram::DCmd_Use::Command(const void* p) {
+		auto& self = *static_cast<const GLProgram::DCmd_Use*>(p);
+		GL.glUseProgram(self.progId);
 	}
 }

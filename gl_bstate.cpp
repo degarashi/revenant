@@ -1,6 +1,6 @@
 #include "gl_bstate.hpp"
 #include "lubee/hash_combine.hpp"
-#include "drawtoken/bstate.hpp"
+#include "drawcmd/queue_if.hpp"
 
 namespace rev {
 	namespace {
@@ -19,12 +19,8 @@ namespace rev {
 	std::size_t GL_BState::getHash() const noexcept {
 		return lubee::hash_combine_implicit(_enable, _flag);
 	}
-	void GL_BState::apply() const {
-		(GL.*cs_func[static_cast<std::size_t>(_enable)])(_flag);
-	}
-	void GL_BState::getDrawToken(draw::TokenDst& dst) const {
-		using UT = draw::BState;
-		new(dst.allocate_memory(sizeof(UT), draw::CalcTokenOffset<UT>())) UT(_flag, _enable);
+	void GL_BState::dcmd_apply(draw::IQueue& q) const {
+		q.add(DCmd_Apply{_enable, _flag});
 	}
 	bool GL_BState::operator == (const GLState& s) const noexcept {
 		return _Compare(*this, s);
@@ -32,5 +28,10 @@ namespace rev {
 	bool GL_BState::operator == (const GL_BState& bs) const noexcept {
 		return _enable == bs._enable &&
 				_flag == bs._flag;
+	}
+
+	void GL_BState::DCmd_Apply::Command(const void* p) {
+		auto& self = *static_cast<const DCmd_Apply*>(p);
+		(GL.*cs_func[static_cast<std::size_t>(self.enable)])(self.flag);
 	}
 }

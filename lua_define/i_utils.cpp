@@ -8,7 +8,7 @@ DEF_LUAIMPLEMENT_SPTR(
 	NOTHING,
 	NOTHING,
 	NOTHING,
-	(rev::Priority)(const rev::draw::ClearParam&)
+	(rev::Priority)(const rev::ClearParam&)
 )
 
 #include "../util/fbswitch.hpp"

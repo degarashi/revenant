@@ -5,6 +5,9 @@
 #include "lubee/fwd.hpp"
 #include "../debuggui_if.hpp"
 
+namespace rev {
+	class UniformEnt;
+}
 namespace rev::gltf {
 	struct NodeParam_USem;
 	struct RTUniform :
@@ -12,7 +15,9 @@ namespace rev::gltf {
 		IDebugGui
 	{
 		virtual ~RTUniform() {}
-		virtual draw::Token_SP makeToken(
+		virtual void exportUniform(
+					UniformEnt& u,
+					const SName& uname,
 					dc::JointId currentId,
 					const dc::SkinBindV_SP& bind,
 					const frea::Mat4& bsm,

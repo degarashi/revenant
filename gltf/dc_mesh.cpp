@@ -24,9 +24,7 @@ namespace rev::gltf {
 		auto& u = e.refUniformEnt();
 		{
 			for(auto& rt : *_rtParams) {
-				u.setUniformWithMake(rt.first, [&](){
-					return rt.second->makeToken(_jointId, _bind, _bsm, npu);
-				});
+				rt.second->exportUniform(u, rt.first, _jointId, _bind, _bsm, npu);
 			}
 		}
 		IMesh::_draw(e);

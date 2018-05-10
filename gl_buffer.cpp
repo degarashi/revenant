@@ -2,8 +2,8 @@
 #include "gl_if.hpp"
 #include "handler.hpp"
 #include "gl_error.hpp"
+#include "drawcmd/queue_if.hpp"
 #include <cstring>
-#include "drawtoken/buffer.hpp"
 
 namespace rev {
 	using ByteBuff = std::vector<uint8_t>;
@@ -96,9 +96,14 @@ namespace rev {
 	GLuint GLBuffer::getNElem() const {
 		return _buffSize / _stride;
 	}
-	draw::Buffer GLBuffer::getDrawToken() const {
+	void GLBuffer::dcmd_use(draw::IQueue& q) const {
 		Assert0(getBuffId() > 0);
-		return draw::Buffer(*this, const_cast<GLBuffer*>(this)->shared_from_this());
+		q.add(DCmd_Use{static_cast<const GLBufferCore&>(*this)});
+		q.stockResource(shared_from_this());
+	}
+	void GLBuffer::dcmd_useEnd(draw::IQueue& q) const {
+		Assert0(getBuffId() > 0);
+		q.add(DCmd_UseEnd{static_cast<const GLBufferCore&>(*this)});
 	}
 	void* GLBuffer::_getBufferPtr() const noexcept {
 		return _pBuffer;
@@ -143,5 +148,14 @@ namespace rev {
 				Assert(false, "unknown ibuffer size type");
 		}
 		return 0;
+	}
+
+	void GLBuffer::DCmd_Use::Command(const void* p) {
+		auto& self = *static_cast<const DCmd_Use*>(p);
+		self.use_begin();
+	}
+	void GLBuffer::DCmd_UseEnd::Command(const void* p) {
+		auto& self = *static_cast<const DCmd_UseEnd*>(p);
+		self.use_end();
 	}
 }
