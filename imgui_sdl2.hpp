@@ -26,7 +26,7 @@ namespace rev {
 				GLint	texture,
 						projMat;
 			} _unif;
-			HVDecl	_vdecl;
+			FWVDecl		_vdecl;
 
 			lubee::Freelist<uintptr_t>	_idStack;
 			struct Store {

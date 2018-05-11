@@ -11,9 +11,8 @@ namespace vertex {
 		frea::Vec3	pos;
 		frea::Vec2	uv;
 
-		static rev::HVDecl MakeData(lubee::IConst<0>);
+		const static rev::FWVDecl s_vdecl;
 	};
-	extern const rev::SingletonData<rev::VDecl, sprite, 0> sprite_vdecl;
 }
 
 namespace rev {

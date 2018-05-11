@@ -8,9 +8,8 @@ namespace vertex {
 		frea::Vec3	pos;
 		frea::Vec3	normal;
 
-		static rev::HVDecl MakeData(lubee::IConst<0>);
+		const static rev::FWVDecl s_vdecl;
 	};
-	extern const rev::SingletonData<rev::VDecl, cube, 0> cube_vdecl;
 }
 class Cube : public beat::g3::Pose,
 			public lubee::AAllocator<Cube>

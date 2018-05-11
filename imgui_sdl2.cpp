@@ -16,7 +16,6 @@
 #include "u_matrix2d.hpp"
 #include "fbrect.hpp"
 #include "primitive.hpp"
-#include "singleton_data_lazy.hpp"
 #include <SDL_version.h>
 
 namespace {
@@ -54,18 +53,13 @@ namespace rev {
 
 	// --------------- ImGui_SDL2 ---------------
 	namespace {
-		struct VDMaker {
-			static HVDecl MakeData(lubee::IConst<0>) {
-				return HVDecl(
-					new VDecl{
-						{0,0, GL_FLOAT, GL_FALSE, 2, {VSemEnum::POSITION, 0}},
-						{0,8, GL_FLOAT, GL_FALSE, 2, {VSemEnum::TEXCOORD, 0}},
-						{0,16, GL_UNSIGNED_BYTE, GL_TRUE, 4, {VSemEnum::COLOR, 0}}
-					}
-				);
+		const FWVDecl g_vdecl(
+			VDecl{
+				{0,0, GL_FLOAT, GL_FALSE, 2, {VSemEnum::POSITION, 0}},
+				{0,8, GL_FLOAT, GL_FALSE, 2, {VSemEnum::TEXCOORD, 0}},
+				{0,16, GL_UNSIGNED_BYTE, GL_TRUE, 4, {VSemEnum::COLOR, 0}}
 			}
-		};
-		const SingletonDataLazy<VDecl, VDMaker, 0> g_vdecl;
+		);
 	}
 	const uintptr_t ImGui_SDL2::cs_invalidId = std::numeric_limits<uintptr_t>::max(),
 					ImGui_SDL2::cs_fontId = cs_invalidId-1;
@@ -311,7 +305,7 @@ namespace rev {
 						(int)(-pcmd->ClipRect.y + fb_height)
 					}});
 					const auto prim = std::make_shared<Primitive>();
-					prim->vdecl = g_vdecl.GetData();
+					prim->vdecl = g_vdecl;
 					prim->drawMode = DrawMode::Triangles;
 					prim->ib = ib;
 					prim->vb[0] = vb;

@@ -11,7 +11,7 @@ namespace rev {
 	struct VSem_AttrId;
 	using VSemAttrV = std::vector<VSem_AttrId>;
 	struct Primitive : IDebugGui {
-		HVDecl		vdecl;
+		FWVDecl		vdecl;
 		HVb			vb[MaxVStream];
 		HIb			ib;
 		DrawMode	drawMode;

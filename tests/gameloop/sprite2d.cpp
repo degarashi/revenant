@@ -23,7 +23,7 @@ rev::HPrim Sprite2D::MakeData(lubee::IConst<0>) {
 	const GLushort idx[] = {0,1,2, 2,3,0};
 	ret->ib = mgr_gl.makeIBuffer(rev::DrawType::Static);
 	ret->ib->initData(idx, countof(idx));
-	ret->vdecl = vertex::sprite_vdecl;
+	ret->vdecl = vertex::sprite::s_vdecl;
 	ret->drawMode = rev::DrawMode::Triangles;
 	auto& info = ret->withIndex;
 	info.count = 6;
@@ -74,15 +74,12 @@ void Sprite2D::outputDrawTag(rev::DrawTag& d) const {
 
 // ---------------------- Sprite頂点宣言 ----------------------
 namespace vertex {
-	rev::HVDecl sprite::MakeData(lubee::IConst<0>) {
-		return rev::HVDecl{
-			new rev::VDecl({
-				{0,0, GL_FLOAT, GL_FALSE, 3, {rev::VSemEnum::POSITION, 0}},
-				{0,12, GL_FLOAT, GL_FALSE, 2, {rev::VSemEnum::TEXCOORD, 0}}
-			})
-		};
-	}
-	const rev::SingletonData<rev::VDecl, sprite, 0> sprite_vdecl;
+	const rev::FWVDecl sprite::s_vdecl = {
+		rev::VDecl({
+			{0,0, GL_FLOAT, GL_FALSE, 3, {rev::VSemEnum::POSITION, 0}},
+			{0,12, GL_FLOAT, GL_FALSE, 2, {rev::VSemEnum::TEXCOORD, 0}}
+		})
+	};
 }
 
 // ----------------------- Sprite2DObj -----------------------

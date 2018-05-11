@@ -94,15 +94,12 @@ namespace rev {
 	}
 
 	// --------------------------- VDecl for text ---------------------------
-	const SingletonDataLazy<VDecl, vertex::text, 0> vertex::text::s_decl;
-	HVDecl vertex::text::MakeData(lubee::IConst<0>) {
-		return HVDecl(
-			new VDecl({
-				{0, 0, GL_FLOAT, GL_FALSE, 2, {VSemEnum::POSITION, 0}},
-				{0, 8, GL_FLOAT, GL_FALSE, 3, {VSemEnum::TEXCOORD, 0}}
-			})
-		);
-	}
+	const FWVDecl vertex::text::s_decl(
+		VDecl{
+			{0, 0, GL_FLOAT, GL_FALSE, 2, {VSemEnum::POSITION, 0}},
+			{0, 8, GL_FLOAT, GL_FALSE, 3, {VSemEnum::TEXCOORD, 0}}
+		}
+	);
 
 	// --------------------------- TextObj ---------------------------
 	TextObj::TextObj(Face& face, CCoreID coreID, std::u32string&& s): _text(std::move(s)), _coreID(coreID), _faceName(face.faceName) {
@@ -188,7 +185,7 @@ namespace rev {
 			p->vb[0]->initData(std::move(vbuff), sizeof(vertex::text));
 			p->ib = mgr_gl.makeIBuffer(DrawType::Static);
 			p->ib->initData(std::move(ibuff));
-			p->vdecl = vertex::text::s_decl.GetData();
+			p->vdecl = vertex::text::s_decl;
 			p->drawMode = DrawMode::Triangles;
 			auto& info = p->withIndex;
 			info.count = ds.nChar*6;

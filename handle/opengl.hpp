@@ -1,5 +1,6 @@
 #pragma once
 #include "common.hpp"
+#include "spine/flyweight_item.hpp"
 
 namespace rev {
 	struct IGLResource;
@@ -32,7 +33,7 @@ namespace rev {
 	struct GLState;
 	DEF_HANDLE(GLState, GLState)
 	class VDecl;
-	DEF_HANDLE(VDecl, VDecl)
+	using FWVDecl = spi::FlyweightItem<VDecl>;
 	struct ITech;
 	DEF_HANDLE(ITech, Tech)
 	struct Primitive;

@@ -7,15 +7,12 @@
 #include "../../u_matrix3d.hpp"
 
 // ---------------------- Cube頂点宣言 ----------------------
-rev::HVDecl vertex::cube::MakeData(lubee::IConst<0>) {
-	return rev::HVDecl{
-		new rev::VDecl({
-			{0,0, GL_FLOAT, GL_FALSE, 3, {rev::VSemEnum::POSITION, 0}},
-			{1,0, GL_FLOAT, GL_FALSE, 3, {rev::VSemEnum::NORMAL, 0}}
-		})
-	};
-}
-const rev::SingletonData<rev::VDecl, vertex::cube, 0> vertex::cube_vdecl;
+const rev::FWVDecl vertex::cube::s_vdecl(
+	rev::VDecl({
+		{0,0, GL_FLOAT, GL_FALSE, 3, {rev::VSemEnum::POSITION, 0}},
+		{1,0, GL_FLOAT, GL_FALSE, 3, {rev::VSemEnum::NORMAL, 0}}
+	})
+);
 
 namespace {
 	const static struct Pos_t {
@@ -151,7 +148,7 @@ Cube::Cube():
 {}
 rev::HPrim Cube::MakeData(lubee::IConst<Data::Flat>) {
 	auto ret = std::make_shared<rev::Primitive>();
-	ret->vdecl = vertex::cube_vdecl;
+	ret->vdecl = vertex::cube::s_vdecl;
 	ret->drawMode = rev::DrawMode::Triangles;
 
 	ret->vb[0] = MakeFlatPosVB();
@@ -165,7 +162,7 @@ rev::HPrim Cube::MakeData(lubee::IConst<Data::Flat>) {
 }
 rev::HPrim Cube::MakeData(lubee::IConst<Data::Gouraud>) {
 	auto ret = std::make_shared<rev::Primitive>();
-	ret->vdecl = vertex::cube_vdecl;
+	ret->vdecl = vertex::cube::s_vdecl;
 	ret->drawMode = rev::DrawMode::Triangles;
 
 	ret->vb[0] = MakeGouraudPosVB();

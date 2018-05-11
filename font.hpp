@@ -45,8 +45,7 @@ namespace rev {
 			frea::Vec2	pos;
 			frea::Vec3	uvt;
 
-			const static SingletonDataLazy<VDecl, text, 0>	s_decl;
-			static HVDecl MakeData(lubee::IConst<0>);
+			const static FWVDecl s_decl;
 		};
 	}
 }

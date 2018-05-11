@@ -78,7 +78,7 @@ namespace rev::gltf {
 					}
 					vdinfo.emplace_back(idx, acc.byteOffset + acc.bufferView->byteOffset, acc.componentType, GL_FALSE, acc.nElem, a.first, acc.byteStride);
 				}
-				p.vdecl = std::make_shared<VDecl>(vdinfo);
+				p.vdecl = FWVDecl(vdinfo);
 				D_Assert(index <= MaxVStream, "too many vertex streams");
 				for(auto& m : map) {
 					p.vb[m.second] = m.first->src->getAsVb();
