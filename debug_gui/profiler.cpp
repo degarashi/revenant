@@ -12,6 +12,7 @@
 #include "spacing.hpp"
 #include "../rev_time.hpp"
 #include "../drawthread.hpp"
+#include <iomanip>
 
 namespace rev::debug {
 	Profiler::Profiler():
@@ -26,6 +27,10 @@ namespace rev::debug {
 		_select(nullptr)
 	{}
 	namespace {
+		float ToMicro(const Duration t) {
+			using namespace std::chrono;
+			return duration_cast<Nanoseconds>(t).count()/1000.f;
+		}
 		float ToMilli(const Duration t) {
 			using namespace std::chrono;
 			return duration_cast<Microseconds>(t).count()/1000.f;
@@ -34,11 +39,14 @@ namespace rev::debug {
 			using namespace std::chrono;
 			return duration_cast<Milliseconds>(t).count()/1000.f;
 		}
-		void ShowTree_Node(const prof::Block& node, const bool sibling) {
+		void ShowTree_Node(const prof::Block& node, const Duration parentLength, const bool sibling) {
 			const auto& h = node.hist;
 			StringStream s;
+			const float parentMilli = ToMicro(parentLength);
+			const float percentage = (parentMilli > 0) ? (ToMicro(h.tAccum) / parentMilli * 100.f) : 0.f;
 			s << node.name;
 			s << "(" << h.nCalled << ")";
+			s << " " << std::fixed << std::setprecision(2) << percentage << "%";
 			s << " Avg:" << ToMilli(h.getAverageTime());
 			s << "(" << ToMilli(node.getAverageTime(true)) << ")";
 			s << " Accum:" << ToMilli(h.tAccum);
@@ -51,7 +59,7 @@ namespace rev::debug {
 			else {
 				if(const auto _ = TreePush(s.output().c_str())) {
 					if(const auto& c = node.getChild()) {
-						ShowTree_Node(*c, true);
+						ShowTree_Node(*c, node.hist.tAccum, true);
 					}
 				}
 			}
@@ -59,7 +67,7 @@ namespace rev::debug {
 				using Node = std::decay_t<decltype(node.getSibling())>;
 				Node s = node.getSibling();
 				while(s) {
-					ShowTree_Node(*s, false);
+					ShowTree_Node(*s, parentLength, false);
 					s = s->getSibling();
 				}
 			}
@@ -69,7 +77,7 @@ namespace rev::debug {
 			Show(nullptr, "At: ");
 			ImGui::SameLine();
 			Show(nullptr, dur);
-			ShowTree_Node(*i.root, true);
+			ShowTree_Node(*i.root, i.root->hist.tAccum, true);
 		}
 		struct CalcWidth {
 			Duration	base;
