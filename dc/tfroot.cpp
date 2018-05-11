@@ -11,8 +11,10 @@ namespace rev::dc {
 		const auto& node = getNode();
 		for(auto& n : node) {
 			n->iterateDepthFirst<true>([&dst](auto& n, int){
-				if(!n.jointName->empty())
-					dst.emplace(n.jointName, &n);
+				if(n.jointName) {
+					if(!n.jointName->empty())
+						dst.emplace(n.jointName, &n);
+				}
 				return spi::Iterate::StepIn;
 			});
 		}

@@ -353,7 +353,7 @@ namespace rev {
 		// 頂点セマンティクス対応リストを生成
 		for(auto& p : attrL) {
 			const char* name = p->name.c_str();
-			if(const auto at = prog->getAttribId(name)) {
+			if(const auto at = prog->getAttribId(SName(name))) {
 				const auto sem = static_cast<VSemEnum::e>(p->sem);
 				VSem_AttrId a;
 				a.sem = VSemantic {

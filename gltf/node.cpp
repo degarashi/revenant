@@ -14,9 +14,11 @@ namespace rev::gltf {
 		Resource(v),
 		pose(loader::Pose3(v)),
 		child(loader::Optional<loader::Array<TagNode>>(v, "children", {})),
-		jointName(loader::Optional<loader::StdString>(v, "jointName", SName())),
 		jointId(s_id++)
-	{}
+	{
+		if(const auto jn = loader::Optional<loader::StdString>(v, "jointName"))
+			jointName = *jn;
+	}
 	Resource::Type Node::getType() const noexcept {
 		return Type::Node;
 	}

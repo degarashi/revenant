@@ -31,7 +31,7 @@ namespace rev::gltf {
 		f.show("Type", getDebugName());
 		f.show("Semantic", semantic);
 		f.show("Node-JointId", node->jointId);
-		f.show("Node-Name", node->jointName->c_str());
+		f.show("Node-Name", (node->jointName) ? node->jointName->c_str() : "(noname)");
 		return f.modified();
 	}
 }

@@ -11,7 +11,7 @@ namespace rev::dc {
 	bool TfNode::property(const bool edit) {
 		auto f = debug::EntryField(nullptr, edit);
 		f.entry("Id", id);
-		f.entry("JointName", jointName->c_str());
+		f.entry("JointName", (jointName ? jointName->c_str() : "(noname)"));
 		f.show("Transform", spi::UnwrapAcValue(getTransform()));
 		ImGui::Columns(1);
 		ImGui::Spacing();
@@ -30,7 +30,7 @@ namespace rev::dc {
 		boost::format fmt(R"("%1%" (Id: %2%, JointName=%3%))");
 		fmt = fmt % userName;
 		fmt = fmt % id;
-		fmt = fmt % jointName->c_str();
+		fmt = fmt % (jointName ? jointName->c_str() : "(noname)");
 		return fmt.str();
 	}
 }

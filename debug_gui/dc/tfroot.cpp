@@ -69,8 +69,10 @@ namespace rev::dc {
 				if(!filter.buffer().empty()) {
 					for(auto& n : node) {
 						n->iterateDepthFirst<true>([&filter, &result](auto& n, int){
-							if(filter.PassFilter(n.jointName->c_str())) {
-								result.emplace_back(&n);
+							if(n.jointName) {
+								if(filter.PassFilter(n.jointName->c_str())) {
+									result.emplace_back(&n);
+								}
 							}
 							return spi::Iterate::StepIn;
 						});

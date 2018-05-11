@@ -14,6 +14,7 @@
 #include <boost/format.hpp>
 
 namespace rev::test {
+	using SName = spi::FlyweightItem<std::string>;
 	void MyScene::St_glTF::onEnter(MyScene& self, ObjTypeId_OP id) {
 		St_3D::onEnter(self, id);
 
@@ -34,7 +35,7 @@ namespace rev::test {
 			auto sc = *(*dsc);
 			gltf::Visitor_Model visitor;
 			{
-				auto node = std::make_shared<dc::TfNode>(0, "", "RootNode");
+				auto node = std::make_shared<dc::TfNode>(0, SName(), "RootNode");
 				node->refPose().identity();
 				node->refPose().setScaling(Vec3{1,1,-1});
 				visitor.addNode(node);

@@ -27,7 +27,7 @@ namespace rev {
 		(GL.*infoF)(getProgramId(), n, countof(g_buff), &len, &sz, &typ, g_buff);
 		GLParamInfo ret = *GLFormat::QueryGLSLInfo(typ);
 		ret.length = sz;
-		ret.name = g_buff;
+		ret.name = SName(g_buff);
 
 		std::smatch m;
 		if(std::regex_match(*ret.name, m, re_array)) {

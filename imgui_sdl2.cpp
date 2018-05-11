@@ -263,8 +263,8 @@ namespace rev {
 		auto tp = mgr_gl.loadTechPass("imgui.glx");
 		_tech = tp->getTechnique("ImGui|Default");
 		auto& p = *_tech->getProgram();
-		_unif.texture = *p.getUniformId("Texture");
-		_unif.projMat = *p.getUniformId("ProjMtx");
+		_unif.texture = *p.getUniformId(SName("Texture"));
+		_unif.projMat = *p.getUniformId(SName("ProjMtx"));
 	}
 	void ImGui_SDL2::_renderDrawLists(ImDrawData* draw_data) {
 		ImGuiIO& io = ImGui::GetIO();
