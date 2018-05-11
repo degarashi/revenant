@@ -37,7 +37,7 @@ namespace rev {
 	struct ITech;
 	DEF_HANDLE(ITech, Tech)
 	struct Primitive;
-	DEF_HANDLE(Primitive, Prim)
+	using FWPrim = spi::FlyweightItem<Primitive>;
 	class TechPass;
 	DEF_HANDLE(TechPass, TP)
 	namespace parse {

@@ -16,7 +16,11 @@ namespace rev {
 			mod |= technique->property(edit);
 		}
 		if(const auto _ = debug::Header("Primitive", !primitive)) {
-			mod |= primitive->property(edit);
+			Primitive tmp = *primitive;
+			if(tmp.property(edit)) {
+				mod = true;
+				primitive = tmp;
+			}
 		}
 		ImGui::Spacing();
 

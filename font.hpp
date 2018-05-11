@@ -63,7 +63,7 @@ namespace rev {
 	class TextObj {
 		using CPosL = std::vector<const CharPos*>;
 		struct DrawSet {
-			HPrim	primitive;
+			FWPrim	primitive;
 			HTex	hTex;
 			int		nChar;	//!< スペースなど制御文字を除いた文字数
 		};

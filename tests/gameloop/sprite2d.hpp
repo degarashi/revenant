@@ -32,7 +32,7 @@ class Sprite2D : public beat::g2::Pose {
 							_alpha;
 
 	public:
-		static rev::HPrim MakeData(lubee::IConst<0>);
+		static std::shared_ptr<rev::Primitive> MakeData(lubee::IConst<0>);
 		static rev::HTech MakeData(lubee::IConst<1>);
 
 		Sprite2D(const rev::HTex& t, float z);

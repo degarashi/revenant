@@ -11,11 +11,11 @@
 
 namespace rev {
 	namespace {
-		const HPrim c_invalidPrimitive = std::make_shared<Primitive>();
+		const FWPrim c_invalidPrimitive{Primitive()};
 	}
 	GLEffect::GLEffect():
-		_primitive(std::make_shared<Primitive>()),
-		_primitive_prev(std::make_shared<Primitive>()),
+		_primitive(c_invalidPrimitive),
+		_primitive_prev(c_invalidPrimitive),
 		_viewrect(false, {0,1,0,1}),
 		_scissorrect(false, {0,1,0,1}),
 		_bView(true),
@@ -115,7 +115,7 @@ namespace rev {
 			_bInit = true;
 		}
 	}
-	void GLEffect::setPrimitive(const HPrim& p) noexcept {
+	void GLEffect::setPrimitive(const FWPrim& p) noexcept {
 		_primitive = p;
 	}
 	void GLEffect::clearFramebuffer(const ClearParam& param) {

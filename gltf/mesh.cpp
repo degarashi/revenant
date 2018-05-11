@@ -48,10 +48,9 @@ namespace rev::gltf {
 	bool Mesh::Primitive::CanLoad(const JValue&) noexcept {
 		return true;
 	}
-	const HPrim& Mesh::Primitive::getPrimitive() const {
+	const FWPrim& Mesh::Primitive::getPrimitive() const {
 		if(!primitive_cache) {
-			primitive_cache = std::make_shared<::rev::Primitive>();
-			auto& p = *primitive_cache;
+			::rev::Primitive p;
 			p.drawMode = mode;
 			std::size_t nV = std::numeric_limits<std::size_t>::max();
 			{
@@ -101,6 +100,7 @@ namespace rev::gltf {
 				wo.first = 0;
 				wo.count = nV;
 			}
+			primitive_cache = p;
 		}
 		return primitive_cache;
 	}

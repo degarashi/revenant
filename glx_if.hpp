@@ -29,7 +29,7 @@ namespace rev {
 			virtual const FBRect& getViewport() const noexcept = 0;
 			virtual FBRect setScissor(const FBRect& r) = 0;
 			virtual void resetFramebuffer() = 0;
-			virtual void setPrimitive(const HPrim& p) noexcept = 0;
+			virtual void setPrimitive(const FWPrim& p) noexcept = 0;
 			virtual void clearFramebuffer(const ClearParam& param) = 0;
 			virtual void draw() = 0;
 			virtual void beginTask() = 0;

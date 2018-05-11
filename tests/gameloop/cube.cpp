@@ -146,7 +146,7 @@ namespace {
 Cube::Cube():
 	_flat(false)
 {}
-rev::HPrim Cube::MakeData(lubee::IConst<Data::Flat>) {
+std::shared_ptr<rev::Primitive> Cube::MakeData(lubee::IConst<Data::Flat>) {
 	auto ret = std::make_shared<rev::Primitive>();
 	ret->vdecl = vertex::cube::s_vdecl;
 	ret->drawMode = rev::DrawMode::Triangles;
@@ -160,7 +160,7 @@ rev::HPrim Cube::MakeData(lubee::IConst<Data::Flat>) {
 	info.count = NFace * countof(FaceIndex);
 	return ret;
 }
-rev::HPrim Cube::MakeData(lubee::IConst<Data::Gouraud>) {
+std::shared_ptr<rev::Primitive> Cube::MakeData(lubee::IConst<Data::Gouraud>) {
 	auto ret = std::make_shared<rev::Primitive>();
 	ret->vdecl = vertex::cube::s_vdecl;
 	ret->drawMode = rev::DrawMode::Triangles;
@@ -186,10 +186,10 @@ void Cube::draw(rev::IEffect& e) const {
 	e.setPrimitive(_getPrimitive());
 	e.draw();
 }
-const rev::HPrim& Cube::_getPrimitive() const noexcept {
+rev::FWPrim Cube::_getPrimitive() const noexcept {
 	if(_flat)
-		return _p_flat;
-	return _p_gouraud;
+		return *_p_flat;
+	return *_p_gouraud;
 }
 
 // ----------------------- CubeObj  -----------------------

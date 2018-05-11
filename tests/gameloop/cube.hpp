@@ -28,11 +28,11 @@ class Cube : public beat::g3::Pose,
 		Gouraud	_p_gouraud;
 		Tech	_tech;
 		bool	_flat;
-		const rev::HPrim& _getPrimitive() const noexcept;
+		rev::FWPrim _getPrimitive() const noexcept;
 
 	public:
-		static rev::HPrim MakeData(lubee::IConst<Data::Flat>);
-		static rev::HPrim MakeData(lubee::IConst<Data::Gouraud>);
+		static std::shared_ptr<rev::Primitive> MakeData(lubee::IConst<Data::Flat>);
+		static std::shared_ptr<rev::Primitive> MakeData(lubee::IConst<Data::Gouraud>);
 		static rev::HTech MakeData(lubee::IConst<Data::Tech>);
 
 		Cube();

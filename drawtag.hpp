@@ -8,7 +8,7 @@ namespace rev {
 		using TexAr = std::array<HTex, 4>;
 
 		HTech		technique;
-		HPrim		primitive;
+		FWPrim		primitive;
 		TexAr		idTex;
 		Priority	priority;
 		float		zOffset;

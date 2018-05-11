@@ -180,16 +180,17 @@ namespace rev {
 			auto& ds = _drawSet[i];
 			ds.hTex = itr->first;
 			ds.nChar = nC;
-			const auto p = ds.primitive = std::make_shared<Primitive>();
-			p->vb[0] = mgr_gl.makeVBuffer(DrawType::Static);
-			p->vb[0]->initData(std::move(vbuff), sizeof(vertex::text));
-			p->ib = mgr_gl.makeIBuffer(DrawType::Static);
-			p->ib->initData(std::move(ibuff));
-			p->vdecl = vertex::text::s_decl;
-			p->drawMode = DrawMode::Triangles;
-			auto& info = p->withIndex;
+			Primitive p;
+			p.vb[0] = mgr_gl.makeVBuffer(DrawType::Static);
+			p.vb[0]->initData(std::move(vbuff), sizeof(vertex::text));
+			p.ib = mgr_gl.makeIBuffer(DrawType::Static);
+			p.ib->initData(std::move(ibuff));
+			p.vdecl = vertex::text::s_decl;
+			p.drawMode = DrawMode::Triangles;
+			auto& info = p.withIndex;
 			info.count = ds.nChar*6;
 			info.offsetElem = 0;
+			ds.primitive = p;
 		}
 	}
 	void TextObj::exportDrawTag(DrawTag& d) const {

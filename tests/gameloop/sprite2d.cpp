@@ -8,7 +8,7 @@
 #include "../../tech_pass.hpp"
 
 // ----------------------- Sprite -----------------------
-rev::HPrim Sprite2D::MakeData(lubee::IConst<0>) {
+std::shared_ptr<rev::Primitive> Sprite2D::MakeData(lubee::IConst<0>) {
 	auto ret = std::make_shared<rev::Primitive>();
 
 	// 大きさ1の矩形を定義して後でスケーリング
@@ -62,12 +62,12 @@ void Sprite2D::draw(rev::IEffect& e) const {
 		c.alpha = _alpha;
 	}
 	dynamic_cast<rev::U_Matrix2D&>(e).setWorld(getToWorld().convert<3,3>());
-	e.setPrimitive(_primitive);
+	e.setPrimitive(*_primitive);
 	e.draw();
 }
 void Sprite2D::outputDrawTag(rev::DrawTag& d) const {
 	d.idTex[0] = _hTex;
-	d.primitive = _primitive;
+	d.primitive = *_primitive;
 	d.technique = _tech;
 	d.zOffset = _zOffset;
 }

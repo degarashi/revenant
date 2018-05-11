@@ -304,12 +304,12 @@ namespace rev {
 						(int)(fb_height - pcmd->ClipRect.w),
 						(int)(-pcmd->ClipRect.y + fb_height)
 					}});
-					const auto prim = std::make_shared<Primitive>();
-					prim->vdecl = g_vdecl;
-					prim->drawMode = DrawMode::Triangles;
-					prim->ib = ib;
-					prim->vb[0] = vb;
-					auto& wi = prim->withIndex;
+					Primitive prim;
+					prim.vdecl = g_vdecl;
+					prim.drawMode = DrawMode::Triangles;
+					prim.ib = ib;
+					prim.vb[0] = vb;
+					auto& wi = prim.withIndex;
 					wi.count = (GLsizei)pcmd->ElemCount;
 					wi.offsetElem = uintptr_t(idx_buffer_offset) / sizeof(ImDrawIdx);
 					D_Assert0(uintptr_t(idx_buffer_offset) % sizeof(ImDrawIdx) == 0);
