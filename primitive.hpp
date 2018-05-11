@@ -45,3 +45,15 @@ namespace rev {
 		DEF_DEBUGGUI_PROP
 	};
 }
+#include "lubee/hash_combine.hpp"
+namespace std {
+	template <>
+	struct hash<rev::Primitive> {
+		std::size_t operator()(const rev::Primitive& p) const noexcept {
+			std::size_t ret = lubee::hash_combine_implicit(p.vdecl);
+			lubee::hash_combine_range(ret, p.vb, p.vb+rev::MaxVStream);
+			lubee::hash_combine(ret, p.ib, p.drawMode.value);
+			return ret;
+		}
+	};
+}
