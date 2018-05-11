@@ -49,6 +49,7 @@ namespace rev {
 			std::size_t	_streamOfs[MaxVStream+1];
 			// 元データ(シリアライズ用)
 			VDInfoV		_vdInfo;
+			friend struct std::hash<rev::VDecl>;
 
 			struct DCmd_VPtr {
 				int			attrId;
@@ -78,5 +79,34 @@ namespace rev {
 				using CBProp = std::function<void (const VDInfo&)>;
 				void property(const CBProp& cb) const;
 			#endif
+	};
+}
+#include "spine/flyweight_item.hpp"
+#include "lubee/hash_combine.hpp"
+namespace rev {
+	using VDecl_FW = spi::FlyweightItem<VDecl>;
+}
+namespace std {
+	template <>
+	struct hash<rev::VDecl::VDInfo> {
+		std::size_t operator()(const rev::VDecl::VDInfo& vd) const noexcept {
+			return lubee::hash_combine_implicit(
+				vd.streamId,
+				vd.offset,
+				vd.elemFlag,
+				vd.bNormalize,
+				vd.elemSize,
+				vd.sem.sem.value,
+				vd.sem.index,
+				vd.strideOvr
+			);
+		}
+	};
+	template <>
+	struct hash<rev::VDecl> {
+		std::size_t operator()(const rev::VDecl& vd) const noexcept {
+			auto& vdi = vd._vdInfo;
+			return lubee::hash_combine_range_implicit(vdi.begin(), vdi.end());
+		}
 	};
 }
