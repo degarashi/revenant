@@ -38,6 +38,7 @@ namespace rev {
 		void dcmd_stream(draw::IQueue& q, const VSemAttrV& vAttr) const;
 		void dcmd_streamEnd(draw::IQueue& q) const;
 		void getArray(CmpArray& dst) const noexcept;
+		bool operator == (const Primitive& p) const noexcept;
 		bool operator != (const Primitive& p) const noexcept;
 		bool operator < (const Primitive& p) const noexcept;
 		bool hasInfo() const noexcept;
