@@ -36,14 +36,13 @@ namespace rev::draw {
 	}
 	void CommandVec::clear() {
 		_vec.clear();
-		_set.clear();
+		_res.clear();
 	}
 	void CommandVec::stockResource(const VoidC_SP& r) {
-		_set.emplace(r);
+		_res.emplace_back(r);
 	}
-	void CommandVec::getResource(const CBResource& cb) const {
-		for(auto& r : _set)
-			cb(r);
+	IQueue::ResP CommandVec::getResource() const {
+		return {_res.data(), _res.size()};
 	}
 	IQueue::DataP CommandVec::getData() const {
 		return {_vec.data(), _vec.size()};
@@ -52,5 +51,10 @@ namespace rev::draw {
 		const auto prevLen = _vec.size();
 		_vec.resize(prevLen + src.second);
 		std::memcpy(_vec.data() + prevLen, src.first, src.second);
+	}
+	void CommandVec::_copyResource(const ResP& src) {
+		const auto prevLen = _res.size();
+		_res.resize(prevLen + src.second);
+		std::memcpy(_res.data() + prevLen, src.first, src.second);
 	}
 }

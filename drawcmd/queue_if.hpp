@@ -8,8 +8,10 @@ namespace rev::draw {
 	class IQueue {
 		protected:
 			using DataP = std::pair<const void*, std::size_t>;
+			using ResP = std::pair<const VoidC_SP*, std::size_t>;
 			virtual void* _allocateMemory(std::size_t s, CommandF f) = 0;
 			virtual void _copyMemory(const DataP& src) = 0;
+			virtual void _copyResource(const ResP& src) = 0;
 		public:
 			virtual ~IQueue() {}
 			template <class T>
@@ -22,15 +24,12 @@ namespace rev::draw {
 			}
 			virtual void stockResource(const VoidC_SP& r) = 0;
 
-			using CBResource = std::function<void (const VoidC_SP&)>;
 			virtual DataP getData() const = 0;
-			virtual void getResource(const CBResource& cb) const = 0;
+			virtual ResP getResource() const = 0;
 
 			void append(const IQueue& src) {
 				_copyMemory(src.getData());
-				src.getResource([this](const VoidC_SP& r){
-					stockResource(r);
-				});
+				_copyResource(src.getResource());
 			}
 	};
 }
