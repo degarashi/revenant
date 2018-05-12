@@ -1,5 +1,5 @@
 #pragma once
-#include "drawcmd/cmd_if.hpp"
+#include "drawcmd/cmd_unif_if.hpp"
 #include "drawcmd/queue_if.hpp"
 #include "drawcmd/types/vector.hpp"
 #include "drawcmd/types/matrix.hpp"
@@ -27,7 +27,7 @@ namespace rev {
 				cb(lubee::SZConst<32>{});
 		}
 		template <class V>
-		struct VecSingle : ICmd {
+		struct VecSingle : ICmd_Uniform {
 			V			value;
 
 			VecSingle(const V& v):
@@ -40,7 +40,7 @@ namespace rev {
 			}
 		};
 		template <class V>
-		struct VecArray : ICmd {
+		struct VecArray : ICmd_Uniform {
 			using Ar = std::vector<V>;
 			Ar			value;
 
@@ -57,7 +57,7 @@ namespace rev {
 			}
 		};
 		template <class M>
-		struct MatSingle : ICmd {
+		struct MatSingle : ICmd_Uniform {
 			M			value;
 
 			MatSingle(const M& m):
@@ -70,7 +70,7 @@ namespace rev {
 			}
 		};
 		template <class M>
-		struct MatArray : ICmd {
+		struct MatArray : ICmd_Uniform {
 			using Ar = std::vector<M>;
 			Ar			value;
 
@@ -86,7 +86,7 @@ namespace rev {
 				});
 			}
 		};
-		struct TexSingle : ICmd {
+		struct TexSingle : ICmd_Uniform {
 			HTexC	tex;
 
 			TexSingle(const HTexC& t):
@@ -96,7 +96,7 @@ namespace rev {
 				tex->dcmd_export(q, id, actId);
 			}
 		};
-		struct TexArray : ICmd {
+		struct TexArray : ICmd_Uniform {
 			using Ar = std::vector<HTexC>;
 			Ar		tex;
 
@@ -111,7 +111,7 @@ namespace rev {
 				}
 			}
 		};
-		using Cmd_SP = std::shared_ptr<ICmd>;
+		using Cmd_SP = std::shared_ptr<ICmd_Uniform>;
 	}
 	namespace detail {
 		template <class T, ENABLE_IF(std::is_floating_point_v<T>)>
