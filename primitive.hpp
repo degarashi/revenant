@@ -11,6 +11,28 @@ namespace rev {
 	struct VSem_AttrId;
 	using VSemAttrV = std::vector<VSem_AttrId>;
 	struct Primitive : IDebugGui {
+		//! Draw token (without index)
+		struct DCmd_Draw {
+			GLenum		mode;
+			GLint		first;
+			GLsizei		count;
+
+			static void Command(const void* p);
+		};
+		//! Draw token (with index)
+		struct DCmd_DrawIndexed {
+			//! 描画モードフラグ(OpenGL)
+			GLenum			mode;
+			//! 描画に使用される要素数
+			GLsizei			count;
+			//! 1要素のサイズを表すフラグ
+			GLenum			sizeF;
+			//! オフセットバイト数
+			GLuint			offset;
+
+			static void Command(const void* p);
+		};
+
 		FWVDecl		vdecl;
 		HVb			vb[MaxVStream];
 		HIb			ib;

@@ -1,6 +1,7 @@
 #include "primitive.hpp"
 #include "lubee/meta/countof.hpp"
 #include "vdecl.hpp"
+#include "drawcmd/queue_if.hpp"
 
 namespace rev {
 	// -------------- Primitive --------------
@@ -39,8 +40,23 @@ namespace rev {
 	void Primitive::dcmd_export(draw::IQueue& q, const VSemAttrV& vAttr) const {
 		Assert(vdecl, "VDecl is not set");
 		vdecl->dcmd_export(q, vb, vAttr);
-		if(ib)
+		if(ib) {
 			ib->dcmd_export(q);
+			const auto str = ib->getStride();
+			const auto szF = GLIBuffer::GetSizeFlag(str);
+			q.add(DCmd_DrawIndexed{
+				.mode = drawMode,
+				.count = withIndex.count,
+				.sizeF = szF,
+				.offset = withIndex.offsetElem*str,
+			});
+		} else {
+			q.add(DCmd_Draw{
+				.mode = drawMode,
+				.first = withoutIndex.first,
+				.count = withoutIndex.count,
+			});
+		}
 	}
 	void Primitive::getArray(CmpArray& dst) const noexcept {
 		auto add = [p = dst.data()](auto& ptr) mutable {
@@ -65,5 +81,19 @@ namespace rev {
 	}
 	bool Primitive::hasInfo() const noexcept {
 		return vdecl || vb[0] || ib;
+	}
+}
+#include "gl_if.hpp"
+#include "gl_error.hpp"
+namespace rev {
+	void Primitive::DCmd_Draw::Command(const void* p) {
+		auto& self = *static_cast<const DCmd_Draw*>(p);
+		GL.glDrawArrays(self.mode, self.first, self.count);
+		D_GLAssert0();
+	}
+	void Primitive::DCmd_DrawIndexed::Command(const void* p) {
+		auto& self = *static_cast<const DCmd_DrawIndexed*>(p);
+		GL.glDrawElements(self.mode, self.count, self.sizeF, reinterpret_cast<const GLvoid*>(self.offset));
+		D_GLAssert0();
 	}
 }

@@ -2,7 +2,6 @@
 #include "gl_framebuffer.hpp"
 #include "gl_if.hpp"
 #include "fbrect.hpp"
-#include "gl_error.hpp"
 
 namespace rev {
 	void GLEffect::DCmd_Clear::Command(const void* p) {
@@ -47,15 +46,5 @@ namespace rev {
 			return GLFBufferCore::GetCurrentFBSize();
 		});
 		GL.glViewport(r.x0, r.y0, r.width(), r.height());
-	}
-	void GLEffect::DCmd_Draw::Command(const void* p) {
-		auto& self = *static_cast<const DCmd_Draw*>(p);
-		GL.glDrawArrays(self.mode, self.first, self.count);
-		D_GLAssert0();
-	}
-	void GLEffect::DCmd_DrawIndexed::Command(const void* p) {
-		auto& self = *static_cast<const DCmd_DrawIndexed*>(p);
-		GL.glDrawElements(self.mode, self.count, self.sizeF, reinterpret_cast<const GLvoid*>(self.offset));
-		D_GLAssert0();
 	}
 }

@@ -134,26 +134,10 @@ namespace rev {
 		_diffCount.buffer += _getDifference();
 		// set V/IBuffer(VDecl)
 		_primitive->dcmd_export(_cmdvec, _tech_sp->getVAttr());
-		{
-			const auto& p = _primitive;
-			if(!p->ib) {
-				_cmdvec.add(DCmd_Draw{
-						.mode = p->drawMode,
-						.first = p->withoutIndex.first,
-						.count = p->withoutIndex.count,
-						});
-				++_diffCount.drawNoIndexed;
-			} else {
-				const auto str = p->ib->getStride();
-				const auto szF = GLIBuffer::GetSizeFlag(str);
-				_cmdvec.add(DCmd_DrawIndexed{
-						.mode = p->drawMode,
-						.count = p->withIndex.count,
-						.sizeF = szF,
-						.offset = p->withIndex.offsetElem*str,
-						});
-				++_diffCount.drawIndexed;
-			}
+		if(!_primitive->ib) {
+			++_diffCount.drawNoIndexed;
+		} else {
+			++_diffCount.drawIndexed;
 		}
 		_writeEnt->append(_cmdvec);
 		_cmdvec.clear();

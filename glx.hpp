@@ -11,27 +11,6 @@ namespace rev {
 	//! GLXエフェクト管理クラス
 	class GLEffect : public IEffect, public std::enable_shared_from_this<GLEffect> {
 		private:
-			//! Draw token (without index)
-			struct DCmd_Draw {
-				GLenum		mode;
-				GLint		first;
-				GLsizei		count;
-
-				static void Command(const void* p);
-			};
-			//! Draw token (with index)
-			struct DCmd_DrawIndexed {
-				//! 描画モードフラグ(OpenGL)
-				GLenum			mode;
-				//! 描画に使用される要素数
-				GLsizei			count;
-				//! 1要素のサイズを表すフラグ
-				GLenum			sizeF;
-				//! オフセットバイト数
-				GLuint			offset;
-
-				static void Command(const void* p);
-			};
 			struct DCmd_Clear {
 				bool			bColor,
 								bDepth,
