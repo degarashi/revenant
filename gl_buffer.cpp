@@ -26,9 +26,6 @@ namespace rev {
 	void GLBufferCore::use_begin() const {
 		GL.glBindBuffer(getBuffType(), getBuffId());
 	}
-	void GLBufferCore::use_end() const {
-		GL.glBindBuffer(getBuffType(), 0);
-	}
 
 	// --------------------------- GLBuffer ---------------------------
 	void GLBuffer::onDeviceLost() {
@@ -52,7 +49,7 @@ namespace rev {
 		if(_idBuff == 0) {
 			D_GLWarn(glGenBuffers, 1, &_idBuff);
 			if(_buff) {
-				const RUser _(*this);
+				use_begin();
 				D_GLWarn(glBufferData, _buffType, _buffSize, _pBuffer, _drawType);
 			}
 		}
@@ -66,7 +63,7 @@ namespace rev {
 	}
 	void GLBuffer::_initData() {
 		if(getBuffId() > 0) {
-			const RUser _(*this);
+			use_begin();
 			D_GLWarn(glBufferData, _buffType, _buffSize, _pBuffer, _drawType);
 		}
 	}
@@ -86,7 +83,7 @@ namespace rev {
 					ofs = offset*_stride;
 		std::memcpy(reinterpret_cast<char*>(_pBuffer)+ofs, src, szCopy);
 		if(getBuffId() > 0) {
-			const RUser _(*this);
+			use_begin();
 			D_GLWarn(glBufferSubData, _buffType, ofs, szCopy, src);
 		}
 	}

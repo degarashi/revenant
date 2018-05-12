@@ -10,7 +10,6 @@
 namespace rev {
 	struct TextureBase {
 		void use_begin() const;
-		void use_end() const;
 
 		//! [mipLevel][Nearest / Linear]
 		const static GLuint cs_Filter[3][2];

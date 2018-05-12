@@ -11,10 +11,6 @@ namespace rev {
 		GLFBufferCore(idFb),
 		_size(s)
 	{}
-	void GLFBufferTmp::use_end() const {
-		for(int i=0 ; i<Att::NUM_ATTACHMENT ; i++)
-			const_cast<GLFBufferTmp*>(this)->_attachRenderbuffer(Att::Id(i), 0);
-	}
 	void GLFBufferTmp::attachRBuffer(const Att::Id att, const GLuint rb) {
 		#ifdef USE_OPENGLES2
 			D_Assert0(att != Att::DEPTH_STENCIL);
@@ -52,9 +48,6 @@ namespace rev {
 	}
 	void GLFBufferCore::use_begin() const {
 		GL.glBindFramebuffer(GL_FRAMEBUFFER, _idFbo);
-	}
-	void GLFBufferCore::use_end() const {
-		GL.glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 	GLuint GLFBufferCore::getBufferId() const { return _idFbo; }
 

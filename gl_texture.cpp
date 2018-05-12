@@ -21,10 +21,6 @@ namespace rev {
 		D_GLAssert(glBindTexture, _texFlag, _idTex);
 		D_GLAssert0();
 	}
-	void TextureBase::use_end() const {
-		D_GLAssert0();
-		D_GLAssert(glBindTexture, _texFlag, 0);
-	}
 	GLuint TextureBase::getTexFlag() const {
 		return _idTex;
 	}
@@ -116,7 +112,7 @@ namespace rev {
 		ByteBuff buff(sz);
 		#ifndef USE_OPENGLES2
 		{
-			const RUser _(*this);
+			use_begin();
 			GL.glGetTexImage(getFaceFlag(face), level, internalFmt, elem, buff.data());
 		}
 		#elif
@@ -125,7 +121,7 @@ namespace rev {
 			GLint id;
 			GL.glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &id);
 			GLFBufferTmp& tmp = mgr_gl.getTmpFramebuffer();
-			const RUser _(*this);
+			use_begin();
 			if(isCubemap())
 				tmp.attachCubeTexture(GLFBuffer::Att::COLOR0, getTextureId(), getFaceFlag(face));
 			else
@@ -151,7 +147,7 @@ namespace rev {
 
 		GLFBufferTmp& tmp = mgr_gl.getTmpFramebuffer();
 		ByteBuff buff(sz);
-		const RUser _(tmp);
+		tmp.use_begin();
 		if(isCubemap())
 			tmp.attachCubeTexture(GLFBuffer::Att::COLOR0, getTextureId(), getFaceFlag(face));
 		else
@@ -211,7 +207,7 @@ namespace rev {
 	}
 	void Texture_Mem::onDeviceReset() {
 		if(_onDeviceReset()) {
-			const RUser _(*this);
+			use_begin();
 			GL.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 			if(_bRestore && _buff) {
 				// バッファの内容から復元
@@ -240,7 +236,7 @@ namespace rev {
 			// テクスチャに転送
 			auto& tfm = getFormat();
 			auto& sz = getSize();
-			const RUser _(*this);
+			use_begin();
 			GL.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 			GL.glTexImage2D(getFaceFlag(face), 0, tfm.get(), sz.width, sz.height,
 							0, GLFormat::QueryInfo(*tfm)->baseType, srcFmt.get(), buff.getPtr());
@@ -261,7 +257,7 @@ namespace rev {
 		#endif
 		if(_idTex != 0) {
 			auto& fmt = getFormat();
-			const RUser _(*this);
+			use_begin();
 			// GLテクスチャに転送
 			const GLenum baseFormat = GLFormat::QueryInfo(fmt.get())->baseType;
 			GL.glTexSubImage2D(getFaceFlag(face), 0, rect.x0, rect.y0, rect.width(), rect.height(), baseFormat, srcFmt.get(), buff.getPtr());
@@ -357,7 +353,7 @@ namespace rev {
 		Size_Fmt LoadTexture(const IGLTexture& tex, const HRW& hRW, const CubeFace face) {
 			const HSfc sfc = Surface::Load(hRW);
 			const GLenum tflag = tex.getFaceFlag(face);
-			const RUser _(tex);
+			tex.use_begin();
 			return WritePixelData(tflag, sfc, tex.getFormat(), true, tex.isMipmap());
 		}
 	}
@@ -366,7 +362,7 @@ namespace rev {
 		const auto info = GLFormat::QueryInfo(format);
 		const int pixelsize = info->numElem* GLFormat::QuerySize(info->baseType);
 		const HSfc sfc = Surface::Create(buff, pixelsize*size.width, size.width, size.height, info->sdlFormat);
-		const RUser _(tex);
+		tex.use_begin();
 		return WritePixelData(tflag, sfc, spi::none, bP2, bMip);
 	}
 	// ------------------------- Texture_URI -------------------------

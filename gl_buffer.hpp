@@ -19,7 +19,6 @@ namespace rev {
 			GLuint getStride() const;
 
 			void use_begin() const;
-			void use_end() const;
 	};
 	namespace debug {
 		class VBView;

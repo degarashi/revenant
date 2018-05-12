@@ -20,9 +20,7 @@ namespace rev {
 				RESTORE,	//!< 事前に保存しておいた内容で復元
 				NUM_ONLOST
 			};
-			friend class RUser<GLRBuffer>;
 			void use_begin() const;
-			void use_end() const;
 			// OpenGL ES2.0だとglDrawPixelsが使えない
 		private:
 			using F_LOST = std::function<void (GLFBufferTmp&,GLRBuffer&)>;

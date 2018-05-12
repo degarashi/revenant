@@ -86,30 +86,6 @@ namespace rev {
 		virtual void onDeviceReset() {}
 		virtual const char* getResourceName() const noexcept override;
 	};
-	template <class T>
-	class RUser {
-		private:
-			const T&	_t;
-			bool		_bRelease;
-		public:
-			RUser(RUser&& r) noexcept:
-				_t(r._t),
-				_bRelease(true)
-			{
-				r._bRelease = false;
-			}
-			RUser(const RUser&) = delete;
-			RUser(const T& t):
-				_t(t),
-				_bRelease(true)
-			{
-				_t.use_begin();
-			}
-			~RUser() {
-				if(_bRelease)
-					_t.use_end();
-			}
-	};
 	struct FBInfo {
 		GLint		redSize,
 					greenSize,

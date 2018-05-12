@@ -13,9 +13,7 @@ namespace rev {
 	}
 	class GLFBufferCore {
 		public:
-			friend class RUser<GLFBufferCore>;
 			void use_begin() const;
-			void use_end() const;
 			static TLS<lubee::SizeI> s_fbSize;
 
 			struct Att {
@@ -86,7 +84,6 @@ namespace rev {
 			void attachRBuffer(Att::Id att, GLuint rb);
 			void attachTexture(Att::Id att, GLuint id);
 			void attachCubeTexture(Att::Id att, GLuint id, GLuint face);
-			void use_end() const;
 
 			void dcmd_fb(draw::IQueue& q) const;
 	};
