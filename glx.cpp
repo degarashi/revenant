@@ -43,7 +43,6 @@ namespace rev {
 	void GLEffect::_clean_drawvalue() {
 		_tech_sp.reset();
 		// セットされているUniform変数を未セット状態にする
-		_cmdvec.clear();
 		_uniformEnt.clearValue();
 	}
 	UniformEnt& GLEffect::refUniformEnt() noexcept {
@@ -58,7 +57,7 @@ namespace rev {
 		_tech_sp = tech;
 		_uniformEnt.setProgram(tech->getProgram());
 		// [Program + GLSetting + UniformDefault]
-		tech->dcmd_setup(_cmdvec);
+		tech->dcmd_setup(*_writeEnt);
 		return prev_tech;
 	}
 	const HTech& GLEffect::getTechnique() const noexcept {
@@ -66,19 +65,19 @@ namespace rev {
 	}
 	void GLEffect::_outputFramebuffer() {
 		const auto set_viewrect = [this](){
-			_cmdvec.add(DCmd_Viewport{_viewrect});
+			_writeEnt->add(DCmd_Viewport{_viewrect});
 			_bView = false;
 		};
 		const auto set_scissorrect = [this](){
-			_cmdvec.add(DCmd_Scissor{_scissorrect});
+			_writeEnt->add(DCmd_Scissor{_scissorrect});
 			_bScissor = false;
 		};
 		if(_hFb) {
 			auto& fb = *_hFb;
 			if(fb)
-				fb->dcmd_export(_cmdvec);
+				fb->dcmd_export(*_writeEnt);
 			else
-				GLFBufferTmp(0, mgr_info.getScreenSize()).dcmd_export(_cmdvec);
+				GLFBufferTmp(0, mgr_info.getScreenSize()).dcmd_export(*_writeEnt);
 			_hFbPrev = fb;
 			_hFb = spi::none;
 			if(!_bView) {
@@ -115,7 +114,7 @@ namespace rev {
 	}
 	void GLEffect::clearFramebuffer(const ClearParam& param) {
 		_outputFramebuffer();
-		_cmdvec.add(DCmd_Clear{
+		_writeEnt->add(DCmd_Clear{
 			.bColor = static_cast<bool>(param.color),
 			.bDepth = static_cast<bool>(param.depth),
 			.bStencil = static_cast<bool>(param.stencil),
@@ -123,24 +122,20 @@ namespace rev {
 			.depth = param.depth ? *param.depth : 0.f,
 			.stencil = param.stencil ? *param.stencil : 0u
 		});
-		_writeEnt->append(_cmdvec);
-		_cmdvec.clear();
 	}
 	void GLEffect::draw() {
 		applyUniform(_uniformEnt, *_tech_sp->getProgram());
-		_cmdvec.append(_uniformEnt);
+		_writeEnt->append(_uniformEnt);
 		_uniformEnt.clearValue();
 		_outputFramebuffer();
 		_diffCount.buffer += _getDifference();
 		// set V/IBuffer(VDecl)
-		_primitive->dcmd_export(_cmdvec, _tech_sp->getVAttr());
+		_primitive->dcmd_export(*_writeEnt, _tech_sp->getVAttr());
 		if(!_primitive->ib) {
 			++_diffCount.drawNoIndexed;
 		} else {
 			++_diffCount.drawIndexed;
 		}
-		_writeEnt->append(_cmdvec);
-		_cmdvec.clear();
 	}
 	void GLEffect::beginTask() {
 		_reset();

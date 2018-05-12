@@ -4,7 +4,6 @@
 #include "resmgr_app.hpp"
 #include "clear.hpp"
 #include "fbrect.hpp"
-#include "drawcmd/cmd.hpp"
 #include "drawcmd/task.hpp"
 
 namespace rev {
@@ -43,7 +42,6 @@ namespace rev {
 								_bScissor;
 			HTech				_tech_sp;		//!< 現在使用中のTech
 			UniformEnt			_uniformEnt;
-			draw::CommandVec	_cmdvec;		//!< 描画スレッドに渡す予定のコマンド
 			draw::Task			_task;
 			draw::IQueue*		_writeEnt;
 
