@@ -29,7 +29,7 @@ namespace rev {
 		#endif
 		_attachCubeTexture(att, face, id);
 	}
-	void GLFBufferTmp::dcmd_fb(draw::IQueue& q) const {
+	void GLFBufferTmp::dcmd_export(draw::IQueue& q) const {
 		DCmd_Fb::AddTmp(q, getBufferId());
 	}
 
@@ -197,7 +197,7 @@ namespace rev {
 	void GLFBuffer::detach(Att::Id att) {
 		_attachment[att] = boost::blank();
 	}
-	void GLFBuffer::dcmd_fb(draw::IQueue& q) const {
+	void GLFBuffer::dcmd_export(draw::IQueue& q) const {
 		DCmd_Fb::Add(q, shared_from_this(), _attachment);
 	}
 	const GLFBuffer::Res& GLFBuffer::getAttachment(Att::Id att) const {

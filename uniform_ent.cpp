@@ -22,7 +22,7 @@ namespace rev {
 		} else
 			e.emplace(id, std::move(cmd));
 	}
-	void UniformEnt::dcmd_output(draw::IQueue& q) {
+	void UniformEnt::dcmd_export(draw::IQueue& q) {
 		const auto& prog = getProgram();
 		const auto& ent = getIdEntry();
 		for(auto& e : ent) {

@@ -93,7 +93,7 @@ namespace rev {
 				tex(t)
 			{}
 			void dcmd_export(draw::IQueue& q, const int id, const int actId) const override {
-				tex->dcmd_uniform(q, id, actId);
+				tex->dcmd_export(q, id, actId);
 			}
 		};
 		struct TexArray : ICmd {
@@ -107,7 +107,7 @@ namespace rev {
 			void dcmd_export(draw::IQueue& q, const int id, const int actId) const override {
 				const auto len = tex.size();
 				for(std::size_t i=0 ; i<len ; i++) {
-					tex[i]->dcmd_uniform(q, id+i, actId+i);
+					tex[i]->dcmd_export(q, id+i, actId+i);
 				}
 			}
 		};
@@ -146,7 +146,7 @@ namespace rev {
 			RFLAG_REFMETHOD_DEFINE(SEQ)
 			#undef SEQ
 
-			void dcmd_output(draw::IQueue& q);
+			void dcmd_export(draw::IQueue& q);
 
 			void _setUniform(GLint id, const draw::Cmd_SP& cmd);
 			template <class... Ts>

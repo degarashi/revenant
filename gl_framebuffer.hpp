@@ -85,7 +85,7 @@ namespace rev {
 			void attachTexture(Att::Id att, GLuint id);
 			void attachCubeTexture(Att::Id att, GLuint id, GLuint face);
 
-			void dcmd_fb(draw::IQueue& q) const;
+			void dcmd_export(draw::IQueue& q) const;
 	};
 	using Size_OP = spi::Optional<lubee::SizeI>;
 	class LuaState;
@@ -116,7 +116,7 @@ namespace rev {
 
 			void onDeviceReset() override;
 			void onDeviceLost() override;
-			void dcmd_fb(draw::IQueue& q) const;
+			void dcmd_export(draw::IQueue& q) const;
 			const Res& getAttachment(Att::Id att) const;
 			HTex getAttachmentAsTexture(Att::Id id) const;
 			HRb getAttachmentAsRBuffer(Att::Id id) const;

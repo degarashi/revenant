@@ -82,7 +82,7 @@ namespace rev {
 			bool operator == (const IGLTexture& t) const;
 			ByteBuff readData(GLInFmt internalFmt, GLTypeFmt elem, int level=0, CubeFace face=CubeFace::PositiveX) const;
 			ByteBuff readRect(GLInFmt internalFmt, GLTypeFmt elem, const lubee::RectI& rect, CubeFace face=CubeFace::PositiveX) const;
-			void dcmd_uniform(draw::IQueue& q, const GLint id, int actId) const;
+			void dcmd_export(draw::IQueue& q, const GLint id, int actId) const;
 	};
 	//! ユーザー定義の空テクスチャ
 	/*!

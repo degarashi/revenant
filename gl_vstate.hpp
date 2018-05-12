@@ -63,7 +63,7 @@ namespace rev {
 				_args{args...},
 				_func(f)
 			{}
-			void dcmd_apply(draw::IQueue& q) const override {
+			void dcmd_export(draw::IQueue& q) const override {
 				q.add(DCmd_Apply{_args, _func});
 			}
 			std::size_t getHash() const noexcept override {

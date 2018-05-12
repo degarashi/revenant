@@ -171,7 +171,7 @@ namespace rev {
 	bool IGLTexture::operator == (const IGLTexture& t) const {
 		return getTextureId() == t.getTextureId();
 	}
-	void IGLTexture::dcmd_uniform(draw::IQueue& q, const GLint id, const int actId) const {
+	void IGLTexture::dcmd_export(draw::IQueue& q, const GLint id, const int actId) const {
 		auto cmd = DCmd_Uniform{
 			static_cast<const TextureBase&>(*this),
 			.unifId = id

@@ -58,10 +58,10 @@ namespace rev {
 		_tech_sp = tech;
 		_uniformEnt.setProgram(tech->getProgram());
 		// 各種セッティングをするTokenをリストに追加
-		_tech_sp->getProgram()->dcmd_use(_cmdvec);
+		_tech_sp->getProgram()->dcmd_export(_cmdvec);
 		auto& sv = _tech_sp->getSetting();
 		for(auto& s : sv)
-			s->dcmd_apply(_cmdvec);
+			s->dcmd_export(_cmdvec);
 		// Uniformデフォルト値読み込み
 		_uniformEnt.assign(_tech_sp->getDefaultValue());
 		return prev_tech;
@@ -81,9 +81,9 @@ namespace rev {
 		if(_hFb) {
 			auto& fb = *_hFb;
 			if(fb)
-				fb->dcmd_fb(_cmdvec);
+				fb->dcmd_export(_cmdvec);
 			else
-				GLFBufferTmp(0, mgr_info.getScreenSize()).dcmd_fb(_cmdvec);
+				GLFBufferTmp(0, mgr_info.getScreenSize()).dcmd_export(_cmdvec);
 			_hFbPrev = fb;
 			_hFb = spi::none;
 			if(!_bView) {
@@ -133,12 +133,12 @@ namespace rev {
 	}
 	void GLEffect::draw() {
 		applyUniform(_uniformEnt, *_tech_sp->getProgram());
-		_uniformEnt.dcmd_output(_cmdvec);
+		_uniformEnt.dcmd_export(_cmdvec);
 		_uniformEnt.clearValue();
 		_outputFramebuffer();
 		_diffCount.buffer += _getDifference();
 		// set V/IBuffer(VDecl)
-		_primitive->dcmd_stream(_cmdvec, _tech_sp->getVAttr());
+		_primitive->dcmd_export(_cmdvec, _tech_sp->getVAttr());
 		{
 			const auto& p = _primitive;
 			if(!p->ib) {

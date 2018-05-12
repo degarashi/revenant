@@ -132,7 +132,7 @@ namespace rev {
 			);
 		}
 	}
-	void VDecl::dcmd_apply(draw::IQueue& q, const HVb (&stream)[MaxVStream], const VSem_AttrV& attr) const {
+	void VDecl::dcmd_export(draw::IQueue& q, const HVb (&stream)[MaxVStream], const VSem_AttrV& attr) const {
 		for(std::size_t i=0 ; i<countof(stream) ; i++) {
 			// VStreamが設定されていればBindする
 			auto& vb = stream[i];
@@ -140,7 +140,7 @@ namespace rev {
 				const GLuint stride = vb->getStride();
 				const auto from = _streamOfs[i],
 							to = _streamOfs[i+1];
-				vb->dcmd_use(q);
+				vb->dcmd_export(q);
 				for(std::size_t j=from ; j<to ; j++)
 					_setter[j](q, stride, attr);
 			}

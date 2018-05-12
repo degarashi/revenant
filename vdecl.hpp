@@ -72,7 +72,7 @@ namespace rev {
 			//! 入力: {streamId, offset, GLFlag, bNoramalize, semantics}
 			VDecl(std::initializer_list<VDInfo> il);
 			//! OpenGLへ頂点位置を設定
-			void dcmd_apply(draw::IQueue& q, const HVb (&stream)[MaxVStream], const VSem_AttrV& attr) const;
+			void dcmd_export(draw::IQueue& q, const HVb (&stream)[MaxVStream], const VSem_AttrV& attr) const;
 			bool operator == (const VDecl& vd) const;
 			bool operator != (const VDecl& vd) const;
 			#ifdef DEBUGGUI_ENABLED

@@ -19,7 +19,7 @@ namespace rev {
 	std::size_t GL_BState::getHash() const noexcept {
 		return lubee::hash_combine_implicit(_enable, _flag);
 	}
-	void GL_BState::dcmd_apply(draw::IQueue& q) const {
+	void GL_BState::dcmd_export(draw::IQueue& q) const {
 		q.add(DCmd_Apply{_enable, _flag});
 	}
 	bool GL_BState::operator == (const GLState& s) const noexcept {

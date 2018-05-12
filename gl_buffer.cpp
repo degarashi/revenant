@@ -93,7 +93,7 @@ namespace rev {
 	GLuint GLBuffer::getNElem() const {
 		return _buffSize / _stride;
 	}
-	void GLBuffer::dcmd_use(draw::IQueue& q) const {
+	void GLBuffer::dcmd_export(draw::IQueue& q) const {
 		Assert0(getBuffId() > 0);
 		q.add(DCmd_Use{static_cast<const GLBufferCore&>(*this)});
 		q.stockResource(shared_from_this());

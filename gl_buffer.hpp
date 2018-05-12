@@ -90,7 +90,7 @@ namespace rev {
 
 			void onDeviceLost() override;
 			void onDeviceReset() override;
-			void dcmd_use(draw::IQueue& q) const;
+			void dcmd_export(draw::IQueue& q) const;
 
 			DEF_DEBUGGUI_PROP
 	};

@@ -36,11 +36,11 @@ namespace rev {
 					w0.first == w1.first;
 		}
 	}
-	void Primitive::dcmd_stream(draw::IQueue& q, const VSemAttrV& vAttr) const {
+	void Primitive::dcmd_export(draw::IQueue& q, const VSemAttrV& vAttr) const {
 		Assert(vdecl, "VDecl is not set");
-		vdecl->dcmd_apply(q, vb, vAttr);
+		vdecl->dcmd_export(q, vb, vAttr);
 		if(ib)
-			ib->dcmd_use(q);
+			ib->dcmd_export(q);
 	}
 	void Primitive::getArray(CmpArray& dst) const noexcept {
 		auto add = [p = dst.data()](auto& ptr) mutable {

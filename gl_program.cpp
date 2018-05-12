@@ -177,7 +177,7 @@ namespace rev {
 	void GLProgram::use() const {
 		GL.glUseProgram(getProgramId());
 	}
-	void GLProgram::dcmd_use(draw::IQueue& q) const {
+	void GLProgram::dcmd_export(draw::IQueue& q) const {
 		q.add(DCmd_Use{getProgramId()});
 		q.stockResource(shared_from_this());
 	}

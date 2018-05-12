@@ -81,7 +81,7 @@ namespace rev {
 			~GLProgram() override;
 			void onDeviceLost() override;
 			void onDeviceReset() override;
-			void dcmd_use(draw::IQueue& q) const;
+			void dcmd_export(draw::IQueue& q) const;
 			const HSh& getShader(ShType type) const noexcept;
 
 			//! 文字列によるUniform-Id検索
