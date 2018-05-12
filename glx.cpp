@@ -128,14 +128,16 @@ namespace rev {
 		_writeEnt->append(_uniformEnt);
 		_uniformEnt.clearValue();
 		_outputFramebuffer();
-		_diffCount.buffer += _getDifference();
-		// set V/IBuffer(VDecl)
-		_primitive->dcmd_export(*_writeEnt, _tech_sp->getVAttr());
+		if(_primitive_prev != _primitive) {
+			// set V/IBuffer(VDecl)
+			_primitive->dcmd_export(*_writeEnt, _tech_sp->getVAttr());
+		}
 		if(!_primitive->ib) {
 			++_diffCount.drawNoIndexed;
 		} else {
 			++_diffCount.drawIndexed;
 		}
+		_diffCount.buffer += _getDifference();
 	}
 	void GLEffect::beginTask() {
 		_reset();
