@@ -57,13 +57,8 @@ namespace rev {
 		const auto prev_tech = _tech_sp;
 		_tech_sp = tech;
 		_uniformEnt.setProgram(tech->getProgram());
-		// 各種セッティングをするTokenをリストに追加
-		_tech_sp->getProgram()->dcmd_export(_cmdvec);
-		auto& sv = _tech_sp->getSetting();
-		for(auto& s : sv)
-			s->dcmd_export(_cmdvec);
-		// Uniformデフォルト値読み込み
-		_uniformEnt = _tech_sp->getDefaultValueQ();
+		// [Program + GLSetting + UniformDefault]
+		tech->dcmd_setup(_cmdvec);
 		return prev_tech;
 	}
 	const HTech& GLEffect::getTechnique() const noexcept {

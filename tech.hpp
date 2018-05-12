@@ -16,6 +16,10 @@ namespace rev {
 			//! Attribute: 頂点セマンティクスに対する頂点Id
 			VSemAttrV		_vattr;
 
+			//! [Program + GLSetting + UniformDefault]
+			draw::CommandVec	_setupCmd;
+			void _makeSetupCmd();
+
 			Name			_name;
 			// 必ず継承して使う
 			Tech() {}
@@ -26,6 +30,7 @@ namespace rev {
 			const HProg& getProgram() const noexcept override;
 			const UniformEnt& getDefaultValueQ() const noexcept override;
 			const Name& getName() const noexcept override;
+			void dcmd_setup(draw::IQueue& q) const override;
 			DEF_DEBUGGUI_PROP
 	};
 }

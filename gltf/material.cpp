@@ -92,6 +92,7 @@ namespace rev::gltf {
 					});
 				}
 			}
+			_makeSetupCmd();
 		} else {
 			// デフォルトのマテリアル
 			D_Assert(false, "default material is not implemented yet");

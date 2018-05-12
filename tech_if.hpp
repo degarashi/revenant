@@ -6,6 +6,9 @@
 #include <unordered_set>
 
 namespace rev {
+	namespace draw {
+		class IQueue;
+	}
 	using Name = std::string;
 	class UniformEnt;
 	struct VSem_AttrId;
@@ -19,5 +22,6 @@ namespace rev {
 		virtual const HProg& getProgram() const noexcept = 0;
 		virtual const UniformEnt& getDefaultValueQ() const = 0;
 		virtual const Name& getName() const noexcept = 0;
+		virtual void dcmd_setup(draw::IQueue& q) const = 0;
 	};
 }

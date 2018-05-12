@@ -398,5 +398,6 @@ namespace rev {
 					_noDefValue.insert(*visitor.id);
 			}
 		}
+		_makeSetupCmd();
 	}
 }

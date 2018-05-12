@@ -21,5 +21,14 @@ namespace rev {
 	const Name& Tech::getName() const noexcept {
 		return _name;
 	}
+	void Tech::_makeSetupCmd() {
+		_uniformDefault.getProgram()->dcmd_export(_setupCmd);
+		_setupCmd.append(_uniformDefault);
+		for(auto& s : _setting)
+			s->dcmd_export(_setupCmd);
+	}
+	void Tech::dcmd_setup(draw::IQueue& q) const {
+		q.append(_setupCmd);
+	}
 }
 
