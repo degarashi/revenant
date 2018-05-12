@@ -6,8 +6,8 @@
 namespace rev {
 	class Tech : public ITech {
 		protected:
-			//! Uniformデフォルト値(と対応するId)
-			UniformEnt		_uniform;
+			//! Uniformデフォルト値設定DrawCommand
+			UniformEnt		_uniformDefault;
 			//! Setting: Uniformデフォルト値(texture, vector, float, bool)設定を含む
 			//! GLDeviceの設定クラスリスト
 			GLState_SPV		_setting;
@@ -24,7 +24,7 @@ namespace rev {
 			const UniIdSet& getNoDefaultValue() const noexcept override;
 			const VSemAttrV& getVAttr() const noexcept override;
 			const HProg& getProgram() const noexcept override;
-			const UniformEnt& getDefaultValue() const noexcept override;
+			const UniformEnt& getDefaultValueQ() const noexcept override;
 			const Name& getName() const noexcept override;
 			DEF_DEBUGGUI_PROP
 	};

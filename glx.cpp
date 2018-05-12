@@ -63,7 +63,7 @@ namespace rev {
 		for(auto& s : sv)
 			s->dcmd_export(_cmdvec);
 		// Uniformデフォルト値読み込み
-		_uniformEnt.assign(_tech_sp->getDefaultValue());
+		_uniformEnt = _tech_sp->getDefaultValueQ();
 		return prev_tech;
 	}
 	const HTech& GLEffect::getTechnique() const noexcept {
@@ -133,7 +133,7 @@ namespace rev {
 	}
 	void GLEffect::draw() {
 		applyUniform(_uniformEnt, *_tech_sp->getProgram());
-		_uniformEnt.dcmd_export(_cmdvec);
+		_cmdvec.append(_uniformEnt);
 		_uniformEnt.clearValue();
 		_outputFramebuffer();
 		_diffCount.buffer += _getDifference();

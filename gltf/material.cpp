@@ -55,7 +55,7 @@ namespace rev::gltf {
 				_setting = tech.state->state;
 			// ---- Uniform変数の登録 ----
 			const auto& prog = tech.program.data()->makeProgram();
-			_uniform.setProgram(prog);
+			_uniformDefault.setProgram(prog);
 
 			// Uniformデフォルト変数
 			for(auto& u : tech.param.fixedUniform) {
@@ -69,7 +69,7 @@ namespace rev::gltf {
 				else
 					value = &fixed.value;
 				auto& glsl_name = tech.namecnv.uniform.at(name);
-				SetUniform(_uniform, glsl_name, *value, fixed.type, fixed.count);
+				SetUniform(_uniformDefault, glsl_name, *value, fixed.type, fixed.count);
 			}
 			// Uniform必須変数
 			for(auto& u : tech.param.typedUniform) {
@@ -79,7 +79,7 @@ namespace rev::gltf {
 				const auto* v = mtl.findValue(name);
 				Assert0(v);
 				auto& glsl_name = tech.namecnv.uniform.at(name);
-				SetUniform(_uniform, glsl_name, *v, typed.type, typed.count);
+				SetUniform(_uniformDefault, glsl_name, *v, typed.type, typed.count);
 			}
 			// ---- 頂点アトリビュート ----
 			for(auto& a : tech.param.attribute) {

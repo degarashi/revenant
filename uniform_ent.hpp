@@ -3,10 +3,10 @@
 #include "drawcmd/queue_if.hpp"
 #include "drawcmd/types/vector.hpp"
 #include "drawcmd/types/matrix.hpp"
+#include "drawcmd/cmd.hpp"
 #include "gl_program.hpp"
 #include "gl_texture.hpp"
 #include "handle/opengl.hpp"
-#include "spine/rflag.hpp"
 #include "frea/detect_type.hpp"
 #include "lubee/compare.hpp"
 
@@ -111,7 +111,6 @@ namespace rev {
 				}
 			}
 		};
-		using Cmd_SP = std::shared_ptr<ICmd_Uniform>;
 	}
 	namespace detail {
 		template <class T, ENABLE_IF(std::is_floating_point_v<T>)>
@@ -129,29 +128,18 @@ namespace rev {
 		struct Is_SP<std::shared_ptr<T>> : std::true_type {};
 	}
 	class UniformEnt :
-		public IDebugGui
+		public draw::CommandVec
 	{
 		private:
-			using UniformIdMap_t = std::unordered_map<GLint, draw::Cmd_SP>;
+			HProg				_program;
 
-			#define SEQ \
-				((Program)(HProg)) \
-				((IdEntry)(UniformIdMap_t)(Program))
-			RFLAG_DEFINE(UniformEnt, SEQ)
-			RFLAG_SETMETHOD(IdEntry)
-			RFLAG_REFMETHOD(IdEntry)
 		public:
-			RFLAG_GETMETHOD_DEFINE(SEQ)
-			RFLAG_SETMETHOD_DEFINE(SEQ)
-			RFLAG_REFMETHOD_DEFINE(SEQ)
-			#undef SEQ
+			void setProgram(const HProg& p);
+			const HProg& getProgram() const noexcept;
 
-			void dcmd_export(draw::IQueue& q);
-
-			void _setUniform(GLint id, const draw::Cmd_SP& cmd);
 			template <class... Ts>
 			void setUniform(const SName& name, Ts&&... ts) {
-				if(const auto id = getProgram()->getUniformId(name)) {
+				if(const auto id = _program->getUniformId(name)) {
 					setUniformById(*id, std::forward<Ts>(ts)...);
 				}
 			}
@@ -165,19 +153,22 @@ namespace rev {
 			>
 			void setUniformById(const GLint id, const T& t) {
 				using vec_t = frea::Vec_t<detail::NumberCnv_t<T>, 1, false>;
-				_setUniform(id, draw::Cmd_SP(new draw::VecSingle<vec_t>(t)));
+				draw::VecSingle<vec_t>(t).dcmd_export(*this, id, -1);
 			}
 			template <class V, ENABLE_IF(frea::is_vector<V>{})>
 			void setUniformById(const GLint id, const V& v) {
-				_setUniform(id, draw::Cmd_SP(new draw::VecSingle<V>(v)));
+				draw::VecSingle<V>(v).dcmd_export(*this, id, -1);
 			}
 			template <class M, ENABLE_IF(frea::is_matrix<M>{})>
 			void setUniformById(const GLint id, const M& m) {
-				_setUniform(id, draw::Cmd_SP(new draw::MatSingle<M>(m)));
+				draw::MatSingle<M>(m).dcmd_export(*this, id, -1);
 			}
 			template <class T>
 			void setUniformById(const GLint id, const std::shared_ptr<T>& t) {
-				_setUniform(id, std::make_shared<draw::TexSingle>(t));
+				// テクスチャユニット番号を検索
+				const auto num = _program->getTexIndex(id);
+				D_Assert0(num);
+				draw::TexSingle(t).dcmd_export(*this, id, *num);
 			}
 
 			template <class T>
@@ -196,7 +187,7 @@ namespace rev {
 			>
 			void setUniformById(const GLint id, const Itr itr, const Itr itrE) {
 				using vec_t = frea::Vec_t<detail::NumberCnv_t<T>, 1, false>;
-				_setUniform(id, std::make_shared<draw::VecArray<vec_t>>(itr, itrE));
+				draw::VecArray<vec_t>(itr, itrE).dcmd_export(*this, id, -1);
 			}
 			template <
 				class Itr,
@@ -204,7 +195,7 @@ namespace rev {
 				ENABLE_IF(frea::is_vector<V>{})
 			>
 			void setUniformById(const GLint id, const Itr itr, const Itr itrE) {
-				_setUniform(id, std::make_shared<draw::VecArray<V>>(itr, itrE));
+				draw::VecArray<V>(itr, itrE).dcmd_export(*this, id, -1);
 			}
 			template <
 				class Itr,
@@ -212,7 +203,7 @@ namespace rev {
 				ENABLE_IF(frea::is_matrix<V>{})
 			>
 			void setUniformById(const GLint id, const Itr itr, const Itr itrE) {
-				_setUniform(id, std::make_shared<draw::MatArray<V>>(itr, itrE));
+				draw::MatArray<V>(itr, itrE).dcmd_export(*this, id, -1);
 			}
 			template <
 				class Itr,
@@ -220,12 +211,11 @@ namespace rev {
 				ENABLE_IF(detail::Is_SP<V>{})
 			>
 			void setUniformById(const GLint id, const Itr itr, const Itr itrE) {
-				_setUniform(id, std::make_shared<draw::TexArray>(itr, itrE));
+				// テクスチャユニット番号を検索
+				const auto num = _program->getTexIndex(id);
+				D_Assert0(num);
+				draw::TexArray(itr, itrE).dcmd_export(*this, id, *num);
 			}
-			void assign(const UniformEnt& e);
 			void clearValue();
-
-			DEF_DEBUGGUI_NAME
-			DEF_DEBUGGUI_PROP
 	};
 }

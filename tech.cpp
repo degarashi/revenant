@@ -13,10 +13,10 @@ namespace rev {
 		return _vattr;
 	}
 	const HProg& Tech::getProgram() const noexcept {
-		return _uniform.getProgram();
+		return _uniformDefault.getProgram();
 	}
-	const UniformEnt& Tech::getDefaultValue() const noexcept {
-		return _uniform;
+	const UniformEnt& Tech::getDefaultValueQ() const noexcept {
+		return _uniformDefault;
 	}
 	const Name& Tech::getName() const noexcept {
 		return _name;

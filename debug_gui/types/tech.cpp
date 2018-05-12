@@ -11,11 +11,6 @@ namespace rev {
 		f.show("Name", getName());
 		{
 			const auto _ = debug::ColumnPush(1);
-			if(const auto _ = debug::Header("DefaultParameter", getDefaultValue().getIdEntry().empty())) {
-				auto& val = const_cast<UniformEnt&>(getDefaultValue());
-				mod |= val.property(edit);
-			}
-
 			if(const auto _ = debug::Header("NoDefaultParameter", getNoDefaultValue().empty())) {
 				const auto& p = getProgram();
 				const auto& nodef = getNoDefaultValue();

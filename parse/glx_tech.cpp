@@ -333,7 +333,7 @@ namespace rev {
 		}
 		// シェーダーのリンク処理
 		const auto prog = mgr_gl.makeProgram(shP[0], shP[1], shP[2]);
-		_uniform.setProgram(prog);
+		_uniformDefault.setProgram(prog);
 		// OpenGLステート設定リストを形成
 		_setting = dupl.exportSetting();
 
@@ -387,7 +387,7 @@ namespace rev {
 		unifL.erase(std::unique(unifL.begin(), unifL.end()), unifL.end());
 		_noDefValue.clear();
 		// Uniform変数にデフォルト値がセットしてある物をリストアップ
-		Visitor visitor(_uniform);
+		Visitor visitor(_uniformDefault);
 		for(const auto* p : unifL) {
 			if(visitor.setKey(p->name)) {
 				const auto& defVal = p->defaultValue;
