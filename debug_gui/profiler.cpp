@@ -13,8 +13,44 @@
 #include "../rev_time.hpp"
 #include "../drawthread.hpp"
 #include <iomanip>
+#include "../dc/pos_sampler.hpp"
+#include "frea/interpolation.hpp"
+#include "style.hpp"
 
 namespace rev::debug {
+	namespace {
+		template <class T>
+		using Vec = std::vector<T>;
+		const Vec<float> g_posV = {0, 25, 50, 75, 100};
+		const dc::SVec<float>	g_posSV = std::make_shared<Vec<float>>(g_posV);
+		const dc::PosSampler g_posSamp(g_posSV);
+
+		struct ColSampler : dc::IFrame {
+			Vec<frea::Vec4>	value;
+
+			ColSampler(const Vec<frea::Vec4>& v):
+				value(v)
+			{}
+			std::size_t numKey() const override {
+				return value.size();
+			}
+			ImVec4 sample(std::size_t idx, float t) const {
+				frea::Vec4 v;
+				if(t == 0.f)
+					v = value[idx];
+				else
+					v = frea::Lerp(value[idx], value[idx+1], t);
+				return {v.x, v.y, v.z, v.w};
+			}
+		};
+		const ColSampler g_colorSamp({
+			{1,1,1,1},
+			{0,1,1,1},
+			{1,1,0,1},
+			{1,0.5,0,1},
+			{1,0,0,1},
+		});
+	}
 	Profiler::Profiler():
 		_widthRatio(512.f),
 		_height(24.f),
@@ -54,12 +90,17 @@ namespace rev::debug {
 			s << " [Min:" << ToMilli(h.tMin);
 			s << ", Max=" << ToMilli(h.tMax) << "]";
 			s << "##" << &node;
-			if(!node.getChild())
-				TreePush(s.output().c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen);
-			else {
-				if(const auto _ = TreePush(s.output().c_str())) {
-					if(const auto& c = node.getChild()) {
-						ShowTree_Node(*c, node.hist.tAccum, true);
+			{
+				const auto p = g_posSamp.position(percentage);
+				const auto color = g_colorSamp.sample(p.idx, p.time);
+				const auto _ = StylePush(ImGuiCol_Text, color);
+				if(!node.getChild()) {
+					TreePush(s.output().c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen);
+				} else {
+					if(const auto _ = TreePush(s.output().c_str())) {
+						if(const auto& c = node.getChild()) {
+							ShowTree_Node(*c, node.hist.tAccum, true);
+						}
 					}
 				}
 			}
