@@ -42,17 +42,6 @@ namespace rev {
 		if(ib)
 			ib->dcmd_use(q);
 	}
-	void Primitive::dcmd_streamEnd(draw::IQueue& q) const {
-		Assert(vdecl, "VDecl is not set");
-		for(std::size_t i=0 ; i<countof(vb) ; i++) {
-			if(vb[i]) {
-				vb[i]->dcmd_useEnd(q);
-				break;
-			}
-		}
-		if(ib)
-			ib->dcmd_useEnd(q);
-	}
 	void Primitive::getArray(CmpArray& dst) const noexcept {
 		auto add = [p = dst.data()](auto& ptr) mutable {
 			*p++ = reinterpret_cast<uintptr_t>(ptr.get());

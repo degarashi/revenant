@@ -36,7 +36,6 @@ namespace rev {
 		bool indexCmp(const Primitive& p) const noexcept;
 		std::pair<int,int> getDifference(const Primitive& p) const noexcept;
 		void dcmd_stream(draw::IQueue& q, const VSemAttrV& vAttr) const;
-		void dcmd_streamEnd(draw::IQueue& q) const;
 		void getArray(CmpArray& dst) const noexcept;
 		bool operator == (const Primitive& p) const noexcept;
 		bool operator != (const Primitive& p) const noexcept;

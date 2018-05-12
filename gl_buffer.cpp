@@ -101,10 +101,6 @@ namespace rev {
 		q.add(DCmd_Use{static_cast<const GLBufferCore&>(*this)});
 		q.stockResource(shared_from_this());
 	}
-	void GLBuffer::dcmd_useEnd(draw::IQueue& q) const {
-		Assert0(getBuffId() > 0);
-		q.add(DCmd_UseEnd{static_cast<const GLBufferCore&>(*this)});
-	}
 	void* GLBuffer::_getBufferPtr() const noexcept {
 		return _pBuffer;
 	}
@@ -153,9 +149,5 @@ namespace rev {
 	void GLBuffer::DCmd_Use::Command(const void* p) {
 		auto& self = *static_cast<const DCmd_Use*>(p);
 		self.use_begin();
-	}
-	void GLBuffer::DCmd_UseEnd::Command(const void* p) {
-		auto& self = *static_cast<const DCmd_UseEnd*>(p);
-		self.use_end();
 	}
 }

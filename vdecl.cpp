@@ -143,7 +143,6 @@ namespace rev {
 				vb->dcmd_use(q);
 				for(std::size_t j=from ; j<to ; j++)
 					_setter[j](q, stride, attr);
-				vb->dcmd_useEnd(q);
 			}
 		}
 	}

@@ -160,7 +160,6 @@ namespace rev {
 				++_diffCount.drawIndexed;
 			}
 		}
-		_primitive->dcmd_streamEnd(_cmdvec);
 		_writeEnt->append(_cmdvec);
 		_cmdvec.clear();
 	}

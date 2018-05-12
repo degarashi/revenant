@@ -41,9 +41,6 @@ namespace rev {
 			struct DCmd_Use : GLBufferCore {
 				static void Command(const void* p);
 			};
-			struct DCmd_UseEnd : GLBufferCore {
-				static void Command(const void* p);
-			};
 
 			using SPBuff = std::shared_ptr<void>;
 			SPBuff			_buff;			//!< 再構築の際に必要となるデータ実体(std::vector<T>)
@@ -95,7 +92,6 @@ namespace rev {
 			void onDeviceLost() override;
 			void onDeviceReset() override;
 			void dcmd_use(draw::IQueue& q) const;
-			void dcmd_useEnd(draw::IQueue& q) const;
 
 			DEF_DEBUGGUI_PROP
 	};
