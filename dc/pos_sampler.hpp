@@ -10,6 +10,8 @@ namespace rev::dc {
 	struct PosSampler : IPosSampler {
 		SVec<float>	pos;
 
+		PosSampler() = default;
+		PosSampler(const SVec<float>& p);
 		float length() const override;
 		std::size_t numKey() const override;
 		PosP position(float t) const override;
@@ -18,6 +20,7 @@ namespace rev::dc {
 	struct PosSampler_cached : PosSampler {
 		mutable std::size_t		_prevFrame;
 
+		using PosSampler::PosSampler;
 		PosSampler_cached();
 		using PosSampler::position;
 		PosP position(float t) const override;

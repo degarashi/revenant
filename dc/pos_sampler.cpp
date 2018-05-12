@@ -4,6 +4,9 @@
 
 namespace rev::dc {
 	// ----------------- PosSampler -----------------
+	PosSampler::PosSampler(const SVec<float>& p):
+		pos(p)
+	{}
 	float PosSampler::length() const {
 		return pos->back();
 	}
