@@ -8,7 +8,7 @@
 namespace rev {
 	namespace util {
 		// ---------------------- TextHUD ----------------------
-		const Name	TextHUD::U_Text("mText");
+		const SName	TextHUD::U_Text("mText");
 		TextHUD::TextHUD():
 			_coordType(Coord::Window),
 			_offset(0),

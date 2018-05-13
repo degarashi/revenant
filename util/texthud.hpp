@@ -5,7 +5,7 @@
 #include "lubee/wrapper.hpp"
 
 namespace rev {
-	using Name = std::string;
+	using SName = spi::FlyweightItem<std::string>;
 	namespace util {
 		//! テキスト描画クラス (for HUD)
 		class TextHUD : public Text {
@@ -22,7 +22,7 @@ namespace rev {
 				frea::Mat3 _makeMatrix() const;
 			public:
 				TextHUD();
-				const static Name	U_Text;
+				const static SName	U_Text;
 				//! ウィンドウ座標系で範囲指定
 				void setWindowOffset(const frea::Vec2& ofs);
 				//! スクリーン座標系で範囲指定

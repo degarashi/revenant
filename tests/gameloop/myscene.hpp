@@ -8,6 +8,7 @@
 #include "../../dc/animation.hpp"
 
 namespace rev::test {
+	using Name = std::string;
 	class MyScene : public Scene<MyScene> {
 		private:
 			DefineEnum(Act,
