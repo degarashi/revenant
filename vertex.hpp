@@ -16,5 +16,8 @@ namespace rev {
 	struct VSem_AttrId {
 		VSemantic	sem;
 		int			attrId;
+
+		bool operator == (const VSem_AttrId& a) const noexcept;
+		bool operator < (const VSem_AttrId& a) const noexcept;
 	};
 }

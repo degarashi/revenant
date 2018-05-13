@@ -12,4 +12,17 @@ namespace rev {
 			return false;
 		return index < v.index;
 	}
+
+	bool VSem_AttrId::operator == (const VSem_AttrId& a) const noexcept {
+		return sem == a.sem &&
+				attrId == a.attrId;
+	}
+	bool VSem_AttrId::operator < (const VSem_AttrId& a) const noexcept {
+		if(sem < a.sem)
+			return true;
+		else if(sem == a.sem) {
+			return attrId < a.attrId;
+		}
+		return false;
+	}
 }
