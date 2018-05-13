@@ -41,7 +41,8 @@ namespace rev {
 			bool				_bView,
 								_bScissor;
 			HTech				_tech_sp;		//!< 現在使用中のTech
-			UniformEnt			_uniformEnt;
+			using UniformEnt_OP = spi::Optional<UniformEnt>;
+			UniformEnt_OP		_uniformEnt;
 			draw::Task			_task;
 			draw::IQueue*		_writeEnt;
 

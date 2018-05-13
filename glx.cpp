@@ -34,6 +34,7 @@ namespace rev {
 	void GLEffect::_reset() {
 		_primitive = _primitive_prev = c_invalidPrimitive;
 		_writeEnt = nullptr;
+		_uniformEnt = spi::none;
 
 		_clean_drawvalue();
 		_hFb = HFb();
@@ -43,10 +44,11 @@ namespace rev {
 	void GLEffect::_clean_drawvalue() {
 		_tech_sp.reset();
 		// セットされているUniform変数を未セット状態にする
-		_uniformEnt.clearValue();
+		if(_uniformEnt)
+			_uniformEnt->clearValue();
 	}
 	UniformEnt& GLEffect::refUniformEnt() noexcept {
-		return _uniformEnt;
+		return *_uniformEnt;
 	}
 	HTech GLEffect::setTechnique(const HTech& tech) {
 		if(tech == _tech_sp)
@@ -55,7 +57,7 @@ namespace rev {
 
 		const auto prev_tech = _tech_sp;
 		_tech_sp = tech;
-		_uniformEnt.setProgram(tech->getProgram());
+		_uniformEnt = spi::construct(*tech->getProgram());
 		// [Program + GLSetting + UniformDefault]
 		tech->dcmd_setup(*_writeEnt);
 		return prev_tech;
@@ -124,9 +126,9 @@ namespace rev {
 		});
 	}
 	void GLEffect::draw() {
-		applyUniform(_uniformEnt, *_tech_sp->getProgram());
-		_writeEnt->append(_uniformEnt);
-		_uniformEnt.clearValue();
+		applyUniform(*_uniformEnt, *_tech_sp->getProgram());
+		_writeEnt->append(*_uniformEnt);
+		_uniformEnt->clearValue();
 		_outputFramebuffer();
 		if(_primitive_prev != _primitive) {
 			// set V/IBuffer(VDecl)

@@ -13,17 +13,15 @@ namespace rev {
 		return _vattr;
 	}
 	const HProg& Tech::getProgram() const noexcept {
-		return _uniformDefault.getProgram();
-	}
-	const UniformEnt& Tech::getDefaultValueQ() const noexcept {
-		return _uniformDefault;
+		return _program;
 	}
 	const Name& Tech::getName() const noexcept {
 		return _name;
 	}
 	void Tech::_makeSetupCmd() {
-		_uniformDefault.getProgram()->dcmd_export(_setupCmd);
-		_setupCmd.append(_uniformDefault);
+		_setupCmd.clear();
+		_program->dcmd_export(_setupCmd);
+		_setupCmd.append(_uniformCmd);
 		for(auto& s : _setting)
 			s->dcmd_export(_setupCmd);
 	}

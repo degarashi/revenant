@@ -131,11 +131,11 @@ namespace rev {
 		public draw::CommandVec
 	{
 		private:
-			HProg				_program;
+			const GLProgram*	_program;
 
 		public:
-			void setProgram(const HProg& p);
-			const HProg& getProgram() const noexcept;
+			UniformEnt(const GLProgram& p);
+			const GLProgram& getProgram() const noexcept;
 
 			template <class... Ts>
 			void setUniform(const SName& name, Ts&&... ts) {

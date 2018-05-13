@@ -206,16 +206,14 @@ namespace rev {
 	namespace {
 		struct Visitor : boost::static_visitor<> {
 			UniformEnt&			ent;
-			const HProg&		prog;
 			spi::Optional<int>	id;
 
 			Visitor(UniformEnt& u):
-				ent(u),
-				prog(u.getProgram())
+				ent(u)
 			{}
 			bool setKey(const Name& key) {
 				// ここでキーが見つからない = uniformブロックで宣言されているがGLSLコードで使われない場合なのでエラーではない
-				return static_cast<bool>(id = prog->getUniformId(key));
+				return static_cast<bool>(id = ent.getProgram().getUniformId(key));
 			}
 			template <class T, ENABLE_IF(frea::is_vector<T>{})>
 			void operator()(const T& t) {
@@ -333,7 +331,7 @@ namespace rev {
 		}
 		// シェーダーのリンク処理
 		const auto prog = mgr_gl.makeProgram(shP[0], shP[1], shP[2]);
-		_uniformDefault.setProgram(prog);
+		_program = prog;
 		// OpenGLステート設定リストを形成
 		_setting = dupl.exportSetting();
 
@@ -387,7 +385,8 @@ namespace rev {
 		unifL.erase(std::unique(unifL.begin(), unifL.end()), unifL.end());
 		_noDefValue.clear();
 		// Uniform変数にデフォルト値がセットしてある物をリストアップ
-		Visitor visitor(_uniformDefault);
+		UniformEnt u(*_program);
+		Visitor visitor(u);
 		for(const auto* p : unifL) {
 			if(visitor.setKey(p->name)) {
 				const auto& defVal = p->defaultValue;
@@ -398,6 +397,7 @@ namespace rev {
 					_noDefValue.insert(*visitor.id);
 			}
 		}
+		_uniformCmd = u;
 		_makeSetupCmd();
 	}
 }

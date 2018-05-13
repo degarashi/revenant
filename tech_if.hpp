@@ -10,7 +10,6 @@ namespace rev {
 		class IQueue;
 	}
 	using Name = std::string;
-	class UniformEnt;
 	struct VSem_AttrId;
 	using VSemAttrV = std::vector<VSem_AttrId>;
 	using UniIdSet = std::unordered_set<GLint>;
@@ -20,7 +19,6 @@ namespace rev {
 		virtual const UniIdSet& getNoDefaultValue() const noexcept = 0;
 		virtual const VSemAttrV& getVAttr() const noexcept = 0;
 		virtual const HProg& getProgram() const noexcept = 0;
-		virtual const UniformEnt& getDefaultValueQ() const = 0;
 		virtual const Name& getName() const noexcept = 0;
 		virtual void dcmd_setup(draw::IQueue& q) const = 0;
 	};
