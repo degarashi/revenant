@@ -27,16 +27,6 @@ namespace rev {
 		_bView(true),
 		_bScissor(true)
 	{}
-	diff::Buffer GLEffect::_getDifference() {
-		diff::Buffer diff = {};
-		if(_primitive != _primitive_prev) {
-			const auto d = _primitive->getDifference(*_primitive_prev);
-			diff.vertex += d.first;
-			diff.index += d.second;
-			_primitive_prev = _primitive;
-		}
-		return diff;
-	}
 	void GLEffect::_reset() {
 		_primitive = _primitive_prev = c_invalidPrimitive;
 		_writeEnt = nullptr;
@@ -140,17 +130,10 @@ namespace rev {
 			// set V/IBuffer(VDecl)
 			_primitive->dcmd_export(*_writeEnt, *_tech_sp->getVMap());
 		}
-		if(!_primitive->hasIndex()) {
-			++_diffCount.drawNoIndexed;
-		} else {
-			++_diffCount.drawIndexed;
-		}
-		_diffCount.buffer += _getDifference();
 	}
 	void GLEffect::beginTask() {
 		_reset();
 		_writeEnt = &_task.beginTask();
-		TupleZeroFill(_diffCount);
 	}
 	void GLEffect::endTask() {
 		_task.endTask();
@@ -187,8 +170,5 @@ namespace rev {
 		_scissorrect = r;
 		_bScissor = true;
 		return prev;
-	}
-	diff::Effect GLEffect::getDifference() const {
-		return _diffCount;
 	}
 }

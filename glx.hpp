@@ -29,7 +29,6 @@ namespace rev {
 			};
 
 			bool			_bInit = false;		//!< deviceLost/Resetの状態区別
-			diff::Effect	_diffCount;			/*!< バッファのカウントクリアはclearTask()かbeginTask()の呼び出しタイミング */
 
 			HPrim			_primitive,
 							_primitive_prev;
@@ -46,9 +45,6 @@ namespace rev {
 			draw::Task			_task;
 			draw::IQueue*		_writeEnt;
 
-			//! 前回とのバッファの差異
-			/*! Vertex, Indexバッファ情報を一時的にバックアップして差異の検出に備える */
-			diff::Buffer _getDifference();
 			void _reset();
 			//! Tech/Passの切り替えで無効になる変数をリセット
 			void _clean_drawvalue();
@@ -99,7 +95,5 @@ namespace rev {
 			void clearTask() override;
 			// ---- from DrawThread ----
 			void execTask() override;
-			//! 1フレームあたりのドローコール回数など
-			diff::Effect getDifference() const override;
 	};
 }

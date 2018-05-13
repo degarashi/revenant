@@ -1,5 +1,4 @@
 #pragma once
-#include "differential.hpp"
 #include "gl_types.hpp"
 #include "uniform_setter.hpp"
 #include "handle/opengl.hpp"
@@ -36,6 +35,5 @@ namespace rev {
 			virtual void endTask() = 0;
 			virtual void execTask() = 0;
 			virtual void clearTask() = 0;
-			virtual diff::Effect getDifference() const = 0;
 	};
 }
