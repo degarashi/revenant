@@ -80,11 +80,7 @@ namespace rev {
 			#endif
 	};
 }
-#include "spine/flyweight_item.hpp"
 #include "lubee/hash_combine.hpp"
-namespace rev {
-	using VDecl_FW = spi::FlyweightItem<VDecl>;
-}
 namespace std {
 	template <>
 	struct hash<rev::VDecl::VDInfo> {
