@@ -15,9 +15,8 @@ namespace rev::dc {
 			HPrim		_primitive;
 			HTech		_tech;
 		protected:
-			JointId		_jointId;
 			Name		_userName;
-			IMesh(const HPrim& p, const HTech& t, JointId id, const Name& userName);
+			IMesh(const HPrim& p, const HTech& t, const Name& userName);
 			void _draw(IEffect& e) const;
 			void _applyTech(IEffect& e) const;
 		public:

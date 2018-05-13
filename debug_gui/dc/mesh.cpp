@@ -10,7 +10,6 @@ namespace rev::dc {
 	bool IMesh::property(const bool edit) {
 		bool mod = false;
 		auto f = debug::EntryField(nullptr, edit, 2);
-		f.entry("JointId", _jointId);
 		ImGui::Columns(1);
 		if(const auto _ = debug::Header("Primitive", !_primitive, true)) {
 			mod |= _primitive->property(edit);

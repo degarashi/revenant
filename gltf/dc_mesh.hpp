@@ -9,6 +9,7 @@ namespace rev::gltf {
 		private:
 			// 描画毎にSemanticに応じて値を算出、設定する物
 			RTUParams_SP		_rtParams;
+			dc::JointId			_jointId;
 			dc::SkinBindV_SP	_bind;
 			frea::Mat4			_bsm;
 		public:

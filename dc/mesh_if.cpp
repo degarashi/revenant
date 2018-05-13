@@ -2,10 +2,9 @@
 #include "../glx_if.hpp"
 
 namespace rev::dc {
-	IMesh::IMesh(const HPrim& p, const HTech& t, const JointId id, const Name& userName):
+	IMesh::IMesh(const HPrim& p, const HTech& t, const Name& userName):
 		_primitive(p),
 		_tech(t),
-		_jointId(id),
 		_userName(userName)
 	{}
 	IMesh::~IMesh() {}
