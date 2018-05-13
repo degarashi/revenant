@@ -8,8 +8,6 @@ namespace rev {
 	namespace draw {
 		class IQueue;
 	}
-	struct VSem_AttrId;
-	using VSemAttrV = std::vector<VSem_AttrId>;
 	struct Primitive : IDebugGui {
 		//! Draw token (without index)
 		struct DCmd_Draw {
@@ -57,7 +55,7 @@ namespace rev {
 		bool vertexCmp(const Primitive& p) const noexcept;
 		bool indexCmp(const Primitive& p) const noexcept;
 		std::pair<int,int> getDifference(const Primitive& p) const noexcept;
-		void dcmd_export(draw::IQueue& q, const VSemAttrV& vAttr) const;
+		void dcmd_export(draw::IQueue& q, const VSemAttrMap& vmap) const;
 		void getArray(CmpArray& dst) const noexcept;
 		bool operator == (const Primitive& p) const noexcept;
 		bool operator != (const Primitive& p) const noexcept;

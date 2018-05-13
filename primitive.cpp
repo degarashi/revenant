@@ -2,6 +2,7 @@
 #include "lubee/meta/countof.hpp"
 #include "vdecl.hpp"
 #include "drawcmd/queue_if.hpp"
+#include "vertex_map.hpp"
 
 namespace rev {
 	// -------------- Primitive --------------
@@ -37,9 +38,9 @@ namespace rev {
 					w0.first == w1.first;
 		}
 	}
-	void Primitive::dcmd_export(draw::IQueue& q, const VSemAttrV& vAttr) const {
+	void Primitive::dcmd_export(draw::IQueue& q, const VSemAttrMap& vmap) const {
 		Assert(vdecl, "VDecl is not set");
-		vdecl->dcmd_export(q, vb, vAttr);
+		vdecl->dcmd_export(q, vb, vmap);
 		if(ib) {
 			ib->dcmd_export(q);
 			const auto str = ib->getStride();

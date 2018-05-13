@@ -32,6 +32,8 @@ namespace rev {
 
 	struct GLState;
 	DEF_HANDLE(GLState, GLState)
+	struct VSemAttrMap;
+	using FWVMap = spi::FlyweightItem<VSemAttrMap>;
 	class VDecl;
 	using FWVDecl = spi::FlyweightItem<VDecl>;
 	struct ITech;

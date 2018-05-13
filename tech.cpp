@@ -9,8 +9,8 @@ namespace rev {
 	const UniIdSet& Tech::getNoDefaultValue() const noexcept {
 		return _noDefValue;
 	}
-	const VSemAttrV& Tech::getVAttr() const noexcept {
-		return _vattr;
+	const FWVMap& Tech::getVMap() const noexcept {
+		return _vmap;
 	}
 	const HProg& Tech::getProgram() const noexcept {
 		return _program;

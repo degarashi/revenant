@@ -15,7 +15,7 @@ namespace rev {
 			//! Uniform非デフォルト値エントリIdセット (主にユーザーの入力チェック用)
 			UniIdSet		_noDefValue;
 			//! Attribute: 頂点セマンティクスに対する頂点Id
-			VSemAttrV		_vattr;
+			FWVMap			_vmap;
 
 			//! [Program + GLSetting + UniformDefault]
 			draw::CommandVec	_setupCmd;
@@ -27,7 +27,7 @@ namespace rev {
 		public:
 			const GLState_SPV& getSetting() const override;
 			const UniIdSet& getNoDefaultValue() const noexcept override;
-			const VSemAttrV& getVAttr() const noexcept override;
+			const FWVMap& getVMap() const noexcept override;
 			const HProg& getProgram() const noexcept override;
 			const Name& getName() const noexcept override;
 			void dcmd_setup(draw::IQueue& q) const override;

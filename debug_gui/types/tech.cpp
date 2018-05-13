@@ -3,6 +3,7 @@
 #include "../../gl_state.hpp"
 #include "../indent.hpp"
 #include "../header.hpp"
+#include "../../vertex_map.hpp"
 
 namespace rev {
 	bool Tech::property(const bool edit) {
@@ -48,7 +49,7 @@ namespace rev {
 					}
 				}
 			}
-			if(const auto _ = debug::Header("VSemantics", _vattr.empty())) {
+			if(const auto _ = debug::Header("VSemantics", !_vmap)) {
 				{
 					const auto __ = debug::ColumnPush(2);
 					ImGui::TextUnformatted("AttributeId");
@@ -56,7 +57,7 @@ namespace rev {
 					ImGui::TextUnformatted("Semantic");
 					ImGui::NextColumn();
 					ImGui::Separator();
-					for(auto& a : _vattr) {
+					for(auto& a : *_vmap) {
 						debug::Show(nullptr, a.attrId);
 						ImGui::NextColumn();
 						ImGui::Text("%s[%d]", a.sem.sem.toStr(), a.sem.index);

@@ -6,7 +6,6 @@
 #include "handle/opengl.hpp"
 
 namespace rev {
-	using VSem_AttrV = std::vector<VSem_AttrId>;
 	//! DirectX9ライクな頂点宣言
 	class VDecl {
 		private:
@@ -41,7 +40,7 @@ namespace rev {
 			};
 			using VDInfoV = std::vector<VDInfo>;
 		private:
-			using Setter = std::function<void (draw::IQueue&, GLuint, const VSem_AttrV&)>;
+			using Setter = std::function<void (draw::IQueue&, GLuint, const VSemAttrMap&)>;
 			using SetterV = std::vector<Setter>;
 			// ストリーム毎のサイズを1次元配列で格納 = 0番から並べる
 			SetterV		_setter;
@@ -72,7 +71,7 @@ namespace rev {
 			//! 入力: {streamId, offset, GLFlag, bNoramalize, semantics}
 			VDecl(std::initializer_list<VDInfo> il);
 			//! OpenGLへ頂点位置を設定
-			void dcmd_export(draw::IQueue& q, const HVb (&stream)[MaxVStream], const VSem_AttrV& attr) const;
+			void dcmd_export(draw::IQueue& q, const HVb (&stream)[MaxVStream], const VSemAttrMap& vmap) const;
 			bool operator == (const VDecl& vd) const;
 			bool operator != (const VDecl& vd) const;
 			#ifdef DEBUGGUI_ENABLED

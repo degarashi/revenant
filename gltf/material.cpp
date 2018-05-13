@@ -2,6 +2,7 @@
 #include "../ovr_functor.hpp"
 #include "gltf/technique.hpp"
 #include "gltf/program.hpp"
+#include "../vertex_map.hpp"
 
 namespace rev::gltf {
 	using namespace loader;
@@ -83,16 +84,18 @@ namespace rev::gltf {
 				SetUniform(ent, glsl_name, *v, typed.type, typed.count);
 			}
 			// ---- 頂点アトリビュート ----
+			VSemAttrMap vm;
 			for(auto& a : tech.param.attribute) {
 				const auto& glsl_name = tech.namecnv.attribute.at(a.first);
 				if(const auto id = prog->getAttribId(glsl_name)) {
 					const auto& ap = *a.second;
-					_vattr.emplace_back(VSem_AttrId{
+					vm.emplace(VSem_AttrId{
 						ap.semantic,
 						*id
 					});
 				}
 			}
+			_vmap = vm;
 			_uniformCmd = ent;
 			_makeSetupCmd();
 		} else {

@@ -10,6 +10,7 @@
 #include "glx_if.hpp"
 #include "comment.hpp"
 #include "tech_pair.hpp"
+#include "vertex_map.hpp"
 #include <boost/format.hpp>
 
 namespace rev {
@@ -346,7 +347,7 @@ namespace rev {
 				return id < u.id;
 			}
 		};
-		_vattr.clear();
+		VSemAttrMap vm;
 		std::vector<UniqueChk> uc;
 		// 頂点セマンティクス対応リストを生成
 		for(auto& p : attrL) {
@@ -359,13 +360,14 @@ namespace rev {
 					(p->index) ? *p->index : 0
 				};
 				a.attrId = *at;
-				_vattr.emplace_back(a);
+				vm.emplace(a);
 				uc.emplace_back(UniqueChk{a.attrId, sem, name});
 			} else {
 				// 該当する変数が見付からない旨の警告を出す(もしかしたらシェーダー内で使ってないだけかもしれない)
 				D_Expect(false, R"(vertex attribute "%s[%s]" not found)", name, parse::GLSem_::cs_typeStr[p->sem]);
 			}
 		}
+		_vmap = vm;
 		{
 			// セマンティクスの重複チェック
 			std::sort(uc.begin(), uc.end());

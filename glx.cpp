@@ -132,7 +132,7 @@ namespace rev {
 		_outputFramebuffer();
 		if(_primitive_prev != _primitive) {
 			// set V/IBuffer(VDecl)
-			_primitive->dcmd_export(*_writeEnt, _tech_sp->getVAttr());
+			_primitive->dcmd_export(*_writeEnt, *_tech_sp->getVMap());
 		}
 		if(!_primitive->ib) {
 			++_diffCount.drawNoIndexed;

@@ -4,6 +4,7 @@
 #include "gl_if.hpp"
 #include "lubee/meta/countof.hpp"
 #include "drawcmd/queue_if.hpp"
+#include "vertex_map.hpp"
 
 namespace rev {
 	// ----------------- VDecl::VDInfo -----------------
@@ -68,7 +69,7 @@ namespace rev {
 		for(std::size_t i=0 ; i<countof(stream) ; i++) {
 			_streamOfs[i] = cur;
 			for(auto& t2 : stream[i]) {
-				_setter[cur] = [t2](draw::IQueue& q, const GLuint vb_stride, const VSem_AttrV& attr) {
+				_setter[cur] = [t2](draw::IQueue& q, const GLuint vb_stride, const VSemAttrMap& attr) {
 					// Stride-Overrideが0の時はVBufferから提供されたStrideを使う
 					const auto stride = (t2.strideOvr==0) ? vb_stride : t2.strideOvr;
 					D_Assert0(stride > 0);
@@ -132,7 +133,7 @@ namespace rev {
 			);
 		}
 	}
-	void VDecl::dcmd_export(draw::IQueue& q, const HVb (&stream)[MaxVStream], const VSem_AttrV& attr) const {
+	void VDecl::dcmd_export(draw::IQueue& q, const HVb (&stream)[MaxVStream], const VSemAttrMap& vmap) const {
 		for(std::size_t i=0 ; i<countof(stream) ; i++) {
 			// VStreamが設定されていればBindする
 			auto& vb = stream[i];
@@ -142,7 +143,7 @@ namespace rev {
 							to = _streamOfs[i+1];
 				vb->dcmd_export(q);
 				for(std::size_t j=from ; j<to ; j++)
-					_setter[j](q, stride, attr);
+					_setter[j](q, stride, vmap);
 			}
 		}
 	}
