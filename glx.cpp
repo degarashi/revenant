@@ -10,25 +10,14 @@
 #include "gl_buffer.hpp"
 
 namespace rev {
-	namespace {
-		const HPrim c_invalidPrimitive = Primitive::MakeWithoutIndex(
-			FWVDecl(),
-			DrawMode::Points,
-			0,
-			0,
-			nullptr
-		);
-	}
 	GLEffect::GLEffect():
-		_primitive(c_invalidPrimitive),
-		_primitive_prev(c_invalidPrimitive),
 		_viewrect(false, {0,1,0,1}),
 		_scissorrect(false, {0,1,0,1}),
 		_bView(true),
 		_bScissor(true)
 	{}
 	void GLEffect::_reset() {
-		_primitive = _primitive_prev = c_invalidPrimitive;
+		_primitive = _primitive_prev = nullptr;
 		_writeEnt = nullptr;
 		_uniformEnt = spi::none;
 
