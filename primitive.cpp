@@ -56,11 +56,8 @@ namespace rev {
 					w0.first == w1.first;
 		}
 	}
-	void Primitive::dcmd_export(draw::IQueue& q, const VSemAttrMap& vmap) const {
-		Assert(vdecl, "VDecl is not set");
-		vdecl->dcmd_export(q, vb, vmap);
+	void Primitive::_dcmd_export_common(draw::IQueue& q) const {
 		if(ib) {
-			ib->dcmd_export(q);
 			const auto str = ib->getStride();
 			const auto szF = GLIBuffer::GetSizeFlag(str);
 			q.add(DCmd_DrawIndexed{
@@ -76,6 +73,22 @@ namespace rev {
 				.count = withoutIndex.count,
 			});
 		}
+	}
+	void Primitive::dcmd_export_diff(draw::IQueue& q, const Primitive& prev, const VSemAttrMap& vmap) const {
+		if(!vertexCmp(prev)) {
+			vdecl->dcmd_export(q, vb, vmap);
+		}
+		if(!indexCmp(prev)) {
+			ib->dcmd_export(q);
+		}
+		_dcmd_export_common(q);
+	}
+	void Primitive::dcmd_export(draw::IQueue& q, const VSemAttrMap& vmap) const {
+		Assert(vdecl, "VDecl is not set");
+		vdecl->dcmd_export(q, vb, vmap);
+		if(ib)
+			ib->dcmd_export(q);
+		_dcmd_export_common(q);
 	}
 	void Primitive::getArray(CmpArray& dst) const noexcept {
 		auto add = [p = dst.data()](auto& ptr) mutable {
