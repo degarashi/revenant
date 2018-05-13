@@ -62,6 +62,7 @@ namespace rev {
 				SPtr<gltf::GLTFMgr>			gltf;
 			};
 
+			static void _FlyweightGC();
 			static void _InitManagers(Manager& m, const GameloopParam& param, const Window& w);
 			//! AppPathの場所に置かれたフォントファイルを列挙し、読み込む
 			static void _LoadFonts();

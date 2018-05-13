@@ -15,8 +15,13 @@
 namespace rev {
 	bool MainThread::_updateFrame(MainProc* mp, DrawThread& dth, Handler& drawHandler, const Duration delta) {
 		try {
-			// ゲーム進行
-			++getInfo()->accumUpd;
+			{
+				// ゲーム進行
+				const auto ac = ++getInfo()->accumUpd;
+				// 16フレームに一度、FlyweightItemのGCを呼ぶ
+				if((ac & 0x0f) == 0)
+					this->_FlyweightGC();
+			}
 			mgr_input.update();
 			mgr_sound.update();
 			g_sdlInputShared.lock()->reset();
