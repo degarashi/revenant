@@ -98,9 +98,6 @@ namespace rev {
 			!indexCmp(p)
 		);
 	}
-	bool Primitive::hasInfo() const noexcept {
-		return vdecl || vb[0] || ib;
-	}
 	bool Primitive::hasIndex() const noexcept {
 		return static_cast<bool>(ib);
 	}

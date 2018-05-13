@@ -90,7 +90,6 @@ namespace rev {
 			bool operator == (const Primitive& p) const noexcept;
 			bool operator != (const Primitive& p) const noexcept;
 			bool operator < (const Primitive& p) const noexcept;
-			bool hasInfo() const noexcept;
 			bool hasIndex() const noexcept;
 			DEF_DEBUGGUI_PROP
 	};
