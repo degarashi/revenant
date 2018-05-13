@@ -28,7 +28,7 @@ class Cube : public beat::g3::Pose,
 		Gouraud	_p_gouraud;
 		Tech	_tech;
 		bool	_flat;
-		rev::FWPrim _getPrimitive() const noexcept;
+		rev::HPrim _getPrimitive() const noexcept;
 
 	public:
 		static std::shared_ptr<rev::Primitive> MakeData(lubee::IConst<Data::Flat>);

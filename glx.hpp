@@ -31,7 +31,7 @@ namespace rev {
 			bool			_bInit = false;		//!< deviceLost/Resetの状態区別
 			diff::Effect	_diffCount;			/*!< バッファのカウントクリアはclearTask()かbeginTask()の呼び出しタイミング */
 
-			FWPrim			_primitive,
+			HPrim			_primitive,
 							_primitive_prev;
 			using HFb_OP = spi::Optional<HFb>;
 			HFb_OP				_hFb;			//!< 描画対象のフレームバッファ (無効ならデフォルトターゲット)
@@ -81,7 +81,7 @@ namespace rev {
 			FBRect setScissor(const FBRect& r) override;
 
 			// ----------------- Primitive -----------------
-			void setPrimitive(const FWPrim& p) noexcept override;
+			void setPrimitive(const HPrim& p) noexcept override;
 
 			// ----------------- Buffer Clear -----------------
 			void clearFramebuffer(const ClearParam& param) override;

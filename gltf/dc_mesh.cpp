@@ -7,11 +7,11 @@
 
 namespace rev::gltf {
 	// ------------ GLTFMesh ------------
-	GLTFMesh::GLTFMesh(const FWPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::JointId id):
+	GLTFMesh::GLTFMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::JointId id):
 		IMesh(p, t, id, userName),
 		_rtParams(rt)
 	{}
-	GLTFMesh::GLTFMesh(const FWPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::SkinBindV_SP& bind, const frea::Mat4& bsm):
+	GLTFMesh::GLTFMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::SkinBindV_SP& bind, const frea::Mat4& bsm):
 		IMesh(p, t, 0, userName),
 		_rtParams(rt),
 		_bind(bind),

@@ -23,10 +23,10 @@ namespace rev::gltf {
 		}
 		_stack.emplace_back(node.get());
 	}
-	void Visitor_Model::addMesh(const FWPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::JointId id) {
+	void Visitor_Model::addMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::JointId id) {
 		_mesh.emplace_back(new GLTFMesh(p, t, userName, rt, id));
 	}
-	void Visitor_Model::addSkinMesh(const FWPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::SkinBindV_SP& bind, const frea::Mat4& bsm) {
+	void Visitor_Model::addSkinMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::SkinBindV_SP& bind, const frea::Mat4& bsm) {
 		_mesh.emplace_back(new GLTFMesh(p, t, userName, rt, bind, bsm));
 	}
 	void Visitor_Model::addCamera(const HCam3&) {}

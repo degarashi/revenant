@@ -19,12 +19,12 @@ namespace rev::gltf {
 			Idx_Accessor	index;
 			DrawMode		mode;
 			TagMaterial		material;
-			mutable FWPrim	primitive_cache;
+			mutable HPrim	primitive_cache;
 
 			Primitive(const JValue& v);
 			void resolve(const ITagQuery& q) override;
 			static bool CanLoad(const JValue& v) noexcept;
-			const FWPrim& getPrimitive() const;
+			const HPrim& getPrimitive() const;
 		};
 		using PrimitiveV = std::vector<Primitive>;
 

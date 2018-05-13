@@ -186,10 +186,10 @@ void Cube::draw(rev::IEffect& e) const {
 	e.setPrimitive(_getPrimitive());
 	e.draw();
 }
-rev::FWPrim Cube::_getPrimitive() const noexcept {
+rev::HPrim Cube::_getPrimitive() const noexcept {
 	if(_flat)
-		return *_p_flat;
-	return *_p_gouraud;
+		return _p_flat;
+	return _p_gouraud;
 }
 
 // ----------------------- CubeObj  -----------------------

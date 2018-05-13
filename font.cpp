@@ -180,7 +180,9 @@ namespace rev {
 			auto& ds = _drawSet[i];
 			ds.hTex = itr->first;
 			ds.nChar = nC;
-			Primitive p;
+
+			ds.primitive = std::make_shared<Primitive>();
+			auto& p = *ds.primitive;
 			p.vb[0] = mgr_gl.makeVBuffer(DrawType::Static);
 			p.vb[0]->initData(std::move(vbuff), sizeof(vertex::text));
 			p.ib = mgr_gl.makeIBuffer(DrawType::Static);
@@ -190,7 +192,6 @@ namespace rev {
 			auto& info = p.withIndex;
 			info.count = ds.nChar*6;
 			info.offsetElem = 0;
-			ds.primitive = p;
 		}
 	}
 	void TextObj::exportDrawTag(DrawTag& d) const {

@@ -13,11 +13,7 @@ namespace rev::dc {
 		f.entry("JointId", _jointId);
 		ImGui::Columns(1);
 		if(const auto _ = debug::Header("Primitive", !_primitive, true)) {
-			Primitive tmp = *_primitive;
-			if(tmp.property(edit)) {
-				mod = true;
-				_primitive = FWPrim(tmp);
-			}
+			mod |= _primitive->property(edit);
 		}
 		if(const auto _ = debug::Header("Technique", !_tech, true)) {
 			mod |= _tech->property(edit);

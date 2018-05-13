@@ -8,7 +8,5 @@ namespace rev {
 		FWVMap::GC();
 		// FWVDecl
 		FWVDecl::GC();
-		// FWPrim
-		FWPrim::GC();
 	}
 }
