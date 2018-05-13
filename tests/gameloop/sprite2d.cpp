@@ -9,8 +9,6 @@
 
 // ----------------------- Sprite -----------------------
 std::shared_ptr<rev::Primitive> Sprite2D::MakeData(lubee::IConst<0>) {
-	auto ret = std::make_shared<rev::Primitive>();
-
 	// 大きさ1の矩形を定義して後でスケーリング
 	const vertex::sprite tmpV[] = {
 		{{0,1}, {0,0}},
@@ -18,17 +16,21 @@ std::shared_ptr<rev::Primitive> Sprite2D::MakeData(lubee::IConst<0>) {
 		{{1,0}, {1,1}},
 		{{0,0}, {0,1}}
 	};
-	ret->vb[0] = mgr_gl.makeVBuffer(rev::DrawType::Static);
-	ret->vb[0]->initData(tmpV, countof(tmpV), sizeof(vertex::sprite));
+	rev::HVb vb = mgr_gl.makeVBuffer(rev::DrawType::Static);
+	vb->initData(tmpV, countof(tmpV), sizeof(vertex::sprite));
+
 	const GLushort idx[] = {0,1,2, 2,3,0};
-	ret->ib = mgr_gl.makeIBuffer(rev::DrawType::Static);
-	ret->ib->initData(idx, countof(idx));
-	ret->vdecl = vertex::sprite::s_vdecl;
-	ret->drawMode = rev::DrawMode::Triangles;
-	auto& info = ret->withIndex;
-	info.count = 6;
-	info.offsetElem = 0;
-	return ret;
+	rev::HIb ib = mgr_gl.makeIBuffer(rev::DrawType::Static);
+	ib->initData(idx, countof(idx));
+
+	return rev::Primitive::MakeWithIndex(
+		vertex::sprite::s_vdecl,
+		rev::DrawMode::Triangles,
+		ib,
+		6,
+		0,
+		vb
+	);
 }
 rev::HTech Sprite2D::MakeData(lubee::IConst<1>) {
 	return mgr_gl.loadTechPass("sprite2d.glx")->getTechnique("Sprite|Default");

@@ -8,60 +8,91 @@ namespace rev {
 	namespace draw {
 		class IQueue;
 	}
-	struct Primitive : IDebugGui {
-		//! Draw token (without index)
-		struct DCmd_Draw {
-			GLenum		mode;
-			GLint		first;
-			GLsizei		count;
-
-			static void Command(const void* p);
-		};
-		//! Draw token (with index)
-		struct DCmd_DrawIndexed {
-			//! 描画モードフラグ(OpenGL)
-			GLenum			mode;
-			//! 描画に使用される要素数
-			GLsizei			count;
-			//! 1要素のサイズを表すフラグ
-			GLenum			sizeF;
-			//! オフセットバイト数
-			GLuint			offset;
-
-			static void Command(const void* p);
-		};
-
-		FWVDecl		vdecl;
-		HVb			vb[MaxVStream];
-		HIb			ib;
-		DrawMode	drawMode;
-		union {
-			struct {
-				// 描画に使用される要素数
-				GLsizei		count;
-				// オフセット要素数
-				GLuint		offsetElem;
-			} withIndex;
-			struct {
-				// 描画を開始する要素オフセット
+	class Primitive : public IDebugGui {
+		private:
+			friend struct std::hash<Primitive>;
+			//! Draw token (without index)
+			struct DCmd_Draw {
+				GLenum		mode;
 				GLint		first;
-				// 描画に使用される要素数
 				GLsizei		count;
-			} withoutIndex;
-		};
-		constexpr static int NArray = MaxVStream + 2;
-		using CmpArray = std::array<uintptr_t, NArray>;
 
-		bool vertexCmp(const Primitive& p) const noexcept;
-		bool indexCmp(const Primitive& p) const noexcept;
-		std::pair<int,int> getDifference(const Primitive& p) const noexcept;
-		void dcmd_export(draw::IQueue& q, const VSemAttrMap& vmap) const;
-		void getArray(CmpArray& dst) const noexcept;
-		bool operator == (const Primitive& p) const noexcept;
-		bool operator != (const Primitive& p) const noexcept;
-		bool operator < (const Primitive& p) const noexcept;
-		bool hasInfo() const noexcept;
-		DEF_DEBUGGUI_PROP
+				static void Command(const void* p);
+			};
+			//! Draw token (with index)
+			struct DCmd_DrawIndexed {
+				//! 描画モードフラグ(OpenGL)
+				GLenum			mode;
+				//! 描画に使用される要素数
+				GLsizei			count;
+				//! 1要素のサイズを表すフラグ
+				GLenum			sizeF;
+				//! オフセットバイト数
+				GLuint			offset;
+
+				static void Command(const void* p);
+			};
+
+			FWVDecl		vdecl;
+			HVb			vb[MaxVStream];
+			HIb			ib;
+			DrawMode	drawMode;
+			union {
+				struct {
+					// 描画に使用される要素数
+					GLsizei		count;
+					// オフセット要素数
+					GLuint		offsetElem;
+				} withIndex;
+				struct {
+					// 描画を開始する要素オフセット
+					GLint		first;
+					// 描画に使用される要素数
+					GLsizei		count;
+				} withoutIndex;
+			};
+			constexpr static int NArray = MaxVStream + 2;
+			using CmpArray = std::array<uintptr_t, NArray>;
+
+			static void _SetVB(HVb*) {}
+			template <class... VBs>
+			static void _SetVB(HVb* dst, const HVb& vb, const VBs&... vbs) {
+				*dst = vb;
+				_SetVB(dst+1, vbs...);
+			}
+			static void _SetVB(HVb* dst, const HVb* vb, std::size_t n) {
+				while(n-- != 0) {
+					*dst++ = *vb++;
+				}
+			}
+			static HPrim _MakeWithIndex(const FWVDecl& vd, DrawMode mode, const HIb& ib,  const GLsizei count, const GLuint offsetElem);
+			static HPrim _MakeWithoutIndex(const FWVDecl& vd, DrawMode mode, const GLint first, const GLsizei count);
+			Primitive() = default;
+
+		public:
+			template <class... VBs>
+			static HPrim MakeWithIndex(const FWVDecl& vd, DrawMode mode, const HIb& ib,  const GLsizei count, const GLuint offsetElem, const VBs&... vbs) {
+				HPrim ret = _MakeWithIndex(vd, mode, ib, count, offsetElem);
+				_SetVB(ret->vb, vbs...);
+				return ret;
+			}
+			template <class... VBs>
+			static HPrim MakeWithoutIndex(const FWVDecl& vd, DrawMode mode, const GLint first, const GLsizei count, const VBs&... vbs) {
+				HPrim ret = _MakeWithoutIndex(vd, mode, first, count);
+				_SetVB(ret->vb, vbs...);
+				return ret;
+			}
+			bool vertexCmp(const Primitive& p) const noexcept;
+			bool indexCmp(const Primitive& p) const noexcept;
+			std::pair<int,int> getDifference(const Primitive& p) const noexcept;
+			void dcmd_export(draw::IQueue& q, const VSemAttrMap& vmap) const;
+			void getArray(CmpArray& dst) const noexcept;
+			bool operator == (const Primitive& p) const noexcept;
+			bool operator != (const Primitive& p) const noexcept;
+			bool operator < (const Primitive& p) const noexcept;
+			bool hasInfo() const noexcept;
+			bool hasIndex() const noexcept;
+			DEF_DEBUGGUI_PROP
 	};
 }
 #include "lubee/hash_combine.hpp"

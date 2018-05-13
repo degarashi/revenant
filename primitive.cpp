@@ -5,7 +5,25 @@
 #include "vertex_map.hpp"
 
 namespace rev {
-	// -------------- Primitive --------------
+	HPrim Primitive::_MakeWithIndex(const FWVDecl& vd, DrawMode mode, const HIb& ib,  const GLsizei count, const GLuint offsetElem) {
+		HPrim ret(new Primitive());
+		ret->vdecl = vd;
+		ret->ib = ib;
+		ret->drawMode = mode;
+		auto& wi = ret->withIndex;
+		wi.count = count;
+		wi.offsetElem = offsetElem;
+		return ret;
+	}
+	HPrim Primitive::_MakeWithoutIndex(const FWVDecl& vd, DrawMode mode, const GLint first, const GLsizei count) {
+		HPrim ret(new Primitive());
+		ret->vdecl = vd;
+		ret->drawMode = mode;
+		auto& wi = ret->withoutIndex;
+		wi.first = first;
+		wi.count = count;
+		return ret;
+	}
 	bool Primitive::operator == (const Primitive& p) const noexcept {
 		return vertexCmp(p) &&
 				indexCmp(p) &&
@@ -82,6 +100,9 @@ namespace rev {
 	}
 	bool Primitive::hasInfo() const noexcept {
 		return vdecl || vb[0] || ib;
+	}
+	bool Primitive::hasIndex() const noexcept {
+		return static_cast<bool>(ib);
 	}
 }
 #include "gl_if.hpp"

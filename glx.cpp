@@ -11,7 +11,13 @@
 
 namespace rev {
 	namespace {
-		const HPrim c_invalidPrimitive = std::make_shared<Primitive>();
+		const HPrim c_invalidPrimitive = Primitive::MakeWithoutIndex(
+			FWVDecl(),
+			DrawMode::Points,
+			0,
+			0,
+			nullptr
+		);
 	}
 	GLEffect::GLEffect():
 		_primitive(c_invalidPrimitive),
@@ -134,7 +140,7 @@ namespace rev {
 			// set V/IBuffer(VDecl)
 			_primitive->dcmd_export(*_writeEnt, *_tech_sp->getVMap());
 		}
-		if(!_primitive->ib) {
+		if(!_primitive->hasIndex()) {
 			++_diffCount.drawNoIndexed;
 		} else {
 			++_diffCount.drawIndexed;

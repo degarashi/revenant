@@ -181,17 +181,18 @@ namespace rev {
 			ds.hTex = itr->first;
 			ds.nChar = nC;
 
-			ds.primitive = std::make_shared<Primitive>();
-			auto& p = *ds.primitive;
-			p.vb[0] = mgr_gl.makeVBuffer(DrawType::Static);
-			p.vb[0]->initData(std::move(vbuff), sizeof(vertex::text));
-			p.ib = mgr_gl.makeIBuffer(DrawType::Static);
-			p.ib->initData(std::move(ibuff));
-			p.vdecl = vertex::text::s_decl;
-			p.drawMode = DrawMode::Triangles;
-			auto& info = p.withIndex;
-			info.count = ds.nChar*6;
-			info.offsetElem = 0;
+			HVb vb = mgr_gl.makeVBuffer(DrawType::Static);
+			vb->initData(std::move(vbuff), sizeof(vertex::text));
+			HIb ib = mgr_gl.makeIBuffer(DrawType::Static);
+			ib->initData(std::move(ibuff));
+			ds.primitive = Primitive::MakeWithIndex(
+				vertex::text::s_decl,
+				DrawMode::Triangles,
+				ib,
+				ds.nChar*6,
+				0,
+				vb
+			);
 		}
 	}
 	void TextObj::exportDrawTag(DrawTag& d) const {

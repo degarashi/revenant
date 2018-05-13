@@ -147,32 +147,26 @@ Cube::Cube():
 	_flat(false)
 {}
 std::shared_ptr<rev::Primitive> Cube::MakeData(lubee::IConst<Data::Flat>) {
-	auto ret = std::make_shared<rev::Primitive>();
-	ret->vdecl = vertex::cube::s_vdecl;
-	ret->drawMode = rev::DrawMode::Triangles;
-
-	ret->vb[0] = MakeFlatPosVB();
-	ret->vb[1] = MakeFlatNormalVB();
-	ret->ib = MakeFlatIB();
-
-	auto& info = ret->withIndex;
-	info.offsetElem = 0;
-	info.count = NFace * countof(FaceIndex);
-	return ret;
+	return rev::Primitive::MakeWithIndex(
+		vertex::cube::s_vdecl,
+		rev::DrawMode::Triangles,
+		MakeFlatIB(),
+		NFace * countof(FaceIndex),
+		0,
+		MakeFlatPosVB(),
+		MakeFlatNormalVB()
+	);
 }
 std::shared_ptr<rev::Primitive> Cube::MakeData(lubee::IConst<Data::Gouraud>) {
-	auto ret = std::make_shared<rev::Primitive>();
-	ret->vdecl = vertex::cube::s_vdecl;
-	ret->drawMode = rev::DrawMode::Triangles;
-
-	ret->vb[0] = MakeGouraudPosVB();
-	ret->vb[1] = MakeGouraudNormalVB();
-	ret->ib = MakeGouraudIB();
-
-	auto& info = ret->withIndex;
-	info.offsetElem = 0;
-	info.count = NFace * countof(FaceIndex);
-	return ret;
+	return rev::Primitive::MakeWithIndex(
+		vertex::cube::s_vdecl,
+		rev::DrawMode::Triangles,
+		MakeGouraudIB(),
+		NFace * countof(FaceIndex),
+		0,
+		MakeGouraudPosVB(),
+		MakeGouraudNormalVB()
+	);
 }
 rev::HTech Cube::MakeData(lubee::IConst<Data::Tech>) {
 	return mgr_gl.loadTechPass("cube.glx")->getTechnique("Cube|Default");

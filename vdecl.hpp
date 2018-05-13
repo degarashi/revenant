@@ -14,7 +14,7 @@ namespace rev {
 			template <class Ar>
 			friend void load(Ar&, const VDecl&);
 			#ifdef DEBUGGUI_ENABLED
-				friend struct Primitive;
+				friend class Primitive;
 			#endif
 		public:
 			struct VDInfo {

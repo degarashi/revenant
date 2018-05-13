@@ -38,7 +38,7 @@ namespace rev {
 	using FWVDecl = spi::FlyweightItem<VDecl>;
 	struct ITech;
 	DEF_HANDLE(ITech, Tech)
-	struct Primitive;
+	class Primitive;
 	DEF_HANDLE(Primitive, Prim)
 	class TechPass;
 	DEF_HANDLE(TechPass, TP)
