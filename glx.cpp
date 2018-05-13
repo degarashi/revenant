@@ -35,17 +35,15 @@ namespace rev {
 	UniformEnt& GLEffect::refUniformEnt() noexcept {
 		return *_uniformEnt;
 	}
-	HTech GLEffect::setTechnique(const HTech& tech) {
+	void GLEffect::setTechnique(const HTech& tech) {
 		if(tech == _tech_sp)
-			return tech;
+			return;
 		_clean_drawvalue();
 
-		const auto prev_tech = _tech_sp;
 		_tech_sp = tech;
 		_uniformEnt = spi::construct(*tech->getProgram());
 		// [Program + GLSetting + UniformDefault]
 		tech->dcmd_setup(*_writeEnt);
-		return prev_tech;
 	}
 	const HTech& GLEffect::getTechnique() const noexcept {
 		return _tech_sp;

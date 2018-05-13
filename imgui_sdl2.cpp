@@ -276,7 +276,7 @@ namespace rev {
 			 0.0f,                  0.0f,                  -1.0f, 0.0f,
 			-1.0f,                  1.0f,                   0.0f, 1.0f
 		);
-		const auto prev_tech = e.setTechnique(_tech);
+		e.setTechnique(_tech);
 		auto& u = e.refUniformEnt();
 		const auto prev_sci = e.setScissor({false, {0,1,0,1}});
 		u.setUniformById(_unif.projMat, ortho_projection);
@@ -320,8 +320,6 @@ namespace rev {
 			}
 		}
 		e.setScissor(prev_sci);
-		if(prev_tech)
-			e.setTechnique(prev_tech);
 		e.setViewport(prev_vp);
 	}
 	bool ImGui_SDL2::pointerOnGUI() const noexcept {

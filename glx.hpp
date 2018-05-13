@@ -51,7 +51,7 @@ namespace rev {
 			void _outputFramebuffer();
 		public:
 			GLEffect();
-			HTech setTechnique(const HTech& tech) override;
+			void setTechnique(const HTech& tech) override;
 			const HTech& getTechnique() const noexcept override;
 			void onDeviceLost() override;
 			void onDeviceReset() override;
