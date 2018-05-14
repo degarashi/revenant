@@ -46,8 +46,6 @@ namespace rev {
 			draw::IQueue*		_writeEnt;
 
 			void _reset();
-			//! Tech/Passの切り替えで無効になる変数をリセット
-			void _clean_drawvalue();
 			void _outputFramebuffer();
 		public:
 			GLEffect();

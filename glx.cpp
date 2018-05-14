@@ -20,14 +20,11 @@ namespace rev {
 		_primitive = _primitive_prev = nullptr;
 		_writeEnt = nullptr;
 
-		_clean_drawvalue();
+		_tech_sp.reset();
+		_uniformEnt = spi::none;
 		_hFb = HFb();
 		// ビューポートはデフォルトでフルスクリーンに初期化
 		setViewport({false, {0,1,0,1}});
-	}
-	void GLEffect::_clean_drawvalue() {
-		_tech_sp.reset();
-		_uniformEnt = spi::none;
 	}
 	UniformEnt& GLEffect::refUniformEnt() noexcept {
 		return *_uniformEnt;
@@ -38,7 +35,6 @@ namespace rev {
 			tech->dcmd_uniform(*_writeEnt);
 			return;
 		}
-		_clean_drawvalue();
 
 		_tech_sp = tech;
 		_uniformEnt = spi::construct(*tech->getProgram());
