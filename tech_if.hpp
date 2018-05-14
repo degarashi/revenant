@@ -18,6 +18,7 @@ namespace rev {
 		virtual const FWVMap& getVMap() const noexcept = 0;
 		virtual const HProg& getProgram() const noexcept = 0;
 		virtual const Name& getName() const noexcept = 0;
+		virtual void dcmd_uniform(draw::IQueue& q) const = 0;
 		virtual void dcmd_setup(draw::IQueue& q) const = 0;
 	};
 }

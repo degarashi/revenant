@@ -30,6 +30,7 @@ namespace rev {
 			const FWVMap& getVMap() const noexcept override;
 			const HProg& getProgram() const noexcept override;
 			const Name& getName() const noexcept override;
+			void dcmd_uniform(draw::IQueue& q) const override;
 			void dcmd_setup(draw::IQueue& q) const override;
 			DEF_DEBUGGUI_PROP
 	};

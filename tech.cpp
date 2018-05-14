@@ -25,6 +25,9 @@ namespace rev {
 		for(auto& s : _setting)
 			s->dcmd_export(_setupCmd);
 	}
+	void Tech::dcmd_uniform(draw::IQueue& q) const {
+		q.append(_uniformCmd);
+	}
 	void Tech::dcmd_setup(draw::IQueue& q) const {
 		q.append(_setupCmd);
 	}
