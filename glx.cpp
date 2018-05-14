@@ -33,8 +33,11 @@ namespace rev {
 		return *_uniformEnt;
 	}
 	void GLEffect::setTechnique(const HTech& tech) {
-		if(tech == _tech_sp)
+		if(tech == _tech_sp) {
+			// Uniformの初期値設定だけする
+			tech->dcmd_uniform(*_writeEnt);
 			return;
+		}
 		_clean_drawvalue();
 
 		_tech_sp = tech;
