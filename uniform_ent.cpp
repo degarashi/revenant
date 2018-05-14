@@ -2,13 +2,11 @@
 #include "gl_program.hpp"
 
 namespace rev {
-	UniformEnt::UniformEnt(const GLProgram& p):
-		_program(&p)
+	UniformEnt::UniformEnt(const GLProgram& p, draw::IQueue& q):
+		_program(p),
+		_q(q)
 	{}
-	void UniformEnt::clearValue() {
-		CommandVec::clear();
-	}
 	const GLProgram& UniformEnt::getProgram() const noexcept {
-		return *_program;
+		return _program;
 	}
 }

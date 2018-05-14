@@ -3,7 +3,6 @@
 #include "drawcmd/queue_if.hpp"
 #include "drawcmd/types/vector.hpp"
 #include "drawcmd/types/matrix.hpp"
-#include "drawcmd/cmd.hpp"
 #include "gl_program.hpp"
 #include "gl_texture.hpp"
 #include "handle/opengl.hpp"
@@ -127,19 +126,18 @@ namespace rev {
 		template <class T>
 		struct Is_SP<std::shared_ptr<T>> : std::true_type {};
 	}
-	class UniformEnt :
-		public draw::CommandVec
-	{
+	class UniformEnt {
 		private:
-			const GLProgram*	_program;
+			const GLProgram&	_program;
+			draw::IQueue&		_q;
 
 		public:
-			UniformEnt(const GLProgram& p);
+			UniformEnt(const GLProgram& p, draw::IQueue& q);
 			const GLProgram& getProgram() const noexcept;
 
 			template <class... Ts>
 			void setUniform(const SName& name, Ts&&... ts) {
-				if(const auto id = _program->getUniformId(name)) {
+				if(const auto id = _program.getUniformId(name)) {
 					setUniformById(*id, std::forward<Ts>(ts)...);
 				}
 			}
@@ -153,22 +151,22 @@ namespace rev {
 			>
 			void setUniformById(const GLint id, const T& t) {
 				using vec_t = frea::Vec_t<detail::NumberCnv_t<T>, 1, false>;
-				draw::VecSingle<vec_t>(t).dcmd_export(*this, id, -1);
+				draw::VecSingle<vec_t>(t).dcmd_export(_q, id, -1);
 			}
 			template <class V, ENABLE_IF(frea::is_vector<V>{})>
 			void setUniformById(const GLint id, const V& v) {
-				draw::VecSingle<V>(v).dcmd_export(*this, id, -1);
+				draw::VecSingle<V>(v).dcmd_export(_q, id, -1);
 			}
 			template <class M, ENABLE_IF(frea::is_matrix<M>{})>
 			void setUniformById(const GLint id, const M& m) {
-				draw::MatSingle<M>(m).dcmd_export(*this, id, -1);
+				draw::MatSingle<M>(m).dcmd_export(_q, id, -1);
 			}
 			template <class T>
 			void setUniformById(const GLint id, const std::shared_ptr<T>& t) {
 				// テクスチャユニット番号を検索
-				const auto num = _program->getTexIndex(id);
+				const auto num = _program.getTexIndex(id);
 				D_Assert0(num);
-				draw::TexSingle(t).dcmd_export(*this, id, *num);
+				draw::TexSingle(t).dcmd_export(_q, id, *num);
 			}
 
 			template <class T>
@@ -187,7 +185,7 @@ namespace rev {
 			>
 			void setUniformById(const GLint id, const Itr itr, const Itr itrE) {
 				using vec_t = frea::Vec_t<detail::NumberCnv_t<T>, 1, false>;
-				draw::VecArray<vec_t>(itr, itrE).dcmd_export(*this, id, -1);
+				draw::VecArray<vec_t>(itr, itrE).dcmd_export(_q, id, -1);
 			}
 			template <
 				class Itr,
@@ -195,7 +193,7 @@ namespace rev {
 				ENABLE_IF(frea::is_vector<V>{})
 			>
 			void setUniformById(const GLint id, const Itr itr, const Itr itrE) {
-				draw::VecArray<V>(itr, itrE).dcmd_export(*this, id, -1);
+				draw::VecArray<V>(itr, itrE).dcmd_export(_q, id, -1);
 			}
 			template <
 				class Itr,
@@ -203,7 +201,7 @@ namespace rev {
 				ENABLE_IF(frea::is_matrix<V>{})
 			>
 			void setUniformById(const GLint id, const Itr itr, const Itr itrE) {
-				draw::MatArray<V>(itr, itrE).dcmd_export(*this, id, -1);
+				draw::MatArray<V>(itr, itrE).dcmd_export(_q, id, -1);
 			}
 			template <
 				class Itr,
@@ -212,10 +210,9 @@ namespace rev {
 			>
 			void setUniformById(const GLint id, const Itr itr, const Itr itrE) {
 				// テクスチャユニット番号を検索
-				const auto num = _program->getTexIndex(id);
+				const auto num = _program.getTexIndex(id);
 				D_Assert0(num);
-				draw::TexArray(itr, itrE).dcmd_export(*this, id, *num);
+				draw::TexArray(itr, itrE).dcmd_export(_q, id, *num);
 			}
-			void clearValue();
 	};
 }

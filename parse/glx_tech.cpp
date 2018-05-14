@@ -11,6 +11,7 @@
 #include "comment.hpp"
 #include "tech_pair.hpp"
 #include "vertex_map.hpp"
+#include "uniform_ent.hpp"
 #include <boost/format.hpp>
 
 namespace rev {
@@ -387,7 +388,7 @@ namespace rev {
 		unifL.erase(std::unique(unifL.begin(), unifL.end()), unifL.end());
 		_noDefValue.clear();
 		// Uniform変数にデフォルト値がセットしてある物をリストアップ
-		UniformEnt u(*_program);
+		UniformEnt u(*_program, _uniformCmd);
 		Visitor visitor(u);
 		for(const auto* p : unifL) {
 			if(visitor.setKey(p->name)) {
@@ -399,7 +400,6 @@ namespace rev {
 					_noDefValue.insert(*visitor.id);
 			}
 		}
-		_uniformCmd = u;
 		_makeSetupCmd();
 	}
 }

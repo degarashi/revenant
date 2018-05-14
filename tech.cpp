@@ -1,6 +1,7 @@
 #include "tech.hpp"
 #include "gl_state.hpp"
 #include "vertex.hpp"
+#include "gl_program.hpp"
 
 namespace rev {
 	const GLState_SPV& Tech::getSetting() const {

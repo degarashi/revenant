@@ -37,7 +37,7 @@ namespace rev {
 		}
 
 		_tech_sp = tech;
-		_uniformEnt = spi::construct(*tech->getProgram());
+		_uniformEnt = spi::construct(*tech->getProgram(), *_writeEnt);
 		// [Program + GLSetting + UniformDefault]
 		tech->dcmd_setup(*_writeEnt);
 	}
@@ -106,8 +106,6 @@ namespace rev {
 	}
 	void GLEffect::draw() {
 		applyUniform(*_uniformEnt, *_tech_sp->getProgram());
-		_writeEnt->append(*_uniformEnt);
-		_uniformEnt->clearValue();
 		_outputFramebuffer();
 
 		// set V/IBuffer(VDecl)

@@ -1,7 +1,7 @@
 #pragma once
 #include "tech_if.hpp"
-#include "uniform_ent.hpp"
 #include "vertex.hpp"
+#include "drawcmd/cmd.hpp"
 
 namespace rev {
 	class Tech : public ITech {

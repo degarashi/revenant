@@ -4,6 +4,7 @@
 #include "../indent.hpp"
 #include "../header.hpp"
 #include "../../vertex_map.hpp"
+#include "../../gl_program.hpp"
 
 namespace rev {
 	bool Tech::property(const bool edit) {

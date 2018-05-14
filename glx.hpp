@@ -5,6 +5,7 @@
 #include "clear.hpp"
 #include "fbrect.hpp"
 #include "drawcmd/task.hpp"
+#include "uniform_ent.hpp"
 
 namespace rev {
 	//! GLXエフェクト管理クラス
