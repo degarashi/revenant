@@ -19,7 +19,6 @@ namespace rev {
 	void GLEffect::_reset() {
 		_primitive = _primitive_prev = nullptr;
 		_writeEnt = nullptr;
-		_uniformEnt = spi::none;
 
 		_clean_drawvalue();
 		_hFb = HFb();
@@ -28,9 +27,7 @@ namespace rev {
 	}
 	void GLEffect::_clean_drawvalue() {
 		_tech_sp.reset();
-		// セットされているUniform変数を未セット状態にする
-		if(_uniformEnt)
-			_uniformEnt->clearValue();
+		_uniformEnt = spi::none;
 	}
 	UniformEnt& GLEffect::refUniformEnt() noexcept {
 		return *_uniformEnt;
