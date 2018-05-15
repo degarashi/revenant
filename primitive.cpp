@@ -38,6 +38,8 @@ namespace rev {
 		return !(this->operator == (p));
 	}
 	bool Primitive::vertexCmp(const Primitive& p) const noexcept {
+		if(vhash != p.vhash)
+			return false;
 		if(vdecl != p.vdecl)
 			return false;
 		for(std::size_t i=0 ; i<countof(vb) ; i++) {
