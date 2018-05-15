@@ -11,10 +11,11 @@ namespace rev::draw {
 		T				data[MaxN];
 		std::size_t		num,
 						dim;
+		bool			transpose;
 
 		static void Command(const void* p) {
 			auto& self = *static_cast<const Matrix*>(p);
-			Unif_Mat_Exec(self.dim-2, self.unifId, self.data, self.num, true);
+			Unif_Mat_Exec(self.dim-2, self.unifId, self.data, self.num, self.transpose);
 		}
 	};
 
@@ -26,12 +27,13 @@ namespace rev::draw {
 			M::dim_m == M::dim_n
 		)
 	>
-	auto MakeMatrix(const M& m, const GLint id) {
+	auto MakeMatrix(const M& m, const GLint id, const bool transpose) {
 		constexpr auto S = M::dim_m * M::dim_m;
 		Matrix<typename M::value_t, S*1> ret;
 		ret.unifId = id;
 		ret.num = 1;
 		ret.dim = M::dim_m;
+		ret.transpose = transpose;
 
 		auto* dst = ret.data;
 		for(std::size_t i=0 ; i<M::dim_m ; i++)
@@ -48,8 +50,8 @@ namespace rev::draw {
 			M::dim_m != M::dim_n
 		)
 	>
-	auto MakeMatrix(const M& m, const GLint id) {
-		return MakeMatrix(m.template convertI<MDim,MDim>(1), id);
+	auto MakeMatrix(const M& m, const GLint id, const bool transpose) {
+		return MakeMatrix(m.template convertI<MDim,MDim>(1), id, transpose);
 	}
 
 	// -------------------- Matrix配列 --------------------
@@ -62,7 +64,7 @@ namespace rev::draw {
 			M::dim_m == M::dim_n
 		)
 	>
-	auto MakeMatrixArray(Itr itr, const Itr itrE, const GLint id) {
+	auto MakeMatrixArray(Itr itr, const Itr itrE, const GLint id, const bool transpose) {
 		const auto num = itrE-itr;
 		constexpr std::size_t S = M::dim_m * M::dim_m;
 		D_Assert0(std::size_t(num) <= MaxN);
@@ -70,6 +72,7 @@ namespace rev::draw {
 		ret.unifId = id;
 		ret.num = num;
 		ret.dim = M::dim_m;
+		ret.transpose = transpose;
 
 		auto* dst = ret.data;
 		while(itr != itrE) {
@@ -92,7 +95,7 @@ namespace rev::draw {
 			M::dim_m != M::dim_n
 		)
 	>
-	auto MakeMatrixArray(Itr itr, const Itr itrE, const GLint id) {
+	auto MakeMatrixArray(Itr itr, const Itr itrE, const GLint id, const bool transpose) {
 		const auto num = itrE-itr;
 		using value_t = typename M::value_t;
 		frea::Mat_t<value_t, MDim, MDim, false> tmp[MaxN];
@@ -102,6 +105,6 @@ namespace rev::draw {
 			++itr;
 		}
 		D_Assert0(dst == tmp + num);
-		return MakeMatrixArray<MaxN>(tmp.begin(), tmp.end(), id);
+		return MakeMatrixArray<MaxN>(tmp.begin(), tmp.end(), id, transpose);
 	}
 }

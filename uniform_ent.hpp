@@ -45,7 +45,7 @@ namespace rev {
 		struct MatSingle {
 			static void DCmd(draw::IQueue& q, const M& value, const int id, const int) {
 				static_assert(frea::is_matrix<M>{});
-				q.add(draw::MakeMatrix(value, id));
+				q.add(draw::MakeMatrix(value, id, true));
 			}
 		};
 		template <class M>
@@ -54,7 +54,7 @@ namespace rev {
 			static void DCmd(draw::IQueue& q, const Itr itr, const Itr itrE, const int id, const int) {
 				static_assert(frea::is_matrix<M>{});
 				GetMaxN(itrE-itr, [itr, itrE, &q, id](auto n){
-					q.add(draw::MakeMatrixArray<decltype(n)::value>(itr, itrE, id));
+					q.add(draw::MakeMatrixArray<decltype(n)::value>(itr, itrE, id, true));
 				});
 			}
 		};
