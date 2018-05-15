@@ -9,7 +9,7 @@
 #include "lubee/compare.hpp"
 
 namespace rev {
-	namespace draw {
+	namespace detail {
 		template <class CB>
 		void GetMaxN(const std::size_t n, const CB& cb) {
 			D_Assert0(lubee::IsInRange<std::size_t>(n, 1, 32));
@@ -26,86 +26,51 @@ namespace rev {
 		}
 		template <class V>
 		struct VecSingle {
-			V			value;
-
-			VecSingle(const V& v):
-				value(v)
-			{
+			static void DCmd(draw::IQueue& q, const V& value, const int id, const int) {
 				static_assert(frea::is_vector<V>{});
-			}
-			void dcmd_export(IQueue& q, const int id, const int) const {
-				q.add(MakeVector(value, id));
+				q.add(draw::MakeVector(value, id));
 			}
 		};
 		template <class V>
 		struct VecArray {
-			using Ar = std::vector<V>;
-			Ar			value;
-
 			template <class Itr>
-			VecArray(Itr itr, const Itr itrE):
-				value(itr, itrE)
-			{
+			static void DCmd(draw::IQueue& q, const Itr itr, const Itr itrE, const int id, const int) {
 				static_assert(frea::is_vector<V>{});
-			}
-			void dcmd_export(IQueue& q, const int id, const int) const {
-				GetMaxN(value.size(), [this, &q, id](auto n){
-					q.add(MakeVectorArray<decltype(n)::value>(value.begin(), value.end(), id));
+				GetMaxN(itrE-itr, [itr, itrE, &q, id](auto n){
+					q.add(draw::MakeVectorArray<decltype(n)::value>(itr, itrE, id));
 				});
 			}
 		};
 		template <class M>
 		struct MatSingle {
-			M			value;
-
-			MatSingle(const M& m):
-				value(m)
-			{
+			static void DCmd(draw::IQueue& q, const M& value, const int id, const int) {
 				static_assert(frea::is_matrix<M>{});
-			}
-			void dcmd_export(draw::IQueue& q, const int id, const int) const {
 				q.add(draw::MakeMatrix(value, id));
 			}
 		};
 		template <class M>
 		struct MatArray {
-			using Ar = std::vector<M>;
-			Ar			value;
-
 			template <class Itr>
-			MatArray(const Itr itr, const Itr itrE):
-				value(itr, itrE)
-			{
+			static void DCmd(draw::IQueue& q, const Itr itr, const Itr itrE, const int id, const int) {
 				static_assert(frea::is_matrix<M>{});
-			}
-			void dcmd_export(draw::IQueue& q, const int id, const int) const {
-				GetMaxN(value.size(), [this, &q, id](auto n){
-					q.add(MakeMatrixArray<decltype(n)::value>(value.begin(), value.end(), id));
+				GetMaxN(itrE-itr, [itr, itrE, &q, id](auto n){
+					q.add(draw::MakeMatrixArray<decltype(n)::value>(itr, itrE, id));
 				});
 			}
 		};
 		struct TexSingle {
-			HTexC	tex;
-
-			TexSingle(const HTexC& t):
-				tex(t)
-			{}
-			void dcmd_export(draw::IQueue& q, const int id, const int actId) const {
+			static void DCmd(draw::IQueue& q, const HTexC& tex, const int id, const int actId) {
 				tex->dcmd_export(q, id, actId);
 			}
 		};
 		struct TexArray {
-			using Ar = std::vector<HTexC>;
-			Ar		tex;
-
 			template <class Itr>
-			TexArray(const Itr itr, const Itr itrE):
-				tex(itr, itrE)
-			{}
-			void dcmd_export(draw::IQueue& q, const int id, const int actId) const {
-				const auto len = tex.size();
-				for(std::size_t i=0 ; i<len ; i++) {
-					tex[i]->dcmd_export(q, id+i, actId+i);
+			static void DCmd(draw::IQueue& q, Itr itr, const Itr itrE, const int id, const int actId) {
+				std::size_t idx = 0;
+				while(itr != itrE) {
+					(*itr)->dcmd_export(q, id+idx, actId+idx);
+					++idx;
+					++itr;
 				}
 			}
 		};
@@ -150,22 +115,22 @@ namespace rev {
 			>
 			void setUniformById(const GLint id, const T& t) {
 				using vec_t = frea::Vec_t<detail::NumberCnv_t<T>, 1, false>;
-				draw::VecSingle<vec_t>(t).dcmd_export(_q, id, -1);
+				detail::VecSingle<vec_t>::DCmd(_q, t, id, -1);
 			}
 			template <class V, ENABLE_IF(frea::is_vector<V>{})>
 			void setUniformById(const GLint id, const V& v) {
-				draw::VecSingle<V>(v).dcmd_export(_q, id, -1);
+				detail::VecSingle<V>::DCmd(_q, v, id, -1);
 			}
 			template <class M, ENABLE_IF(frea::is_matrix<M>{})>
 			void setUniformById(const GLint id, const M& m) {
-				draw::MatSingle<M>(m).dcmd_export(_q, id, -1);
+				detail::MatSingle<M>::DCmd(_q, m, id, -1);
 			}
 			template <class T>
 			void setUniformById(const GLint id, const std::shared_ptr<T>& t) {
 				// テクスチャユニット番号を検索
 				const auto num = _program.getTexIndex(id);
 				D_Assert0(num);
-				draw::TexSingle(t).dcmd_export(_q, id, *num);
+				detail::TexSingle::DCmd(_q, t, id, *num);
 			}
 
 			template <class T>
@@ -184,7 +149,8 @@ namespace rev {
 			>
 			void setUniformById(const GLint id, const Itr itr, const Itr itrE) {
 				using vec_t = frea::Vec_t<detail::NumberCnv_t<T>, 1, false>;
-				draw::VecArray<vec_t>(itr, itrE).dcmd_export(_q, id, -1);
+				std::vector<vec_t> tmp(itr, itrE);
+				detail::VecArray<vec_t>::DCmd(_q, tmp.begin(), tmp.end(), id, -1);
 			}
 			template <
 				class Itr,
@@ -192,7 +158,7 @@ namespace rev {
 				ENABLE_IF(frea::is_vector<V>{})
 			>
 			void setUniformById(const GLint id, const Itr itr, const Itr itrE) {
-				draw::VecArray<V>(itr, itrE).dcmd_export(_q, id, -1);
+				detail::VecArray<V>::DCmd(_q, itr, itrE, id, -1);
 			}
 			template <
 				class Itr,
@@ -200,7 +166,7 @@ namespace rev {
 				ENABLE_IF(frea::is_matrix<V>{})
 			>
 			void setUniformById(const GLint id, const Itr itr, const Itr itrE) {
-				draw::MatArray<V>(itr, itrE).dcmd_export(_q, id, -1);
+				detail::MatArray<V>::DCmd(_q, itr, itrE, id, -1);
 			}
 			template <
 				class Itr,
@@ -211,7 +177,7 @@ namespace rev {
 				// テクスチャユニット番号を検索
 				const auto num = _program.getTexIndex(id);
 				D_Assert0(num);
-				draw::TexArray(itr, itrE).dcmd_export(_q, id, *num);
+				detail::TexArray::DCmd(_q, itr, itrE, id, *num);
 			}
 	};
 }
