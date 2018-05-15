@@ -26,7 +26,7 @@ namespace rev {
 		}
 		template <class V>
 		struct VecSingle {
-			static void DCmd(draw::IQueue& q, const V& value, const int id, const int) {
+			static void DCmd(draw::IQueue& q, const V& value, const int id) {
 				static_assert(frea::is_vector<V>{});
 				q.add(draw::MakeVector(value, id));
 			}
@@ -34,7 +34,7 @@ namespace rev {
 		template <class V>
 		struct VecArray {
 			template <class Itr>
-			static void DCmd(draw::IQueue& q, const Itr itr, const Itr itrE, const int id, const int) {
+			static void DCmd(draw::IQueue& q, const Itr itr, const Itr itrE, const int id) {
 				static_assert(frea::is_vector<V>{});
 				GetMaxN(itrE-itr, [itr, itrE, &q, id](auto n){
 					q.add(draw::MakeVectorArray<decltype(n)::value>(itr, itrE, id));
@@ -43,7 +43,7 @@ namespace rev {
 		};
 		template <class M>
 		struct MatSingle {
-			static void DCmd(draw::IQueue& q, const M& value, const int id, const int) {
+			static void DCmd(draw::IQueue& q, const M& value, const int id) {
 				static_assert(frea::is_matrix<M>{});
 				q.add(draw::MakeMatrix(value, id, true));
 			}
@@ -51,7 +51,7 @@ namespace rev {
 		template <class M>
 		struct MatArray {
 			template <class Itr>
-			static void DCmd(draw::IQueue& q, const Itr itr, const Itr itrE, const int id, const int) {
+			static void DCmd(draw::IQueue& q, const Itr itr, const Itr itrE, const int id) {
 				static_assert(frea::is_matrix<M>{});
 				GetMaxN(itrE-itr, [itr, itrE, &q, id](auto n){
 					q.add(draw::MakeMatrixArray<decltype(n)::value>(itr, itrE, id, true));
@@ -115,15 +115,15 @@ namespace rev {
 			>
 			void setUniformById(const GLint id, const T& t) {
 				using vec_t = frea::Vec_t<detail::NumberCnv_t<T>, 1, false>;
-				detail::VecSingle<vec_t>::DCmd(_q, t, id, -1);
+				detail::VecSingle<vec_t>::DCmd(_q, t, id);
 			}
 			template <class V, ENABLE_IF(frea::is_vector<V>{})>
 			void setUniformById(const GLint id, const V& v) {
-				detail::VecSingle<V>::DCmd(_q, v, id, -1);
+				detail::VecSingle<V>::DCmd(_q, v, id);
 			}
 			template <class M, ENABLE_IF(frea::is_matrix<M>{})>
 			void setUniformById(const GLint id, const M& m) {
-				detail::MatSingle<M>::DCmd(_q, m, id, -1);
+				detail::MatSingle<M>::DCmd(_q, m, id);
 			}
 			template <class T>
 			void setUniformById(const GLint id, const std::shared_ptr<T>& t) {
@@ -150,7 +150,7 @@ namespace rev {
 			void setUniformById(const GLint id, const Itr itr, const Itr itrE) {
 				using vec_t = frea::Vec_t<detail::NumberCnv_t<T>, 1, false>;
 				std::vector<vec_t> tmp(itr, itrE);
-				detail::VecArray<vec_t>::DCmd(_q, tmp.begin(), tmp.end(), id, -1);
+				detail::VecArray<vec_t>::DCmd(_q, tmp.begin(), tmp.end(), id);
 			}
 			template <
 				class Itr,
@@ -158,7 +158,7 @@ namespace rev {
 				ENABLE_IF(frea::is_vector<V>{})
 			>
 			void setUniformById(const GLint id, const Itr itr, const Itr itrE) {
-				detail::VecArray<V>::DCmd(_q, itr, itrE, id, -1);
+				detail::VecArray<V>::DCmd(_q, itr, itrE, id);
 			}
 			template <
 				class Itr,
@@ -166,7 +166,7 @@ namespace rev {
 				ENABLE_IF(frea::is_matrix<V>{})
 			>
 			void setUniformById(const GLint id, const Itr itr, const Itr itrE) {
-				detail::MatArray<V>::DCmd(_q, itr, itrE, id, -1);
+				detail::MatArray<V>::DCmd(_q, itr, itrE, id);
 			}
 			template <
 				class Itr,
