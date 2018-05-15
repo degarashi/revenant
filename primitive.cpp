@@ -78,7 +78,7 @@ namespace rev {
 		if(!vertexCmp(prev)) {
 			vdecl->dcmd_export(q, vb, vmap);
 		}
-		if(!indexCmp(prev)) {
+		if(ib && !indexCmp(prev)) {
 			ib->dcmd_export(q);
 		}
 		_dcmd_export_common(q);
