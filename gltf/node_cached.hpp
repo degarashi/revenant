@@ -2,6 +2,7 @@
 #include "../handle/camera.hpp"
 #include "lubee/rect.hpp"
 #include "node_cached_if.hpp"
+#include "../dc/node_cached.hpp"
 
 namespace rev::gltf {
 	class NodeParam_USemCached :

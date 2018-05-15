@@ -1,6 +1,7 @@
 #include "dc/model.hpp"
 #include "dc/mesh.hpp"
 #include "dc/node.hpp"
+#include "dc/node_cached.hpp"
 
 namespace rev::dc {
 	NodeParam_UP Model::DefaultCache(const IEffect&, const NodeParam& np) {
