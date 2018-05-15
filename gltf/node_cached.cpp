@@ -15,9 +15,9 @@ namespace rev::gltf {
 	{
 		_camera = cam;
 		_viewport = Vec4{vp.x0, vp.y0, vp.width(), vp.height()};
-		_view = _camera->getView() * Mat4::Scaling({1,1,-1,1});
-		_proj = Mat4::Scaling({1,1,-1,1}) * _camera->getProj();
-		_viewProj = _view * _proj;
+		_view = Mat4::Scaling({1,1,-1,1}) * _camera->getView().transposition();
+		_proj = _camera->getProj().transposition() * Mat4::Scaling({1,1,-1,1});
+		_viewProj = _proj * _view;
 	}
 	NodeParam_USemCached::Mat4 NodeParam_USemCached::_calcMat(const JointId id, const USemantic sem) const {
 		if(sem == USemantic::View) {
@@ -27,8 +27,8 @@ namespace rev::gltf {
 			return _proj;
 		}
 		const auto makeMat = [this, id, sem]() -> Mat4 {
-			const auto local = [this, id](){ return base_t::getLocal(id); };
-			const auto global = [this, id](){ return base_t::getGlobal(id); };
+			const auto local = [this, id]() -> Mat4 { return base_t::getLocal(id).transposition(); };
+			const auto global = [this, id]() -> Mat4 { return base_t::getGlobal(id).transposition(); };
 			switch(sem) {
 				case USemantic::Local:
 					// This is the node's matrix property
@@ -38,10 +38,10 @@ namespace rev::gltf {
 					return global();
 				case USemantic::ModelView:
 					// Combined MODEL and VIEW
-					return global() * _view;
+					return _view * global();
 				case USemantic::ModelViewProjection:
 					// Combined MODEL, VIEW, and PROJECTION
-					return global() * _viewProj;
+					return _viewProj * global();
 				case USemantic::ModelInverse:
 					// Inverse of MODEL
 					return global().inversion();
@@ -82,21 +82,21 @@ namespace rev::gltf {
 	void NodeParam_USemCached::exportSemantic(UniformEnt& u, const SName& uname, const JointId id, const USemantic sem) const {
 		if(sem == USemantic::View) {
 			// Transforms from world to view coordinates using the active camera node
-			u.setUniform(uname, Mat4(_view.transposition()));
+			u.setUniform(uname, _view);
 			return;
 		}
 		if(sem == USemantic::Projection) {
 			// Transforms from view to clip coordinates using the active camera node
-			u.setUniform(uname, Mat4(_proj.transposition()));
+			u.setUniform(uname, _proj);
 			return;
 		}
 
 		const auto m = _calcMat(id, sem);
 		if(sem == USemantic::ModelInverseTranspose ||
 			sem == USemantic::ModelViewInverseTranspose)
-			u.setUniform(uname, frea::Mat3(m.convert<3,3>().transposition()));
+			u.setUniform(uname, frea::Mat3(m.convert<3,3>()));
 		else
-			u.setUniform(uname, frea::Mat4(m.transposition()));
+			u.setUniform(uname, frea::Mat4(m));
 	}
 	void NodeParam_USemCached::exportViewport(UniformEnt& u, const SName& uname) const {
 		u.setUniform(uname, _viewport);
