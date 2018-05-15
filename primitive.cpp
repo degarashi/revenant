@@ -24,6 +24,11 @@ namespace rev {
 		wi.count = count;
 		return ret;
 	}
+	void Primitive::_makeVHash() {
+		std::size_t h = lubee::hash_combine_implicit(vdecl);
+		lubee::hash_combine_range(h, vb, vb+MaxVStream);
+		vhash = h;
+	}
 	bool Primitive::operator == (const Primitive& p) const noexcept {
 		return vertexCmp(p) &&
 				indexCmp(p) &&

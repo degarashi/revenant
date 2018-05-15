@@ -35,6 +35,7 @@ namespace rev {
 
 			FWVDecl		vdecl;
 			HVb			vb[MaxVStream];
+			std::size_t	vhash;
 			HIb			ib;
 			DrawMode	drawMode;
 			union {
@@ -69,18 +70,21 @@ namespace rev {
 			static HPrim _MakeWithoutIndex(const FWVDecl& vd, DrawMode mode, const GLint first, const GLsizei count);
 			Primitive() = default;
 			void _dcmd_export_common(draw::IQueue& q) const;
+			void _makeVHash();
 
 		public:
 			template <class... VBs>
 			static HPrim MakeWithIndex(const FWVDecl& vd, DrawMode mode, const HIb& ib,  const GLsizei count, const GLuint offsetElem, const VBs&... vbs) {
 				HPrim ret = _MakeWithIndex(vd, mode, ib, count, offsetElem);
 				_SetVB(ret->vb, vbs...);
+				ret->_makeVHash();
 				return ret;
 			}
 			template <class... VBs>
 			static HPrim MakeWithoutIndex(const FWVDecl& vd, DrawMode mode, const GLint first, const GLsizei count, const VBs&... vbs) {
 				HPrim ret = _MakeWithoutIndex(vd, mode, first, count);
 				_SetVB(ret->vb, vbs...);
+				ret->_makeVHash();
 				return ret;
 			}
 			bool vertexCmp(const Primitive& p) const noexcept;
