@@ -109,7 +109,7 @@ namespace rev {
 		_outputFramebuffer();
 
 		// set V/IBuffer(VDecl)
-		const auto& vmap = *_tech_sp->getVMap();
+		const auto vmap = _tech_sp->getVMap();
 		if(_primitive_prev) {
 			_primitive->dcmd_export_diff(*_writeEnt, *_primitive_prev, vmap);
 		} else {

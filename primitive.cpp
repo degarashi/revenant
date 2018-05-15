@@ -5,6 +5,13 @@
 #include "vertex_map.hpp"
 
 namespace rev {
+	Primitive::Primitive():
+		cache([this](const FWVMap& vm){
+			draw::CommandVec cmd;
+			vdecl->dcmd_export(cmd, vb, vm);
+			return cmd;
+		})
+	{}
 	HPrim Primitive::_MakeWithIndex(const FWVDecl& vd, DrawMode mode, const HIb& ib,  const GLsizei count, const GLuint offsetElem) {
 		HPrim ret(new Primitive());
 		ret->vdecl = vd;
@@ -81,18 +88,18 @@ namespace rev {
 			});
 		}
 	}
-	void Primitive::dcmd_export_diff(draw::IQueue& q, const Primitive& prev, const VSemAttrMap& vmap) const {
+	void Primitive::dcmd_export_diff(draw::IQueue& q, const Primitive& prev, const FWVMap& vmap) const {
 		if(!vertexCmp(prev)) {
-			vdecl->dcmd_export(q, vb, vmap);
+			q.append(cache.getCache(vmap));
 		}
 		if(ib && !indexCmp(prev)) {
 			ib->dcmd_export(q);
 		}
 		_dcmd_export_common(q);
 	}
-	void Primitive::dcmd_export(draw::IQueue& q, const VSemAttrMap& vmap) const {
+	void Primitive::dcmd_export(draw::IQueue& q, const FWVMap& vmap) const {
 		Assert(vdecl, "VDecl is not set");
-		vdecl->dcmd_export(q, vb, vmap);
+		q.append(cache.getCache(vmap));
 		if(ib)
 			ib->dcmd_export(q);
 		_dcmd_export_common(q);

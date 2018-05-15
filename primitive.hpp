@@ -3,6 +3,8 @@
 #include "gl_types.hpp"
 #include "debuggui_if.hpp"
 #include "handle/opengl.hpp"
+#include "cache.hpp"
+#include "drawcmd/cmd.hpp"
 
 namespace rev {
 	namespace draw {
@@ -38,6 +40,10 @@ namespace rev {
 			std::size_t	vhash;
 			HIb			ib;
 			DrawMode	drawMode;
+
+			using Cache_t = Cache<FWVMap, draw::CommandVec>;
+			mutable Cache_t	cache;
+
 			union {
 				struct {
 					// 描画に使用される要素数
@@ -68,7 +74,7 @@ namespace rev {
 			}
 			static HPrim _MakeWithIndex(const FWVDecl& vd, DrawMode mode, const HIb& ib,  const GLsizei count, const GLuint offsetElem);
 			static HPrim _MakeWithoutIndex(const FWVDecl& vd, DrawMode mode, const GLint first, const GLsizei count);
-			Primitive() = default;
+			Primitive();
 			void _dcmd_export_common(draw::IQueue& q) const;
 			void _makeVHash();
 
@@ -90,8 +96,8 @@ namespace rev {
 			bool vertexCmp(const Primitive& p) const noexcept;
 			bool indexCmp(const Primitive& p) const noexcept;
 			std::pair<int,int> getDifference(const Primitive& p) const noexcept;
-			void dcmd_export(draw::IQueue& q, const VSemAttrMap& vmap) const;
-			void dcmd_export_diff(draw::IQueue& q, const Primitive& prev, const VSemAttrMap& vmap) const;
+			void dcmd_export(draw::IQueue& q, const FWVMap& vmap) const;
+			void dcmd_export_diff(draw::IQueue& q, const Primitive& prev, const FWVMap& vmap) const;
 			void getArray(CmpArray& dst) const noexcept;
 			bool operator == (const Primitive& p) const noexcept;
 			bool operator != (const Primitive& p) const noexcept;
