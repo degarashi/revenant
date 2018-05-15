@@ -48,13 +48,21 @@ namespace rev::draw {
 		return {_vec.data(), _vec.size()};
 	}
 	void CommandVec::_copyMemory(const DataP& src) {
-		const auto prevLen = _vec.size();
-		_vec.resize(prevLen + src.second);
-		std::memcpy(_vec.data() + prevLen, src.first, src.second);
+		if(src.second > 0) {
+			const auto prevLen = _vec.size();
+			_vec.resize(prevLen + src.second);
+			std::memcpy(_vec.data() + prevLen, src.first, src.second);
+		}
 	}
 	void CommandVec::_copyResource(const ResP& src) {
-		const auto prevLen = _res.size();
-		_res.resize(prevLen + src.second);
-		std::memcpy(_res.data() + prevLen, src.first, src.second);
+		if(src.second > 0) {
+			const auto prevLen = _res.size();
+			_res.resize(prevLen + src.second);
+			const auto* pSrc = src.first;
+			auto* pDst = _res.data() + prevLen;
+			for(std::size_t i=0 ; i<src.second ; i++) {
+				*pDst++ = *pSrc++;
+			}
+		}
 	}
 }
