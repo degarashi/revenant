@@ -26,31 +26,26 @@ namespace rev::dc {
 	}
 	// ---------------------- NodeParam_cached ----------------------
 	NodeParam_cached::NodeParam_cached(const NodeParam& np):
+		_single([this](const KeyS& k) -> Mat4{
+			return k.mat.node_m.transposition() * getGlobal(*k.bind.jointName).transposition() * k.bind.invmat * k.mat.bs_m;
+		}),
+		_vec([this](const KeyV& k) -> Mat4V{
+			const auto len = k.bind->size();
+			Mat4V mv(len);
+			for(std::size_t i=0 ; i<len ; i++) {
+				mv[i] = _single.getCache(KeyS{k.mat, (*k.bind)[i]});
+			}
+			return mv;
+		}),
 		_np(np)
 	{}
-	const Mat4& NodeParam_cached::_getSingle(const MatP& mat, const SkinBind& bind) const {
-		const KeyS ks{mat, bind};
-		auto itr = _single.find(ks);
-		if(itr == _single.end()) {
-			const Mat4 m = mat.node_m.transposition() * getGlobal(*bind.jointName).transposition() * bind.invmat * mat.bs_m;
-			itr = _single.emplace(ks, m).first;
-		}
-		return itr->second;
-	}
+	NodeParam_cached::NodeParam_cached(const NodeParam_cached& np):
+		NodeParam_cached(np._np)
+	{}
 	const Mat4V& NodeParam_cached::getJointMat(const Mat4& node_m, const SkinBindV_SP& bind, const Mat4& bs_m) const {
 		const MatP mp{node_m, bs_m};
-		const KeyV kv{mp, bind};
-		const auto itr = _vec.find(kv);
-		if(itr != _vec.end()) {
-			return itr->second;
-		}
-
-		const auto len = bind->size();
-		Mat4V mv(len);
-		for(std::size_t i=0 ; i<len ; i++) {
-			mv[i] = _getSingle(mp, (*bind)[i]);
-		}
-		return _vec.emplace(kv, std::move(mv)).first->second;
+		const KeyV k{mp, bind};
+		return _vec.getCache(k);
 	}
 	Mat4 NodeParam_cached::getLocal(const JointId id) const {
 		return _np.getLocal(id);

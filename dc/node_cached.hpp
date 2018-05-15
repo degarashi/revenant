@@ -1,5 +1,6 @@
 #pragma once
 #include "common.hpp"
+#include "../cache.hpp"
 
 namespace rev::dc {
 	class NodeParam_cached : public NodeParam {
@@ -35,13 +36,12 @@ namespace rev::dc {
 			};
 			using VecM = std::unordered_map<KeyV, Mat4V, Hash>;
 
-			mutable SingleM		_single;
-			mutable VecM		_vec;
+			mutable Cache<KeyS, Mat4, Hash>		_single;
+			mutable Cache<KeyV, Mat4V, Hash>	_vec;
 			const NodeParam&	_np;
-
-			const Mat4& _getSingle(const MatP& mat, const SkinBind& bind) const;
 		public:
 			NodeParam_cached(const NodeParam& np);
+			NodeParam_cached(const NodeParam_cached& np);
 			Mat4 getLocal(JointId id) const override;
 			Mat4 getGlobal(JointId id) const override;
 			Mat4 getLocal(const SName& name) const override;
