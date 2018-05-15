@@ -43,18 +43,18 @@ namespace rev {
 		};
 		template <class M>
 		struct MatSingle {
-			static void DCmd(draw::IQueue& q, const M& value, const int id) {
+			static void DCmd(draw::IQueue& q, const M& value, const int id, const bool transpose) {
 				static_assert(frea::is_matrix<M>{});
-				q.add(draw::MakeMatrix(value, id, true));
+				q.add(draw::MakeMatrix(value, id, transpose));
 			}
 		};
 		template <class M>
 		struct MatArray {
 			template <class Itr>
-			static void DCmd(draw::IQueue& q, const Itr itr, const Itr itrE, const int id) {
+			static void DCmd(draw::IQueue& q, const Itr itr, const Itr itrE, const int id, const bool transpose) {
 				static_assert(frea::is_matrix<M>{});
-				GetMaxN(itrE-itr, [itr, itrE, &q, id](auto n){
-					q.add(draw::MakeMatrixArray<decltype(n)::value>(itr, itrE, id, true));
+				GetMaxN(itrE-itr, [=, &q](auto n){
+					q.add(draw::MakeMatrixArray<decltype(n)::value>(itr, itrE, id, transpose));
 				});
 			}
 		};
@@ -122,8 +122,8 @@ namespace rev {
 				detail::VecSingle<V>::DCmd(_q, v, id);
 			}
 			template <class M, ENABLE_IF(frea::is_matrix<M>{})>
-			void setUniformById(const GLint id, const M& m) {
-				detail::MatSingle<M>::DCmd(_q, m, id);
+			void setUniformById(const GLint id, const M& m, const bool transpose=true) {
+				detail::MatSingle<M>::DCmd(_q, m, id, transpose);
 			}
 			template <class T>
 			void setUniformById(const GLint id, const std::shared_ptr<T>& t) {
@@ -165,8 +165,8 @@ namespace rev {
 				class V = std::decay_t<decltype(*std::declval<Itr>())>,
 				ENABLE_IF(frea::is_matrix<V>{})
 			>
-			void setUniformById(const GLint id, const Itr itr, const Itr itrE) {
-				detail::MatArray<V>::DCmd(_q, itr, itrE, id);
+			void setUniformById(const GLint id, const Itr itr, const Itr itrE, const bool transpose=true) {
+				detail::MatArray<V>::DCmd(_q, itr, itrE, id, transpose);
 			}
 			template <
 				class Itr,
