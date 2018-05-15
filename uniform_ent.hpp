@@ -1,5 +1,4 @@
 #pragma once
-#include "drawcmd/cmd_unif_if.hpp"
 #include "drawcmd/queue_if.hpp"
 #include "drawcmd/types/vector.hpp"
 #include "drawcmd/types/matrix.hpp"
@@ -26,7 +25,7 @@ namespace rev {
 				cb(lubee::SZConst<32>{});
 		}
 		template <class V>
-		struct VecSingle : ICmd_Uniform {
+		struct VecSingle {
 			V			value;
 
 			VecSingle(const V& v):
@@ -34,12 +33,12 @@ namespace rev {
 			{
 				static_assert(frea::is_vector<V>{});
 			}
-			void dcmd_export(IQueue& q, const int id, const int) const override {
+			void dcmd_export(IQueue& q, const int id, const int) const {
 				q.add(MakeVector(value, id));
 			}
 		};
 		template <class V>
-		struct VecArray : ICmd_Uniform {
+		struct VecArray {
 			using Ar = std::vector<V>;
 			Ar			value;
 
@@ -49,14 +48,14 @@ namespace rev {
 			{
 				static_assert(frea::is_vector<V>{});
 			}
-			void dcmd_export(IQueue& q, const int id, const int) const override {
+			void dcmd_export(IQueue& q, const int id, const int) const {
 				GetMaxN(value.size(), [this, &q, id](auto n){
 					q.add(MakeVectorArray<decltype(n)::value>(value.begin(), value.end(), id));
 				});
 			}
 		};
 		template <class M>
-		struct MatSingle : ICmd_Uniform {
+		struct MatSingle {
 			M			value;
 
 			MatSingle(const M& m):
@@ -64,12 +63,12 @@ namespace rev {
 			{
 				static_assert(frea::is_matrix<M>{});
 			}
-			void dcmd_export(draw::IQueue& q, const int id, const int) const override {
+			void dcmd_export(draw::IQueue& q, const int id, const int) const {
 				q.add(draw::MakeMatrix(value, id));
 			}
 		};
 		template <class M>
-		struct MatArray : ICmd_Uniform {
+		struct MatArray {
 			using Ar = std::vector<M>;
 			Ar			value;
 
@@ -79,23 +78,23 @@ namespace rev {
 			{
 				static_assert(frea::is_matrix<M>{});
 			}
-			void dcmd_export(draw::IQueue& q, const int id, const int) const override {
+			void dcmd_export(draw::IQueue& q, const int id, const int) const {
 				GetMaxN(value.size(), [this, &q, id](auto n){
 					q.add(MakeMatrixArray<decltype(n)::value>(value.begin(), value.end(), id));
 				});
 			}
 		};
-		struct TexSingle : ICmd_Uniform {
+		struct TexSingle {
 			HTexC	tex;
 
 			TexSingle(const HTexC& t):
 				tex(t)
 			{}
-			void dcmd_export(draw::IQueue& q, const int id, const int actId) const override {
+			void dcmd_export(draw::IQueue& q, const int id, const int actId) const {
 				tex->dcmd_export(q, id, actId);
 			}
 		};
-		struct TexArray : ICmd_Uniform {
+		struct TexArray {
 			using Ar = std::vector<HTexC>;
 			Ar		tex;
 
@@ -103,7 +102,7 @@ namespace rev {
 			TexArray(const Itr itr, const Itr itrE):
 				tex(itr, itrE)
 			{}
-			void dcmd_export(draw::IQueue& q, const int id, const int actId) const override {
+			void dcmd_export(draw::IQueue& q, const int id, const int actId) const {
 				const auto len = tex.size();
 				for(std::size_t i=0 ; i<len ; i++) {
 					tex[i]->dcmd_export(q, id+i, actId+i);
