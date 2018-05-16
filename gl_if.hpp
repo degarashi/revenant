@@ -100,11 +100,11 @@ namespace rev {
 			using PutCall = std::unique_ptr<GLWrap, Put>;
 			void _putReset();
 
-		public:
 			constexpr static std::size_t MF_Size = sizeof(&IGL::setSwapInterval);
+		public:
 			using MF_Pointer = std::array<uint8_t, MF_Size>;
-			using MF_NameMap = std::unordered_map<MF_Pointer, const char*>;
 		private:
+			using MF_NameMap = std::unordered_map<MF_Pointer, const char*>;
 			static MF_NameMap s_funcName;
 		public:
 			//! 関数ポインタから関数名を取得
@@ -119,7 +119,7 @@ namespace rev {
 
 			#undef DEF_GLMETHOD
 			#undef DEF_GLCONST
-		public:
+
 			GLWrap(bool bShareEnabled);
 			void loadGLFunc();
 			bool isGLFuncLoaded();
