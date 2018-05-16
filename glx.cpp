@@ -36,6 +36,9 @@ namespace rev {
 			return;
 		}
 
+		// 前のTechのステートを初期値に戻す
+		if(_tech_sp)
+			_tech_sp->dcmd_resetState(*_writeEnt);
 		_tech_sp = tech;
 		_uniformEnt = spi::construct(*tech->getProgram(), *_writeEnt);
 		// [Program + GLSetting + UniformDefault]
