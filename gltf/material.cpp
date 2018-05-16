@@ -97,7 +97,7 @@ namespace rev::gltf {
 				}
 			}
 			_vmap = vm;
-			_makeSetupCmd();
+			_makeCmd();
 		} else {
 			// デフォルトのマテリアル
 			D_Assert(false, "default material is not implemented yet");

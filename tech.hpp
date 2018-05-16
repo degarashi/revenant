@@ -18,8 +18,10 @@ namespace rev {
 			FWVMap			_vmap;
 
 			//! [Program + GLSetting + UniformDefault]
-			draw::CommandVec	_setupCmd;
-			void _makeSetupCmd();
+			draw::CommandVec	_setupCmd,
+			//! [GLSetting(reset)]
+								_resetCmd;
+			void _makeCmd();
 
 			Name			_name;
 			// 必ず継承して使う
@@ -32,6 +34,7 @@ namespace rev {
 			const Name& getName() const noexcept override;
 			void dcmd_uniform(draw::IQueue& q) const override;
 			void dcmd_setup(draw::IQueue& q) const override;
+			void dcmd_resetState(draw::IQueue& q) const override;
 			DEF_DEBUGGUI_PROP
 	};
 }
