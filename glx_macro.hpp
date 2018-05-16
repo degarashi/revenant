@@ -1,14 +1,10 @@
 #pragma once
+#include "gl_depend.hpp"
 #include <boost/preprocessor.hpp>
 
 #define SEQ_GLTYPE (void)(bool)(int)(float)(vec2)(vec3)(vec4)(ivec2)(ivec3)(ivec4)(bvec2)(bvec3)(bvec4)(mat2)(mat3)(mat4)(sampler2D)(samplerCube)
 #define SEQ_PRECISION (highp)(mediump)(lowp)
 
-#ifdef USE_OPENGLES2
-	#define GLDEPTHRANGE glDepthRangef
-#else
-	#define GLDEPTHRANGE glDepthRange
-#endif
 #define SEQ_GLSETTING ((linewidth,glLineWidth,float))((frontface,glFrontFace,unsigned))((cullfacedir,glCullFace,unsigned))((depthrange,GLDEPTHRANGE,float,float))((viewport,glViewport,float,float,float,float))\
 		((scissor,glScissor,float,float,float,float))((samplecoverage,glSampleCoverage,float,bool))((stencilfunc,glStencilFunc,unsigned,float,unsigned))((stencilfuncfront,stencilFuncFront,unsigned,float,unsigned))\
 		((stencilfuncback,stencilFuncBack,unsigned,float,unsigned))((stencilop,glStencilOp,unsigned,unsigned,unsigned))((stencilopfront,stencilOpFront,unsigned,unsigned,unsigned))((stencilopback,stencilOpBack,unsigned,unsigned,unsigned))\
