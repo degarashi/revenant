@@ -17,6 +17,7 @@ namespace rev::gltf {
 		Type getType() const noexcept override;
 		void resolve(const ITagQuery& q) override;
 
-		HProg makeProgram() const;
+		mutable HProg cache;
+		const HProg& makeProgram() const;
 	};
 }

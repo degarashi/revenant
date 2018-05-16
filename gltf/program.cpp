@@ -23,10 +23,13 @@ namespace rev::gltf {
 		vshader.resolve(q);
 		fshader.resolve(q);
 	}
-	HProg Program::makeProgram() const {
-		return mgr_gl.makeProgram(
-			vshader.data()->makeShader(),
-			fshader.data()->makeShader()
-		);
+	const HProg& Program::makeProgram() const {
+		if(!cache) {
+			cache = mgr_gl.makeProgram(
+				vshader.data()->makeShader(),
+				fshader.data()->makeShader()
+			);
+		}
+		return cache;
 	}
 }
