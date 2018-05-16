@@ -7,8 +7,6 @@ namespace rev {
 	class Tech : public ITech {
 		protected:
 			HProg			_program;
-			//! Uniformデフォルト値設定DrawCommand
-			draw::CommandVec	_uniformCmd;
 			//! Setting: Uniformデフォルト値(texture, vector, float, bool)設定を含む
 			//! GLDeviceの設定クラスリスト
 			GLState_SPV		_setting;
@@ -17,10 +15,11 @@ namespace rev {
 			//! Attribute: 頂点セマンティクスに対する頂点Id
 			FWVMap			_vmap;
 
-			//! [Program + GLSetting + UniformDefault]
-			draw::CommandVec	_setupCmd,
-			//! [GLSetting(reset)]
-								_resetCmd;
+			struct {
+				draw::CommandVec	setup,			//!< [Program + GLSetting + UniformDefault]
+									reset,			//!< [GLSetting(reset)]
+									uniform;		//!< Uniformデフォルト値設定DrawCommand
+			} _cmd;
 			void _makeCmd();
 
 			Name			_name;

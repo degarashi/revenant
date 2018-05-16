@@ -58,7 +58,7 @@ namespace rev::gltf {
 			// ---- Uniform変数の登録 ----
 			const auto& prog = tech.program.data()->makeProgram();
 			_program = prog;
-			UniformEnt ent(*prog, _uniformCmd);
+			UniformEnt ent(*prog, _cmd.uniform);
 
 			// Uniformデフォルト変数
 			for(auto& u : tech.param.fixedUniform) {

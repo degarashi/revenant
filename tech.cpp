@@ -20,24 +20,22 @@ namespace rev {
 		return _name;
 	}
 	void Tech::_makeCmd() {
-		_setupCmd.clear();
-		_program->dcmd_export(_setupCmd);
-		_setupCmd.append(_uniformCmd);
+		_program->dcmd_export(_cmd.setup);
+		_cmd.setup.append(_cmd.uniform);
 		for(auto& s : _setting)
-			s->dcmd_export(_setupCmd);
+			s->dcmd_export(_cmd.setup);
 
-		_resetCmd.clear();
 		for(auto& s : _setting)
-			s->dcmd_reset(_resetCmd);
+			s->dcmd_reset(_cmd.reset);
 	}
 	void Tech::dcmd_uniform(draw::IQueue& q) const {
-		q.append(_uniformCmd);
+		q.append(_cmd.uniform);
 	}
 	void Tech::dcmd_setup(draw::IQueue& q) const {
-		q.append(_setupCmd);
+		q.append(_cmd.setup);
 	}
 	void Tech::dcmd_resetState(draw::IQueue& q) const {
-		q.append(_resetCmd);
+		q.append(_cmd.reset);
 	}
 }
 

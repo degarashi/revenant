@@ -388,7 +388,7 @@ namespace rev {
 		unifL.erase(std::unique(unifL.begin(), unifL.end()), unifL.end());
 		_noDefValue.clear();
 		// Uniform変数にデフォルト値がセットしてある物をリストアップ
-		UniformEnt u(*_program, _uniformCmd);
+		UniformEnt u(*_program, _cmd.uniform);
 		Visitor visitor(u);
 		for(const auto* p : unifL) {
 			if(visitor.setKey(p->name)) {
