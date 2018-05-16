@@ -106,6 +106,11 @@ namespace rev {
 		private:
 			using MF_NameMap = std::unordered_map<MF_Pointer, const char*>;
 			static MF_NameMap s_funcName;
+			static const char* _GetFunctionName(const MF_Pointer& mfp);
+
+			using ResetF = void (*)();
+			using MF_ResetMap = std::unordered_map<MF_Pointer, ResetF>;
+			static MF_ResetMap s_reset;
 		public:
 			template <class P>
 			static MF_Pointer ToMFPointer(P ptr) {
@@ -113,6 +118,8 @@ namespace rev {
 				std::memcpy(mfp.data(), &ptr, MF_Size);
 				return mfp;
 			}
+			static ResetF ResetValueFunction(const MF_Pointer& mfp);
+			static bool DefaultBool(GLenum flag);
 			//! 関数ポインタから関数名を取得
 			static const char* GetFunctionName(const MF_Pointer& mfp);
 
