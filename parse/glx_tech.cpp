@@ -181,7 +181,7 @@ namespace rev {
 				_outputArgR(value);
 			}
 		};
-		Tech_SPV _MakeGLXMaterial(const parse::BlockSet_SP& bs, const parse::TPStruct& tech) {
+		Tech_SPV _MakeGLXMaterial(const parse::BlockSet& bs, const parse::TPStruct& tech) {
 			Tech_SPV ret;
 			for(auto& pass : tech.tpL) {
 				ret.emplace_back(
@@ -191,9 +191,9 @@ namespace rev {
 			return ret;
 		}
 	}
-	TechPairV MakeGLXMaterial(const parse::BlockSet_SP& bs) {
+	TechPairV MakeGLXMaterial(const parse::BlockSet& bs) {
 		TechPairV ret;
-		for(auto& blk : *bs) {
+		for(auto& blk : bs) {
 			for(auto& tech : blk->tpL) {
 				ret.emplace_back(
 					TechPair {
@@ -225,9 +225,7 @@ namespace rev {
 			}
 		};
 	}
-	GLXTech::GLXTech(const parse::BlockSet_SP& bs, const parse::TPStruct& tech, const parse::TPStruct& pass):
-		_block(bs)
-	{
+	GLXTech::GLXTech(const parse::BlockSet& bs, const parse::TPStruct& tech, const parse::TPStruct& pass) {
 		_name = pass.name;
 		const parse::ShSetting* selectSh[ShType::_Num] = {};
 		// PassかTechからシェーダー名を取ってくる
@@ -241,7 +239,7 @@ namespace rev {
 			throw GLE_LogicalError("no vertex or fragment shader found");
 
 		std::stringstream ss;
-		DResolver dupl(*bs, tech, pass);
+		DResolver dupl(bs, tech, pass);
 		HSh shP[ShType::_Num];
 		using AttrL = std::vector<const parse::AttrEntry*>;
 		AttrL attrL;
@@ -252,7 +250,7 @@ namespace rev {
 			auto* shp = selectSh[i];
 			if(!shp)
 				continue;
-			auto s = bs->findShader(shp->shName);
+			auto s = bs.findShader(shp->shName);
 			if(!s)
 				throw GLE_LogicalError((boost::format("requested shader \"%1%\" not found") % shp->shName).str());
 			// シェーダーバージョンを出力
@@ -300,7 +298,7 @@ namespace rev {
 
 			// コードブロック出力
 			for(auto& cn : s->code) {
-				auto code = bs->findCode(cn);
+				auto code = bs.findCode(cn);
 				if(!code)
 					throw GLE_LogicalError((boost::format("requested code block %1% not found (in shader %2%)") % cn % s->name).str());
 				ss << *code << std::endl;

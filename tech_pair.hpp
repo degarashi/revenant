@@ -4,7 +4,6 @@
 namespace rev {
 	namespace parse {
 		class BlockSet;
-		using BlockSet_SP = std::shared_ptr<BlockSet>;
 	}
 	using Tech_SPV = std::vector<HTech>;
 	struct TechPair {
@@ -12,5 +11,5 @@ namespace rev {
 		Tech_SPV	pass;
 	};
 	using TechPairV = std::vector<TechPair>;
-	TechPairV MakeGLXMaterial(const parse::BlockSet_SP& bs);
+	TechPairV MakeGLXMaterial(const parse::BlockSet& bs);
 }

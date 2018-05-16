@@ -16,8 +16,7 @@ namespace rev {
 				spi::Optional<const TPStruct&> findTechPass(const std::string& s) const;
 				spi::Optional<const CodeStruct&> findCode(const std::string& s) const;
 		};
-		using BlockSet_SP = std::shared_ptr<BlockSet>;
-		BlockSet_SP LoadGLXStructSet(const std::string& path);
+		BlockSet LoadGLXStructSet(const std::string& path);
 		#define mgr_block (::rev::parse::FxBlock::ref())
 		class FxBlock : public ResMgrApp<GLXStruct>, public spi::Singleton<FxBlock> {
 			public:

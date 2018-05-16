@@ -8,8 +8,8 @@ namespace rev {
 				"effect"
 			};
 		}
-		BlockSet_SP LoadGLXStructSet(const std::string& path) {
-			BlockSet_SP bs = std::make_shared<BlockSet>();
+		BlockSet LoadGLXStructSet(const std::string& path) {
+			BlockSet bs;
 			std::unordered_set<std::string>		loaded,
 												toLoad{path};
 			// 現状はファイルパスのみ対応
@@ -32,7 +32,7 @@ namespace rev {
 					if(loaded.count(inc) == 0)
 						toLoad.emplace(inc);
 				}
-				bs->emplace(std::move(hdl));
+				bs.emplace(std::move(hdl));
 			}
 			return bs;
 		}
