@@ -106,20 +106,6 @@ namespace rev::gltf {
 			{"polygonOffset",				MakeVStateMaker(&IGL::glPolygonOffset)},
 			{"scissor",						MakeVStateMaker(&IGL::glScissor)}
 		};
-		const std::array<HGLState, countof(c_value)> c_defaultValue = {
-			MakeGL_VState(&IGL::glBlendColor, 0,0,0,0),
-			MakeGL_VState(&IGL::glBlendEquationSeparate, GL_FUNC_ADD, GL_FUNC_ADD),
-			MakeGL_VState(&IGL::glBlendFuncSeparate, 1,0,1,0),
-			MakeGL_VState(&IGL::glColorMask, true, true, true, true),
-			MakeGL_VState(&IGL::glCullFace, GL_BACK),
-			MakeGL_VState(&IGL::glDepthFunc, GL_LESS),
-			MakeGL_VState(&IGL::glDepthMask, true),
-			MakeGL_VState(&IGL::glDepthRange, 0, 1),
-			MakeGL_VState(&IGL::glFrontFace, GL_CCW),
-			MakeGL_VState(&IGL::glLineWidth, 1),
-			MakeGL_VState(&IGL::glPolygonOffset, 0,0),
-			MakeGL_VState(&IGL::glScissor, 0,0,0,0),
-		};
 		const I_VStateMaker& g_ccw = MakeVStateMaker(&IGL::glFrontFace);
 		const I_VStateMaker& g_depthmask = MakeVStateMaker(&IGL::glDepthMask);
 		const GLenum c_glsltype[] = {
@@ -217,20 +203,13 @@ namespace rev::gltf {
 	// ---------------------------- Technique::State ----------------------------
 	Technique::State::State(const JValue& v) {
 		{
-			// 指示の無い物は全てDisabledとする
-			constexpr auto n = countof(c_bool);
-			bool bs_flag[n] = {};
 			const auto bs = Optional<Array<loader::GLEnum>>(v, "enable", {});
 			for(auto& b : bs) {
 				const auto& idx = &CheckEnum(c_bool, b) - c_bool;
-				bs_flag[idx] = true;
+				state.emplace_back(std::make_shared<GL_BState>(true, c_bool[idx]));
 			}
-			for(std::size_t i=0 ; i<n ; i++)
-				state.emplace_back(std::make_shared<GL_BState>(bs_flag[i], c_bool[i]));
 		}
 		{
-			constexpr auto n = countof(c_value);
-			auto st = c_defaultValue;
 			const auto itr = v.FindMember("functions");
 			if(itr != v.MemberEnd()) {
 				const auto& funcs = itr->value;
@@ -238,13 +217,10 @@ namespace rev::gltf {
 				const auto itr2E = funcs.MemberEnd();
 				while(itr2 != itr2E) {
 					const auto& def = CheckEnum(c_value, itr2->name.GetString());
-					const auto idx = &def - c_value;
-					st[idx] = def.maker.make(itr2->value);
+					state.emplace_back(def.maker.make(itr2->value));
 					++itr2;
 				}
 			}
-			for(std::size_t i=0 ; i<n ; i++)
-				state.emplace_back(st[i]);
 		}
 	}
 
