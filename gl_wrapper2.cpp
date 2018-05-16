@@ -47,14 +47,14 @@ namespace rev {
 		#include REV_OPENGL_INCLUDE
 		#undef DEF_GLMETHOD
 
+		const auto ToMFPointer = [](auto ptr) {
+			MF_Pointer mfp;
+			std::memcpy(mfp.data(), &ptr, MF_Size);
+			return mfp;
+		};
 		// 関数名の格納
-		MF_Pointer mfp;
 		#define DEF_GLMETHOD(ret_type, num, name, args, argnames) \
-			{ \
-				auto ptr = &IGL::name; \
-				std::memcpy(mfp.data(), &ptr, MF_Size); \
-				s_funcName[mfp] = #name; \
-			}
+			s_funcName[ToMFPointer(&IGL::name)] = #name;
 		#include REV_OPENGL_INCLUDE
 		#undef DEF_GLMETHOD
 		#undef DEF_GLCONST
