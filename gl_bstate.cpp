@@ -22,6 +22,9 @@ namespace rev {
 	void GL_BState::dcmd_export(draw::IQueue& q) const {
 		q.add(DCmd_Apply{_enable, _flag});
 	}
+	void GL_BState::dcmd_reset(draw::IQueue& q) const {
+		q.add(DCmd_Apply{GLW.DefaultBool(_flag), _flag});
+	}
 	bool GL_BState::operator == (const GLState& s) const noexcept {
 		return _Compare(*this, s);
 	}

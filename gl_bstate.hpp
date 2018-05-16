@@ -17,6 +17,7 @@ namespace rev {
 			GL_BState(bool enable, GLenum flag);
 			Type getType() const noexcept override;
 			void dcmd_export(draw::IQueue& q) const override;
+			void dcmd_reset(draw::IQueue& q) const override;
 			std::size_t getHash() const noexcept override;
 			bool operator == (const GLState& s) const noexcept override;
 			bool operator == (const GL_BState& s) const noexcept;

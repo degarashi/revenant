@@ -58,6 +58,15 @@ namespace rev {
 					self._apply(std::make_index_sequence<NArgs>{});
 				}
 			};
+			struct DCmd_Reset {
+				Func	func;
+
+				static void Command(const void* p) {
+					auto& self = *static_cast<const DCmd_Reset*>(p);
+					if(const auto f = GLW.ResetValueFunction(GLW.ToMFPointer(self.func)))
+						f();
+				}
+			};
 		public:
 			GL_VState(const Func f, const Args&... args):
 				_args{args...},
@@ -65,6 +74,9 @@ namespace rev {
 			{}
 			void dcmd_export(draw::IQueue& q) const override {
 				q.add(DCmd_Apply{_args, _func});
+			}
+			void dcmd_reset(draw::IQueue& q) const override {
+				q.add(DCmd_Reset{_func});
 			}
 			std::size_t getHash() const noexcept override {
 				// 適当実装だがとりあえず、これで。
