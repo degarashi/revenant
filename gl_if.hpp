@@ -107,6 +107,12 @@ namespace rev {
 			using MF_NameMap = std::unordered_map<MF_Pointer, const char*>;
 			static MF_NameMap s_funcName;
 		public:
+			template <class P>
+			static MF_Pointer ToMFPointer(P ptr) {
+				MF_Pointer mfp;
+				std::memcpy(mfp.data(), &ptr, MF_Size);
+				return mfp;
+			}
 			//! 関数ポインタから関数名を取得
 			static const char* GetFunctionName(const MF_Pointer& mfp);
 
