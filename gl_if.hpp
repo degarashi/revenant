@@ -103,9 +103,9 @@ namespace rev {
 		public:
 			constexpr static std::size_t MF_Size = sizeof(&IGL::setSwapInterval);
 			using MF_Pointer = std::array<uint8_t, MF_Size>;
-			using MF_Map = std::unordered_map<MF_Pointer, const char*>;
+			using MF_NameMap = std::unordered_map<MF_Pointer, const char*>;
 		private:
-			static MF_Map s_funcName;
+			static MF_NameMap s_funcName;
 			static const char* _GetFunctionName(const MF_Pointer& mfp);
 		public:
 			//! 関数ポインタから関数名を取得

@@ -70,5 +70,5 @@ namespace rev {
 		return "function name not found.";
 	}
 
-	GLWrap::MF_Map GLWrap::s_funcName;
+	GLWrap::MF_NameMap GLWrap::s_funcName;
 }
