@@ -63,7 +63,7 @@ namespace rev {
 		// その他OS依存なAPI関数
 		g_bglfuncInit = true;
 	}
-	const char* GLWrap::_GetFunctionName(const MF_Pointer& mfp) {
+	const char* GLWrap::GetFunctionName(const MF_Pointer& mfp) {
 		const auto itr = s_funcName.find(mfp);
 		if(itr != s_funcName.end())
 			return itr->second;

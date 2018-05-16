@@ -106,10 +106,9 @@ namespace rev {
 			using MF_NameMap = std::unordered_map<MF_Pointer, const char*>;
 		private:
 			static MF_NameMap s_funcName;
-			static const char* _GetFunctionName(const MF_Pointer& mfp);
 		public:
 			//! 関数ポインタから関数名を取得
-			static const char* GetFunctionName(const MF_Pointer& ptr);
+			static const char* GetFunctionName(const MF_Pointer& mfp);
 
 			#define DEF_GLCONST(...)
 			#define DEF_GLMETHOD(ret_type, num, name, args, argnames) \
@@ -135,7 +134,7 @@ namespace rev {
 			static const char* GetFunctionName(Ret (IGL::*func)(Args...)) {
 				MF_Pointer mfp;
 				std::memcpy(mfp.data(), &func, MF_Size);
-				return _GetFunctionName(mfp);
+				return GetFunctionName(mfp);
 			}
 	};
 	#undef APICALL
