@@ -21,7 +21,7 @@ namespace rev {
 }
 
 #include "glx.hpp"
-#include "glx_block.hpp"
+#include "glx_tech.hpp"
 namespace rev {
 	void MainThread::_checkFxReload(FNotify& ntf) {
 		using PathSet = std::unordered_set<Dir>;
@@ -40,7 +40,7 @@ namespace rev {
 		if(!bUpdate && !updatePath.empty()) {
 			try {
 				for(auto& p : updatePath)
-					mgr_block.setAnonymous(FileURI(p.plain_utf32()));
+					mgr_tech.setAnonymous(FileURI(p.plain_utf32()));
 
 				// TODO: シェーダーファイルの反映 (仕様が変わったのでEffectの再構築はしない)
 				// Effectファイルの再構築(読み込みトライ)

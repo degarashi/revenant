@@ -1,5 +1,5 @@
 #include "tech_pass.hpp"
-#include "glx_block.hpp"
+#include "glx_tech.hpp"
 #include "tech_if.hpp"
 
 namespace rev {

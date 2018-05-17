@@ -15,7 +15,7 @@
 #include "glx.hpp"
 #include "font.hpp"
 #include "scene_mgr.hpp"
-#include "glx_block.hpp"
+#include "glx_tech.hpp"
 #include "imgui_sdl2.hpp"
 #include "object_mgr.hpp"
 #include "gltf/mgr.hpp"
@@ -43,7 +43,7 @@ namespace rev {
 		m.fgen = std::make_shared<FontGen>(lubee::PowSize(512,512));
 		m.snd = std::make_shared<SoundMgr>(44100);
 		m.snd->makeCurrent();
-		m.block = std::make_shared<parse::FxBlock>();
+		m.tech = std::make_shared<parse::TechMgr>();
 		m.obj = std::make_shared<ObjMgr>();
 		m.scene = std::make_shared<SceneMgr>();
 		m.imgui = std::make_shared<ImGui_SDL2>(

@@ -24,7 +24,7 @@ namespace rev {
 	class FontFamily;
 	class FontGen;
 	namespace parse {
-		class FxBlock;
+		class TechMgr;
 	}
 	class ObjMgr;
 	class SceneMgr;
@@ -55,7 +55,7 @@ namespace rev {
 				SPtr<RWMgr>					rwm;
 				SPtr<FontFamily>			font;
 				SPtr<FontGen>				fgen;
-				SPtr<parse::FxBlock>		block;
+				SPtr<parse::TechMgr>		tech;
 				SPtr<ObjMgr>				obj;
 				SPtr<SceneMgr>				scene;
 				SPtr<ImGui_SDL2>			imgui;

@@ -9,7 +9,7 @@
 #include "glx.hpp"
 #include "sdl_rw.hpp"
 #include "systeminfo.hpp"
-#include "glx_block.hpp"
+#include "glx_tech.hpp"
 
 namespace rev {
 	const char* IGLResource::getResourceName() const noexcept {
@@ -177,7 +177,7 @@ namespace rev {
 				ret = loadTexture(uri);
 			// is it TechPass(Effect)?
 			else if(ext == "glx") {
-				ret = mgr_block.loadTechPass(fu.pathblock().plain_utf8());
+				ret = mgr_tech.loadTechPass(fu.pathblock().plain_utf8());
 			}
 		}
 		return ret;

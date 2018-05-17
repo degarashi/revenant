@@ -17,13 +17,13 @@ namespace rev {
 				spi::Optional<const TPStruct&> findTechPass(const std::string& s) const;
 				spi::Optional<const CodeStruct&> findCode(const std::string& s) const;
 		};
-		#define mgr_block (::rev::parse::FxBlock::ref())
-		class FxBlock : public ResMgrApp<GLXStruct>, public spi::Singleton<FxBlock> {
+		#define mgr_tech (::rev::parse::TechMgr::ref())
+		class TechMgr : public ResMgrApp<GLXStruct>, public spi::Singleton<TechMgr> {
 			private:
 				using Path = std::string;
 				BlockSet _loadBlockSet(const Path& path);
 			public:
-				FxBlock();
+				TechMgr();
 				HTP loadTechPass(const Path& path);
 		};
 	}

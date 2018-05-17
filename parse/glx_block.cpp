@@ -1,4 +1,4 @@
-#include "glx_block.hpp"
+#include "glx_tech.hpp"
 #include "sdl_rw.hpp"
 #include "tech_pass.hpp"
 
@@ -9,10 +9,10 @@ namespace rev {
 				"effect"
 			};
 		}
-		HTP FxBlock::loadTechPass(const Path& path) {
+		HTP TechMgr::loadTechPass(const Path& path) {
 			return std::make_shared<TechPass>(_loadBlockSet(path));
 		}
-		BlockSet FxBlock::_loadBlockSet(const Path& path) {
+		BlockSet TechMgr::_loadBlockSet(const Path& path) {
 			BlockSet bs;
 			std::unordered_set<std::string>		loaded,
 												toLoad{path};
@@ -40,8 +40,8 @@ namespace rev {
 			}
 			return bs;
 		}
-		// ----------------- FxBlock -----------------
-		FxBlock::FxBlock():
+		// ----------------- TechMgr -----------------
+		TechMgr::TechMgr():
 			ResMgrApp(cs_rtname)
 		{}
 		// ----------------- BlockSet -----------------

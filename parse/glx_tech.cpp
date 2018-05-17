@@ -1,6 +1,6 @@
 #include "tech.hpp"
 #include "glx_makesetting.hpp"
-#include "glx_block.hpp"
+#include "glx_tech.hpp"
 #include "gl_error.hpp"
 #include "gl_resource.hpp"
 #include "gl_program.hpp"
