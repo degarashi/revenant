@@ -2,7 +2,7 @@
 #include "../../vdecl.hpp"
 #include "../../gl_resource.hpp"
 #include "lubee/meta/countof.hpp"
-#include "../../tech_pass.hpp"
+#include "../../techmgr.hpp"
 #include "../../glx.hpp"
 #include "../../u_matrix3d.hpp"
 
@@ -169,7 +169,7 @@ std::shared_ptr<rev::Primitive> Cube::MakeData(lubee::IConst<Data::Gouraud>) {
 	);
 }
 rev::HTech Cube::MakeData(lubee::IConst<Data::Tech>) {
-	return mgr_gl.loadTechPass("cube.glx")->getTechnique("Cube|Default");
+	return mgr_tech.loadTechPass("cube.glx")->getTechnique("Cube|Default");
 }
 void Cube::outputDrawTag(rev::DrawTag& d) const {
 	d.primitive = _getPrimitive();

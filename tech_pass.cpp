@@ -29,6 +29,9 @@ namespace rev {
 		tp.append(pass);
 		return getTechnique(tp);
 	}
+	const char* TechPass::getResourceName() const noexcept {
+		return "TechPass";
+	}
 }
 #include <boost/format.hpp>
 namespace rev {

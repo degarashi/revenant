@@ -16,6 +16,7 @@
 #include "u_matrix2d.hpp"
 #include "fbrect.hpp"
 #include "primitive.hpp"
+#include "techmgr.hpp"
 #include <SDL_version.h>
 
 namespace {
@@ -254,7 +255,7 @@ namespace rev {
 		io.Fonts->TexID = reinterpret_cast<ImTextureID>(cs_fontId);
 	}
 	void ImGui_SDL2::_initTech() {
-		auto tp = mgr_gl.loadTechPass("imgui.glx");
+		auto tp = mgr_tech.loadTechPass("imgui.glx");
 		_tech = tp->getTechnique("ImGui|Default");
 		auto& p = *_tech->getProgram();
 		_unif.texture = *p.getUniformId(SName("Texture"));

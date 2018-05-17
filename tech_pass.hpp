@@ -1,10 +1,9 @@
 #pragma once
 #include "tech_pair.hpp"
-#include "gl_types.hpp"
-#include <unordered_map>
+#include "resource.hpp"
 
 namespace rev {
-	class TechPass : public IGLResource {
+	class TechPass : public Resource {
 		private:
 			// [Tech|Pass] -> [TechId, PassId]
 			using NameToId = std::unordered_map<Name, std::pair<int, int>>;
@@ -21,5 +20,6 @@ namespace rev {
 			TechPass(const std::string& path);
 			HTech getTechnique(const Name& techpass) const;
 			HTech getTechnique(const Name& tech, const Name& pass) const;
+			const char* getResourceName() const noexcept override;
 	};
 }

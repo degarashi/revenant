@@ -20,6 +20,7 @@ namespace rev {
 	class RWMgr;
 	class AppPath;
 	class GLRes;
+	class TechMgr;
 	class SoundMgr;
 	class FontFamily;
 	class FontGen;
@@ -51,6 +52,7 @@ namespace rev {
 				SPtr<SystemInfo>			info;
 				SPtr<AppPath>				appPath;
 				SPtr<GLRes>					glr;
+				SPtr<TechMgr>				tech;
 				SPtr<SoundMgr>				snd;
 				SPtr<RWMgr>					rwm;
 				SPtr<FontFamily>			font;

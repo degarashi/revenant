@@ -9,7 +9,7 @@
 #include "glx.hpp"
 #include "sdl_rw.hpp"
 #include "systeminfo.hpp"
-#include "tech_pass.hpp"
+#include "techmgr.hpp"
 
 namespace rev {
 	const char* IGLResource::getResourceName() const noexcept {
@@ -25,8 +25,7 @@ namespace rev {
 		}
 	}
 	const std::string GLRes::cs_rtname[] = {
-		"texture",
-		"effect"
+		"texture"
 	};
 	// 既にデバイスがアクティブだったらonDeviceResetを呼ぶ
 	void GLRes::_resourceInit(IGLResource *const r) {
@@ -68,17 +67,6 @@ namespace rev {
 					uri,
 					[this, miplevel, fmt](auto& uri, auto&& mk){
 						mk(uri.uri, miplevel, fmt);
-						_resourceInit(mk.pointer);
-					}
-				).first;
-	}
-	HTP GLRes::loadTechPass(const std::string& name) {
-		_setResourceTypeId(ResourceType::Effect);
-		return loadResourceApp<TechPass>(
-					UserURI(name),
-					[this](auto& uri, auto&& mk){
-						const auto f_uri = std::dynamic_pointer_cast<FileURI>(uri.uri);
-						mk(f_uri->path());
 						_resourceInit(mk.pointer);
 					}
 				).first;
@@ -189,7 +177,7 @@ namespace rev {
 				ret = loadTexture(uri);
 			// is it TechPass(Effect)?
 			else if(ext == "glx") {
-				ret = loadTechPass(fu.pathblock().plain_utf8());
+				ret = mgr_tech.loadTechPass(fu.pathblock().plain_utf8());
 			}
 		}
 		return ret;

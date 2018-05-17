@@ -33,7 +33,6 @@ namespace rev {
 			DefineEnum(
 				ResourceType,
 				(Texture)
-				(Effect)
 			);
 			const static std::string cs_rtname[ResourceType::_Num];
 			void _resourceInit(IGLResource* r);
@@ -88,8 +87,6 @@ namespace rev {
 				_resourceInit(h.get());
 				return h;
 			}
-			//! ファイルからエフェクトの読み込み
-			HTP loadTechPass(const std::string& path);
 			// ------------ Buffer ------------
 			//! 頂点バッファの確保
 			HVb makeVBuffer(DrawType dtype);

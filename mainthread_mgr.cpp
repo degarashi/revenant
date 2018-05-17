@@ -12,6 +12,7 @@
 #include "input.hpp"
 #include "input_sdlvalue.hpp"
 #include "gl_resource.hpp"
+#include "techmgr.hpp"
 #include "glx.hpp"
 #include "font.hpp"
 #include "scene_mgr.hpp"
@@ -38,6 +39,7 @@ namespace rev {
 			_LoadPathfile(*p);
 		m.glr = std::make_shared<GLRes>();
 		m.glr->onDeviceReset();
+		m.tech = std::make_shared<TechMgr>();
 		m.font = std::make_shared<FontFamily>();
 		_LoadFonts();
 		m.fgen = std::make_shared<FontGen>(lubee::PowSize(512,512));
