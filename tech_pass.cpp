@@ -9,13 +9,17 @@ namespace rev {
 		for(auto& t : _tech) {
 			const Name techName(t.name);
 			for(auto& p : t.pass) {
-				Name tp(techName);
-				tp.append("|");
-				tp.append(p->getName());
+				const auto tp = MakeName(techName, p->getName());
 				_nameToId[tp] = std::make_pair(&t - _tech.data(),
 												&p - t.pass.data());
 			}
 		}
+	}
+	Name TechPass::MakeName(const Name& tech, const Name& pass) {
+		Name tp(tech);
+		tp.append("|");
+		tp.append(pass);
+		return tp;
 	}
 	HTech TechPass::getTechnique(const Name& techpass) const {
 		const auto itr = _nameToId.find(techpass);
@@ -26,10 +30,7 @@ namespace rev {
 		return nullptr;
 	}
 	HTech TechPass::getTechnique(const Name& tech, const Name& pass) const {
-		Name tp(tech);
-		tp.append("|");
-		tp.append(pass);
-		return getTechnique(tp);
+		return getTechnique(MakeName(tech, pass));
 	}
 	const char* TechPass::getResourceName() const noexcept {
 		return "TechPass";

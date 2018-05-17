@@ -11,6 +11,7 @@ namespace rev {
 			TechPairV	_tech;
 
 		public:
+			static Name MakeName(const Name& tech, const Name& pass);
 			// ----------------- Exceptions -----------------
 			//! 該当するGLXファイルが見つからない
 			struct EC_FileNotFound : std::runtime_error {
