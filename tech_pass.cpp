@@ -1,9 +1,10 @@
 #include "tech_pass.hpp"
 #include "glx_block.hpp"
+#include "tech_if.hpp"
 
 namespace rev {
 	TechPass::TechPass(const std::string& path):
-		_tech(MakeGLXMaterial(parse::LoadGLXStructSet(path)))
+		_tech(MakeTechPair(parse::LoadGLXStructSet(path)))
 	{
 		for(auto& t : _tech) {
 			const Name techName(t.name);

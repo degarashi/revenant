@@ -1,15 +1,16 @@
 #pragma once
-#include "tech_if.hpp"
+#include "handle/opengl.hpp"
 
 namespace rev {
-	namespace parse {
-		class BlockSet;
-	}
+	using Name = std::string;
 	using Tech_SPV = std::vector<HTech>;
 	struct TechPair {
 		Name		name;
 		Tech_SPV	pass;
 	};
+	namespace parse {
+		class BlockSet;
+	}
 	using TechPairV = std::vector<TechPair>;
-	TechPairV MakeGLXMaterial(const parse::BlockSet& bs);
+	TechPairV MakeTechPair(const parse::BlockSet& bs);
 }

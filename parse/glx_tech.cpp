@@ -181,7 +181,9 @@ namespace rev {
 				_outputArgR(value);
 			}
 		};
-		Tech_SPV _MakeGLXMaterial(const parse::BlockSet& bs, const parse::TPStruct& tech) {
+	}
+	TechPairV MakeTechPair(const parse::BlockSet& bs) {
+		const auto makeTech = [&bs](const parse::TPStruct& tech){
 			Tech_SPV ret;
 			for(auto& pass : tech.tpL) {
 				ret.emplace_back(
@@ -189,16 +191,14 @@ namespace rev {
 				);
 			}
 			return ret;
-		}
-	}
-	TechPairV MakeGLXMaterial(const parse::BlockSet& bs) {
+		};
 		TechPairV ret;
 		for(auto& blk : bs) {
 			for(auto& tech : blk->tpL) {
 				ret.emplace_back(
 					TechPair {
 						tech.name,
-						_MakeGLXMaterial(bs, tech)
+						makeTech(tech)
 					}
 				);
 			}
