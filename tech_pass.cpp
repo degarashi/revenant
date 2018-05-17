@@ -27,6 +27,7 @@ namespace rev {
 	}
 	HTech TechPass::getTechnique(const Name& tech, const Name& pass) const {
 		Name tp(tech);
+		tp.append("|");
 		tp.append(pass);
 		return getTechnique(tp);
 	}
