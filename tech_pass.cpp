@@ -3,15 +3,11 @@
 #include "tech_if.hpp"
 
 namespace rev {
-	TechPass::TechPass(const std::string& path):
-		_tech(MakeTechPair(parse::LoadGLXStructSet(path)))
-	{
-		for(auto& t : _tech) {
-			const Name techName(t.name);
+	TechPass::TechPass(const std::string& path) {
+		const auto tpv = MakeTechPair(parse::LoadGLXStructSet(path));
+		for(auto& t : tpv) {
 			for(auto& p : t.pass) {
-				const auto tp = MakeName(techName, p->getName());
-				_nameToId[tp] = std::make_pair(&t - _tech.data(),
-												&p - t.pass.data());
+				_nameToTech[MakeName(t.name, p->getName())] = p;
 			}
 		}
 	}
@@ -22,10 +18,9 @@ namespace rev {
 		return tp;
 	}
 	HTech TechPass::getTechnique(const Name& techpass) const {
-		const auto itr = _nameToId.find(techpass);
-		if(itr != _nameToId.end()) {
-			const auto idx = itr->second;
-			return _tech[idx.first].pass[idx.second];
+		const auto itr = _nameToTech.find(techpass);
+		if(itr != _nameToTech.end()) {
+			return itr->second;
 		}
 		return nullptr;
 	}

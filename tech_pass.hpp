@@ -5,10 +5,9 @@
 namespace rev {
 	class TechPass : public Resource {
 		private:
-			// [Tech|Pass] -> [TechId, PassId]
-			using NameToId = std::unordered_map<Name, std::pair<int, int>>;
-			NameToId	_nameToId;
-			TechPairV	_tech;
+			// [Tech|Pass] -> HTech
+			using NameToTech = std::unordered_map<Name, HTech>;
+			NameToTech		_nameToTech;
 
 		public:
 			static Name MakeName(const Name& tech, const Name& pass);
