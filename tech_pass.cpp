@@ -30,6 +30,9 @@ namespace rev {
 	const char* TechPass::getResourceName() const noexcept {
 		return "TechPass";
 	}
+	TechPass::NameToTech& TechPass::refTech() noexcept {
+		return _nameToTech;
+	}
 }
 #include <boost/format.hpp>
 namespace rev {

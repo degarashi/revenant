@@ -4,7 +4,10 @@
 
 namespace rev::parse {
 	class BlockSet : public std::unordered_set<HBlock> {
+		private:
+			using Path_V = std::vector<std::string>;
 		public:
+			Path_V	dependency;
 			spi::Optional<const AttrStruct&> findAttribute(const std::string& s) const;
 			spi::Optional<const ConstStruct&> findConst(const std::string& s) const;
 			spi::Optional<const UnifStruct&> findUniform(const std::string& s) const;

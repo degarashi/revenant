@@ -20,6 +20,7 @@ namespace rev {
 			TechPass(const parse::BlockSet& bs);
 			HTech getTechnique(const Name& techpass) const;
 			HTech getTechnique(const Name& tech, const Name& pass) const;
+			NameToTech& refTech() noexcept;
 			const char* getResourceName() const noexcept override;
 	};
 }

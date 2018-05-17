@@ -25,29 +25,32 @@ namespace rev {
 namespace rev {
 	void MainThread::_checkFxReload(FNotify& ntf) {
 		using PathSet = std::unordered_set<Dir>;
-		PathSet updatePath;
+		static PathSet updatePath;
 		// シェーダーファイルが更新されていたら再読み込みをかける
 		bool bUpdate = false;
-		ntf.procEvent([&bUpdate, &ps=updatePath](const FEv& e, const Data_SP&){
+		ntf.procEvent([&bUpdate](const FEv& e, const Data_SP&){
 			Dir d(*e.basePath);
 			d <<= e.name;
 			if(d.isFile()) {
-				if(ps.emplace(std::move(d)).second)
+				if(updatePath.emplace(std::move(d)).second)
 					bUpdate = true;
 			}
 		});
 		// 連続したファイル操作の直後に再読み込み
 		if(!bUpdate && !updatePath.empty()) {
+			for(auto& u : updatePath)
+				Log(Verbose, "File changed %s", u.plain_utf8().c_str());
 			try {
-				for(auto& p : updatePath)
-					mgr_tech.setAnonymous(FileURI(p.plain_utf32()));
-
-				// TODO: シェーダーファイルの反映 (仕様が変わったのでEffectの再構築はしない)
 				// Effectファイルの再構築(読み込みトライ)
+				std::vector<std::string> pathv;
+				for(auto& p : updatePath)
+					pathv.emplace_back(p.plain_utf8());
+				mgr_tech.onFileModified(pathv);
 			} catch(const std::exception& e) {
 				// 文法エラーが起こったら差し替えない
-				Log(Info, "effect reloading failed.\n%s", e.what());
+				Log(Error, "effect reloading failed.\n%s", e.what());
 			}
+			updatePath.clear();
 		}
 	}
 }
