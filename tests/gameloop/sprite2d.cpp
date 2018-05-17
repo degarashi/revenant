@@ -5,7 +5,7 @@
 #include "../../glx_if.hpp"
 #include "../../uniform_ent.hpp"
 #include "../../vdecl.hpp"
-#include "../../techmgr.hpp"
+#include "../../glx_block.hpp"
 
 // ----------------------- Sprite -----------------------
 std::shared_ptr<rev::Primitive> Sprite2D::MakeData(lubee::IConst<0>) {
@@ -33,7 +33,7 @@ std::shared_ptr<rev::Primitive> Sprite2D::MakeData(lubee::IConst<0>) {
 	);
 }
 rev::HTech Sprite2D::MakeData(lubee::IConst<1>) {
-	return mgr_tech.loadTechPass("sprite2d.glx")->getTechnique("Sprite|Default");
+	return mgr_block.loadTechPass("sprite2d.glx")->getTechnique("Sprite|Default");
 }
 
 Sprite2D::Sprite2D(const rev::HTex& t, const float z) {

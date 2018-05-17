@@ -17,7 +17,7 @@ namespace rev {
 				EC_FileNotFound(const std::string& fPath);
 			};
 			//! Effectファイル(gfx)を読み込む
-			TechPass(const std::string& path);
+			TechPass(const parse::BlockSet& bs);
 			HTech getTechnique(const Name& techpass) const;
 			HTech getTechnique(const Name& tech, const Name& pass) const;
 			const char* getResourceName() const noexcept override;

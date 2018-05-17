@@ -1,6 +1,7 @@
 #pragma once
 #include "resmgr_app.hpp"
 #include "glx_parse.hpp"
+#include "tech_pass.hpp"
 #include "handle/opengl.hpp"
 #include <unordered_set>
 
@@ -18,9 +19,12 @@ namespace rev {
 		};
 		#define mgr_block (::rev::parse::FxBlock::ref())
 		class FxBlock : public ResMgrApp<GLXStruct>, public spi::Singleton<FxBlock> {
+			private:
+				using Path = std::string;
+				BlockSet _loadBlockSet(const Path& path);
 			public:
 				FxBlock();
-				BlockSet loadBlockSet(const std::string& path);
+				HTP loadTechPass(const Path& path);
 		};
 	}
 }

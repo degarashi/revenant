@@ -3,8 +3,8 @@
 #include "tech_if.hpp"
 
 namespace rev {
-	TechPass::TechPass(const std::string& path) {
-		const auto tpv = MakeTechPair(mgr_block.loadBlockSet(path));
+	TechPass::TechPass(const parse::BlockSet& bs) {
+		const auto tpv = MakeTechPair(bs);
 		for(auto& t : tpv) {
 			for(auto& p : t.pass) {
 				_nameToTech[MakeName(t.name, p->getName())] = p;

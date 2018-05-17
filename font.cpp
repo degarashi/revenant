@@ -11,7 +11,7 @@
 #include "vdecl.hpp"
 #include "primitive.hpp"
 #include "uniform_ent.hpp"
-#include "techmgr.hpp"
+#include "glx_block.hpp"
 #include "u_common.hpp"
 
 namespace rev {
@@ -237,7 +237,7 @@ namespace rev {
 		const Name Tech_Id("Text|Default");
 	}
 	HTech TextObj::MakeData(lubee::IConst<0>) {
-		return mgr_tech.loadTechPass("text.glx")->getTechnique(Tech_Id);
+		return mgr_block.loadTechPass("text.glx")->getTechnique(Tech_Id);
 	}
 	HTech TextObj::GetDefaultTech() {
 		return s_defaultTech.GetData();

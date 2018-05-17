@@ -1,5 +1,6 @@
 #include "glx_block.hpp"
 #include "sdl_rw.hpp"
+#include "tech_pass.hpp"
 
 namespace rev {
 	namespace parse {
@@ -8,7 +9,10 @@ namespace rev {
 				"effect"
 			};
 		}
-		BlockSet FxBlock::loadBlockSet(const std::string& path) {
+		HTP FxBlock::loadTechPass(const Path& path) {
+			return std::make_shared<TechPass>(_loadBlockSet(path));
+		}
+		BlockSet FxBlock::_loadBlockSet(const Path& path) {
 			BlockSet bs;
 			std::unordered_set<std::string>		loaded,
 												toLoad{path};
