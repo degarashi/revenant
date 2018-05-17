@@ -5,7 +5,7 @@
 #include "../../glx_if.hpp"
 #include "../../uniform_ent.hpp"
 #include "../../vdecl.hpp"
-#include "../../glx_tech.hpp"
+#include "../../techmgr.hpp"
 
 // ----------------------- Sprite -----------------------
 std::shared_ptr<rev::Primitive> Sprite2D::MakeData(lubee::IConst<0>) {

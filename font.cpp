@@ -11,7 +11,7 @@
 #include "vdecl.hpp"
 #include "primitive.hpp"
 #include "uniform_ent.hpp"
-#include "glx_tech.hpp"
+#include "techmgr.hpp"
 #include "u_common.hpp"
 
 namespace rev {

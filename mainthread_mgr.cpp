@@ -15,7 +15,7 @@
 #include "glx.hpp"
 #include "font.hpp"
 #include "scene_mgr.hpp"
-#include "glx_tech.hpp"
+#include "techmgr.hpp"
 #include "imgui_sdl2.hpp"
 #include "object_mgr.hpp"
 #include "gltf/mgr.hpp"

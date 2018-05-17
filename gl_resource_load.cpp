@@ -1,6 +1,7 @@
 #include "gl_resource.hpp"
 #include "gl_texture.hpp"
-#include "glx_tech.hpp"
+#include "techmgr.hpp"
+#include "tech_pass.hpp"
 
 namespace rev {
 	HRes GLRes::loadResource(const URI& uri) {

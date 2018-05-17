@@ -21,7 +21,7 @@ namespace rev {
 }
 
 #include "glx.hpp"
-#include "glx_tech.hpp"
+#include "techmgr.hpp"
 namespace rev {
 	void MainThread::_checkFxReload(FNotify& ntf) {
 		using PathSet = std::unordered_set<Dir>;

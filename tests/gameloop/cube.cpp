@@ -2,7 +2,7 @@
 #include "../../vdecl.hpp"
 #include "../../gl_resource.hpp"
 #include "lubee/meta/countof.hpp"
-#include "../../glx_tech.hpp"
+#include "../../techmgr.hpp"
 #include "../../glx.hpp"
 #include "../../u_matrix3d.hpp"
 

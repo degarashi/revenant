@@ -1,6 +1,6 @@
 #include "tech.hpp"
 #include "glx_makesetting.hpp"
-#include "glx_tech.hpp"
+#include "techmgr.hpp"
 #include "gl_error.hpp"
 #include "gl_resource.hpp"
 #include "gl_program.hpp"
@@ -12,6 +12,7 @@
 #include "tech_pair.hpp"
 #include "vertex_map.hpp"
 #include "uniform_ent.hpp"
+#include "blockset.hpp"
 #include <boost/format.hpp>
 
 namespace rev {

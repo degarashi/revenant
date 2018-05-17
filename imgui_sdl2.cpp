@@ -16,7 +16,7 @@
 #include "u_matrix2d.hpp"
 #include "fbrect.hpp"
 #include "primitive.hpp"
-#include "glx_tech.hpp"
+#include "techmgr.hpp"
 #include <SDL_version.h>
 
 namespace {
