@@ -4,7 +4,7 @@
 
 namespace rev {
 	TechPass::TechPass(const std::string& path) {
-		const auto tpv = MakeTechPair(parse::LoadGLXStructSet(path));
+		const auto tpv = MakeTechPair(mgr_block.loadBlockSet(path));
 		for(auto& t : tpv) {
 			for(auto& p : t.pass) {
 				_nameToTech[MakeName(t.name, p->getName())] = p;

@@ -8,7 +8,7 @@ namespace rev {
 				"effect"
 			};
 		}
-		BlockSet LoadGLXStructSet(const std::string& path) {
+		BlockSet FxBlock::loadBlockSet(const std::string& path) {
 			BlockSet bs;
 			std::unordered_set<std::string>		loaded,
 												toLoad{path};
@@ -17,7 +17,7 @@ namespace rev {
 			while(!toLoad.empty()) {
 				// toLoadから1つ取り出して読み込み
 				const auto itr = toLoad.begin();
-				auto hdl = mgr_block.loadResourceApp<GLXStruct>(
+				auto hdl = loadResourceApp<GLXStruct>(
 								UserURI(*itr),
 								[](auto& uri, auto&& mk){
 									auto s = mgr_rw.fromURI(*uri.uri, Access::Read);
