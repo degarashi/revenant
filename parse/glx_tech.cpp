@@ -1,4 +1,4 @@
-#include "glx_tech.hpp"
+#include "tech.hpp"
 #include "glx_makesetting.hpp"
 #include "glx_block.hpp"
 #include "gl_error.hpp"
@@ -180,6 +180,12 @@ namespace rev {
 				_outputArgL();
 				_outputArgR(value);
 			}
+		};
+		// Tech | Pass の分だけ作成
+		class GLXTech : public Tech {
+			public:
+				//! エフェクトファイルのパース結果を読み取る
+				GLXTech(const parse::BlockSet& bs, const parse::TPStruct& tech, const parse::TPStruct& pass);
 		};
 	}
 	TechPairV MakeTechPair(const parse::BlockSet& bs) {
