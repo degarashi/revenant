@@ -1,6 +1,5 @@
 #pragma once
 #include "glx_if.hpp"
-#include "glx_tech.hpp"
 #include "resmgr_app.hpp"
 #include "clear.hpp"
 #include "fbrect.hpp"
