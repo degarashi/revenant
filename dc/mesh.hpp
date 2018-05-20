@@ -26,22 +26,4 @@ namespace rev::dc {
 
 			DEF_DEBUGGUI_PROP
 	};
-	class Mesh : public IMesh {
-		private:
-			SName			_jointName;
-		public:
-			Mesh(const HPrim& p, const HTech& t, const Name& userName, const SName& jointName);
-			void draw(IEffect& e, const NodeParam& np) const override;
-
-			DEF_DEBUGGUI_SUMMARYSTR
-	};
-	class SkinMesh : public IMesh {
-		private:
-			SkinBindV_SP	_binding;
-		public:
-			SkinMesh(const HPrim& p, const HTech& t, const Name& userName, const SkinBindV_SP& bind);
-			void draw(IEffect& e, const NodeParam& np) const override;
-
-			DEF_DEBUGGUI_SUMMARYSTR
-	};
 }

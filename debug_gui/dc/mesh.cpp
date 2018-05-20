@@ -19,10 +19,4 @@ namespace rev::dc {
 		}
 		return mod | f.modified();
 	}
-	std::string Mesh::summary_str() const {
-		return "Mesh";
-	}
-	std::string SkinMesh::summary_str() const {
-		return "SkinMesh";
-	}
 }
