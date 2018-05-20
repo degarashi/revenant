@@ -11,14 +11,12 @@ namespace rev::dc {
 	class IMesh :
 		public IDebugGui
 	{
-		private:
+		protected:
 			HPrim		_primitive;
 			HTech		_tech;
-		protected:
 			Name		_userName;
 			IMesh(const HPrim& p, const HTech& t, const Name& userName);
-			void _draw(IEffect& e) const;
-			void _applyTech(IEffect& e) const;
+
 		public:
 			virtual ~IMesh();
 			virtual void draw(IEffect& e, const NodeParam& np) const = 0;

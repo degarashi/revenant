@@ -20,8 +20,7 @@ namespace rev::gltf {
 		_bsm(bsm)
 	{}
 	void GLTFMesh::draw(IEffect& e, const dc::NodeParam& np) const {
-		IMesh::_applyTech(e);
-
+		e.setTechnique(_tech);
 		auto& npu = dynamic_cast<const NodeParam_USem&>(np);
 		auto& u = e.refUniformEnt();
 		{
@@ -29,6 +28,7 @@ namespace rev::gltf {
 				rt.second->exportUniform(u, rt.first, _jointId, _bind, _bsm, npu);
 			}
 		}
-		IMesh::_draw(e);
+		e.setPrimitive(_primitive);
+		e.draw();
 	}
 }

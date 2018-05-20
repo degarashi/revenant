@@ -14,8 +14,7 @@ namespace rev::gltf {
 			frea::Mat4			_bsm;
 		public:
 			GLTFMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, dc::JointId id);
-			GLTFMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::SkinBindV_SP& bind, const frea::Mat4& bsm);
-			// setterした後にbase::drawを呼ぶ
+			GLTFMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::SkinBindSet_SP& bind);
 			void draw(IEffect& e, const dc::NodeParam& np) const override;
 			DEF_DEBUGGUI_SUMMARYSTR
 			DEF_DEBUGGUI_PROP

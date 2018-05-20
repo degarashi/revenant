@@ -8,13 +8,6 @@ namespace rev::dc {
 		_userName(userName)
 	{}
 	IMesh::~IMesh() {}
-	void IMesh::_draw(IEffect& e) const {
-		e.setPrimitive(_primitive);
-		e.draw();
-	}
-	void IMesh::_applyTech(IEffect& e) const {
-		e.setTechnique(_tech);
-	}
 	const HTech& IMesh::getTech() const noexcept {
 		return _tech;
 	}
