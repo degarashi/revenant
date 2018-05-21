@@ -6,7 +6,7 @@ namespace rev {
 		class TfRoot;
 		class TfNode;
 		struct IModel;
-		class IMesh;
+		struct IMesh;
 		struct IChannel;
 		struct IJointAt;
 		struct ISampler;

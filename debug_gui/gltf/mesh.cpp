@@ -4,6 +4,9 @@
 #include "../../gltf/rt_uniform.hpp"
 #include "../print.hpp"
 #include "../header.hpp"
+#include "../entry_field.hpp"
+#include "../../primitive.hpp"
+#include "../../tech_if.hpp"
 
 namespace rev::gltf {
 	std::string GLTFMesh::summary_str() const {
@@ -31,9 +34,18 @@ namespace rev::gltf {
 				ImGui::Spacing();
 			}
 		}
-
 		ImGui::Separator();
-		mod |= IMesh::property(edit);	
+		{
+			auto f = debug::EntryField(nullptr, edit, 2);
+			ImGui::Columns(1);
+			if(const auto _ = debug::Header("Primitive", !_primitive, true)) {
+				mod |= _primitive->property(edit);
+			}
+			if(const auto _ = debug::Header("Technique", !_tech, true)) {
+				mod |= _tech->property(edit);
+			}
+			mod |= f.modified();
+		}
 		return mod;
 	}
 }

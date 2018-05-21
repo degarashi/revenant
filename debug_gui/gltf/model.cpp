@@ -3,7 +3,7 @@
 #include "../../dc/model_if.hpp"
 #include "../../dc/node.hpp"
 #include "../../imgui/imgui.h"
-#include "../../dc/mesh.hpp"
+#include "../../dc/mesh_if.hpp"
 #include "../listview.hpp"
 #include "../../gltf/dc_model.hpp"
 
