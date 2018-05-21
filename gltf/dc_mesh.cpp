@@ -5,6 +5,7 @@
 #include "../dc/node.hpp"
 #include "gltf/node_cached.hpp"
 #include "semantic_if.hpp"
+#include "../tech_if.hpp"
 
 namespace rev::gltf {
 	// ------------ GLTFMesh ------------
@@ -14,7 +15,18 @@ namespace rev::gltf {
 		_userName(userName),
 		_rtParams(rt),
 		_jointId(id)
-	{}
+	{
+		auto& prog = *t->getProgram();
+		const auto rtpLen = rt->size();
+		_uId.resize(rtpLen);
+		for(std::size_t i=0 ; i<rtpLen ; i++) {
+			auto& r = (*rt)[i];
+			if(const auto id = prog.getUniformId(r.first)) {
+				_uId[i] = *id;
+			} else
+				_uId[i] = -1;
+		}
+	}
 	GLTFMesh::GLTFMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::SkinBindSet_SP& bind):
 		GLTFMesh(p, t, userName, rt, 0)
 	{
@@ -22,7 +34,8 @@ namespace rev::gltf {
 	}
 	void GLTFMesh::draw(IEffect& e, const dc::NodeParam& np) const {
 		e.setTechnique(_tech);
-		{
+		auto& rtp = *_rtParams;
+		if(!rtp.empty()) {
 			struct SemanticSet : ISemanticSet {
 				UniformEnt&		u;
 				GLint			id;
@@ -43,14 +56,14 @@ namespace rev::gltf {
 					u.setUniformById(id, mv);
 				}
 			};
-			auto& u = e.refUniformEnt();
-			SemanticSet sem(u);
-			auto& prog = u.getProgram();
+			SemanticSet sem(e.refUniformEnt());
 			auto& npu = dynamic_cast<const NodeParam_USem&>(np);
-			for(auto& rt : *_rtParams) {
-				if(const auto id = prog.getUniformId(rt.first)) {
-					sem.id = *id;
-					rt.second->exportUniform(sem, _jointId, _bind, npu);
+			const auto rtpLen = rtp.size();
+			for(std::size_t i=0 ; i<rtpLen ; i++) {
+				const auto uid = _uId[i];
+				if(uid >= 0) {
+					sem.id = uid;
+					rtp[i].second->exportUniform(sem, _jointId, _bind, npu);
 				}
 			}
 		}

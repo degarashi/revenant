@@ -15,6 +15,10 @@ namespace rev::gltf {
 			RTUParams_SP		_rtParams;
 			dc::JointId			_jointId;
 			dc::SkinBindSet_SP	_bind;
+
+			// Uniform-Idのキャッシュ
+			using UIdV = std::vector<int>;
+			UIdV				_uId;
 		public:
 			GLTFMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, dc::JointId id);
 			GLTFMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::SkinBindSet_SP& bind);
