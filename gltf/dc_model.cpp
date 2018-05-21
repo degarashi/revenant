@@ -8,6 +8,9 @@
 #include "../glx_if.hpp"
 #include "../fbrect.hpp"
 #include "../dc/node_cached.hpp"
+#include "gltf/visitor_model.hpp"
+#include "gltf/scene.hpp"
+#include "frea/vector.hpp"
 
 namespace rev::gltf {
 	GLTFModel::GLTFModel(const MeshV& mesh, const MeshV& skinmesh, const HTf& tf) {
@@ -32,5 +35,19 @@ namespace rev::gltf {
 	}
 	HTf GLTFModel::getNode() const {
 		return _tf;
+	}
+
+	HMdl GLTFModel::FromScene(const Scene& s) {
+		gltf::Visitor_Model visitor;
+		{
+			auto node = std::make_shared<dc::TfNode>(0, SName(), "RootNode");
+			node->refPose().identity();
+			node->refPose().setScaling(frea::Vec3{1,1,-1});
+			visitor.addNode(node);
+		}
+		for(auto& n : s.node) {
+			n->visit(visitor);
+		}
+		return visitor.result();
 	}
 }

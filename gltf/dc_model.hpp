@@ -3,7 +3,7 @@
 #include "gltf/dc_common.hpp"
 
 namespace rev::gltf {
-	// Mesh, SkinMesh共用
+	struct Scene;
 	class GLTFModel : public dc::IModel {
 		private:
 			using MeshV = std::vector<HMesh>;
@@ -11,6 +11,7 @@ namespace rev::gltf {
 						_skinmesh;
 			HTf			_tf;
 		public:
+			static HMdl FromScene(const Scene& s);
 			GLTFModel(const MeshV& mesh, const MeshV& skinmesh, const HTf& tf);
 			void draw(IEffect& e) const override;
 			HTf getNode() const override;

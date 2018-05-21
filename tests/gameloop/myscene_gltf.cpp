@@ -4,7 +4,7 @@
 #include "../../gltf/scene.hpp"
 #include "../../dc/node.hpp"
 #include "../../dc/model_if.hpp"
-#include "../../gltf/visitor_model.hpp"
+#include "../../gltf/dc_model.hpp"
 #include "../../debug_gui/resource_window.hpp"
 #include "../../debug_gui/window.hpp"
 #include "../../debug_gui/print.hpp"
@@ -32,19 +32,10 @@ namespace rev::test {
 		auto& dsc = g->defaultScene;
 		D_Assert0(dsc);
 		{
-			auto sc = *(*dsc);
-			gltf::Visitor_Model visitor;
 			{
-				auto node = std::make_shared<dc::TfNode>(0, SName(), "RootNode");
-				node->refPose().identity();
-				node->refPose().setScaling(Vec3{1,1,-1});
-				visitor.addNode(node);
+				auto sc = *(*dsc);
+				_model = gltf::GLTFModel::FromScene(*sc);
 			}
-			for(auto& n : sc->node) {
-				n->visit(visitor);
-			}
-			_model = visitor.result();
-
 			_anim.clear();
 			for(auto& a : g->animation.map)
 				_anim.append(a.second->makeAnimation());
