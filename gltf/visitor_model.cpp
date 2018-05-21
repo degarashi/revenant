@@ -1,12 +1,8 @@
 #include "gltf/visitor_model.hpp"
 #include "gltf/dc_mesh.hpp"
+#include "gltf/dc_model.hpp"
 #include "../dc/node.hpp"
 #include "../dc/model.hpp"
-#include "gltf/node_cached.hpp"
-#include "glx_if.hpp"
-#include "u_matrix3d.hpp"
-#include "fbrect.hpp"
-#include "systeminfo.hpp"
 
 namespace rev::gltf {
 	Visitor_Model::Visitor_Model():
@@ -30,20 +26,12 @@ namespace rev::gltf {
 		_mesh.emplace_back(new GLTFMesh(p, t, userName, rt, bind, bsm));
 	}
 	void Visitor_Model::addCamera(const HCam3&) {}
-	namespace {
-		dc::NodeParam_UP MakeCache(const IEffect& e, const dc::NodeParam& np) {
-			const auto cam = dynamic_cast<const U_Matrix3D&>(e).getCamera();
-			const auto vp = e.getViewport().resolve([](){ return mgr_info.getScreenSize(); });
-			auto* ret = static_cast<dc::NodeParam*>(static_cast<NodeParam_USem*>(new NodeParam_USemCached(cam, vp, np)));
-			return dc::NodeParam_UP(ret);
-		}
-	}
 	HMdl Visitor_Model::result() const {
 		auto* self = const_cast<Visitor_Model*>(this);
 		// メッシュをTechでソート
 		std::sort(self->_mesh.begin(), self->_mesh.end(), [](const auto& m0, const auto& m1){
 			return m0->getTech().get() < m1->getTech().get();
 		});
-		return std::make_shared<dc::Model>(_mesh, _tfRoot, &MakeCache);
+		return std::make_shared<GLTFModel>(_mesh, _tfRoot);
 	}
 }

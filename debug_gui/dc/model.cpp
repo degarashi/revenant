@@ -7,10 +7,10 @@
 #include "../listview.hpp"
 
 namespace rev::dc {
-	const char* Model::getDebugName() const noexcept {
+	const char* IModel::getDebugName() const noexcept {
 		return "Model";
 	}
-	bool Model::property(const bool edit) {
+	bool IModel::property(const bool edit) {
 		bool mod = false;
 		static int num = 0;
 		ImGui::RadioButton("Node", &num, 0);
@@ -20,7 +20,7 @@ namespace rev::dc {
 		if(num == 0) {
 			const auto _ = debug::IndentPush();
 			const auto __ = debug::IdPush("Node");
-			mod |= _tf->property(edit);
+			mod |= getNode()->property(edit);
 		} else {
 			debug::ListView(_mesh.cbegin(), _mesh.cend(), true);
 		}
