@@ -7,12 +7,16 @@ namespace rev::dc {
 
 	void Animation::addChannel(const HChannel& c) {
 		_channel.emplace_back(c);
+		_length = spi::none;
 	}
 	float Animation::length() const {
-		float t = 0;
-		for(auto& c : _channel)
-			t = std::max(t, c->length());
-		return t;
+		if(!_length) {
+			float t = 0;
+			for(auto& c : _channel)
+				t = std::max(t, c->length());
+			_length = t;
+		}
+		return *_length;
 	}
 	void Animation::setTime(const float t) {
 		_time = t;
