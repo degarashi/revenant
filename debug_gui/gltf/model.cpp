@@ -1,16 +1,17 @@
 #include "../indent.hpp"
 #include "../id.hpp"
-#include "../../dc/model.hpp"
+#include "../../dc/model_if.hpp"
 #include "../../dc/node.hpp"
 #include "../../imgui/imgui.h"
 #include "../../dc/mesh.hpp"
 #include "../listview.hpp"
+#include "../../gltf/dc_model.hpp"
 
-namespace rev::dc {
-	const char* IModel::getDebugName() const noexcept {
-		return "Model";
+namespace rev::gltf {
+	const char* GLTFModel::getDebugName() const noexcept {
+		return "GLTFModel";
 	}
-	bool IModel::property(const bool edit) {
+	bool GLTFModel::property(const bool edit) {
 		bool mod = false;
 		static int num = 0;
 		ImGui::RadioButton("Node", &num, 0);

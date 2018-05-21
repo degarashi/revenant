@@ -26,4 +26,7 @@ namespace rev::gltf {
 			m->draw(e, npc);
 		}
 	}
+	HTf GLTFModel::getNode() const {
+		return _tf;
+	}
 }

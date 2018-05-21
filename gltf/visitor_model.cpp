@@ -2,7 +2,7 @@
 #include "gltf/dc_mesh.hpp"
 #include "gltf/dc_model.hpp"
 #include "../dc/node.hpp"
-#include "../dc/model.hpp"
+#include "../dc/model_if.hpp"
 
 namespace rev::gltf {
 	Visitor_Model::Visitor_Model():

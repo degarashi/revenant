@@ -3,7 +3,7 @@
 #include "../../uri.hpp"
 #include "../../gltf/scene.hpp"
 #include "../../dc/node.hpp"
-#include "../../dc/model.hpp"
+#include "../../dc/model_if.hpp"
 #include "../../gltf/visitor_model.hpp"
 #include "../../debug_gui/resource_window.hpp"
 #include "../../debug_gui/window.hpp"

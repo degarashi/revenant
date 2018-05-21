@@ -5,7 +5,7 @@ namespace rev {
 	namespace dc {
 		class TfRoot;
 		class TfNode;
-		class IModel;
+		struct IModel;
 		class IMesh;
 		struct IChannel;
 		struct IJointAt;
