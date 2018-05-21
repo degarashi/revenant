@@ -10,8 +10,9 @@
 #include "../dc/node_cached.hpp"
 
 namespace rev::gltf {
-	GLTFModel::GLTFModel(const MeshV& mesh, const HTf& tf) {
+	GLTFModel::GLTFModel(const MeshV& mesh, const MeshV& skinmesh, const HTf& tf) {
 		_mesh = mesh;
+		_skinmesh = skinmesh;
 		_tf = tf;
 	}
 	void GLTFModel::draw(IEffect& e) const {
@@ -21,6 +22,9 @@ namespace rev::gltf {
 		NodeParam_USemCached npc(cam, vp, np);
 
 		for(auto& m : _mesh) {
+			m->draw(e, npc);
+		}
+		for(auto& m : _skinmesh) {
 			auto& gm = static_cast<const GLTFMesh&>(*m);
 			np.setNodeJointId(gm._jointId);
 			m->draw(e, npc);

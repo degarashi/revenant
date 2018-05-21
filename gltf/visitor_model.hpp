@@ -9,7 +9,8 @@ namespace rev::gltf {
 
 			HTf			_tfRoot;
 			NodeStack	_stack;
-			MeshV		_mesh;
+			MeshV		_mesh,
+						_skinmesh;
 		public:
 			Visitor_Model();
 			void upNode() override;

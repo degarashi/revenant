@@ -23,15 +23,19 @@ namespace rev::gltf {
 		_mesh.emplace_back(new GLTFMesh(p, t, userName, rt, id));
 	}
 	void Visitor_Model::addSkinMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::SkinBindSet_SP& bind) {
-		_mesh.emplace_back(new GLTFMesh(p, t, userName, rt, bind));
+		_skinmesh.emplace_back(new GLTFMesh(p, t, userName, rt, bind));
 	}
 	void Visitor_Model::addCamera(const HCam3&) {}
 	HMdl Visitor_Model::result() const {
 		auto* self = const_cast<Visitor_Model*>(this);
 		// メッシュをTechでソート
-		std::sort(self->_mesh.begin(), self->_mesh.end(), [](const auto& m0, const auto& m1){
-			return m0->getTech().get() < m1->getTech().get();
-		});
-		return std::make_shared<GLTFModel>(_mesh, _tfRoot);
+		const auto sortMesh = [](auto& m){
+			std::sort(m.begin(), m.end(), [](const auto& m0, const auto& m1){
+				return m0->getTech().get() < m1->getTech().get();
+			});
+		};
+		sortMesh(self->_mesh);
+		sortMesh(self->_skinmesh);
+		return std::make_shared<GLTFModel>(_mesh, _skinmesh, _tfRoot);
 	}
 }
