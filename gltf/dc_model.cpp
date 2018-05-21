@@ -18,11 +18,12 @@ namespace rev::gltf {
 		dc::NodeParam_cached np(*_tf);
 		const auto cam = dynamic_cast<const U_Matrix3D&>(e).getCamera();
 		const auto vp = e.getViewport().resolve([](){ return mgr_info.getScreenSize(); });
-		auto* ret = static_cast<dc::NodeParam*>(static_cast<NodeParam_USem*>(new NodeParam_USemCached(cam, vp, np)));
-		auto npc = std::unique_ptr<dc::NodeParam>(ret);
+		NodeParam_USemCached npc(cam, vp, np);
 
 		for(auto& m : _mesh) {
-			m->draw(e, *npc);
+			auto& gm = static_cast<const GLTFMesh&>(*m);
+			np.setNodeJointId(gm._jointId);
+			m->draw(e, npc);
 		}
 	}
 }

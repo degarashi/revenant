@@ -12,9 +12,14 @@ namespace rev::dc {
 		Mat4		invmat;
 
 		bool operator == (const SkinBind& s) const noexcept;
+		std::size_t operator()(const SkinBind& s) const noexcept;
 	};
-	using SkinBindV = std::vector<SkinBind>;
-	using SkinBindV_SP = std::shared_ptr<SkinBindV>;
+	struct SkinBindSet {
+		using SkinBindV = std::vector<SkinBind>;
+		SkinBindV	bind;
+		Mat4		bs_m;
+	};
+	using SkinBindSet_SP = std::shared_ptr<SkinBindSet>;
 
 	using Mat4V = std::vector<Mat4>;
 	struct NodeParam {
@@ -23,7 +28,7 @@ namespace rev::dc {
 		virtual Mat4 getGlobal(JointId id) const = 0;
 		virtual Mat4 getLocal(const SName& name) const = 0;
 		virtual Mat4 getGlobal(const SName& name) const = 0;
-		virtual const Mat4V& getJointMat(const Mat4& node_m, const SkinBindV_SP& bind, const Mat4& bs_m) const = 0;
+		virtual const Mat4V& getJointMat(const Mat4& node_m, const SkinBindSet_SP& bind) const = 0;
 	};
 }
 

@@ -12,12 +12,11 @@ namespace rev::gltf {
 		_rtParams(rt),
 		_jointId(id)
 	{}
-	GLTFMesh::GLTFMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::SkinBindV_SP& bind, const frea::Mat4& bsm):
+	GLTFMesh::GLTFMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::SkinBindSet_SP& bind):
 		IMesh(p, t, userName),
 		_rtParams(rt),
 		_jointId(0),
-		_bind(bind),
-		_bsm(bsm)
+		_bind(bind)
 	{}
 	void GLTFMesh::draw(IEffect& e, const dc::NodeParam& np) const {
 		e.setTechnique(_tech);
@@ -25,7 +24,7 @@ namespace rev::gltf {
 		auto& u = e.refUniformEnt();
 		{
 			for(auto& rt : *_rtParams) {
-				rt.second->exportUniform(u, rt.first, _jointId, _bind, _bsm, npu);
+				rt.second->exportUniform(u, rt.first, _jointId, _bind, npu);
 			}
 		}
 		e.setPrimitive(_primitive);

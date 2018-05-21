@@ -117,7 +117,6 @@ namespace rev::gltf {
 	}
 	void SkinMeshNode::visit(Visitor& v) const {
 		Node::visit(v);
-		const auto bsm = skin->bindShapeMat;
 		const auto& bind = skin.data()->getBind();
 		for(auto& m : mesh) {
 			for(auto& p : m.data()->primitive) {
@@ -127,8 +126,7 @@ namespace rev::gltf {
 					m.getTech(),
 					username ? *username : Name(),
 					m.getRT(),
-					bind,
-					bsm
+					bind
 				);
 			}
 		}

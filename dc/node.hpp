@@ -70,7 +70,7 @@ namespace rev::dc {
 			Mat4 getGlobal(JointId id) const override;
 			Mat4 getLocal(const SName& name) const override;
 			Mat4 getGlobal(const SName& name) const override;
-			const Mat4V& getJointMat(const Mat4& node_m, const SkinBindV_SP& bind, const Mat4& bs_m) const override;
+			const Mat4V& getJointMat(const Mat4& node_m, const SkinBindSet_SP& bind) const override;
 
 			TfNode& query(JointId id) const override;
 			TfNode& query(const SName& name) const override;

@@ -13,12 +13,12 @@ namespace rev::gltf {
 		TagAccessor		invBindMat;
 		SName_V			jointName;
 
-		mutable dc::SkinBindV_SP	bind_cached;
+		mutable dc::SkinBindSet_SP	bind_cached;
 
 		Skin(const JValue& v);
 		Type getType() const noexcept override;
 		void resolve(const ITagQuery& q) override;
 
-		const dc::SkinBindV_SP& getBind() const;
+		const dc::SkinBindSet_SP& getBind() const;
 	};
 }

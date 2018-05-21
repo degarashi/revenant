@@ -6,11 +6,11 @@
 
 namespace rev::gltf {
 	class NodeParam_USemCached :
-		public dc::NodeParam_cached,
 		public NodeParam_USem
 	{
 		private:
-			using base_t = dc::NodeParam_cached;
+			dc::NodeParam&		_np;
+
 			using Mat4 = frea::Mat4;
 			using Vec4 = frea::Vec4;
 			// ----------------- for USemantics -----------------
@@ -34,7 +34,7 @@ namespace rev::gltf {
 			Mat4 _calcMat(JointId id, USemantic sem) const;
 
 		public:
-			NodeParam_USemCached(const HCam3& cam, const lubee::RectF& vp, const NodeParam& np);
+			NodeParam_USemCached(const HCam3& cam, const lubee::RectF& vp, dc::NodeParam& np);
 
 			void exportSemantic(UniformEnt& u, const SName& uname, JointId id, USemantic sem) const override;
 			void exportViewport(UniformEnt& u, const SName& uname) const override;
@@ -43,6 +43,6 @@ namespace rev::gltf {
 			dc::Mat4 getGlobal(JointId id) const override;
 			dc::Mat4 getLocal(const dc::SName& name) const override;
 			dc::Mat4 getGlobal(const dc::SName& name) const override;
-			const dc::Mat4V& getJointMat(const dc::Mat4& node_m, const dc::SkinBindV_SP& bind, const dc::Mat4& bs_m) const override;
+			const dc::Mat4V& getJointMat(const dc::Mat4& node_m, const dc::SkinBindSet_SP& bind) const override;
 	};
 }

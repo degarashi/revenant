@@ -18,7 +18,7 @@ namespace rev::gltf {
 			virtual void upNode() = 0;
 			virtual void addNode(const HTfNode& node) = 0;
 			virtual void addMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, dc::JointId id) = 0;
-			virtual void addSkinMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::SkinBindV_SP& bind, const frea::Mat4& bsm) = 0;
+			virtual void addSkinMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::SkinBindSet_SP& bind) = 0;
 			virtual void addCamera(const HCam3& c) = 0;
 		};
 		using Pose3 = beat::g3::Pose;

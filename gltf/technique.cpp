@@ -173,7 +173,7 @@ namespace rev::gltf {
 				np.exportSemantic(u, uname, id, semantic);
 		}
 	}
-	void Technique::UnifParam_Sem::exportUniform(UniformEnt& u, const SName& uname, const dc::JointId currentId, const dc::SkinBindV_SP&, const frea::Mat4&, const NodeParam_USem& np) const {
+	void Technique::UnifParam_Sem::exportUniform(UniformEnt& u, const SName& uname, const dc::JointId currentId, const dc::SkinBindSet_SP&, const NodeParam_USem& np) const {
 		ExportSemantic(u, uname, currentId, np, semantic);
 	}
 
@@ -181,9 +181,9 @@ namespace rev::gltf {
 	Technique::UnifParam_JointMat::UnifParam_JointMat(const JValue& v):
 		count(Required<Integer>(v, "count"))
 	{}
-	void Technique::UnifParam_JointMat::exportUniform(UniformEnt& u, const SName& uname, const dc::JointId currentId, const dc::SkinBindV_SP& bind, const frea::Mat4& bsm, const NodeParam_USem& np) const {
-		Assert0(bind && bind->size() == count);
-		u.setUniform(uname, np.getJointMat(np.getGlobal(currentId), bind, bsm));
+	void Technique::UnifParam_JointMat::exportUniform(UniformEnt& u, const SName& uname, const dc::JointId currentId, const dc::SkinBindSet_SP& bind, const NodeParam_USem& np) const {
+		Assert0(bind && bind->bind.size() == count);
+		u.setUniform(uname, np.getJointMat(np.getGlobal(currentId), bind));
 	}
 
 	// ---------------------------- Technique::UnifParam_NodeSem ----------------------------
@@ -197,7 +197,7 @@ namespace rev::gltf {
 	void Technique::UnifParam_NodeSem::resolve(const ITagQuery& q) {
 		node.resolve(q);
 	}
-	void Technique::UnifParam_NodeSem::exportUniform(UniformEnt& u, const SName& uname, const dc::JointId, const dc::SkinBindV_SP&, const frea::Mat4&, const NodeParam_USem& np) const {
+	void Technique::UnifParam_NodeSem::exportUniform(UniformEnt& u, const SName& uname, const dc::JointId, const dc::SkinBindSet_SP&, const NodeParam_USem& np) const {
 		ExportSemantic(u, uname, node.data()->jointId, np, semantic);
 	}
 	// ---------------------------- Technique::State ----------------------------

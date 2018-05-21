@@ -10,8 +10,8 @@ namespace rev::gltf {
 		return jointId == k.jointId &&
 				sem == k.sem;
 	}
-	NodeParam_USemCached::NodeParam_USemCached(const HCam3& cam, const lubee::RectF& vp, const NodeParam& np):
-		dc::NodeParam_cached(np)
+	NodeParam_USemCached::NodeParam_USemCached(const HCam3& cam, const lubee::RectF& vp, dc::NodeParam& np):
+		_np(np)
 	{
 		_camera = cam;
 		_viewport = Vec4{vp.x0, vp.y0, vp.width(), vp.height()};
@@ -27,8 +27,8 @@ namespace rev::gltf {
 			return _proj;
 		}
 		const auto makeMat = [this, id, sem]() -> Mat4 {
-			const auto local = [this, id]() -> Mat4 { return base_t::getLocal(id); };
-			const auto global = [this, id]() -> Mat4 { return base_t::getGlobal(id); };
+			const auto local = [this, id]() -> Mat4 { return _np.getLocal(id); };
+			const auto global = [this, id]() -> Mat4 { return _np.getGlobal(id); };
 			switch(sem) {
 				case USemantic::Local:
 					// This is the node's matrix property
@@ -102,18 +102,18 @@ namespace rev::gltf {
 		u.setUniform(uname, _viewport);
 	}
 	dc::Mat4 NodeParam_USemCached::getLocal(const JointId id) const {
-		return base_t::getLocal(id);
+		return _np.getLocal(id);
 	}
 	dc::Mat4 NodeParam_USemCached::getGlobal(const JointId id) const  {
-		return base_t::getGlobal(id);
+		return _np.getGlobal(id);
 	}
 	dc::Mat4 NodeParam_USemCached::getLocal(const dc::SName& name) const  {
-		return base_t::getLocal(name);
+		return _np.getLocal(name);
 	}
 	dc::Mat4 NodeParam_USemCached::getGlobal(const dc::SName& name) const  {
-		return base_t::getGlobal(name);
+		return _np.getGlobal(name);
 	}
-	const dc::Mat4V& NodeParam_USemCached::getJointMat(const dc::Mat4& node_m, const dc::SkinBindV_SP& bind, const dc::Mat4& bs_m) const {
-		return base_t::getJointMat(node_m, bind, bs_m);
+	const dc::Mat4V& NodeParam_USemCached::getJointMat(const dc::Mat4& node_m, const dc::SkinBindSet_SP& bind) const {
+		return _np.getJointMat(node_m, bind);
 	}
 }

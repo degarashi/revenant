@@ -25,15 +25,16 @@ namespace rev::gltf {
 		invBindMat.resolve(q);
 	}
 
-	const dc::SkinBindV_SP& Skin::getBind() const {
+	const dc::SkinBindSet_SP& Skin::getBind() const {
 		if(!bind_cached) {
-			bind_cached = std::make_shared<dc::SkinBindV>();
+			bind_cached = std::make_shared<dc::SkinBindSet>();
 			auto& bc = *bind_cached;
 			const int n = jointName.size();
-			bc.resize(n);
+			bc.bind.resize(n);
+			bc.bs_m = bindShapeMat;
 
 			const auto& mat = invBindMat->getDataAs<frea::Mat4>();
-			auto* dst = bc.data();
+			auto* dst = bc.bind.data();
 			for(int i=0 ; i<n ; i++) {
 				dst->jointName = jointName[i];
 				dst->invmat = (*mat)[i];

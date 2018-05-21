@@ -1,9 +1,13 @@
 #include "dc/node.hpp"
+#include "lubee/hash_combine.hpp"
 
 namespace rev::dc {
 	bool SkinBind::operator == (const SkinBind& bind) const noexcept {
 		return jointName == bind.jointName &&
 			invmat == bind.invmat;
+	}
+	std::size_t SkinBind::operator()(const SkinBind& s) const noexcept {
+		return lubee::hash_combine_implicit(s.jointName, s.invmat);
 	}
 
 	bool TfRoot::_refresh(NameToNode::value_t& dst, NameToNode*) const {
@@ -67,7 +71,7 @@ namespace rev::dc {
 	TfNode& TfRoot::query(const SName& name) const {
 		return *const_cast<TfNode*>(find(name));
 	}
-	const Mat4V& TfRoot::getJointMat(const Mat4&, const SkinBindV_SP&, const Mat4&) const {
+	const Mat4V& TfRoot::getJointMat(const Mat4&, const SkinBindSet_SP&) const {
 		Assert(false, "invaid function called");
 		throw 0;
 	}

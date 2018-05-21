@@ -19,8 +19,7 @@ namespace rev::gltf {
 					UniformEnt& u,
 					const SName& uname,
 					dc::JointId currentId,
-					const dc::SkinBindV_SP& bind,
-					const frea::Mat4& bsm,
+					const dc::SkinBindSet_SP& bind,
 					const NodeParam_USem& np
 				) const = 0;
 		void resolve(const ITagQuery&) override {}
