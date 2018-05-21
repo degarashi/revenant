@@ -1,4 +1,5 @@
 #include "dc/animation.hpp"
+#include <cmath>
 
 namespace rev::dc {
 	Animation::Animation():
@@ -8,6 +9,14 @@ namespace rev::dc {
 	void Animation::addChannel(const HChannel& c) {
 		_channel.emplace_back(c);
 		_length = spi::none;
+	}
+	void Animation::append(const Animation& a) {
+		_channel.insert(_channel.end(), a._channel.begin(), a._channel.end());
+		_length = spi::none;
+	}
+	void Animation::clear() {
+		_channel.clear();
+		setTime(0);
 	}
 	float Animation::length() const {
 		if(!_length) {
@@ -24,8 +33,11 @@ namespace rev::dc {
 	float Animation::time() const noexcept {
 		return _time;
 	}
-	void Animation::reset() {
-		setTime(0);
+	bool Animation::empty() const noexcept {
+		return _channel.empty();
+	}
+	void Animation::loop() {
+		_time = std::fmod(_time, length());
 	}
 
 	bool Animation::update(const IJointQuery& q, const float dt) {

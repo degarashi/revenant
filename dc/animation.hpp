@@ -15,11 +15,14 @@ namespace rev::dc {
 		public:
 			Animation();
 			void addChannel(const HChannel& c);
+			void append(const Animation& a);
+			void clear();
+			bool empty() const noexcept;
 			float length() const;
 
 			void setTime(float t);
 			float time() const noexcept;
-			void reset();
+			void loop();
 
 			bool update(const IJointQuery& q, float dt);
 	};

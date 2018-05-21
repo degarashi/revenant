@@ -47,11 +47,7 @@ namespace rev::test {
 
 			_anim.clear();
 			for(auto& a : g->animation.map)
-				_anim.emplace(a.first, a.second->makeAnimation());
-			_animLen = 0;
-			_animCur = 0;
-			for(auto& a : _anim)
-				_animLen = std::max<float>(_animLen, a.second.length());
+				_anim.append(a.second->makeAnimation());
 		}
 		// モデル詳細GUIを表示
 		debug::ResourceWindow::Add(_model);
@@ -84,16 +80,8 @@ namespace rev::test {
 		if(!_anim.empty()) {
 			auto& node = *_model->getNode();
 			constexpr float dt = 1.f / 60;
-			_animCur += dt;
-			for(auto& a : _anim) {
-				a.second.update(node, dt);
-			}
-			if(_animCur >= _animLen) {
-				for(auto& a : _anim) {
-					a.second.reset();
-				}
-				_animCur = 0;
-			}
+			if(_anim.update(node, dt))
+				_anim.loop();
 		}
 	}
 }

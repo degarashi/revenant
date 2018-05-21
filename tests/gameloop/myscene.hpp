@@ -57,10 +57,7 @@ namespace rev::test {
 				StrV	_fileList,
 						_fileFullPath;
 				mutable HMdl	_model;
-				using AnimM = std::unordered_map<Name, dc::Animation>;
-				mutable AnimM	_anim;
-				mutable float	_animLen,
-								_animCur;
+				mutable dc::Animation _anim;
 				mutable bool	_dirtyFlag=false;
 
 				void _loadModel(const std::string& path) const;
