@@ -5,19 +5,16 @@
 #include "lubee/fwd.hpp"
 #include "../debuggui_if.hpp"
 
-namespace rev {
-	class UniformEnt;
-}
 namespace rev::gltf {
 	struct NodeParam_USem;
+	struct ISemanticSet;
 	struct RTUniform :
 		IResolvable,
 		IDebugGui
 	{
 		virtual ~RTUniform() {}
 		virtual void exportUniform(
-					UniformEnt& u,
-					const SName& uname,
+					ISemanticSet& s,
 					dc::JointId currentId,
 					const dc::SkinBindSet_SP& bind,
 					const NodeParam_USem& np

@@ -36,8 +36,8 @@ namespace rev::gltf {
 		public:
 			NodeParam_USemCached(const HCam3& cam, const lubee::RectF& vp, dc::NodeParam& np);
 
-			void exportSemantic(UniformEnt& u, const SName& uname, JointId id, USemantic sem) const override;
-			void exportViewport(UniformEnt& u, const SName& uname) const override;
+			void exportSemantic(ISemanticSet& s, JointId id, USemantic sem) const override;
+			void exportViewport(ISemanticSet& s) const override;
 
 			dc::Mat4 getLocal(JointId id) const override;
 			dc::Mat4 getGlobal(JointId id) const override;

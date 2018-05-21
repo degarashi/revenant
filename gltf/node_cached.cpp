@@ -1,6 +1,7 @@
 #include "node_cached.hpp"
 #include "../camera3d.hpp"
 #include "../uniform_ent.hpp"
+#include "semantic_if.hpp"
 
 namespace rev::gltf {
 	std::size_t NodeParam_USemCached::USemKey::operator()(const USemKey& k) const noexcept {
@@ -79,27 +80,27 @@ namespace rev::gltf {
 		}
 		return itr->second;
 	}
-	void NodeParam_USemCached::exportSemantic(UniformEnt& u, const SName& uname, const JointId id, const USemantic sem) const {
+	void NodeParam_USemCached::exportSemantic(ISemanticSet& s, const JointId id, const USemantic sem) const {
 		if(sem == USemantic::View) {
 			// Transforms from world to view coordinates using the active camera node
-			u.setUniform(uname, _view, false);
+			s.set(_view, false);
 			return;
 		}
 		if(sem == USemantic::Projection) {
 			// Transforms from view to clip coordinates using the active camera node
-			u.setUniform(uname, _proj, false);
+			s.set(_proj, false);
 			return;
 		}
 
 		const auto m = _calcMat(id, sem);
 		if(sem == USemantic::ModelInverseTranspose ||
 			sem == USemantic::ModelViewInverseTranspose)
-			u.setUniform(uname, frea::Mat3(m.convert<3,3>()), false);
+			s.set(frea::Mat3(m.convert<3,3>()), false);
 		else
-			u.setUniform(uname, frea::Mat4(m), false);
+			s.set(frea::Mat4(m), false);
 	}
-	void NodeParam_USemCached::exportViewport(UniformEnt& u, const SName& uname) const {
-		u.setUniform(uname, _viewport);
+	void NodeParam_USemCached::exportViewport(ISemanticSet& s) const {
+		s.set(_viewport);
 	}
 	dc::Mat4 NodeParam_USemCached::getLocal(const JointId id) const {
 		return _np.getLocal(id);

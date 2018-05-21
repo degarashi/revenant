@@ -4,6 +4,7 @@
 #include "uniform_ent.hpp"
 #include "../dc/node.hpp"
 #include "gltf/node_cached.hpp"
+#include "semantic_if.hpp"
 
 namespace rev::gltf {
 	// ------------ GLTFMesh ------------
@@ -21,11 +22,36 @@ namespace rev::gltf {
 	}
 	void GLTFMesh::draw(IEffect& e, const dc::NodeParam& np) const {
 		e.setTechnique(_tech);
-		auto& npu = dynamic_cast<const NodeParam_USem&>(np);
-		auto& u = e.refUniformEnt();
 		{
+			struct SemanticSet : ISemanticSet {
+				UniformEnt&		u;
+				GLint			id;
+
+				SemanticSet(UniformEnt& u):
+					u(u)
+				{}
+				void set(const frea::Vec4& v) override {
+					u.setUniformById(id, v);
+				}
+				void set(const frea::Mat3& m, const bool t) override {
+					u.setUniformById(id, m, t);
+				}
+				void set(const frea::Mat4& m, const bool t) override {
+					u.setUniformById(id, m, t);
+				}
+				void set(const std::vector<frea::Mat4>& mv, const bool) override {
+					u.setUniformById(id, mv);
+				}
+			};
+			auto& u = e.refUniformEnt();
+			SemanticSet sem(u);
+			auto& prog = u.getProgram();
+			auto& npu = dynamic_cast<const NodeParam_USem&>(np);
 			for(auto& rt : *_rtParams) {
-				rt.second->exportUniform(u, rt.first, _jointId, _bind, npu);
+				if(const auto id = prog.getUniformId(rt.first)) {
+					sem.id = *id;
+					rt.second->exportUniform(sem, _jointId, _bind, npu);
+				}
 			}
 		}
 		e.setPrimitive(_primitive);
