@@ -22,7 +22,7 @@ namespace rev::gltf {
 		public:
 			GLTFMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, dc::JointId id);
 			GLTFMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::SkinBindSet_SP& bind);
-			void draw(IEffect& e, const dc::NodeParam& np) const override;
+			void draw(IEffect& e, const dc::IQueryMatrix& qm) const override;
 			HTech getTech() const override;
 			DEF_DEBUGGUI_SUMMARYSTR
 			DEF_DEBUGGUI_PROP

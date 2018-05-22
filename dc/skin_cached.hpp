@@ -3,7 +3,7 @@
 #include "../cache.hpp"
 
 namespace rev::dc {
-	class NodeParam_cached : public NodeParam {
+	class QueryMatrix_skincached : public IQueryMatrix {
 		private:
 			struct KeyS {
 				SkinBind	bind;
@@ -14,12 +14,12 @@ namespace rev::dc {
 			};
 			mutable Cache<KeyS, Mat4, KeyS>			_single;
 			mutable Cache<SkinBindSet_SP, Mat4V>	_vec;
-			const NodeParam&	_np;
+			const IQueryMatrix&	_qm;
 			JointId				_jointId;
 			Mat4				_node_m;
 		public:
-			NodeParam_cached(const NodeParam& np);
-			NodeParam_cached(const NodeParam_cached& np);
+			QueryMatrix_skincached(const IQueryMatrix& qm);
+			QueryMatrix_skincached(const QueryMatrix_skincached& qm);
 			void setNodeJointId(JointId id);
 			Mat4 getLocal(JointId id) const override;
 			Mat4 getGlobal(JointId id) const override;

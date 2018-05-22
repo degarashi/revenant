@@ -6,7 +6,7 @@
 #include "../debuggui_if.hpp"
 
 namespace rev::gltf {
-	struct NodeParam_USem;
+	struct IQueryMatrix_USem;
 	struct ISemanticSet;
 	struct RTUniform :
 		IResolvable,
@@ -17,7 +17,7 @@ namespace rev::gltf {
 					ISemanticSet& s,
 					dc::JointId currentId,
 					const dc::SkinBindSet_SP& bind,
-					const NodeParam_USem& np
+					const IQueryMatrix_USem& qm
 				) const = 0;
 		void resolve(const ITagQuery&) override {}
 	};

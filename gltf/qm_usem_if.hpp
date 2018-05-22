@@ -6,7 +6,7 @@ namespace rev::gltf {
 	using JointId = dc::JointId;
 	struct ISemanticSet;
 
-	struct NodeParam_USem : dc::NodeParam {
+	struct IQueryMatrix_USem : dc::IQueryMatrix {
 		virtual void exportSemantic(ISemanticSet& s, JointId id, USemantic sem) const = 0;
 		virtual void exportViewport(ISemanticSet& s) const = 0;
 	};

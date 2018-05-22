@@ -44,7 +44,7 @@ namespace rev::dc {
 			DEF_DEBUGGUI_ALL
 	};
 	class TfRoot :
-		public NodeParam,
+		public IQueryMatrix,
 		public IJointQuery,
 		public IDebugGui
 	{

@@ -7,7 +7,7 @@
 #include "../gl_vstate.hpp"
 #include "../camera3d.hpp"
 #include "../ovr_functor.hpp"
-#include "gltf/node_cached_if.hpp"
+#include "gltf/qm_usem_if.hpp"
 #include "semantic_if.hpp"
 
 namespace rev::gltf {
@@ -166,24 +166,24 @@ namespace rev::gltf {
 		semantic = *U_Semantic::FromString(sem);
 	}
 	namespace {
-		void ExportSemantic(ISemanticSet& s, const dc::JointId id, const NodeParam_USem& np, const USemantic semantic) {
+		void ExportSemantic(ISemanticSet& s, const dc::JointId id, const IQueryMatrix_USem& qm, const USemantic semantic) {
 			if(semantic == USemantic::Viewport)
-				np.exportViewport(s);
+				qm.exportViewport(s);
 			else
-				np.exportSemantic(s, id, semantic);
+				qm.exportSemantic(s, id, semantic);
 		}
 	}
-	void Technique::UnifParam_Sem::exportUniform(ISemanticSet& s, const dc::JointId currentId, const dc::SkinBindSet_SP&, const NodeParam_USem& np) const {
-		ExportSemantic(s, currentId, np, semantic);
+	void Technique::UnifParam_Sem::exportUniform(ISemanticSet& s, const dc::JointId currentId, const dc::SkinBindSet_SP&, const IQueryMatrix_USem& qm) const {
+		ExportSemantic(s, currentId, qm, semantic);
 	}
 
 	// ---------------------------- Technique::UnifParam_JointMat ----------------------------
 	Technique::UnifParam_JointMat::UnifParam_JointMat(const JValue& v):
 		count(Required<Integer>(v, "count"))
 	{}
-	void Technique::UnifParam_JointMat::exportUniform(ISemanticSet& s, const dc::JointId currentId, const dc::SkinBindSet_SP& bind, const NodeParam_USem& np) const {
+	void Technique::UnifParam_JointMat::exportUniform(ISemanticSet& s, const dc::JointId currentId, const dc::SkinBindSet_SP& bind, const IQueryMatrix_USem& qm) const {
 		Assert0(bind && bind->bind.size() == count);
-		s.set(np.getJointMat(np.getGlobal(currentId), bind), true);
+		s.set(qm.getJointMat(qm.getGlobal(currentId), bind), true);
 	}
 
 	// ---------------------------- Technique::UnifParam_NodeSem ----------------------------
@@ -197,8 +197,8 @@ namespace rev::gltf {
 	void Technique::UnifParam_NodeSem::resolve(const ITagQuery& q) {
 		node.resolve(q);
 	}
-	void Technique::UnifParam_NodeSem::exportUniform(ISemanticSet& s, const dc::JointId, const dc::SkinBindSet_SP&, const NodeParam_USem& np) const {
-		ExportSemantic(s, node.data()->jointId, np, semantic);
+	void Technique::UnifParam_NodeSem::exportUniform(ISemanticSet& s, const dc::JointId, const dc::SkinBindSet_SP&, const IQueryMatrix_USem& qm) const {
+		ExportSemantic(s, node.data()->jointId, qm, semantic);
 	}
 	// ---------------------------- Technique::State ----------------------------
 	Technique::State::State(const JValue& v) {

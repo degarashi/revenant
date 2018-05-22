@@ -22,8 +22,8 @@ namespace rev::dc {
 	using SkinBindSet_SP = std::shared_ptr<SkinBindSet>;
 
 	using Mat4V = std::vector<Mat4>;
-	struct NodeParam {
-		virtual ~NodeParam() {}
+	struct IQueryMatrix {
+		virtual ~IQueryMatrix() {}
 		virtual Mat4 getLocal(JointId id) const = 0;
 		virtual Mat4 getGlobal(JointId id) const = 0;
 		virtual Mat4 getLocal(const SName& name) const = 0;

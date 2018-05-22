@@ -1,18 +1,18 @@
-#include "node_cached.hpp"
+#include "qm_usemcached.hpp"
 #include "../camera3d.hpp"
 #include "../uniform_ent.hpp"
 #include "semantic_if.hpp"
 
 namespace rev::gltf {
-	std::size_t NodeParam_USemCached::USemKey::operator()(const USemKey& k) const noexcept {
+	std::size_t QueryMatrix_USemCached::USemKey::operator()(const USemKey& k) const noexcept {
 		return std::hash<dc::JointId>()(k.jointId) + std::hash<USemantic::e>()(k.sem);
 	}
-	bool NodeParam_USemCached::USemKey::operator == (const USemKey& k) const noexcept {
+	bool QueryMatrix_USemCached::USemKey::operator == (const USemKey& k) const noexcept {
 		return jointId == k.jointId &&
 				sem == k.sem;
 	}
-	NodeParam_USemCached::NodeParam_USemCached(const HCam3& cam, const lubee::RectF& vp, dc::NodeParam& np):
-		_np(np)
+	QueryMatrix_USemCached::QueryMatrix_USemCached(const HCam3& cam, const lubee::RectF& vp, dc::IQueryMatrix& qm):
+		_qm(qm)
 	{
 		_camera = cam;
 		_viewport = Vec4{vp.x0, vp.y0, vp.width(), vp.height()};
@@ -20,7 +20,7 @@ namespace rev::gltf {
 		_proj = Mat4::Scaling({1,1,-1,1}) * _camera->getProj();
 		_viewProj = _view * _proj;
 	}
-	NodeParam_USemCached::Mat4 NodeParam_USemCached::_calcMat(const JointId id, const USemantic sem) const {
+	QueryMatrix_USemCached::Mat4 QueryMatrix_USemCached::_calcMat(const JointId id, const USemantic sem) const {
 		if(sem == USemantic::View) {
 			return _view;
 		}
@@ -28,8 +28,8 @@ namespace rev::gltf {
 			return _proj;
 		}
 		const auto makeMat = [this, id, sem]() -> Mat4 {
-			const auto local = [this, id]() -> Mat4 { return _np.getLocal(id); };
-			const auto global = [this, id]() -> Mat4 { return _np.getGlobal(id); };
+			const auto local = [this, id]() -> Mat4 { return _qm.getLocal(id); };
+			const auto global = [this, id]() -> Mat4 { return _qm.getGlobal(id); };
 			switch(sem) {
 				case USemantic::Local:
 					// This is the node's matrix property
@@ -80,7 +80,7 @@ namespace rev::gltf {
 		}
 		return itr->second;
 	}
-	void NodeParam_USemCached::exportSemantic(ISemanticSet& s, const JointId id, const USemantic sem) const {
+	void QueryMatrix_USemCached::exportSemantic(ISemanticSet& s, const JointId id, const USemantic sem) const {
 		if(sem == USemantic::View) {
 			// Transforms from world to view coordinates using the active camera node
 			s.set(_view, false);
@@ -99,22 +99,22 @@ namespace rev::gltf {
 		else
 			s.set(frea::Mat4(m), false);
 	}
-	void NodeParam_USemCached::exportViewport(ISemanticSet& s) const {
+	void QueryMatrix_USemCached::exportViewport(ISemanticSet& s) const {
 		s.set(_viewport);
 	}
-	dc::Mat4 NodeParam_USemCached::getLocal(const JointId id) const {
-		return _np.getLocal(id);
+	dc::Mat4 QueryMatrix_USemCached::getLocal(const JointId id) const {
+		return _qm.getLocal(id);
 	}
-	dc::Mat4 NodeParam_USemCached::getGlobal(const JointId id) const  {
-		return _np.getGlobal(id);
+	dc::Mat4 QueryMatrix_USemCached::getGlobal(const JointId id) const  {
+		return _qm.getGlobal(id);
 	}
-	dc::Mat4 NodeParam_USemCached::getLocal(const dc::SName& name) const  {
-		return _np.getLocal(name);
+	dc::Mat4 QueryMatrix_USemCached::getLocal(const dc::SName& name) const  {
+		return _qm.getLocal(name);
 	}
-	dc::Mat4 NodeParam_USemCached::getGlobal(const dc::SName& name) const  {
-		return _np.getGlobal(name);
+	dc::Mat4 QueryMatrix_USemCached::getGlobal(const dc::SName& name) const  {
+		return _qm.getGlobal(name);
 	}
-	const dc::Mat4V& NodeParam_USemCached::getJointMat(const dc::Mat4& node_m, const dc::SkinBindSet_SP& bind) const {
-		return _np.getJointMat(node_m, bind);
+	const dc::Mat4V& QueryMatrix_USemCached::getJointMat(const dc::Mat4& node_m, const dc::SkinBindSet_SP& bind) const {
+		return _qm.getJointMat(node_m, bind);
 	}
 }

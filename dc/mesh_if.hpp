@@ -6,12 +6,12 @@ namespace rev {
 	class IEffect;
 }
 namespace rev::dc {
-	struct NodeParam;
+	struct IQueryMatrix;
 	struct IMesh :
 		IDebugGui
 	{
 		virtual ~IMesh() {}
-		virtual void draw(IEffect& e, const NodeParam& np) const = 0;
+		virtual void draw(IEffect& e, const IQueryMatrix& qm) const = 0;
 		virtual HTech getTech() const = 0;
 	};
 }

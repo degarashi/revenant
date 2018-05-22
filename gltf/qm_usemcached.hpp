@@ -1,15 +1,15 @@
 #pragma once
 #include "../handle/camera.hpp"
 #include "lubee/rect.hpp"
-#include "node_cached_if.hpp"
-#include "../dc/node_cached.hpp"
+#include "qm_usem_if.hpp"
+#include "../dc/skin_cached.hpp"
 
 namespace rev::gltf {
-	class NodeParam_USemCached :
-		public NodeParam_USem
+	class QueryMatrix_USemCached :
+		public IQueryMatrix_USem
 	{
 		private:
-			dc::NodeParam&		_np;
+			dc::IQueryMatrix&		_qm;
 
 			using Mat4 = frea::Mat4;
 			using Vec4 = frea::Vec4;
@@ -34,7 +34,7 @@ namespace rev::gltf {
 			Mat4 _calcMat(JointId id, USemantic sem) const;
 
 		public:
-			NodeParam_USemCached(const HCam3& cam, const lubee::RectF& vp, dc::NodeParam& np);
+			QueryMatrix_USemCached(const HCam3& cam, const lubee::RectF& vp, dc::IQueryMatrix& qm);
 
 			void exportSemantic(ISemanticSet& s, JointId id, USemantic sem) const override;
 			void exportViewport(ISemanticSet& s) const override;

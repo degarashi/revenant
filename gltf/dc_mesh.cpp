@@ -3,7 +3,7 @@
 #include "glx_if.hpp"
 #include "uniform_ent.hpp"
 #include "../dc/node.hpp"
-#include "gltf/node_cached.hpp"
+#include "gltf/qm_usemcached.hpp"
 #include "semantic_if.hpp"
 #include "../tech_if.hpp"
 
@@ -32,7 +32,7 @@ namespace rev::gltf {
 	{
 		_bind = bind;
 	}
-	void GLTFMesh::draw(IEffect& e, const dc::NodeParam& np) const {
+	void GLTFMesh::draw(IEffect& e, const dc::IQueryMatrix& qm) const {
 		e.setTechnique(_tech);
 		auto& rtp = *_rtParams;
 		if(!rtp.empty()) {
@@ -57,13 +57,13 @@ namespace rev::gltf {
 				}
 			};
 			SemanticSet sem(e.refUniformEnt());
-			auto& npu = dynamic_cast<const NodeParam_USem&>(np);
+			auto& qmu = dynamic_cast<const IQueryMatrix_USem&>(qm);
 			const auto rtpLen = rtp.size();
 			for(std::size_t i=0 ; i<rtpLen ; i++) {
 				const auto uid = _uId[i];
 				if(uid >= 0) {
 					sem.id = uid;
-					rtp[i].second->exportUniform(sem, _jointId, _bind, npu);
+					rtp[i].second->exportUniform(sem, _jointId, _bind, qmu);
 				}
 			}
 		}
