@@ -11,7 +11,7 @@ namespace rev::gltf {
 		return jointId == k.jointId &&
 				sem == k.sem;
 	}
-	QueryMatrix_USemCached::QueryMatrix_USemCached(const HCam3& cam, const lubee::RectF& vp, dc::IQueryMatrix& qm):
+	QueryMatrix_USemCached::QueryMatrix_USemCached(const HCam3& cam, const lubee::RectF& vp, const dc::IQueryMatrix& qm):
 		_qm(qm)
 	{
 		_camera = cam;

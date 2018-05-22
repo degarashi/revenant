@@ -9,7 +9,7 @@ namespace rev::gltf {
 		public IQueryMatrix_USem
 	{
 		private:
-			dc::IQueryMatrix&		_qm;
+			const dc::IQueryMatrix&		_qm;
 
 			using Mat4 = frea::Mat4;
 			using Vec4 = frea::Vec4;
@@ -34,7 +34,7 @@ namespace rev::gltf {
 			Mat4 _calcMat(JointId id, USemantic sem) const;
 
 		public:
-			QueryMatrix_USemCached(const HCam3& cam, const lubee::RectF& vp, dc::IQueryMatrix& qm);
+			QueryMatrix_USemCached(const HCam3& cam, const lubee::RectF& vp, const dc::IQueryMatrix& qm);
 
 			void exportSemantic(ISemanticSet& s, JointId id, USemantic sem) const override;
 			void exportViewport(ISemanticSet& s) const override;
