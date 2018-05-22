@@ -2,7 +2,6 @@
 #include "../handle/camera.hpp"
 #include "lubee/rect.hpp"
 #include "qm_usem_if.hpp"
-#include "../dc/skin_cached.hpp"
 
 namespace rev::gltf {
 	class QueryMatrix_USemCached :

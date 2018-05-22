@@ -6,7 +6,6 @@
 #include "../u_matrix3d.hpp"
 #include "../glx_if.hpp"
 #include "../fbrect.hpp"
-#include "../dc/skin_cached.hpp"
 #include "gltf/visitor_model.hpp"
 #include "gltf/scene.hpp"
 #include "frea/vector.hpp"
@@ -16,19 +15,17 @@ namespace rev::gltf {
 		_mesh(mesh),
 		_skinmesh(skinmesh),
 		_tf(tf),
-		_qms(*_tf)
+		_qm(*_tf)
 	{}
 	void GLTFModel::draw(IEffect& e) const {
 		const auto cam = dynamic_cast<const U_Matrix3D&>(e).getCamera();
 		const auto vp = e.getViewport().resolve([](){ return mgr_info.getScreenSize(); });
-		QueryMatrix_USemCached qmc(cam, vp, _qms);
+		QueryMatrix_USemCached qmc(cam, vp, _qm.prepareInterface());
 
 		for(auto& m : _mesh) {
 			m->draw(e, qmc);
 		}
 		for(auto& m : _skinmesh) {
-			auto& gm = static_cast<const GLTFMesh&>(*m);
-			_qms.setNodeJointId(gm._jointId);
 			m->draw(e, qmc);
 		}
 	}
