@@ -71,8 +71,14 @@ namespace rev::dc {
 	TfNode& TfRoot::query(const SName& name) const {
 		return *const_cast<TfNode*>(find(name));
 	}
-	const Mat4V& TfRoot::getJointMat(const Mat4&, const SkinBindSet_SP&) const {
-		Assert(false, "invaid function called");
-		throw 0;
+	const Mat4V& TfRoot::getJointMat(const Mat4& node_m, const SkinBindSet_SP& bind) const {
+		const auto len = bind->bind.size();
+		_jointMat.resize(len);
+		auto node_t = node_m.transposition();
+		for(std::size_t i=0 ; i<len ; i++) {
+			auto& b = bind->bind[i];
+			_jointMat[i] = node_t * getGlobal(b.jointName).transposition() * b.invmat * bind->bs_m;
+		}
+		return _jointMat;
 	}
 }

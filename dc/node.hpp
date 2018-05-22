@@ -59,6 +59,7 @@ namespace rev::dc {
 				((IdToNode)(IdMap)(Node))
 			RFLAG_DEFINE(TfRoot, SEQ)
 			RFLAG_GETMETHOD_DEFINE(SEQ)
+			mutable Mat4V _jointMat;
 		public:
 			RFLAG_REFMETHOD_DEFINE(SEQ)
 			RFLAG_SETMETHOD_DEFINE(SEQ)
