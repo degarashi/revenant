@@ -1,5 +1,6 @@
 #pragma once
 #include "../dc/model_if.hpp"
+#include "../dc/skin_cached.hpp"
 #include "gltf/dc_common.hpp"
 
 namespace rev::gltf {
@@ -10,6 +11,7 @@ namespace rev::gltf {
 			MeshV		_mesh,
 						_skinmesh;
 			HTf			_tf;
+			mutable dc::QueryMatrix_skincached _qms;
 		public:
 			static HMdl FromScene(const Scene& s);
 			GLTFModel(const MeshV& mesh, const MeshV& skinmesh, const HTf& tf);
