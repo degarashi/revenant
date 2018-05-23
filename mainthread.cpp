@@ -27,17 +27,19 @@ namespace rev {
 		auto lk = _info.lock();
 		lk->accumUpd = lk->accumDraw = 0;
 	}
-	Timepoint MainThread::_WaitForNextInterval(const Timepoint prevtime, const Duration interval) {
+	Timepoint MainThread::_WaitForNextInterval(const Timepoint prevtime, const Duration interval, const bool spinwait) {
 		RevProfile(Sleep);
 		auto ntp = prevtime + interval;
 		const auto tp = Clock::now();
 		if(ntp <= tp)
 			ntp = tp;
 		else {
-			const auto dur = ntp - tp;
-			if(dur >= Microseconds(1000)) {
-				// 時間に余裕があるならスリープをかける
-				D_SDLWarn(SDL_Delay, std::chrono::duration_cast<Milliseconds>(dur).count() - 1);
+			if(!spinwait) {
+				const auto dur = ntp - tp;
+				if(dur >= Microseconds(1000)) {
+					// 時間に余裕があるならスリープをかける
+					D_SDLWarn(SDL_Delay, std::chrono::duration_cast<Milliseconds>(dur).count() - 1);
+				}
 			}
 			// スピンウェイト
 			while(Clock::now() < ntp);
@@ -219,7 +221,8 @@ namespace rev {
 						RevEndProfile(Aux);
 						const auto prev2 = prevtime;
 						// 次のフレーム開始時刻を待つ
-						prevtime = _WaitForNextInterval(prevtime, Microseconds(16666));
+						const bool spinwait = getInfo()->spinwait;
+						prevtime = _WaitForNextInterval(prevtime, Microseconds(16666), spinwait);
 						// プロファイラのフレーム切り替え
 						if(profiler.checkIntervalSwitch()) {
 							prof::PreserveThreadInfo();

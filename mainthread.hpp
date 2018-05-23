@@ -40,6 +40,7 @@ namespace rev {
 			struct Info {
 				uint64_t	accumUpd;	//!< アップデート累積カウンタ
 				uint64_t	accumDraw;	//!< 描画フレーム累積カウンタ
+				bool		spinwait = false;	//!< true時はスレッドのスリープを行わずスピンロックで待機
 			};
 			SpinLock<Info>		_info;
 
@@ -72,7 +73,7 @@ namespace rev {
 			static void _Restore(Manager& m, std::istream& is);
 			void _setupFxNotify(FNotify& ntf);
 			void _checkFxReload(FNotify& ntf);
-			static Timepoint _WaitForNextInterval(Timepoint prevtime, Duration interval);
+			static Timepoint _WaitForNextInterval(Timepoint prevtime, Duration interval, bool spinwait);
 			bool _updateFrame(MainProc* mp, DrawThread& dth, Handler& drawHandler, Duration delta);
 		protected:
 			void runL(const Looper_SP& guiLooper) override;
