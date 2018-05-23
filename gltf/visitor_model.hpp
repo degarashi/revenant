@@ -16,7 +16,7 @@ namespace rev::gltf {
 			void upNode() override;
 			void addNode(const HTfNode& node) override;
 			void addMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, dc::JointId id) override;
-			void addSkinMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::SkinBindSet_SP& bind) override;
+			void addSkinMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const SkinBindSet_SP& bind) override;
 			void addCamera(const HCam3& c) override;
 
 			HMdl result() const;

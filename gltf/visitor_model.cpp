@@ -22,7 +22,7 @@ namespace rev::gltf {
 	void Visitor_Model::addMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::JointId id) {
 		_mesh.emplace_back(new GLTFMesh(p, t, userName, rt, id));
 	}
-	void Visitor_Model::addSkinMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::SkinBindSet_SP& bind) {
+	void Visitor_Model::addSkinMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const SkinBindSet_SP& bind) {
 		_skinmesh.emplace_back(new GLTFMesh(p, t, userName, rt, bind));
 	}
 	void Visitor_Model::addCamera(const HCam3&) {}

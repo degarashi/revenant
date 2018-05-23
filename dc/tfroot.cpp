@@ -2,14 +2,6 @@
 #include "lubee/hash_combine.hpp"
 
 namespace rev::dc {
-	bool SkinBind::operator == (const SkinBind& bind) const noexcept {
-		return jointName == bind.jointName &&
-			invmat == bind.invmat;
-	}
-	std::size_t SkinBind::operator()(const SkinBind& s) const noexcept {
-		return lubee::hash_combine_implicit(s.jointName, s.invmat);
-	}
-
 	bool TfRoot::_refresh(NameToNode::value_t& dst, NameToNode*) const {
 		dst.clear();
 		const auto& node = getNode();
@@ -70,15 +62,5 @@ namespace rev::dc {
 	}
 	TfNode& TfRoot::query(const SName& name) const {
 		return *const_cast<TfNode*>(find(name));
-	}
-	const Mat4V& TfRoot::getJointMat(const Mat4& node_m, const SkinBindSet_SP& bind) const {
-		const auto len = bind->bind.size();
-		_jointMat.resize(len);
-		auto node_t = node_m.transposition();
-		for(std::size_t i=0 ; i<len ; i++) {
-			auto& b = bind->bind[i];
-			_jointMat[i] = node_t * getGlobal(b.jointName).transposition() * b.invmat * bind->bs_m;
-		}
-		return _jointMat;
 	}
 }

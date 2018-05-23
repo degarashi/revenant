@@ -16,7 +16,7 @@ namespace rev::gltf {
 		virtual void exportUniform(
 					ISemanticSet& s,
 					dc::JointId currentId,
-					const dc::SkinBindSet_SP& bind,
+					const SkinBindSet_SP& bind,
 					const IQueryMatrix_USem& qm
 				) const = 0;
 		void resolve(const ITagQuery&) override {}

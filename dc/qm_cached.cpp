@@ -7,19 +7,14 @@ namespace rev::dc {
 	const Mat4& QMCached::IGet::get() const {
 		D_Assert0(false); throw 0;
 	}
-	const Mat4V& QMCached::IGet::getJointMat() const {
-		D_Assert0(false); throw 0;
-	}
 	bool QMCached::IGet::operator == (const QMCached::IGet& g) const noexcept {
 		const auto &typ0 = typeid(*this),
 					&typ1 = typeid(g);
 		if(typ0 == typ1) {
 			if(typ0 == typeid(GetById)) {
 				return static_cast<const GetById&>(*this) == static_cast<const GetById&>(g);
-			} else if(typ0 == typeid(GetByName)) {
-				return static_cast<const GetByName&>(*this) == static_cast<const GetByName&>(g);
 			} else {
-				return static_cast<const GetJointMat&>(*this) == static_cast<const GetJointMat&>(g);
+				return static_cast<const GetByName&>(*this) == static_cast<const GetByName&>(g);
 			}
 		}
 		return false;
@@ -59,24 +54,6 @@ namespace rev::dc {
 		return name==g.name && local==g.local;
 	}
 
-	// ------------------- QMCached::GetJointMat -------------------
-	QMCached::GetJointMat::GetJointMat(const Mat4& m, const SkinBindSet_SP& bind):
-		node_m(m),
-		bind(bind)
-	{}
-	void QMCached::GetJointMat::refresh(const IQueryMatrix& q) {
-		result = q.getJointMat(node_m, bind);
-	}
-	const Mat4V& QMCached::GetJointMat::getJointMat() const {
-		return result;
-	}
-	std::size_t QMCached::GetJointMat::getHash() const noexcept {
-		return lubee::hash_combine_implicit(node_m, bind);
-	}
-	bool QMCached::GetJointMat::operator == (const GetJointMat& g) const noexcept {
-		return node_m==g.node_m && bind==g.bind;
-	}
-
 	// ------------------- QMCached::Hash -------------------
 	std::size_t QMCached::Hash::operator()(const IGet* g) const noexcept {
 		return g->getHash();
@@ -107,10 +84,6 @@ namespace rev::dc {
 	}
 	Mat4 QMCached::CacheUse::getGlobal(const SName&) const {
 		return _getMat4();
-	}
-	const Mat4V& QMCached::CacheUse::getJointMat(const Mat4&, const SkinBindSet_SP&) const {
-		D_Assert0(_cursor < _cache.size());
-		return _cache[_cursor++]->getJointMat();
 	}
 
 	// ------------------- QMCached -------------------
@@ -160,9 +133,5 @@ namespace rev::dc {
 	Mat4 QMCached::getGlobal(const SName& name) const {
 		_register(GetByName(name, false));
 		return _source.getGlobal(name);
-	}
-	const Mat4V& QMCached::getJointMat(const Mat4& node_m, const SkinBindSet_SP& bind) const {
-		_register(GetJointMat(node_m, bind));
-		return _source.getJointMat(node_m, bind);
 	}
 }

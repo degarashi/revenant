@@ -27,7 +27,7 @@ namespace rev::gltf {
 				_uId[i] = -1;
 		}
 	}
-	GLTFMesh::GLTFMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::SkinBindSet_SP& bind):
+	GLTFMesh::GLTFMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const SkinBindSet_SP& bind):
 		GLTFMesh(p, t, userName, rt, 0)
 	{
 		_bind = bind;

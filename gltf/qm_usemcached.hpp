@@ -31,17 +31,18 @@ namespace rev::gltf {
 			// Viewport
 			Vec4			_viewport;
 			Mat4 _calcMat(JointId id, USemantic sem) const;
+			mutable Mat4V _jointMat;
 
 		public:
 			QueryMatrix_USemCached(const HCam3& cam, const lubee::RectF& vp, const dc::IQueryMatrix& qm);
 
 			void exportSemantic(ISemanticSet& s, JointId id, USemantic sem) const override;
 			void exportViewport(ISemanticSet& s) const override;
+			const Mat4V& getJointMat(const Mat4& node_m, const SkinBindSet_SP& bind) const override;
 
 			dc::Mat4 getLocal(JointId id) const override;
 			dc::Mat4 getGlobal(JointId id) const override;
 			dc::Mat4 getLocal(const dc::SName& name) const override;
 			dc::Mat4 getGlobal(const dc::SName& name) const override;
-			const dc::Mat4V& getJointMat(const dc::Mat4& node_m, const dc::SkinBindSet_SP& bind) const override;
 	};
 }

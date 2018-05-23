@@ -1,5 +1,6 @@
 #include "gltf/skin.hpp"
 #include "gltf/accessor.hpp"
+#include "gltf/dc_common.hpp"
 
 namespace rev::gltf {
 	namespace {
@@ -25,9 +26,9 @@ namespace rev::gltf {
 		invBindMat.resolve(q);
 	}
 
-	const dc::SkinBindSet_SP& Skin::getBind() const {
+	const SkinBindSet_SP& Skin::getBind() const {
 		if(!bind_cached) {
-			bind_cached = std::make_shared<dc::SkinBindSet>();
+			bind_cached = std::make_shared<SkinBindSet>();
 			auto& bc = *bind_cached;
 			const int n = jointName.size();
 			bc.bind.resize(n);

@@ -59,7 +59,6 @@ namespace rev::dc {
 				((IdToNode)(IdMap)(Node))
 			RFLAG_DEFINE(TfRoot, SEQ)
 			RFLAG_GETMETHOD_DEFINE(SEQ)
-			mutable Mat4V _jointMat;
 		public:
 			RFLAG_REFMETHOD_DEFINE(SEQ)
 			RFLAG_SETMETHOD_DEFINE(SEQ)
@@ -71,7 +70,6 @@ namespace rev::dc {
 			Mat4 getGlobal(JointId id) const override;
 			Mat4 getLocal(const SName& name) const override;
 			Mat4 getGlobal(const SName& name) const override;
-			const Mat4V& getJointMat(const Mat4& node_m, const SkinBindSet_SP& bind) const override;
 
 			TfNode& query(JointId id) const override;
 			TfNode& query(const SName& name) const override;

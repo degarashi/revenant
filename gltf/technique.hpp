@@ -40,7 +40,7 @@ namespace rev::gltf {
 			// count == 1
 
 			UnifParam_Sem(const JValue& v);
-			void exportUniform(ISemanticSet& s, dc::JointId currentId, const dc::SkinBindSet_SP& bind, const IQueryMatrix_USem& qmu) const override;
+			void exportUniform(ISemanticSet& s, dc::JointId currentId, const SkinBindSet_SP& bind, const IQueryMatrix_USem& qmu) const override;
 			DEF_DEBUGGUI_NAME
 			DEF_DEBUGGUI_PROP
 		};
@@ -49,7 +49,7 @@ namespace rev::gltf {
 			std::size_t		count;
 
 			UnifParam_JointMat(const JValue& v);
-			void exportUniform(ISemanticSet& s, dc::JointId currentId, const dc::SkinBindSet_SP& bind, const IQueryMatrix_USem& qmu) const override;
+			void exportUniform(ISemanticSet& s, dc::JointId currentId, const SkinBindSet_SP& bind, const IQueryMatrix_USem& qmu) const override;
 			DEF_DEBUGGUI_NAME
 			DEF_DEBUGGUI_PROP
 		};
@@ -61,7 +61,7 @@ namespace rev::gltf {
 			// count == 1
 
 			UnifParam_NodeSem(const JValue& v);
-			void exportUniform(ISemanticSet& s, dc::JointId currentId, const dc::SkinBindSet_SP& bind, const IQueryMatrix_USem& qmu) const override;
+			void exportUniform(ISemanticSet& s, dc::JointId currentId, const SkinBindSet_SP& bind, const IQueryMatrix_USem& qmu) const override;
 			void resolve(const ITagQuery& q) override;
 			DEF_DEBUGGUI_NAME
 			DEF_DEBUGGUI_PROP

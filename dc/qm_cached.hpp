@@ -8,7 +8,6 @@ namespace rev::dc {
 				virtual ~IGet();
 				virtual void refresh(const IQueryMatrix& q) = 0;
 				virtual const Mat4& get() const;
-				virtual const Mat4V& getJointMat() const;
 				virtual std::size_t getHash() const noexcept = 0;
 				bool operator == (const IGet& g) const noexcept;
 			};
@@ -33,17 +32,6 @@ namespace rev::dc {
 				const Mat4& get() const override;
 				std::size_t getHash() const noexcept override;
 				bool operator == (const GetByName& g) const noexcept;
-			};
-			struct GetJointMat : IGet {
-				Mat4			node_m;
-				SkinBindSet_SP	bind;
-				Mat4V			result;
-
-				GetJointMat(const Mat4& m, const SkinBindSet_SP& bind);
-				void refresh(const IQueryMatrix& q) override;
-				const Mat4V& getJointMat() const override;
-				std::size_t getHash() const noexcept override;
-				bool operator == (const GetJointMat& g) const noexcept;
 			};
 			using Get_Up = std::unique_ptr<IGet>;
 
@@ -74,7 +62,6 @@ namespace rev::dc {
 					Mat4 getGlobal(JointId id) const override;
 					Mat4 getLocal(const SName& name) const override;
 					Mat4 getGlobal(const SName& name) const override;
-					const Mat4V& getJointMat(const Mat4& node_m, const SkinBindSet_SP& bind) const override;
 			};
 			CacheUse			_cacheUse;
 			const IQueryMatrix&	_source;
@@ -91,6 +78,5 @@ namespace rev::dc {
 			Mat4 getGlobal(JointId id) const override;
 			Mat4 getLocal(const SName& name) const override;
 			Mat4 getGlobal(const SName& name) const override;
-			const Mat4V& getJointMat(const Mat4& node_m, const SkinBindSet_SP& bind) const override;
 	};
 }

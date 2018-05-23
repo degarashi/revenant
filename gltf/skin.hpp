@@ -5,6 +5,8 @@
 #include "../dc/common.hpp"
 
 namespace rev::gltf {
+	struct SkinBindSet;
+	using SkinBindSet_SP = std::shared_ptr<SkinBindSet>;
 	struct Skin :
 		Resource,
 		IResolvable
@@ -13,12 +15,12 @@ namespace rev::gltf {
 		TagAccessor		invBindMat;
 		SName_V			jointName;
 
-		mutable dc::SkinBindSet_SP	bind_cached;
+		mutable SkinBindSet_SP	bind_cached;
 
 		Skin(const JValue& v);
 		Type getType() const noexcept override;
 		void resolve(const ITagQuery& q) override;
 
-		const dc::SkinBindSet_SP& getBind() const;
+		const SkinBindSet_SP& getBind() const;
 	};
 }
