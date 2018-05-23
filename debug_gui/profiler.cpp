@@ -12,6 +12,7 @@
 #include "spacing.hpp"
 #include "../rev_time.hpp"
 #include "../drawthread.hpp"
+#include "../mainthread.hpp"
 #include <iomanip>
 #include "../dc/pos_sampler.hpp"
 #include "frea/interpolation.hpp"
@@ -159,6 +160,10 @@ namespace rev::debug {
 			ImGui::Checkbox("VSync", &op->vsync);
 		}
 		ImGui::Spacing();
+		{
+			auto op = MainThread::ref().getInfo();
+			ImGui::Checkbox("SpinWait", &op->spinwait);
+		}
 		ImGui::Separator();
 
 		if(prof::IsCapturing())
