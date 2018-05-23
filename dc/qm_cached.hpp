@@ -54,8 +54,10 @@ namespace rev::dc {
 				bool operator()(const IGet* g0, const IGet* g1) const noexcept;
 			};
 			using Cache = std::unordered_map<IGet*, Get_Up, Hash, Equal>;
+			using CacheV = std::vector<Get_Up>;
 			using CachePtrV = std::vector<IGet*>;
 			mutable Cache		_cache;
+			mutable CacheV		_cacheV;
 			mutable CachePtrV	_cachePtr;
 
 			class CacheUse : public IQueryMatrix {

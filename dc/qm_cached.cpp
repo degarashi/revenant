@@ -121,8 +121,13 @@ namespace rev::dc {
 	{}
 	const IQueryMatrix& QMCached::prepareInterface() {
 		if(_initialized) {
-			for(auto& p : _cache)
-				p.second->refresh(_source);
+			if(_cacheV.empty()) {
+				for(auto& c : _cache)
+					_cacheV.emplace_back(std::move(c.second));
+				_cache.clear();
+			}
+			for(auto& p : _cacheV)
+				p->refresh(_source);
 			_cacheUse.resetCursor();
 			return _cacheUse;
 		}
