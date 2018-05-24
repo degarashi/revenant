@@ -29,18 +29,18 @@ namespace rev::dc {
 	}
 
 	frea::Mat4 TfRoot::getLocal(const JointId id) const {
-		return find(id)->getPose().getToWorld().convertI<4,4>(1);
+		return queryJoint(id)->getPose().getToWorld().convertI<4,4>(1);
 	}
 	frea::Mat4 TfRoot::getGlobal(const JointId id) const {
-		return find(id)->getTransform();
+		return queryJoint(id)->getTransform();
 	}
 	frea::Mat4 TfRoot::getLocal(const SName& name) const {
-		return find(name)->getPose().getToWorld().convertI<4,4>(1);
+		return queryJoint(name)->getPose().getToWorld().convertI<4,4>(1);
 	}
 	frea::Mat4 TfRoot::getGlobal(const SName& name) const {
-		return find(name)->getTransform();
+		return queryJoint(name)->getTransform();
 	}
-	const TfNode* TfRoot::find(const JointId id) const {
+	TfNode* TfRoot::queryJoint(const JointId id) const {
 		auto& idton = getIdToNode();
 		const auto itr = idton.find(id);
 		if(itr != idton.end()) {
@@ -48,19 +48,12 @@ namespace rev::dc {
 		}
 		return nullptr;
 	}
-	const TfNode* TfRoot::find(const SName& name) const {
+	TfNode* TfRoot::queryJoint(const SName& name) const {
 		auto& nton = getNameToNode();
 		const auto itr = nton.find(name);
 		if(itr != nton.end()) {
 			return itr->second;
 		}
 		return nullptr;
-	}
-
-	TfNode& TfRoot::query(const JointId id) const {
-		return *const_cast<TfNode*>(find(id));
-	}
-	TfNode& TfRoot::query(const SName& name) const {
-		return *const_cast<TfNode*>(find(name));
 	}
 }

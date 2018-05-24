@@ -50,8 +50,8 @@ namespace rev::dc {
 	{
 		private:
 			using HTfNodeV = std::vector<HTfNode>;
-			using NameMap = std::unordered_map<SName, const TfNode*>;
-			using IdMap = std::unordered_map<JointId, const TfNode*>;
+			using NameMap = std::unordered_map<SName, TfNode*>;
+			using IdMap = std::unordered_map<JointId, TfNode*>;
 
 			#define SEQ \
 				((Node)(HTfNodeV)) \
@@ -63,16 +63,14 @@ namespace rev::dc {
 			RFLAG_REFMETHOD_DEFINE(SEQ)
 			RFLAG_SETMETHOD_DEFINE(SEQ)
 			#undef SEQ
-			const TfNode* find(JointId id) const;
-			const TfNode* find(const SName& name) const;
 
 			Mat4 getLocal(JointId id) const override;
 			Mat4 getGlobal(JointId id) const override;
 			Mat4 getLocal(const SName& name) const override;
 			Mat4 getGlobal(const SName& name) const override;
 
-			TfNode& query(JointId id) const override;
-			TfNode& query(const SName& name) const override;
+			TfNode* queryJoint(JointId id) const override;
+			TfNode* queryJoint(const SName& name) const override;
 
 			DEF_DEBUGGUI_NAME
 			DEF_DEBUGGUI_PROP

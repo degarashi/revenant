@@ -8,8 +8,8 @@ namespace rev::dc {
 	class TfNode;
 	struct IJointQuery {
 		virtual ~IJointQuery() {}
-		virtual TfNode& query(JointId id) const = 0;
-		virtual TfNode& query(const SName& name) const = 0;
+		virtual TfNode* queryJoint(JointId id) const = 0;
+		virtual TfNode* queryJoint(const SName& name) const = 0;
 	};
 	struct IJointAt {
 		virtual ~IJointAt() {}
