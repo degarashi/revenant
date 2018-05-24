@@ -12,6 +12,9 @@ namespace rev::dc {
 		virtual TfNode* queryJoint(const SName& name) const = 0;
 	};
 	struct IJointAt {
+		struct JointNotFound : std::runtime_error {
+			using std::runtime_error::runtime_error;
+		};
 		virtual ~IJointAt() {}
 		virtual TfNode& findJoint(const IJointQuery& q) const = 0;
 	};
