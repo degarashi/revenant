@@ -2,7 +2,7 @@
 #include "beat/pose3d.hpp"
 #include "spine/treenode.hpp"
 #include "../handle/model.hpp"
-#include "common.hpp"
+#include "qm_if.hpp"
 #include "../debuggui_if.hpp"
 #include "jat_if.hpp"
 

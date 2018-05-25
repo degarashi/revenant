@@ -1,5 +1,5 @@
 #pragma once
-#include "common.hpp"
+#include "qm_if.hpp"
 
 namespace rev::dc {
 	// QueryMatrixの呼び出し順が変化しないと仮定するキャッシュ機構
