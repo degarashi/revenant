@@ -20,7 +20,7 @@ namespace rev::gltf {
 		_proj = Mat4::Scaling({1,1,-1,1}) * _camera->getProj();
 		_viewProj = _view * _proj;
 	}
-	QueryMatrix_USemCached::Mat4 QueryMatrix_USemCached::_calcMat(const JointId id, const USemantic sem) const {
+	const QueryMatrix_USemCached::Mat4& QueryMatrix_USemCached::_calcMat(const JointId id, const USemantic sem) const {
 		if(sem == USemantic::View) {
 			return _view;
 		}
@@ -100,12 +100,12 @@ namespace rev::gltf {
 			return;
 		}
 
-		const auto m = _calcMat(id, sem);
+		const auto& m = _calcMat(id, sem);
 		if(sem == USemantic::ModelInverseTranspose ||
 			sem == USemantic::ModelViewInverseTranspose)
 			s.set(frea::Mat3(m.convert<3,3>()), false);
 		else
-			s.set(frea::Mat4(m), false);
+			s.set(m, false);
 	}
 	dc::Mat4 QueryMatrix_USemCached::getLocal(const JointId id) const {
 		return _qm.getLocal(id);

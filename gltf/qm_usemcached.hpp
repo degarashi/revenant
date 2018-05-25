@@ -30,7 +30,7 @@ namespace rev::gltf {
 			// ----------------- for Viewport -----------------
 			// Viewport
 			Vec4			_viewport;
-			Mat4 _calcMat(JointId id, USemantic sem) const;
+			const Mat4& _calcMat(JointId id, USemantic sem) const;
 			mutable Mat4V _jointMat;
 			const Mat4V& _getJointMat(JointId id, const SkinBindSet_SP& bind) const;
 
