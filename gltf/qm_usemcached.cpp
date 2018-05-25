@@ -12,73 +12,61 @@ namespace rev::gltf {
 				sem == k.sem;
 	}
 	QueryMatrix_USemCached::QueryMatrix_USemCached(const HCam3& cam, const lubee::RectF& vp, const dc::IQueryMatrix& qm):
-		_qm(qm)
+		_qm(qm),
+		_matrix(
+			[this](const USemKey& k) -> Mat4 {
+				const auto local = [this, id=k.jointId]() -> Mat4 { return _qm.getLocal(id); };
+				const auto global = [this, id=k.jointId]() -> Mat4 { return _qm.getGlobal(id); };
+				switch(k.sem) {
+					case USemantic::View:
+						return _view;
+					case USemantic::Projection:
+						return _proj;
+					case USemantic::Local:
+						// This is the node's matrix property
+						return local();
+					case USemantic::Model:
+						// Transforms from model to world coordinates using the transform's node and all of its ancestors
+						return global();
+					case USemantic::ModelView:
+						// Combined MODEL and VIEW
+						return global() * _view;
+					case USemantic::ModelViewProjection:
+						// Combined MODEL, VIEW, and PROJECTION
+						return global() * _viewProj ;
+					case USemantic::ModelInverse:
+						// Inverse of MODEL
+						return global().inversion();
+					case USemantic::ViewInverse:
+						// Inverse of VIEW
+						return _view.inversion();
+					case USemantic::ProjectionInverse:
+						// Inverse of PROJECTION
+						return _proj.inversion();
+					case USemantic::ModelViewInverse:
+						// Inverse of MODELVIEW
+						return _matrix.getCache(USemKey{k.jointId, USemantic::ModelView}).inversion();
+					case USemantic::ModelViewProjectionInverse:
+						// Inverse of MODELVIEWPROJECTION
+						return _matrix.getCache(USemKey{k.jointId, USemantic::ModelViewProjection}).inversion();
+					case USemantic::ModelInverseTranspose:
+						// This translates normals in model coordinates to world coordinates
+						return _matrix.getCache(USemKey{k.jointId, USemantic::Model});
+					case USemantic::ModelViewInverseTranspose:
+						// This translates normals in model coordinates to eye coordinates
+						return _matrix.getCache(USemKey{k.jointId, USemantic::ModelView});
+					default:
+						Assert0(false);
+				}
+				return {};
+			}
+		)
 	{
 		_camera = cam;
 		_viewport = Vec4{vp.x0, vp.y0, vp.width(), vp.height()};
 		_view = _camera->getView() * Mat4::Scaling({1,1,-1,1});
 		_proj = Mat4::Scaling({1,1,-1,1}) * _camera->getProj();
 		_viewProj = _view * _proj;
-	}
-	const QueryMatrix_USemCached::Mat4& QueryMatrix_USemCached::_calcMat(const JointId id, const USemantic sem) const {
-		if(sem == USemantic::View) {
-			return _view;
-		}
-		if(sem == USemantic::Projection) {
-			return _proj;
-		}
-		const auto makeMat = [this, id, sem]() -> Mat4 {
-			const auto local = [this, id]() -> Mat4 { return _qm.getLocal(id); };
-			const auto global = [this, id]() -> Mat4 { return _qm.getGlobal(id); };
-			switch(sem) {
-				case USemantic::Local:
-					// This is the node's matrix property
-					return local();
-				case USemantic::Model:
-					// Transforms from model to world coordinates using the transform's node and all of its ancestors
-					return global();
-				case USemantic::ModelView:
-					// Combined MODEL and VIEW
-					return global() * _view;
-				case USemantic::ModelViewProjection:
-					// Combined MODEL, VIEW, and PROJECTION
-					return global() * _viewProj ;
-				case USemantic::ModelInverse:
-					// Inverse of MODEL
-					return global().inversion();
-				case USemantic::ViewInverse:
-					// Inverse of VIEW
-					return _view.inversion();
-				case USemantic::ProjectionInverse:
-					// Inverse of PROJECTION
-					return _proj.inversion();
-				case USemantic::ModelViewInverse:
-					// Inverse of MODELVIEW
-					return _calcMat(id, USemantic::ModelView).inversion();
-				case USemantic::ModelViewProjectionInverse:
-					// Inverse of MODELVIEWPROJECTION
-					return _calcMat(id, USemantic::ModelViewProjection).inversion();
-				case USemantic::ModelInverseTranspose:
-					// This translates normals in model coordinates to world coordinates
-					return _calcMat(id, USemantic::Model);
-				case USemantic::ModelViewInverseTranspose:
-					// This translates normals in model coordinates to eye coordinates
-					return _calcMat(id, USemantic::ModelView);
-				default:
-					Assert0(false);
-			}
-			return {};
-		};
-
-		const USemKey key{
-			.jointId = id,
-			.sem = sem
-		};
-		auto itr = _matrix.find(key);
-		if(itr == _matrix.end()) {
-			itr = _matrix.emplace(key, makeMat()).first;
-		}
-		return itr->second;
 	}
 	void QueryMatrix_USemCached::exportSemantic(ISemanticSet& s, const JointId id, const SkinBindSet_SP& bind, const USemantic sem) const {
 		if(sem == USemantic::Viewport) {
@@ -100,7 +88,7 @@ namespace rev::gltf {
 			return;
 		}
 
-		const auto& m = _calcMat(id, sem);
+		const auto& m = _matrix.getCache(USemKey{.jointId=id, .sem=sem});
 		if(sem == USemantic::ModelInverseTranspose ||
 			sem == USemantic::ModelViewInverseTranspose)
 			s.set(frea::Mat3(m.convert<3,3>()), false);

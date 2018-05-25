@@ -2,6 +2,7 @@
 #include "../handle/camera.hpp"
 #include "lubee/rect.hpp"
 #include "qm_usem_if.hpp"
+#include "../cache.hpp"
 
 namespace rev::gltf {
 	class QueryMatrix_USemCached :
@@ -20,7 +21,7 @@ namespace rev::gltf {
 				std::size_t operator()(const USemKey& k) const noexcept;
 				bool operator == (const USemKey& k) const noexcept;
 			};
-			using USemM = std::unordered_map<USemKey, Mat4, USemKey>;
+			using USemM = Cache<USemKey, Mat4, USemKey>;
 			mutable USemM	_matrix;
 
 			HCam3			_camera;
@@ -30,7 +31,6 @@ namespace rev::gltf {
 			// ----------------- for Viewport -----------------
 			// Viewport
 			Vec4			_viewport;
-			const Mat4& _calcMat(JointId id, USemantic sem) const;
 			mutable Mat4V _jointMat;
 			const Mat4V& _getJointMat(JointId id, const SkinBindSet_SP& bind) const;
 
