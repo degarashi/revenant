@@ -81,6 +81,10 @@ namespace rev::gltf {
 		return itr->second;
 	}
 	void QueryMatrix_USemCached::exportSemantic(ISemanticSet& s, const JointId id, const USemantic sem) const {
+		if(sem == USemantic::Viewport) {
+			s.set(_viewport);
+			return;
+		}
 		if(sem == USemantic::View) {
 			// Transforms from world to view coordinates using the active camera node
 			s.set(_view, false);
@@ -98,9 +102,6 @@ namespace rev::gltf {
 			s.set(frea::Mat3(m.convert<3,3>()), false);
 		else
 			s.set(frea::Mat4(m), false);
-	}
-	void QueryMatrix_USemCached::exportViewport(ISemanticSet& s) const {
-		s.set(_viewport);
 	}
 	dc::Mat4 QueryMatrix_USemCached::getLocal(const JointId id) const {
 		return _qm.getLocal(id);

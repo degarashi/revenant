@@ -37,7 +37,6 @@ namespace rev::gltf {
 			QueryMatrix_USemCached(const HCam3& cam, const lubee::RectF& vp, const dc::IQueryMatrix& qm);
 
 			void exportSemantic(ISemanticSet& s, JointId id, USemantic sem) const override;
-			void exportViewport(ISemanticSet& s) const override;
 			const Mat4V& getJointMat(JointId id, const SkinBindSet_SP& bind) const override;
 
 			dc::Mat4 getLocal(JointId id) const override;

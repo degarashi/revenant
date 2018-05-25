@@ -165,16 +165,8 @@ namespace rev::gltf {
 		const char* sem = Required<String>(v, "semantic");
 		semantic = *U_Semantic::FromString(sem);
 	}
-	namespace {
-		void ExportSemantic(ISemanticSet& s, const dc::JointId id, const IQueryMatrix_USem& qm, const USemantic semantic) {
-			if(semantic == USemantic::Viewport)
-				qm.exportViewport(s);
-			else
-				qm.exportSemantic(s, id, semantic);
-		}
-	}
 	void Technique::UnifParam_Sem::exportUniform(ISemanticSet& s, const dc::JointId currentId, const SkinBindSet_SP&, const IQueryMatrix_USem& qm) const {
-		ExportSemantic(s, currentId, qm, semantic);
+		qm.exportSemantic(s, currentId, semantic);
 	}
 
 	// ---------------------------- Technique::UnifParam_JointMat ----------------------------
@@ -198,7 +190,7 @@ namespace rev::gltf {
 		node.resolve(q);
 	}
 	void Technique::UnifParam_NodeSem::exportUniform(ISemanticSet& s, const dc::JointId, const SkinBindSet_SP&, const IQueryMatrix_USem& qm) const {
-		ExportSemantic(s, node.data()->jointId, qm, semantic);
+		qm.exportSemantic(s, node.data()->jointId, semantic);
 	}
 	// ---------------------------- Technique::State ----------------------------
 	Technique::State::State(const JValue& v) {
