@@ -3,7 +3,7 @@
 
 namespace rev::dc {
 	// QueryMatrixの呼び出し順が変化しないと仮定するキャッシュ機構
-	class QMCached : public IQueryMatrix {
+	class QM_FixedSequence : public IQueryMatrix {
 		private:
 			struct IGet {
 				Mat4	result;
@@ -69,7 +69,7 @@ namespace rev::dc {
 			void _register(Ent e) const;
 
 		public:
-			QMCached(const IQueryMatrix& q);
+			QM_FixedSequence(const IQueryMatrix& q);
 			const IQueryMatrix& prepareInterface();
 
 			Mat4 getLocal(JointId id) const override;

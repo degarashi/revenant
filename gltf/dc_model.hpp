@@ -1,6 +1,6 @@
 #pragma once
 #include "../dc/model_if.hpp"
-#include "../dc/qm_cached.hpp"
+#include "../dc/qm_fixedseq.hpp"
 #include "gltf/dc_common.hpp"
 
 namespace rev::gltf {
@@ -11,7 +11,7 @@ namespace rev::gltf {
 			MeshV		_mesh,
 						_skinmesh;
 			HTf			_tf;
-			mutable dc::QMCached _qm;
+			mutable dc::QM_FixedSequence _qm;
 		public:
 			static HMdl FromScene(const Scene& s);
 			GLTFModel(const MeshV& mesh, const MeshV& skinmesh, const HTf& tf);
