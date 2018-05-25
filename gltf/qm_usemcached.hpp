@@ -37,7 +37,6 @@ namespace rev::gltf {
 			// ----------------- for Viewport -----------------
 			// Viewport
 			Vec4			_viewport;
-			mutable Mat4V _jointMat;
 
 			struct SkinKey {
 				dc::JointId		jointId;

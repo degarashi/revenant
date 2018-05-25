@@ -74,13 +74,13 @@ namespace rev::gltf {
 		),
 		_skin([this](const SkinKey& k){
 			const auto len = k.bind->bind.size();
-			_jointMat.resize(len);
+			Mat4V ret(len);
 			const Mat4 node_m = getGlobal(k.jointId);
 			for(std::size_t i=0 ; i<len ; i++) {
 				auto& b = k.bind->bind[i];
-				_jointMat[i] = k.bind->bs_m * b.invmat * getGlobal(b.jointName) * node_m;
+				ret[i] = k.bind->bs_m * b.invmat * getGlobal(b.jointName) * node_m;
 			}
-			return _jointMat;
+			return ret;
 		})
 	{
 		_camera = cam;
