@@ -5,16 +5,16 @@
 
 namespace rev::gltf {
 	// --------------------- QueryMatrix_USemCached::USemKey ---------------------
-	std::size_t QueryMatrix_USemCached::USemKey::operator()(const USemKey& k) const noexcept {
-		return std::hash<dc::JointId>()(k.jointId) + std::hash<USemantic::e>()(k.sem);
+	std::size_t QueryMatrix_USemCached::USemKey::getHash() const noexcept {
+		return std::hash<dc::JointId>()(jointId) + std::hash<USemantic::e>()(sem);
 	}
 	bool QueryMatrix_USemCached::USemKey::operator == (const USemKey& k) const noexcept {
 		return jointId == k.jointId &&
 				sem == k.sem;
 	}
 	// --------------------- QueryMatrix_USemCached::SkinKey ---------------------
-	std::size_t QueryMatrix_USemCached::SkinKey::operator()(const SkinKey& k) const noexcept {
-		return lubee::hash_combine_implicit(k.jointId, k.bind);
+	std::size_t QueryMatrix_USemCached::SkinKey::getHash() const noexcept {
+		return lubee::hash_combine_implicit(jointId, bind);
 	}
 	bool QueryMatrix_USemCached::SkinKey::operator == (const SkinKey& k) const noexcept {
 		return jointId == k.jointId &&

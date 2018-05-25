@@ -13,15 +13,21 @@ namespace rev::gltf {
 
 			using Mat4 = frea::Mat4;
 			using Vec4 = frea::Vec4;
+			struct Hash {
+				template <class T>
+				std::size_t operator()(const T& t) const noexcept {
+					return t.getHash();
+				}
+			};
 			// ----------------- for USemantics -----------------
 			struct USemKey {
 				dc::JointId		jointId;
 				USemantic		sem;
 
-				std::size_t operator()(const USemKey& k) const noexcept;
+				std::size_t getHash() const noexcept;
 				bool operator == (const USemKey& k) const noexcept;
 			};
-			using USemM = Cache<USemKey, Mat4, USemKey>;
+			using USemM = Cache<USemKey, Mat4, Hash>;
 			mutable USemM	_matrix;
 
 			HCam3			_camera;
@@ -37,10 +43,10 @@ namespace rev::gltf {
 				dc::JointId		jointId;
 				SkinBindSet_SP	bind;
 
-				std::size_t operator()(const SkinKey& k) const noexcept;
+				std::size_t getHash() const noexcept;
 				bool operator == (const SkinKey& k) const noexcept;
 			};
-			using SkinM = Cache<SkinKey, Mat4V, SkinKey>;
+			using SkinM = Cache<SkinKey, Mat4V, Hash>;
 			mutable SkinM	_skin;
 
 		public:
