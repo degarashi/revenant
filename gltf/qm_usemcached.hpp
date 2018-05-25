@@ -32,7 +32,16 @@ namespace rev::gltf {
 			// Viewport
 			Vec4			_viewport;
 			mutable Mat4V _jointMat;
-			const Mat4V& _getJointMat(JointId id, const SkinBindSet_SP& bind) const;
+
+			struct SkinKey {
+				dc::JointId		jointId;
+				SkinBindSet_SP	bind;
+
+				std::size_t operator()(const SkinKey& k) const noexcept;
+				bool operator == (const SkinKey& k) const noexcept;
+			};
+			using SkinM = Cache<SkinKey, Mat4V, SkinKey>;
+			mutable SkinM	_skin;
 
 		public:
 			QueryMatrix_USemCached(const HCam3& cam, const lubee::RectF& vp, const dc::IQueryMatrix& qm);

@@ -4,6 +4,7 @@
 #include "semantic_if.hpp"
 
 namespace rev::gltf {
+	// --------------------- QueryMatrix_USemCached::USemKey ---------------------
 	std::size_t QueryMatrix_USemCached::USemKey::operator()(const USemKey& k) const noexcept {
 		return std::hash<dc::JointId>()(k.jointId) + std::hash<USemantic::e>()(k.sem);
 	}
@@ -11,6 +12,16 @@ namespace rev::gltf {
 		return jointId == k.jointId &&
 				sem == k.sem;
 	}
+	// --------------------- QueryMatrix_USemCached::SkinKey ---------------------
+	std::size_t QueryMatrix_USemCached::SkinKey::operator()(const SkinKey& k) const noexcept {
+		return lubee::hash_combine_implicit(k.jointId, k.bind);
+	}
+	bool QueryMatrix_USemCached::SkinKey::operator == (const SkinKey& k) const noexcept {
+		return jointId == k.jointId &&
+				bind == k.bind;
+	}
+
+	// --------------------- QueryMatrix_USemCached ---------------------
 	QueryMatrix_USemCached::QueryMatrix_USemCached(const HCam3& cam, const lubee::RectF& vp, const dc::IQueryMatrix& qm):
 		_qm(qm),
 		_matrix(
@@ -60,7 +71,17 @@ namespace rev::gltf {
 				}
 				return {};
 			}
-		)
+		),
+		_skin([this](const SkinKey& k){
+			const auto len = k.bind->bind.size();
+			_jointMat.resize(len);
+			const Mat4 node_m = getGlobal(k.jointId);
+			for(std::size_t i=0 ; i<len ; i++) {
+				auto& b = k.bind->bind[i];
+				_jointMat[i] = k.bind->bs_m * b.invmat * getGlobal(b.jointName) * node_m;
+			}
+			return _jointMat;
+		})
 	{
 		_camera = cam;
 		_viewport = Vec4{vp.x0, vp.y0, vp.width(), vp.height()};
@@ -74,7 +95,7 @@ namespace rev::gltf {
 			return;
 		}
 		if(sem == USemantic::JointMatrix) {
-			s.set(_getJointMat(id, bind), false);
+			s.set(_skin.getCache(SkinKey{.jointId=id, .bind=bind}), false);
 			return;
 		}
 		if(sem == USemantic::View) {
@@ -106,15 +127,5 @@ namespace rev::gltf {
 	}
 	dc::Mat4 QueryMatrix_USemCached::getGlobal(const dc::SName& name) const  {
 		return _qm.getGlobal(name);
-	}
-	const Mat4V& QueryMatrix_USemCached::_getJointMat(const JointId id, const SkinBindSet_SP& bind) const {
-		const auto len = bind->bind.size();
-		_jointMat.resize(len);
-		const Mat4 node_m = getGlobal(id);
-		for(std::size_t i=0 ; i<len ; i++) {
-			auto& b = bind->bind[i];
-			_jointMat[i] = bind->bs_m * b.invmat * getGlobal(b.jointName) * node_m;
-		}
-		return _jointMat;
 	}
 }
