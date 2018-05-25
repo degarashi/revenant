@@ -4,9 +4,6 @@
 namespace rev::dc {
 	// ------------------- QMCached::IGet -------------------
 	QMCached::IGet::~IGet() {}
-	const Mat4& QMCached::IGet::get() const {
-		D_Assert0(false); throw 0;
-	}
 	bool QMCached::IGet::operator == (const QMCached::IGet& g) const noexcept {
 		const auto &typ0 = typeid(*this),
 					&typ1 = typeid(g);
@@ -27,9 +24,6 @@ namespace rev::dc {
 	void QMCached::GetById::refresh(const IQueryMatrix& q) {
 		result = local ? q.getLocal(id) : q.getGlobal(id);
 	}
-	const Mat4& QMCached::GetById::get() const {
-		return result;
-	}
 	std::size_t QMCached::GetById::getHash() const noexcept {
 		return lubee::hash_combine_implicit(id, local);
 	}
@@ -43,9 +37,6 @@ namespace rev::dc {
 	{}
 	void QMCached::GetByName::refresh(const IQueryMatrix& q) {
 		result = local ? q.getLocal(name) : q.getGlobal(name);
-	}
-	const Mat4& QMCached::GetByName::get() const {
-		return result;
 	}
 	std::size_t QMCached::GetByName::getHash() const noexcept {
 		return lubee::hash_combine_implicit(name, local);
@@ -71,7 +62,7 @@ namespace rev::dc {
 	}
 	const Mat4& QMCached::CacheUse::_getMat4() const {
 		D_Assert0(_cursor < _cache.size());
-		return _cache[_cursor++]->get();
+		return _cache[_cursor++]->result;
 	}
 	Mat4 QMCached::CacheUse::getLocal(const JointId) const {
 		return _getMat4();

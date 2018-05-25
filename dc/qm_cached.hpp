@@ -2,34 +2,32 @@
 #include "common.hpp"
 
 namespace rev::dc {
+	// QueryMatrixの呼び出し順が変化しないと仮定するキャッシュ機構
 	class QMCached : public IQueryMatrix {
 		private:
 			struct IGet {
+				Mat4	result;
+
 				virtual ~IGet();
 				virtual void refresh(const IQueryMatrix& q) = 0;
-				virtual const Mat4& get() const;
 				virtual std::size_t getHash() const noexcept = 0;
 				bool operator == (const IGet& g) const noexcept;
 			};
 			struct GetById : IGet {
 				JointId	id;
 				bool	local;
-				Mat4	result;
 
 				GetById(JointId id, bool local);
 				void refresh(const IQueryMatrix& q) override;
-				const Mat4& get() const override;
 				std::size_t getHash() const noexcept override;
 				bool operator == (const GetById& g) const noexcept;
 			};
 			struct GetByName : IGet {
 				SName	name;
 				bool	local;
-				Mat4	result;
 
 				GetByName(const SName& name, bool local);
 				void refresh(const IQueryMatrix& q) override;
-				const Mat4& get() const override;
 				std::size_t getHash() const noexcept override;
 				bool operator == (const GetByName& g) const noexcept;
 			};
