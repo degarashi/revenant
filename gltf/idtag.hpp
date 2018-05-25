@@ -32,21 +32,6 @@ namespace rev {
 				return nullptr;
 			}
 		};
-		class TagQueryNest : public ITagQuery {
-			private:
-				const ITagQuery	&_prev,
-								&_next;
-			public:
-				TagQueryNest(const ITagQuery& prev, const ITagQuery& next):
-					_prev(prev),
-					_next(next)
-				{}
-				Void_SP query(Resource::Type type, const Tag& tag) const noexcept override {
-					if(auto ret = _next.query(type, tag))
-						return ret;
-					return _prev.query(type, tag);
-				}
-		};
 		struct IResolvable {
 			virtual ~IResolvable() {}
 			virtual void resolve(const ITagQuery& q) = 0;
