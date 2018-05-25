@@ -32,12 +32,12 @@ namespace rev::gltf {
 			Vec4			_viewport;
 			Mat4 _calcMat(JointId id, USemantic sem) const;
 			mutable Mat4V _jointMat;
+			const Mat4V& _getJointMat(JointId id, const SkinBindSet_SP& bind) const;
 
 		public:
 			QueryMatrix_USemCached(const HCam3& cam, const lubee::RectF& vp, const dc::IQueryMatrix& qm);
 
-			void exportSemantic(ISemanticSet& s, JointId id, USemantic sem) const override;
-			const Mat4V& getJointMat(JointId id, const SkinBindSet_SP& bind) const override;
+			void exportSemantic(ISemanticSet& s, JointId id, const SkinBindSet_SP& bind, USemantic sem) const override;
 
 			dc::Mat4 getLocal(JointId id) const override;
 			dc::Mat4 getGlobal(JointId id) const override;

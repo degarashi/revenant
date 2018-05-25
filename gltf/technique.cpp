@@ -165,8 +165,8 @@ namespace rev::gltf {
 		const char* sem = Required<String>(v, "semantic");
 		semantic = *U_Semantic::FromString(sem);
 	}
-	void Technique::UnifParam_Sem::exportUniform(ISemanticSet& s, const dc::JointId currentId, const SkinBindSet_SP&, const IQueryMatrix_USem& qm) const {
-		qm.exportSemantic(s, currentId, semantic);
+	void Technique::UnifParam_Sem::exportUniform(ISemanticSet& s, const dc::JointId currentId, const SkinBindSet_SP& bind, const IQueryMatrix_USem& qm) const {
+		qm.exportSemantic(s, currentId, bind, semantic);
 	}
 
 	// ---------------------------- Technique::UnifParam_JointMat ----------------------------
@@ -175,7 +175,7 @@ namespace rev::gltf {
 	{}
 	void Technique::UnifParam_JointMat::exportUniform(ISemanticSet& s, const dc::JointId currentId, const SkinBindSet_SP& bind, const IQueryMatrix_USem& qm) const {
 		Assert0(bind && bind->bind.size() == count);
-		s.set(qm.getJointMat(currentId, bind), false);
+		qm.exportSemantic(s, currentId, bind, USemantic::JointMatrix);
 	}
 
 	// ---------------------------- Technique::UnifParam_NodeSem ----------------------------
@@ -189,8 +189,8 @@ namespace rev::gltf {
 	void Technique::UnifParam_NodeSem::resolve(const ITagQuery& q) {
 		node.resolve(q);
 	}
-	void Technique::UnifParam_NodeSem::exportUniform(ISemanticSet& s, const dc::JointId, const SkinBindSet_SP&, const IQueryMatrix_USem& qm) const {
-		qm.exportSemantic(s, node.data()->jointId, semantic);
+	void Technique::UnifParam_NodeSem::exportUniform(ISemanticSet& s, const dc::JointId, const SkinBindSet_SP& bind, const IQueryMatrix_USem& qm) const {
+		qm.exportSemantic(s, node.data()->jointId, bind, semantic);
 	}
 	// ---------------------------- Technique::State ----------------------------
 	Technique::State::State(const JValue& v) {

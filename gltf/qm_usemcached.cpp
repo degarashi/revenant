@@ -80,9 +80,13 @@ namespace rev::gltf {
 		}
 		return itr->second;
 	}
-	void QueryMatrix_USemCached::exportSemantic(ISemanticSet& s, const JointId id, const USemantic sem) const {
+	void QueryMatrix_USemCached::exportSemantic(ISemanticSet& s, const JointId id, const SkinBindSet_SP& bind, const USemantic sem) const {
 		if(sem == USemantic::Viewport) {
 			s.set(_viewport);
+			return;
+		}
+		if(sem == USemantic::JointMatrix) {
+			s.set(_getJointMat(id, bind), false);
 			return;
 		}
 		if(sem == USemantic::View) {
@@ -115,7 +119,7 @@ namespace rev::gltf {
 	dc::Mat4 QueryMatrix_USemCached::getGlobal(const dc::SName& name) const  {
 		return _qm.getGlobal(name);
 	}
-	const Mat4V& QueryMatrix_USemCached::getJointMat(const JointId id, const SkinBindSet_SP& bind) const {
+	const Mat4V& QueryMatrix_USemCached::_getJointMat(const JointId id, const SkinBindSet_SP& bind) const {
 		const auto len = bind->bind.size();
 		_jointMat.resize(len);
 		const Mat4 node_m = getGlobal(id);
