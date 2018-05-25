@@ -133,9 +133,9 @@ namespace rev {
 				detail::TexSingle::DCmd(_q, t, id, *num);
 			}
 
-			template <class T>
-			void setUniformById(const GLint id, const std::vector<T>& t) {
-				setUniformById(id, t.begin(), t.end());
+			template <class T, class... Ts>
+			void setUniformById(const GLint id, const std::vector<T>& t, Ts&&... ts) {
+				setUniformById(id, t.begin(), t.end(), std::forward<Ts>(ts)...);
 			}
 
 			template <
