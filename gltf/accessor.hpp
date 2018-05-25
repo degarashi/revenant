@@ -1,6 +1,6 @@
 #pragma once
 #include "gltf/resource.hpp"
-#include "gltf/idtag.hpp"
+#include "gltf/dataref.hpp"
 #include "../gl_format.hpp"
 #include "gltf/bufferview.hpp"
 #include "../ovr_functor.hpp"
@@ -177,8 +177,7 @@ namespace rev::gltf {
 	}
 	//! BufferViewが指すバイナリデータを型情報付きで参照
 	struct Accessor :
-		Resource,
-		IResolvable
+		Resource
 	{
 		// BufferViewに対するオフセット、間隔
 		std::size_t		byteOffset,
@@ -192,16 +191,16 @@ namespace rev::gltf {
 		detail::MinMaxV		filter;
 
 		// 参照元のバイナリデータ
-		TagBufferView	bufferView;
+		DRef_BufferView	bufferView;
 		bool			bMatrix;
 		// 1要素あたりの数値ペア数
 		std::size_t		nElem;
 
-		Accessor(const JValue& v);
+		Accessor(const JValue& v, const IDataQuery& q);
 		Type getType() const noexcept override;
-		void resolve(const ITagQuery& q) override;
 		void filterValue(double* data) const noexcept;
 
+		using Void_SP = std::shared_ptr<void>;
 		mutable Void_SP	data_cached;
 		template <class T>
 		using SVec = std::shared_ptr<std::vector<T>>;

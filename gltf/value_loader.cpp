@@ -4,16 +4,20 @@ namespace rev {
 	namespace gltf {
 		namespace loader {
 			const JValue& GetRequiredEntry(const JValue& v, const char* key) {
-				const auto itr = v.FindMember(key);
-				if(itr == v.MemberEnd())
-					throw LackOfPrerequisite(key);
-				return itr->value;
+				if(const auto r = GetOptionalEntry(v, key))
+					return *r;
+				throw LackOfPrerequisite(key);
 			}
-			const JValue& GetOptionalEntry(const JValue& v, const char* key, const JValue& def) {
+			const JValue& GetOptionalEntryDefault(const JValue& v, const char* key, const JValue& def) {
+				if(const auto r = GetOptionalEntry(v, key))
+					return *r;
+				return def;
+			}
+			spi::Optional<const JValue&> GetOptionalEntry(const JValue& v, const char* key) {
 				const auto itr = v.FindMember(key);
-				if(itr == v.MemberEnd())
-					return def;
-				return itr->value;
+				if(itr != v.MemberEnd())
+					return itr->value;
+				return spi::none;
 			}
 			Null::Null(const JValue& v) {
 				if(!CanLoad(v))

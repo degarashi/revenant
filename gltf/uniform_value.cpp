@@ -3,10 +3,10 @@
 #include "../uniform_ent.hpp"
 
 namespace rev::gltf {
-	UniformValue LoadUniformValue(const JValue& v) {
+	UniformValue LoadUniformValue(const JValue& v, const IDataQuery& q) {
 		const auto getDouble = [](auto& v){ return v.GetDouble(); };
 		const auto getBool = [](auto& v){ return static_cast<uint8_t>(v.GetBool()); };
-		const auto getTexture = [](auto& v) -> TagTexture { return v.GetString(); };
+		const auto getTexture = [&q](auto& v) -> DRef_Texture { return {v.GetString(), q}; };
 
 		// 配列要素数が1の時は[]で囲まなくても可
 		if(!v.IsArray()) {
@@ -19,13 +19,13 @@ namespace rev::gltf {
 			else if(v.IsNull())
 				return 0.;
 		} else {
-			const int n = v.Size();
+			const std::size_t n = v.Size();
 			Assert(n > 0, "empty array is not allowed");
 			const auto proc = [&v, n](auto&& getter, auto* type){
 				using Type = std::remove_pointer_t<decltype(type)>;
-				std::vector<Type> ret(n);
-				for(int i=0 ; i<n ; i++)
-					ret[i] = getter(v[rapidjson::SizeType(i)]);
+				std::vector<Type> ret;
+				for(std::size_t i=0 ; i<n ; i++)
+					ret.emplace_back(getter(v[rapidjson::SizeType(i)]));
 				return ret;
 			};
 			if(v[0].IsNumber())
@@ -33,7 +33,7 @@ namespace rev::gltf {
 			else if(v[0].IsBool())
 				return proc(getBool, (uint8_t*)nullptr);
 			else if(v[0].IsString())
-				return proc(getTexture, (TagTexture*)nullptr);
+				return proc(getTexture, (DRef_Texture*)nullptr);
 		}
 		Assert(false, "unknown value type");
 		throw 0;
@@ -54,8 +54,8 @@ namespace rev::gltf {
 		struct Single : Base {
 			using Base::Base;
 
-			void operator()(const TagTexture&) const { Assert0(false); }
-			void operator()(const std::vector<TagTexture>&) const { Assert0(false); }
+			void operator()(const DRef_Texture&) const { Assert0(false); }
+			void operator()(const std::vector<DRef_Texture>&) const { Assert0(false); }
 
 			template <class V>
 			void operator()(const V& v) const {
@@ -78,8 +78,8 @@ namespace rev::gltf {
 
 			template <class T>
 			void operator()(const T&) const { Assert0(false); }
-			void operator()(const TagTexture&) const { Assert0(false); }
-			void operator()(const std::vector<TagTexture>&) const { Assert0(false); }
+			void operator()(const DRef_Texture&) const { Assert0(false); }
+			void operator()(const std::vector<DRef_Texture>&) const { Assert0(false); }
 
 			template <class T, std::size_t... Idx>
 			static V _MakeVec(const T* value, std::index_sequence<Idx...>) {
@@ -106,8 +106,8 @@ namespace rev::gltf {
 
 			template <class V>
 			void operator()(const V&) const { Assert0(false); }
-			void operator()(const TagTexture&) const { Assert0(false); }
-			void operator()(const std::vector<TagTexture>&) const { Assert0(false); }
+			void operator()(const DRef_Texture&) const { Assert0(false); }
+			void operator()(const std::vector<DRef_Texture>&) const { Assert0(false); }
 
 			template <class V, std::size_t... Idx>
 			static M _MakeMat(const V* value, std::index_sequence<Idx...>) {
@@ -134,10 +134,10 @@ namespace rev::gltf {
 			template <class T>
 			void operator()(const T&) const { D_Assert0(false); }
 
-			void operator()(const TagTexture& t) const {
+			void operator()(const DRef_Texture& t) const {
 				_u.setUniform(_uname, t.data()->getGLResource());
 			}
-			void operator()(const std::vector<TagTexture>& t) const {
+			void operator()(const std::vector<DRef_Texture>& t) const {
 				const auto s = std::min(_count, t.size());
 				std::vector<HTexC> tex(s);
 				for(std::size_t i = 0 ; i<s ; i++) {

@@ -10,10 +10,10 @@
 namespace rev::gltf {
 	dc::JointId Node::s_id = 1;
 
-	Node::Node(const JValue& v):
+	Node::Node(const JValue& v, const IDataQuery& q):
 		Resource(v),
 		pose(loader::Pose3(v)),
-		child(loader::Optional<loader::Array<TagNode>>(v, "children", {})),
+		child(loader::OptionalDefault<loader::Array<DRef_Node>>(v, "children", {}, q)),
 		jointId(s_id++)
 	{
 		if(const auto jn = loader::Optional<loader::StdString>(v, "jointName"))
@@ -21,10 +21,6 @@ namespace rev::gltf {
 	}
 	Resource::Type Node::getType() const noexcept {
 		return Type::Node;
-	}
-	void Node::resolve(const ITagQuery& q) {
-		for(auto& c : child)
-			c.resolve(q);
 	}
 	void Node::_visit(Visitor& v) const {
 		auto node = std::make_shared<dc::TfNode>(jointId, jointName, username ? *username : Name());
@@ -38,49 +34,41 @@ namespace rev::gltf {
 		}
 		v.upNode();
 	}
+	void Node::moveTo(void* dst) {
+		new(dst) Node(std::move(*this));
+	}
 
 	// ------------------- CameraNode -------------------
-	std::shared_ptr<CameraNode> CameraNode::Load(const JValue& v) {
+	std::shared_ptr<CameraNode> CameraNode::Load(const JValue& v, const IDataQuery& q) {
 		if(v.HasMember("camera"))
-			return std::make_shared<CameraNode>(v);
+			return std::make_shared<CameraNode>(v, q);
 		return nullptr;
 	}
-	CameraNode::CameraNode(const JValue& v):
-		Node(v),
-		camera(loader::Required<TagCamera>(v, "camera"))
+	CameraNode::CameraNode(const JValue& v, const IDataQuery& q):
+		Node(v, q),
+		camera(loader::Required<DRef_Camera>(v, "camera", q))
 	{}
-	void CameraNode::resolve(const ITagQuery& q) {
-		camera.resolve(q);
-		Node::resolve(q);
-	}
 	void CameraNode::visit(Visitor& v) const {
 		Node::visit(v);
 		v.addCamera(camera.data()->makeCamera());
 	}
-	// ------------------- MeshNodeBase -------------------
-	MeshNodeBase::MeshNodeBase(const JValue& v):
-		Node(v),
-		mesh(loader::Required<loader::Array<TagMesh>>(v, "meshes"))
-	{}
-	void MeshNodeBase::resolve(const ITagQuery& q) {
-		for(auto& m : mesh)
-			m.resolve(q);
-		Node::resolve(q);
+	void CameraNode::moveTo(void* dst) {
+		new(dst) CameraNode(std::move(*this));
 	}
+	// ------------------- MeshNodeBase -------------------
+	MeshNodeBase::MeshNodeBase(const JValue& v, const IDataQuery& q):
+		Node(v, q),
+		mesh(loader::Required<loader::Array<DRef_Mesh>>(v, "meshes", q))
+	{}
 	// ------------------- MeshNode -------------------
-	std::shared_ptr<MeshNode> MeshNode::Load(const JValue& v) {
+	std::shared_ptr<MeshNode> MeshNode::Load(const JValue& v, const IDataQuery& q) {
 		if(v.HasMember("meshes"))
-			return std::make_shared<MeshNode>(v);
+			return std::make_shared<MeshNode>(v, q);
 		return nullptr;
 	}
-	MeshNode::MeshNode(const JValue& v):
-		MeshNodeBase(v)
+	MeshNode::MeshNode(const JValue& v, const IDataQuery& q):
+		MeshNodeBase(v, q)
 	{}
-	void MeshNode::resolve(const ITagQuery& q) {
-		for(auto& m : mesh)
-			m.resolve(q);
-		MeshNodeBase::resolve(q);
-	}
 	void MeshNode::visit(Visitor& v) const {
 		Node::visit(v);
 		for(auto& m : mesh) {
@@ -97,24 +85,21 @@ namespace rev::gltf {
 			}
 		}
 	}
+	void MeshNode::moveTo(void* dst) {
+		new(dst) MeshNode(std::move(*this));
+	}
 
 	// ------------------- SkinMeshNode -------------------
-	std::shared_ptr<SkinMeshNode> SkinMeshNode::Load(const JValue& v) {
+	std::shared_ptr<SkinMeshNode> SkinMeshNode::Load(const JValue& v, const IDataQuery& q) {
 		if(v.HasMember("skin"))
-			return std::make_shared<SkinMeshNode>(v);
+			return std::make_shared<SkinMeshNode>(v, q);
 		return nullptr;
 	}
-	SkinMeshNode::SkinMeshNode(const JValue& v):
-		MeshNodeBase(v),
-		skin(loader::Required<TagSkin>(v, "skin")),
-		skeleton(loader::Optional<loader::Array<TagNode>>(v, "skeleton", {}))
+	SkinMeshNode::SkinMeshNode(const JValue& v, const IDataQuery& q):
+		MeshNodeBase(v, q),
+		skin(loader::Required<DRef_Skin>(v, "skin", q)),
+		skeleton(loader::OptionalDefault<loader::Array<DRef_Node>>(v, "skeleton", {}, q))
 	{}
-	void SkinMeshNode::resolve(const ITagQuery& q) {
-		skin.resolve(q);
-		for(auto& s : skeleton)
-			s.resolve(q);
-		MeshNodeBase::resolve(q);
-	}
 	void SkinMeshNode::visit(Visitor& v) const {
 		Node::visit(v);
 		const auto& bind = skin.data()->getBind();
@@ -131,20 +116,23 @@ namespace rev::gltf {
 			}
 		}
 	}
+	void SkinMeshNode::moveTo(void* dst) {
+		new(dst) SkinMeshNode(std::move(*this));
+	}
 
 	namespace loader {
-		Node::Node(const JValue& v) {
+		Node::Node(const JValue& v, const IDataQuery& q) {
 			Node_SP& sp = *this;
 			if(!v.IsObject())
 				throw InvalidProperty("not an object");
-			if(auto node = CameraNode::Load(v))
+			if(auto node = CameraNode::Load(v, q))
 				sp = node;
-			else if(auto node = SkinMeshNode::Load(v))
+			else if(auto node = SkinMeshNode::Load(v, q))
 				sp = node;
-			else if(auto node = MeshNode::Load(v))
+			else if(auto node = MeshNode::Load(v, q))
 				sp = node;
 			else
-				sp = std::make_shared<::rev::gltf::Node>(v);
+				sp = std::make_shared<::rev::gltf::Node>(v, q);
 		}
 	}
 }

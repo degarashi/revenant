@@ -24,25 +24,21 @@ namespace rev::gltf {
 		};
 	}
 	using namespace loader;
-	Texture::Texture(const JValue& v):
+	Texture::Texture(const JValue& v, const IDataQuery& q):
 		Resource(v),
-		format(Optional<loader::GLEnum>(v, "format", GL_RGBA)),
-		internalFormat(Optional<loader::GLEnum>(v, "internalFormat", GL_RGBA)),
-		sampler(Required<String>(v, "sampler")),
-		source(Required<String>(v, "source")),
-		type(Optional<loader::GLEnum>(v, "type", GL_UNSIGNED_BYTE))
+		format(OptionalDefault<loader::GLEnum>(v, "format", GL_RGBA)),
+		internalFormat(OptionalDefault<loader::GLEnum>(v, "internalFormat", GL_RGBA)),
+		sampler(Required<DRef_Sampler>(v, "sampler", q)),
+		source(Required<DRef_Image>(v, "source", q)),
+		type(OptionalDefault<loader::GLEnum>(v, "type", GL_UNSIGNED_BYTE))
 	{
 		CheckEnum(c_format, format);
 		CheckEnum(c_format, internalFormat);
-		CheckEnum(c_target, Optional<loader::GLEnum>(v, "target", GL_TEXTURE_2D));
+		CheckEnum(c_target, OptionalDefault<loader::GLEnum>(v, "target", GL_TEXTURE_2D));
 		CheckEnum(c_type, type);
 	}
 	Resource::Type Texture::getType() const noexcept {
 		return Type::Texture;
-	}
-	void Texture::resolve(const ITagQuery& q) {
-		sampler.resolve(q);
-		source.resolve(q);
 	}
 	HTex Texture::getGLResource() const {
 		auto& samp = *sampler.data();

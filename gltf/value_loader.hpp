@@ -24,7 +24,6 @@ namespace rev::gltf {
 		template <class T>
 		using UnwrapValue_T = decltype(UnwrapValue_TFunc((T*)nullptr));
 
-		inline Tag g_dictEntName;
 		// 必須エントリの読み込み
 		// エントリが存在しない場合はLackOfPrerequisite例外を投げる
 		// 型が一致しない場合はInvalidPropertyr例外を投げる
@@ -32,23 +31,30 @@ namespace rev::gltf {
 		// Optionalエントリの読み込み
 		// エントリが存在しない場合は引数の値が渡される
 		// 型が一致しない場合はInvalidProperty例外を投げる
-		const JValue& GetOptionalEntry(const JValue& v, const char* key, const JValue& def);
+		const JValue& GetOptionalEntryDefault(const JValue& v, const char* key, const JValue& def);
+		spi::Optional<const JValue&> GetOptionalEntry(const JValue& v, const char* key);
 
-		template <class T>
-		T Required(const JValue& v, const char* key) {
-			return T(GetRequiredEntry(v, key));
+		template <class T, class... Ts>
+		T Required(const JValue& v, const char* key, Ts&&... ts) {
+			return T(GetRequiredEntry(v, key), std::forward<Ts>(ts)...);
 		}
-		template <class T>
-		typename spi::Optional<UnwrapValue_T<T>> Optional(const JValue& v, const char* key) {
+		template <class T, class... Ts>
+		typename spi::Optional<UnwrapValue_T<T>> Optional(const JValue& v, const char* key, Ts&&... ts) {
 			const auto itr = v.FindMember(key);
 			if(itr == v.MemberEnd())
 				return spi::none;
-			return T(itr->value);
+			return T(itr->value, std::forward<Ts>(ts)...);
 		}
-		template <class T>
-		UnwrapValue_T<T> Optional(const JValue& v, const char* key, const UnwrapValue_T<T>& def) {
-			if(auto ret = Optional<T>(v, key))
-				return *ret;
+		template <class T, class... Ts>
+		UnwrapValue_T<T> OptionalDefault(const JValue& v, const char* key, UnwrapValue_T<T>&& def, Ts&&... ts) {
+			if(auto ret = Optional<T>(v, key, std::forward<Ts>(ts)...))
+				return std::move(*ret);
+			return std::move(def);
+		}
+		template <class T, class... Ts>
+		UnwrapValue_T<T> OptionalDefault(const JValue& v, const char* key, const UnwrapValue_T<T>& def, Ts&&... ts) {
+			if(auto ret = Optional<T>(v, key, std::forward<Ts>(ts)...))
+				return std::move(*ret);
 			return def;
 		}
 
@@ -82,9 +88,10 @@ namespace rev::gltf {
 		struct Shared : std::shared_ptr<UnwrapValue_T<T>> {
 			using child_t = UnwrapValue_T<T>;
 			using value_t = std::shared_ptr<child_t>;
-			Shared(const JValue& v):
+			template <class... Ts>
+			Shared(const JValue& v, const Ts&... ts):
 				value_t(
-					new child_t(lubee::UnwrapValue(T{v}))
+					new child_t(lubee::UnwrapValue(T{v, ts...}))
 				)
 			{}
 			static bool CanLoad(const JValue& v) noexcept {
@@ -95,12 +102,13 @@ namespace rev::gltf {
 		struct Array : std::vector<UnwrapValue_T<T>> {
 			using child_t = UnwrapValue_T<T>;
 			using value_t = std::vector<child_t>;
-			Array(const JValue& v) {
+			template <class... Ts>
+			Array(const JValue& v, const Ts&... ts) {
 				if(!CanLoad(v))
 					throw InvalidProperty("can't read as array");
 				if(!v.IsArray()) {
 					if(AllowSingle) {
-						this->emplace_back(T{v});
+						this->emplace_back(T{v, ts...});
 					} else
 						throw InvalidProperty("not an array");
 				} else {
@@ -108,7 +116,7 @@ namespace rev::gltf {
 					for(JSize i=0 ; i<sz ; i++) {
 						this->emplace_back(
 							static_cast<const child_t&>(
-								T{v[i]}
+								T{v[i], ts...}
 							)
 						);
 					}
@@ -128,21 +136,20 @@ namespace rev::gltf {
 		struct Dictionary : std::unordered_map<Tag, UnwrapValue_T<T>> {
 			using child_t = UnwrapValue_T<T>;
 			using value_t = std::unordered_map<Tag, child_t>;
-			Dictionary(const JValue& v) {
+			template <class... Ts>
+			Dictionary(const JValue& v, const Ts&... ts) {
 				if(!CanLoad(v))
 					throw InvalidProperty("not an object");
 				const auto itrE = v.MemberEnd();
 				for(auto itr = v.MemberBegin(); itr != itrE ; ++itr) {
 					auto* str = itr->name.GetString();
-					g_dictEntName = str;
 					this->emplace(
 						str,
-						static_cast<const child_t&>(
-							T{itr->value}
+						std::move(
+							T{itr->value, ts...}
 						)
 					);
 				}
-				g_dictEntName.clear();
 			}
 			static bool CanLoad(const JValue& v) noexcept {
 				return v.IsObject();

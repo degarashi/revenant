@@ -136,7 +136,7 @@ namespace rev::gltf {
 	// ---------------------------- Technique::ParamBase ----------------------------
 	Technique::ParamBase::ParamBase(const JValue& v):
 		type(Required<loader::GLEnum>(v, "type")),
-		count(Optional<Integer>(v, "count", 1))
+		count(OptionalDefault<Integer>(v, "count", 1))
 	{
 		CheckEnum(c_glsltype, type);
 	}
@@ -155,9 +155,9 @@ namespace rev::gltf {
 	{}
 
 	// ---------------------------- Technique::UnifParam_Fixed ----------------------------
-	Technique::UnifParam_Fixed::UnifParam_Fixed(const JValue& v):
+	Technique::UnifParam_Fixed::UnifParam_Fixed(const JValue& v, const IDataQuery& q):
 		ParamBase(v),
-		value(LoadUniformValue(v["value"]))
+		value(LoadUniformValue(v["value"], q))
 	{}
 
 	// ---------------------------- Technique::UnifParam_Sem ----------------------------
@@ -179,15 +179,12 @@ namespace rev::gltf {
 	}
 
 	// ---------------------------- Technique::UnifParam_NodeSem ----------------------------
-	Technique::UnifParam_NodeSem::UnifParam_NodeSem(const JValue& v):
-		node(Required<String>(v, "node"))
+	Technique::UnifParam_NodeSem::UnifParam_NodeSem(const JValue& v, const IDataQuery& q):
+		node(Required<DRef_Node>(v, "node", q))
 	{
 		const char* sem = Required<String>(v, "semantic");
 		semantic = *U_Semantic::FromString(sem);
 		D_Assert0(semantic != USemantic::JointMatrix);
-	}
-	void Technique::UnifParam_NodeSem::resolve(const ITagQuery& q) {
-		node.resolve(q);
 	}
 	void Technique::UnifParam_NodeSem::exportUniform(ISemanticSet& s, const dc::JointId, const SkinBindSet_SP& bind, const IQueryMatrix_USem& qm) const {
 		qm.exportSemantic(s, node.data()->jointId, bind, semantic);
@@ -195,7 +192,7 @@ namespace rev::gltf {
 	// ---------------------------- Technique::State ----------------------------
 	Technique::State::State(const JValue& v) {
 		{
-			const auto bs = Optional<Array<loader::GLEnum>>(v, "enable", {});
+			const auto bs = OptionalDefault<Array<loader::GLEnum>>(v, "enable", {});
 			for(auto& b : bs) {
 				const auto& idx = &CheckEnum(c_bool, b) - c_bool;
 				state.emplace_back(std::make_shared<GL_BState>(true, c_bool[idx]));
@@ -218,7 +215,7 @@ namespace rev::gltf {
 
 	namespace {
 		template <class CB>
-		void LoadParameter(CB&& cb, const JValue& v) {
+		void LoadParameter(CB&& cb, const JValue& v, const IDataQuery& q) {
 			const auto itr = v.FindMember("semantic");
 			if(itr != v.MemberEnd()) {
 				const char* sem = itr->value.GetString();
@@ -233,7 +230,7 @@ namespace rev::gltf {
 					}
 					if(v.HasMember("node")) {
 						// NodeSem
-						return cb(std::make_unique<Technique::UnifParam_NodeSem>(v));
+						return cb(std::make_unique<Technique::UnifParam_NodeSem>(v, q));
 					}
 					// Sem
 					return cb(std::make_unique<Technique::UnifParam_Sem>(v));
@@ -241,7 +238,7 @@ namespace rev::gltf {
 			} else {
 				if(v.HasMember("value")) {
 					// Fixed
-					return cb(std::make_unique<Technique::UnifParam_Fixed>(v));
+					return cb(std::make_unique<Technique::UnifParam_Fixed>(v, q));
 				} else {
 					// Type Only
 					return cb(std::make_unique<Technique::UnifParam_Type>(v));
@@ -250,13 +247,13 @@ namespace rev::gltf {
 		}
 	}
 	// ---------------------------- Technique ----------------------------
-	Technique::Technique(const JValue& v):
+	Technique::Technique(const JValue& v, const IDataQuery& q):
 		Resource(v),
 		state(Optional<State>(v, "states")),
-		program(Required<String>(v, "program")),
+		program(Required<DRef_Program>(v, "program", q)),
 		namecnv{
-			Optional<Dictionary<StdString>>(v, "attributes", {}),
-			Optional<Dictionary<StdString>>(v, "uniforms", {})
+			.attribute = OptionalDefault<Dictionary<StdString>>(v, "attributes", {}),
+			.uniform = OptionalDefault<Dictionary<StdString>>(v, "uniforms", {})
 		}
 	{
 		const auto flipMap = [](auto& m) {
@@ -290,17 +287,12 @@ namespace rev::gltf {
 					[this, srcName](std::unique_ptr<UnifParam_Type> p){
 						param.typedUniform.emplace_back(srcName, std::move(p));
 					},
-				}, itr2->value);
+				}, itr2->value, q);
 				++itr2;
 			}
 		}
 	}
 	Resource::Type Technique::getType() const noexcept {
 		return Type::Technique;
-	}
-	void Technique::resolve(const ITagQuery& q) {
-		for(auto& p : *param.rtUniform)
-			p.second->resolve(q);
-		program.resolve(q);
 	}
 }

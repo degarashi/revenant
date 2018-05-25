@@ -17,11 +17,11 @@ namespace rev::gltf {
 		};
 	}
 	using namespace loader;
-	BufferView::BufferView(const JValue& v):
+	BufferView::BufferView(const JValue& v, const IDataQuery& q):
 		Resource(v),
-		src(Required<String>(v, "buffer")),
+		src(Required<DRef_Buffer>(v, "buffer", q)),
 		byteOffset(Required<Integer>(v, "byteOffset")),
-		byteLength(Optional<Integer>(v, "byteLength", 0))
+		byteLength(OptionalDefault<Integer>(v, "byteLength", 0))
 	{
 		auto t = Optional<Integer>(v, "target");
 		if(t)
@@ -29,9 +29,6 @@ namespace rev::gltf {
 	}
 	Resource::Type BufferView::getType() const noexcept {
 		return Type::BufferView;
-	}
-	void BufferView::resolve(const ITagQuery& q) {
-		src.resolve(q);
 	}
 	std::pair<uintptr_t, std::size_t> BufferView::getBuffer() const {
 		const auto& buff = src.data()->src.getBuffer();

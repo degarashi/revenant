@@ -34,10 +34,10 @@ namespace rev::test {
 		{
 			{
 				auto sc = *(*dsc);
-				_model = gltf::GLTFModel::FromScene(*sc);
+				_model = gltf::GLTFModel::FromScene(sc);
 			}
 			_anim.clear();
-			for(auto& a : g->animation.map)
+			for(auto& a : g->m_Animation)
 				_anim.append(a.second->makeAnimation());
 		}
 		// モデル詳細GUIを表示

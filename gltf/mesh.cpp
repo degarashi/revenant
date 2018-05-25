@@ -21,29 +21,22 @@ namespace rev::gltf {
 	}
 	using namespace loader;
 	// --------------------------- Mesh::Primitive ---------------------------
-	Mesh::Primitive::Primitive(const JValue& v):
-		index(Optional<String>(v, "indices")),
-		material(Required<String>(v, "material"))
+	Mesh::Primitive::Primitive(const JValue& v, const IDataQuery& q):
+		index(Optional<DRef_Accessor>(v, "indices", q)),
+		material(Required<DRef_Material>(v, "material", q))
 	{
-		const auto m = Optional<Integer>(v, "mode", 4);
+		const auto m = OptionalDefault<Integer>(v, "mode", 4);
 		mode = CheckEnum(
 					c_mode, m,
 					[](auto&& c, auto&& m){ return c.first == m; }
 				).second;
-		const auto attr = Optional<Dictionary<String>>(v, "attributes", {});
+		const auto attr = OptionalDefault<Dictionary<String>>(v, "attributes", {});
 		for(auto& a : attr) {
 			attribute.emplace_back(
 				*V_Semantic::FromString(a.first.c_str()),
-				TagAccessor(a.second)
+				DRef_Accessor(a.second, q)
 			);
 		}
-	}
-	void Mesh::Primitive::resolve(const ITagQuery& q) {
-		for(auto& a : attribute)
-			a.second.resolve(q);
-		material.resolve(q);
-		if(index)
-			index->resolve(q);
 	}
 	bool Mesh::Primitive::CanLoad(const JValue&) noexcept {
 		return true;
@@ -61,10 +54,10 @@ namespace rev::gltf {
 				// BufferViewがそのままVertexBufferになる
 				VDecl::VDInfoV	 vdinfo;
 				for(auto& a : attribute) {
-					auto& acc = *(*a.second);
+					auto& acc = *a.second;
 					std::size_t idx;
 					{
-						const BufferView* key = acc.bufferView.data().get();
+						const BufferView* key = acc.bufferView.data();
 						if(const auto itr = map.find(key);
 								itr != map.end())
 							idx = itr->second;
@@ -88,7 +81,7 @@ namespace rev::gltf {
 			if(index) {
 				// make Index-buffer
 				const HIb ib = mgr_gl.makeIBuffer(DrawType::Static);
-				auto& idata = *(*(*index));
+				auto& idata = *(*index);
 				std::size_t count;
 				idata.getData([&ib, &count](const auto& p){
 					count = p->size();
@@ -102,15 +95,11 @@ namespace rev::gltf {
 		return primitive_cache;
 	}
 	// --------------------------- Mesh ---------------------------
-	Mesh::Mesh(const JValue& v):
+	Mesh::Mesh(const JValue& v, const IDataQuery& q):
 		Resource(v),
-		primitive(Optional<Array<Primitive>>(v, "primitives", {}))
+		primitive(OptionalDefault<Array<Primitive>>(v, "primitives", {}, q))
 	{}
 	Resource::Type Mesh::getType() const noexcept {
 		return Type::Mesh;
-	}
-	void Mesh::resolve(const ITagQuery& q) {
-		for(auto& p : primitive)
-			p.resolve(q);
 	}
 }

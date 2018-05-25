@@ -3,15 +3,11 @@
 
 namespace rev::gltf {
 	using namespace loader;
-	Scene::Scene(const JValue& v):
+	Scene::Scene(const JValue& v, const IDataQuery& q):
 		Resource(v),
-		node(Optional<Array<TagNode>>(v, "nodes", {}))
+		node(OptionalDefault<Array<DRef_Node>>(v, "nodes", {}, q))
 	{}
 	Resource::Type Scene::getType() const noexcept {
 		return Type::Scene;
-	}
-	void Scene::resolve(const ITagQuery& q) {
-		for(auto& n : node)
-			n.resolve(q);
 	}
 }

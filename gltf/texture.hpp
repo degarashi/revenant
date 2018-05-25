@@ -1,23 +1,20 @@
 #pragma once
-#include "resource.hpp"
-#include "idtag.hpp"
+#include "dataref.hpp"
 #include "../gl_format.hpp"
 #include "../handle/opengl.hpp"
 
 namespace rev::gltf {
 	struct Texture :
-		Resource,
-		IResolvable
+		Resource
 	{
-		GLInFmt		format,
-					internalFormat;
-		TagSampler	sampler;
-		TagImage	source;
-		GLTypeFmt	type;
+		GLInFmt			format,
+						internalFormat;
+		DRef_Sampler	sampler;
+		DRef_Image		source;
+		GLTypeFmt		type;
 
-		Texture(const JValue& v);
+		Texture(const JValue& v, const IDataQuery& q);
 		Type getType() const noexcept override;
-		void resolve(const ITagQuery& q) override;
 
 		HTex getGLResource() const;
 	};

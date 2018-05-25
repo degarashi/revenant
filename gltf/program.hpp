@@ -1,21 +1,19 @@
 #pragma once
-#include "resource.hpp"
-#include "idtag.hpp"
+#include "gltf/resource.hpp"
+#include "gltf/dataref.hpp"
 #include "../handle/opengl.hpp"
 
 namespace rev::gltf {
 	struct Program :
-		Resource,
-		IResolvable
+		Resource
 	{
 		// とりあえず無視
 		GLSLNameV	attribute;
-		TagShader	vshader,
+		DRef_Shader	vshader,
 					fshader;
 
-		Program(const JValue& v);
+		Program(const JValue& v, const IDataQuery& q);
 		Type getType() const noexcept override;
-		void resolve(const ITagQuery& q) override;
 
 		mutable HProg cache;
 		const HProg& makeProgram() const;

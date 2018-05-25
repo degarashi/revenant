@@ -6,16 +6,16 @@ namespace rev {
 		using namespace loader;
 		// ------------------ Asset::Profile ------------------
 		Asset::Profile::Profile(const JValue& v):
-			api(Optional<String>(v, "api", "WebGL")),
-			version(Optional<String>(v, "version", "1.0.3"))
+			api(OptionalDefault<String>(v, "api", "WebGL")),
+			version(OptionalDefault<String>(v, "version", "1.0.3"))
 		{}
 
 		// ------------------ Asset ------------------
 		Asset::Asset(const JValue& v):
-			copyright(Optional<String>(v, "copyright", "")),
-			generator(Optional<String>(v, "generator", "")),
+			copyright(OptionalDefault<String>(v, "copyright", "")),
+			generator(OptionalDefault<String>(v, "generator", "")),
 			version(Required<String>(v, "version")),
-			premultipliedAlpha(Optional<Bool>(v, "premultipliedAlpha", false)),
+			premultipliedAlpha(OptionalDefault<Bool>(v, "premultipliedAlpha", false)),
 			profile(Optional<Profile>(v, "profile"))
 		{}
 	}

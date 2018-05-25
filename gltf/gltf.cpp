@@ -1,25 +1,14 @@
 #include "gltf/gltf.hpp"
-#include "gltf/accessor.hpp"
-#include "gltf/animation.hpp"
-#include "gltf/buffer.hpp"
-#include "gltf/bufferview.hpp"
-#include "gltf/camera.hpp"
-#include "gltf/image.hpp"
-#include "gltf/material.hpp"
-#include "gltf/mesh.hpp"
-#include "gltf/node.hpp"
-#include "gltf/program.hpp"
-#include "gltf/sampler.hpp"
-#include "gltf/scene.hpp"
-#include "gltf/shader.hpp"
-#include "gltf/skin.hpp"
-#include "gltf/technique.hpp"
-#include "gltf/texture.hpp"
 #include "../sdl_rw.hpp"
-#include "../dir.hpp"
 
 namespace rev::gltf {
-	using namespace loader;
+	using loader::Required;
+	using loader::Optional;
+	using loader::OptionalDefault;
+	using loader::Dictionary;
+	using loader::GetRequiredEntry;
+	using loader::GetOptionalEntry;
+
 	GLTF GLTF::Make(const FileURI& file) {
 		// ファイルのディレクトリをベースパスとする
 		PathBlock base(file.pathblock());
@@ -29,95 +18,111 @@ namespace rev::gltf {
 			base
 		);
 	}
-	#define LOAD_TQ(value, type, entry)	value(Optional<Dictionary<Shared<type>>>(v, entry, {}))
+	#define LOAD_ENT(type, entry)	BOOST_PP_CAT(m_, type)(OptionalDefault<Dictionary<type>>(v, entry, {}, *this))
+	#define LOAD_ENT0(type, entry)	BOOST_PP_CAT(m_, type)(OptionalDefault<Dictionary<type>>(v, entry, {}))
 	GLTF::GLTF(const JValue& v, const PathBlock& basepath):
 		_basepath(basepath),
-		LOAD_TQ(accessor, Accessor, "accessors"),
-		LOAD_TQ(animation, Animation, "animations"),
-		asset(Optional<Asset>(v, "asset")),
-		LOAD_TQ(buffer, Buffer, "buffers"),
-		LOAD_TQ(bufferView, BufferView, "bufferViews"),
-		LOAD_TQ(camera, Camera, "cameras"),
-		LOAD_TQ(image, Image, "images"),
-		LOAD_TQ(material, Material, "materials"),
-		LOAD_TQ(mesh, Mesh, "meshes"),
-		LOAD_TQ(program, Program, "programs"),
-		LOAD_TQ(sampler, Sampler, "samplers"),
-		defaultScene(Optional<TagScene>(v, "scene")),
-		LOAD_TQ(scene, Scene, "scenes"),
-		LOAD_TQ(shader, Shader, "shaders"),
-		LOAD_TQ(skin, Skin, "skins"),
-		LOAD_TQ(technique, Technique, "techniques"),
-		LOAD_TQ(texture, Texture, "textures")
+		asset(Optional<Asset>(v, "asset"))
 	{
-		const auto nodes = Optional<Dictionary<loader::Node>>(v, "nodes", {});
-		for(auto& nd : nodes)
-			node.map.emplace(nd.first, nd.second);
-		_mergeTags();
-		resolve(*this);
-	}
-
-	#undef LOAD_TQ
-	void GLTF::_mergeTags() {
-		_query.emplace_back(&accessor);
-		_query.emplace_back(&animation);
-		_query.emplace_back(&buffer);
-		_query.emplace_back(&bufferView);
-		_query.emplace_back(&camera);
-		_query.emplace_back(&image);
-		_query.emplace_back(&material);
-		_query.emplace_back(&mesh);
-		_query.emplace_back(&node);
-		_query.emplace_back(&program);
-		_query.emplace_back(&sampler);
-		_query.emplace_back(&scene);
-		_query.emplace_back(&shader);
-		_query.emplace_back(&skin);
-		_query.emplace_back(&technique);
-		_query.emplace_back(&texture);
-	}
-
-	void GLTF::resolve(const ITagQuery& q) {
-		const auto rsv = [&q](auto& dst){
-			for(auto& m : dst.map)
-				m.second->resolve(q);
-		};
-		rsv(accessor);
-		rsv(animation);
-		rsv(buffer);
-		rsv(bufferView);
-		rsv(image);
-		rsv(material);
-		rsv(mesh);
-		rsv(node);
-		rsv(program);
-		rsv(scene);
-		rsv(shader);
-		rsv(skin);
-		rsv(technique);
-		rsv(texture);
-		if(defaultScene)
-			defaultScene->resolve(q);
-	}
-	Void_SP GLTF::query(Resource::Type type, const Tag& tag) const noexcept {
-		if(type == Resource::Type::Localfile) {
-			_basepath <<= tag;
-			struct Term {
-				PathBlock& pb;
-				~Term() {
-					pb.popBack();
+		// 最初にメモリを確保する
+		const auto alloc = [&v](auto& dst, const char* name){
+			if(const auto& e = GetOptionalEntry(v, name)) {
+				auto& ent = *e;
+				auto itr = ent.MemberBegin();
+				const auto itrE = ent.MemberEnd();
+				while(itr != itrE) {
+					dst[itr->name.GetString()];
+					++itr;
 				}
-			};
-			const Term term{_basepath};
-			if(_basepath.isFile()) {
-				return std::make_shared<PathBlock>(_basepath);
+			}
+		};
+		alloc(m_Accessor,		"accessors");
+		alloc(m_Animation,		"animations");
+		alloc(m_Buffer,			"buffers");
+		alloc(m_BufferView,		"bufferViews");
+		alloc(m_Camera,			"cameras");
+		alloc(m_Image,			"images");
+		alloc(m_Mesh,			"meshes");
+		alloc(m_Material,		"materials");
+		alloc(m_Program,		"programs");
+		alloc(m_Sampler,		"samplers");
+		alloc(m_Scene,			"scenes");
+		alloc(m_Skin,			"skins");
+		alloc(m_Shader,			"shaders");
+		alloc(m_Technique,		"techniques");
+		alloc(m_Texture,		"textures");
+		alloc(m_Node,			"nodes");
+
+		const auto load = [&v](auto& dst, const auto&... args) {
+			using OP = typename std::remove_reference_t<decltype(dst)>::mapped_type;
+			using Value = typename OP::value_t;
+			if(auto m_op = Optional<Dictionary<Value>>(v, args...)) {
+				auto& mm = *m_op;
+				for(auto& m : mm) {
+					dst.at(m.first) = std::move(m.second);
+				}
+			}
+		};
+		load(m_Accessor,		"accessors",	*this);
+		load(m_Animation,		"animations",	*this);
+		load(m_Buffer,			"buffers",		*this);
+		load(m_BufferView,		"bufferViews",	*this);
+		load(m_Camera,			"cameras");
+		load(m_Image,			"images",		*this);
+		load(m_Mesh,			"meshes",		*this);
+		load(m_Material,		"materials",	*this);
+		load(m_Program,			"programs",		*this);
+		load(m_Sampler,			"samplers");
+		load(m_Scene,			"scenes",		*this);
+		load(m_Skin,			"skins",		*this);
+		load(m_Shader,			"shaders",		*this);
+		load(m_Technique,		"techniques",	*this);
+		load(m_Texture,			"textures",		*this);
+		if(auto n = Optional<Dictionary<loader::Node>>(v, "nodes", *this)) {
+			auto& nodes = *n;
+			for(auto& nd : nodes) {
+				auto& mem = m_Node.at(nd.first);
+				nd.second->moveTo(mem.data());
 			}
 		}
-		for(auto* q : _query) {
-			if(const auto ret = q->query(type, tag))
-				return ret;
+		defaultScene = Optional<DRef_Scene>(v, "scene", *this);
+	}
+	PathBlock GLTF::getFilePath(const Path& p) const {
+		_basepath <<= p;
+		struct Term {
+			PathBlock& pb;
+			~Term() {
+				pb.popBack();
+			}
+		};
+		const Term term{_basepath};
+		if(_basepath.isFile()) {
+			return _basepath;
 		}
-		return nullptr;
+		throw UnknownID("file not found");
+	}
+	#define DEF_QUERY(z, ign, name) \
+		const name& GLTF::BOOST_PP_CAT(get, name)(const Tag& tag) const { \
+			auto& m = BOOST_PP_CAT(m_, name); \
+			const auto itr = m.find(tag); \
+			if(itr != m.end()) \
+				return *itr->second.pointer(); \
+			return IDataQuery::BOOST_PP_CAT(get, name)(tag); \
+		}
+	BOOST_PP_SEQ_FOR_EACH(DEF_QUERY, EMPTY, SEQ_RES0)
+	#undef DEF_QUERY
+
+	const Node& GLTF::getNode(const Tag& tag) const {
+		const auto itr = m_Node.find(tag);
+		if(itr != m_Node.end())
+			return *reinterpret_cast<const Node*>(itr->second.data());
+		return IDataQuery::getNode(tag);
+	}
+	GLTF::~GLTF() {
+		for(auto& n : m_Node) {
+			auto* np = reinterpret_cast<Node*>(n.second.data());
+			np->~Node();
+		}
 	}
 }
 #include <cereal/external/rapidjson/error/en.h>

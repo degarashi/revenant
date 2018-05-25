@@ -1,15 +1,16 @@
 #pragma once
-#include "../gl_format.hpp"
 #include "gltf/resource.hpp"
-#include "gltf/idtag.hpp"
 #include "gltf/enums.hpp"
 #include "gltf/uniform_value.hpp"
-#include "../handle/opengl.hpp"
 #include "gltf/rt_uniform.hpp"
+#include "../gl_format.hpp"
+#include "../handle/opengl.hpp"
 #include "../handle/camera.hpp"
 
 namespace rev::gltf {
-	struct Technique : Resource, IResolvable {
+	struct Technique :
+		Resource
+	{
 		struct ParamBase {
 			GLenum			type;
 			std::size_t		count;
@@ -25,7 +26,7 @@ namespace rev::gltf {
 		// デフォルト値(Materialでの上書き可)
 		struct UnifParam_Fixed : ParamBase {
 			UniformValue	value;
-			UnifParam_Fixed(const JValue& v);
+			UnifParam_Fixed(const JValue& v, const IDataQuery& q);
 		};
 		// 値型だけの指定(Materialでの上書き必須)
 		struct UnifParam_Type : ParamBase {
@@ -55,14 +56,13 @@ namespace rev::gltf {
 		};
 		// Semantic + 明示的なノード指定
 		struct UnifParam_NodeSem : RTUniform {
-			TagNode			node;
+			DRef_Node		node;
 			USemantic		semantic;
 			// type == MAT4
 			// count == 1
 
-			UnifParam_NodeSem(const JValue& v);
+			UnifParam_NodeSem(const JValue& v, const IDataQuery& q);
 			void exportUniform(ISemanticSet& s, dc::JointId currentId, const SkinBindSet_SP& bind, const IQueryMatrix_USem& qmu) const override;
-			void resolve(const ITagQuery& q) override;
 			DEF_DEBUGGUI_NAME
 			DEF_DEBUGGUI_PROP
 		};
@@ -99,7 +99,7 @@ namespace rev::gltf {
 		using State_OP = spi::Optional<State>;
 		State_OP	state;
 
-		TagProgram	program;
+		DRef_Program	program;
 
 		// GLSLとの名前対応記述
 		struct {
@@ -111,8 +111,9 @@ namespace rev::gltf {
 			UniformM		uniform;
 		} namecnv;
 
-		Technique(const JValue& v);
+		Technique(Technique&& t) = default;
+		Technique& operator = (Technique&& t) = default;
+		Technique(const JValue& v, const IDataQuery& q);
 		Type getType() const noexcept override;
-		void resolve(const ITagQuery& q) override;
 	};
 }

@@ -1,5 +1,6 @@
 #include "gltf/buffer.hpp"
 #include "gltf/check.hpp"
+#include "gltf/value_loader.hpp"
 #include "../gl_resource.hpp"
 #include "../gl_buffer.hpp"
 
@@ -11,21 +12,17 @@ namespace rev::gltf {
 		};
 	}
 	using namespace loader;
-	Buffer::Buffer(const JValue& v):
+	Buffer::Buffer(const JValue& v, const IDataQuery& q):
 		Resource(v),
-		src(loader::GetRequiredEntry(v, "uri")),
-		byteLength(Optional<Integer>(v, "byteLength", 0)),
-		type(Optional<String>(v, "type", "arraybuffer"))
+		src(loader::GetRequiredEntry(v, "uri"), q),
+		byteLength(OptionalDefault<Integer>(v, "byteLength", 0)),
+		type(OptionalDefault<String>(v, "type", "arraybuffer"))
 	{
 		CheckEnum(c_type, type);
 	}
 	Buffer::Type Buffer::getType() const noexcept {
 		return Resource::Type::Buffer;
 	}
-	void Buffer::resolve(const ITagQuery& q) {
-		src.resolve(q);
-	}
-
 	const HVb& Buffer::getAsVb() const {
 		if(!vb_cached) {
 			const auto& buff = src.getBuffer();

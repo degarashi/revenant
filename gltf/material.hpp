@@ -1,6 +1,6 @@
 #pragma once
 #include "resource.hpp"
-#include "idtag.hpp"
+#include "dataref.hpp"
 #include "../gl_format.hpp"
 #include "../tech.hpp"
 #include "gltf/dc_common.hpp"
@@ -8,10 +8,9 @@
 
 namespace rev::gltf {
 	struct Material :
-		Resource,
-		IResolvable
+		Resource
 	{
-		TagTechnique		technique;
+		DRef_Technique		technique;
 
 		// Uniform変数の上書き分
 		UniformValueNVP		uniformOvr;
@@ -21,9 +20,8 @@ namespace rev::gltf {
 		};
 		mutable HTech			tech_cached;
 
-		Material(const JValue& v);
+		Material(const JValue& v, const IDataQuery& q);
 		Type getType() const noexcept override;
-		void resolve(const ITagQuery& q) override;
 
 		const UniformValue* findValue(const Name& name) const;
 		const HTech& getTech() const;

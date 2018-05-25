@@ -7,40 +7,22 @@
 
 namespace rev::gltf {
 	using namespace loader;
-	Material::Material(const JValue& v):
+	Material::Material(const JValue& v, const IDataQuery& q):
 		Resource(v),
-		technique(Required<String>(v, "technique"))
+		technique(Required<DRef_Technique>(v, "technique", q))
 	{
 		auto itr = v.FindMember("values");
 		if(itr != v.MemberEnd()) {
 			const JValue& values = itr->value;
 			itr = values.MemberBegin();
 			while(itr != values.MemberEnd()) {
-				uniformOvr.emplace_back(itr->name.GetString(), LoadUniformValue(itr->value));
+				uniformOvr.emplace_back(itr->name.GetString(), LoadUniformValue(itr->value, q));
 				++itr;
 			}
 		}
 	}
 	Resource::Type Material::getType() const noexcept {
 		return Type::Material;
-	}
-	void Material::resolve(const ITagQuery& q) {
-		technique.resolve(q);
-		for(auto& u : uniformOvr) {
-			boost::apply_visitor(
-				OVR_Functor {
-					[](auto&&){},
-					[&q](TagTexture& t){
-						t.resolve(q);
-					},
-					[&q](std::vector<TagTexture>& t) {
-						for(auto& t0 : t)
-							t0.resolve(q);
-					}
-				},
-				u.second
-			);
-		}
 	}
 	Material::GLTfTech::GLTfTech(const Material& mtl) {
 		if(const auto& t = mtl.technique.data()) {

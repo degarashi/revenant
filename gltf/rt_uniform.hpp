@@ -1,6 +1,6 @@
 #pragma once
 #include "gltf/dc_common.hpp"
-#include "gltf/idtag.hpp"
+#include "gltf/dataref.hpp"
 #include "lubee/fwd.hpp"
 #include "../debuggui_if.hpp"
 
@@ -8,7 +8,6 @@ namespace rev::gltf {
 	struct IQueryMatrix_USem;
 	struct ISemanticSet;
 	struct RTUniform :
-		IResolvable,
 		IDebugGui
 	{
 		virtual ~RTUniform() {}
@@ -18,6 +17,5 @@ namespace rev::gltf {
 					const SkinBindSet_SP& bind,
 					const IQueryMatrix_USem& qm
 				) const = 0;
-		void resolve(const ITagQuery&) override {}
 	};
 }

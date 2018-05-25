@@ -1,16 +1,15 @@
 #pragma once
-#include "resource.hpp"
-#include "idtag.hpp"
+#include "gltf/resource.hpp"
+#include "gltf/dataref.hpp"
+#include "gltf/dc_common.hpp"
 #include "../handle/camera.hpp"
 #include "../handle/model.hpp"
 #include "../handle/opengl.hpp"
-#include "gltf/dc_common.hpp"
 
 namespace rev::gltf {
-
+	using DRef_NodeV = std::vector<DRef_Node>;
 	struct Node :
-		Resource,
-		IResolvable
+		Resource
 	{
 		struct Visitor {
 			virtual ~Visitor() {}
@@ -21,52 +20,54 @@ namespace rev::gltf {
 			virtual void addCamera(const HCam3& c) = 0;
 		};
 		using Pose3 = beat::g3::Pose;
+
 		Pose3				pose;
-		TagNodeV			child;
+		DRef_NodeV			child;
 		SName				jointName;
 		dc::JointId			jointId;
 		static dc::JointId	s_id;
 
 		void _visit(Visitor& v) const;
-		Node(const JValue& v);
+		Node(const JValue& v, const IDataQuery& q);
 		Type getType() const noexcept override;
-		void resolve(const ITagQuery& q) override;
 		virtual void visit(Visitor& v) const;
+		virtual void moveTo(void* dst);
 	};
 	struct CameraNode : Node {
-		TagCamera		camera;
+		DRef_Camera		camera;
 
-		static std::shared_ptr<CameraNode> Load(const JValue& v);
-		CameraNode(const JValue& v);
-		void resolve(const ITagQuery& q) override;
+		static std::shared_ptr<CameraNode> Load(const JValue& v, const IDataQuery& q);
+		CameraNode(const JValue& v, const IDataQuery& q);
 		void visit(Visitor& v) const override;
+		void moveTo(void* dst) override;
 	};
 	struct MeshNodeBase : Node {
-		TagMeshV		mesh;
+		using DRef_MeshV = std::vector<DRef_Mesh>;
+		DRef_MeshV		mesh;
 
-		MeshNodeBase(const JValue& v);
-		void resolve(const ITagQuery& q) override;
+		MeshNodeBase(const JValue& v, const IDataQuery& q);
 	};
 	struct MeshNode : MeshNodeBase {
-		static std::shared_ptr<MeshNode> Load(const JValue& v);
-		MeshNode(const JValue& v);
-		void resolve(const ITagQuery& q) override;
+		static std::shared_ptr<MeshNode> Load(const JValue& v, const IDataQuery& q);
+		MeshNode(const JValue& v, const IDataQuery& q);
 		void visit(Visitor& v) const override;
+		void moveTo(void* dst) override;
 	};
 	struct SkinMeshNode : MeshNodeBase {
-		TagSkin			skin;
-		TagNodeV		skeleton;
+		DRef_Skin		skin;
+		DRef_NodeV		skeleton;
 
-		static std::shared_ptr<SkinMeshNode> Load(const JValue& v);
-		SkinMeshNode(const JValue& v);
-		void resolve(const ITagQuery& q) override;
+		static std::shared_ptr<SkinMeshNode> Load(const JValue& v, const IDataQuery& q);
+		SkinMeshNode(const JValue& v, const IDataQuery& q);
 		void visit(Visitor& v) const override;
+		void moveTo(void* dst) override;
 	};
 
+	using Node_SP = std::shared_ptr<Node>;
 	namespace loader {
 		struct Node : Node_SP {
 			using value_t = Node_SP;
-			Node(const JValue& v);
+			Node(const JValue& v, const IDataQuery& q);
 		};
 	}
 }

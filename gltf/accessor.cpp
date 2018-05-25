@@ -30,21 +30,21 @@ namespace rev::gltf {
 		};
 	}
 	using namespace loader;
-	Accessor::Accessor(const JValue& v):
+	Accessor::Accessor(const JValue& v, const IDataQuery& q):
 		Resource(v),
 		byteOffset(Required<Integer>(v, "byteOffset")),
-		byteStride(Optional<Integer>(v, "byteStride", 0)),
+		byteStride(OptionalDefault<Integer>(v, "byteStride", 0)),
 		componentType(Required<Integer>(v, "componentType")),
 		count(Required<Integer>(v, "count")),
-		bufferView(Required<String>(v, "bufferView"))
+		bufferView(Required<DRef_BufferView>(v, "bufferView", q))
 	{
 		CheckRange<std::size_t>(byteOffset, 0);
 		CheckEnum(c_componentType, componentType);
 		CheckRange<std::size_t>(count, 1);
 		const auto& typ = CheckEnum(c_elemtype, Required<String>(v, "type"));
 
-		const auto max = Optional<Number_A>(v, "max", {}),
-					min = Optional<Number_A>(v, "min", {});
+		const auto max = OptionalDefault<Number_A>(v, "max", {}),
+					min = OptionalDefault<Number_A>(v, "min", {});
 		const int sMax = max.size(),
 					sMin = min.size();
 		if(sMax > 0) {
@@ -64,9 +64,6 @@ namespace rev::gltf {
 	}
 	Resource::Type Accessor::getType() const noexcept {
 		return Type::Accessor;
-	}
-	void Accessor::resolve(const ITagQuery& q) {
-		bufferView.resolve(q);
 	}
 	void Accessor::filterValue(double* data) const noexcept {
 		if(filter.empty())

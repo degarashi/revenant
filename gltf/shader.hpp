@@ -1,21 +1,19 @@
 #pragma once
-#include "resource.hpp"
-#include "idtag.hpp"
+#include "gltf/resource.hpp"
+#include "gltf/rwref.hpp"
 #include "../gl_types.hpp"
 #include "../handle/opengl.hpp"
-#include <GL/gl.h>
+#include "../gl_header.hpp"
 
 namespace rev::gltf {
 	struct Shader :
-		Resource,
-		IResolvable
+		Resource
 	{
-		TagRW		src;
+		RWRef		src;
 		ShType		type;
 
-		Shader(const JValue& v);
+		Shader(const JValue& v, const IDataQuery& q);
 		Type getType() const noexcept override;
-		void resolve(const ITagQuery& q) override;
 
 		HSh makeShader() const;
 	};

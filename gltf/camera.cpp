@@ -9,7 +9,7 @@ namespace rev::gltf {
 	using namespace loader;
 	// ---------------------- Camera::Perspective ----------------------
 	Camera::Perspective::Perspective(const JValue& v):
-		aspectRatio(Optional<Number>(v, "aspectRatio", 1.f)),
+		aspectRatio(OptionalDefault<Number>(v, "aspectRatio", 1.f)),
 		yfov(Required<Number>(v, "yfov")),
 		zfar(Required<Number>(v, "zfar")),
 		znear(Required<Number>(v, "znear"))

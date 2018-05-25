@@ -1,16 +1,14 @@
 #pragma once
-#include "resource.hpp"
-#include "idtag.hpp"
+#include "gltf/resource.hpp"
+#include "gltf/rwref.hpp"
 
 namespace rev::gltf {
 	struct Image :
-		Resource,
-		IResolvable
+		Resource
 	{
-		TagRW			src;
+		RWRef		src;
 
-		Image(const JValue& v);
+		Image(const JValue& v, const IDataQuery& q);
 		Type getType() const noexcept override;
-		void resolve(const ITagQuery& q) override;
 	};
 }

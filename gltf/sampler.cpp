@@ -43,13 +43,13 @@ namespace rev::gltf {
 	Sampler::Sampler(const JValue& v):
 		Resource(v)
 	{
-		iLinearMag = CheckEnum(c_mag, Optional<loader::GLEnum>(v, "magFilter", GL_LINEAR)).iLinear;
-		const auto& min = CheckEnum(c_min, Optional<loader::GLEnum>(v, "minFilter", GL_NEAREST_MIPMAP_LINEAR));
+		iLinearMag = CheckEnum(c_mag, OptionalDefault<loader::GLEnum>(v, "magFilter", GL_LINEAR)).iLinear;
+		const auto& min = CheckEnum(c_min, OptionalDefault<loader::GLEnum>(v, "minFilter", GL_NEAREST_MIPMAP_LINEAR));
 		iLinearMin = min.iLinear;
 		mipLevel = min.mip;
 
-		wrapS = CheckEnum(c_wrap, Optional<loader::GLEnum>(v, "wrapS", GL_REPEAT)).state;
-		wrapT = CheckEnum(c_wrap, Optional<loader::GLEnum>(v, "wrapT", GL_REPEAT)).state;
+		wrapS = CheckEnum(c_wrap, OptionalDefault<loader::GLEnum>(v, "wrapS", GL_REPEAT)).state;
+		wrapT = CheckEnum(c_wrap, OptionalDefault<loader::GLEnum>(v, "wrapT", GL_REPEAT)).state;
 	}
 	Resource::Type Sampler::getType() const noexcept {
 		return Type::Sampler;

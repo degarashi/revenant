@@ -7,10 +7,10 @@ namespace rev::gltf {
 		const frea::AMat4 c_defaultMat = frea::AMat4::Identity();
 	}
 	using namespace loader;
-	Skin::Skin(const JValue& v):
+	Skin::Skin(const JValue& v, const IDataQuery& q):
 		Resource(v),
-		bindShapeMat(Optional<Mat4>(v, "bindShapeMatrix", c_defaultMat)),
-		invBindMat(Required<TagAccessor>(v, "inverseBindMatrices"))
+		bindShapeMat(OptionalDefault<Mat4>(v, "bindShapeMatrix", c_defaultMat)),
+		invBindMat(Required<DRef_Accessor>(v, "inverseBindMatrices", q))
 	{
 		const auto names = Required<Array<StdString>>(v, "jointNames");
 		const auto len = names.size();
@@ -21,9 +21,6 @@ namespace rev::gltf {
 	}
 	Resource::Type Skin::getType() const noexcept {
 		return Type::Skin;
-	}
-	void Skin::resolve(const ITagQuery& q) {
-		invBindMat.resolve(q);
 	}
 
 	const SkinBindSet_SP& Skin::getBind() const {
