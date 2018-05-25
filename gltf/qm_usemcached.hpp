@@ -38,7 +38,7 @@ namespace rev::gltf {
 
 			void exportSemantic(ISemanticSet& s, JointId id, USemantic sem) const override;
 			void exportViewport(ISemanticSet& s) const override;
-			const Mat4V& getJointMat(const Mat4& node_m, const SkinBindSet_SP& bind) const override;
+			const Mat4V& getJointMat(JointId id, const SkinBindSet_SP& bind) const override;
 
 			dc::Mat4 getLocal(JointId id) const override;
 			dc::Mat4 getGlobal(JointId id) const override;

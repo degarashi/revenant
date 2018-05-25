@@ -183,7 +183,7 @@ namespace rev::gltf {
 	{}
 	void Technique::UnifParam_JointMat::exportUniform(ISemanticSet& s, const dc::JointId currentId, const SkinBindSet_SP& bind, const IQueryMatrix_USem& qm) const {
 		Assert0(bind && bind->bind.size() == count);
-		s.set(qm.getJointMat(qm.getGlobal(currentId), bind), false);
+		s.set(qm.getJointMat(currentId, bind), false);
 	}
 
 	// ---------------------------- Technique::UnifParam_NodeSem ----------------------------

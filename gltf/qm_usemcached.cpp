@@ -114,9 +114,10 @@ namespace rev::gltf {
 	dc::Mat4 QueryMatrix_USemCached::getGlobal(const dc::SName& name) const  {
 		return _qm.getGlobal(name);
 	}
-	const Mat4V& QueryMatrix_USemCached::getJointMat(const Mat4& node_m, const SkinBindSet_SP& bind) const {
+	const Mat4V& QueryMatrix_USemCached::getJointMat(const JointId id, const SkinBindSet_SP& bind) const {
 		const auto len = bind->bind.size();
 		_jointMat.resize(len);
+		const Mat4 node_m = getGlobal(id);
 		for(std::size_t i=0 ; i<len ; i++) {
 			auto& b = bind->bind[i];
 			_jointMat[i] = bind->bs_m * b.invmat * getGlobal(b.jointName) * node_m;
