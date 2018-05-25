@@ -3,7 +3,7 @@
 #include "gltf/dc_common.hpp"
 
 namespace rev::gltf {
-	struct IQueryMatrix;
+	struct IQueryMatrix_USem;
 	using Name = std::string;
 	// Mesh, SkinMesh共用
 	class GLTFMesh : public dc::IMesh {
@@ -22,7 +22,7 @@ namespace rev::gltf {
 		public:
 			GLTFMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, dc::JointId id);
 			GLTFMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const SkinBindSet_SP& bind);
-			void draw(IEffect& e, const dc::IQueryMatrix& qm) const override;
+			void draw(IEffect& e, const IQueryMatrix_USem& qm) const;
 			HTech getTech() const override;
 			DEF_DEBUGGUI_SUMMARYSTR
 			DEF_DEBUGGUI_PROP

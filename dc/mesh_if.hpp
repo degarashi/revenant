@@ -11,7 +11,6 @@ namespace rev::dc {
 		IDebugGui
 	{
 		virtual ~IMesh() {}
-		virtual void draw(IEffect& e, const IQueryMatrix& qm) const = 0;
 		virtual HTech getTech() const = 0;
 	};
 }

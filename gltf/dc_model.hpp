@@ -7,7 +7,7 @@ namespace rev::gltf {
 	struct Scene;
 	class GLTFModel : public dc::IModel {
 		private:
-			using MeshV = std::vector<HMesh>;
+			using MeshV = std::vector<HMesh_U>;
 			MeshV		_mesh,
 						_skinmesh;
 			HTf			_tf;

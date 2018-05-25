@@ -5,7 +5,7 @@ namespace rev::gltf {
 	class Visitor_Model : public Node::Visitor {
 		private:
 			using NodeStack  = std::vector<dc::TfNode*>;
-			using MeshV = std::vector<HMesh>;
+			using MeshV = std::vector<HMesh_U>;
 
 			HTf			_tfRoot;
 			NodeStack	_stack;

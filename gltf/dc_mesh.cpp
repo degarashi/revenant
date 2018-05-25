@@ -32,7 +32,7 @@ namespace rev::gltf {
 	{
 		_bind = bind;
 	}
-	void GLTFMesh::draw(IEffect& e, const dc::IQueryMatrix& qm) const {
+	void GLTFMesh::draw(IEffect& e, const IQueryMatrix_USem& qmu) const {
 		e.setTechnique(_tech);
 		auto& rtp = *_rtParams;
 		if(!rtp.empty()) {
@@ -57,7 +57,6 @@ namespace rev::gltf {
 				}
 			};
 			SemanticSet sem(e.refUniformEnt());
-			auto& qmu = dynamic_cast<const IQueryMatrix_USem&>(qm);
 			const auto rtpLen = rtp.size();
 			for(std::size_t i=0 ; i<rtpLen ; i++) {
 				const auto uid = _uId[i];

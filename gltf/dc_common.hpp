@@ -27,5 +27,7 @@ namespace rev {
 			frea::Mat4	bs_m;
 		};
 		using SkinBindSet_SP = std::shared_ptr<SkinBindSet>;
+		class GLTFMesh;
+		using HMesh_U = std::shared_ptr<GLTFMesh>;
 	}
 }

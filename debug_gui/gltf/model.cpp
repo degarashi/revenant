@@ -6,6 +6,7 @@
 #include "../../dc/mesh_if.hpp"
 #include "../listview.hpp"
 #include "../../gltf/dc_model.hpp"
+#include "../../gltf/dc_mesh.hpp"
 
 namespace rev::gltf {
 	const char* GLTFModel::getDebugName() const noexcept {
