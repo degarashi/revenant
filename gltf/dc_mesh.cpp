@@ -52,8 +52,8 @@ namespace rev::gltf {
 				void set(const frea::Mat4& m, const bool t) override {
 					u.setUniformById(id, m, t);
 				}
-				void set(const std::vector<frea::Mat4>& mv, const bool) override {
-					u.setUniformById(id, mv);
+				void set(const std::vector<frea::Mat4>& mv, const bool t) override {
+					u.setUniformById(id, mv, t);
 				}
 			};
 			SemanticSet sem(e.refUniformEnt());
