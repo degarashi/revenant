@@ -2,7 +2,6 @@
 #include "resource.hpp"
 #include "idtag.hpp"
 #include "frea/matrix.hpp"
-#include "../dc/common.hpp"
 
 namespace rev::gltf {
 	struct SkinBindSet;

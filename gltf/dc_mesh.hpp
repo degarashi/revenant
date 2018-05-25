@@ -1,9 +1,9 @@
 #pragma once
 #include "../dc/mesh_if.hpp"
-#include "../dc/common.hpp"
 #include "gltf/dc_common.hpp"
 
 namespace rev::gltf {
+	struct IQueryMatrix;
 	using Name = std::string;
 	// Mesh, SkinMesh共用
 	class GLTFMesh : public dc::IMesh {

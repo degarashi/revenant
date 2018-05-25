@@ -4,7 +4,6 @@
 #include "../handle/camera.hpp"
 #include "../handle/model.hpp"
 #include "../handle/opengl.hpp"
-#include "../dc/common.hpp"
 #include "gltf/dc_common.hpp"
 
 namespace rev::gltf {

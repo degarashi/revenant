@@ -1,7 +1,6 @@
 #pragma once
 #include "gltf/dc_common.hpp"
 #include "gltf/idtag.hpp"
-#include "../dc/common.hpp"
 #include "lubee/fwd.hpp"
 #include "../debuggui_if.hpp"
 
