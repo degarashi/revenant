@@ -243,4 +243,7 @@ namespace rev {
 	std::ostream& operator << (std::ostream& os, const GLSLFormatDesc& desc) {
 		return desc.print(os);
 	}
+	bool GLSLFormatDesc::isInteger() const noexcept {
+		return type==GLSLType::IntT || type==GLSLType::BoolT;
+	}
 }

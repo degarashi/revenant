@@ -105,6 +105,7 @@ namespace rev {
 			void showAsRow() const;
 		#endif
 		std::ostream& print(std::ostream& os) const;
+		bool isInteger() const noexcept;
 	};
 	constexpr void DecompDim(const uint32_t) {}
 	template <class... Ts>
