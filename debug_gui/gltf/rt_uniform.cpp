@@ -30,8 +30,7 @@ namespace rev::gltf {
 		auto f = debug::EntryField(nullptr, edit, 2);
 		f.show("Type", getDebugName());
 		f.show("Semantic", semantic);
-		f.show("Node-JointId", node->jointId);
-		f.show("Node-Name", (node->jointName) ? node->jointName->c_str() : "(noname)");
+		f.show("Node-JointId", jointId);
 		return f.modified();
 	}
 }

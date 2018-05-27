@@ -180,14 +180,14 @@ namespace rev::gltf {
 
 	// ---------------------------- Technique::UnifParam_NodeSem ----------------------------
 	Technique::UnifParam_NodeSem::UnifParam_NodeSem(const JValue& v, const IDataQuery& q):
-		node(Required<DRef_Node>(v, "node", q))
+		jointId(Required<DRef_Node>(v, "node", q)->jointId)
 	{
 		const char* sem = Required<String>(v, "semantic");
 		semantic = *U_Semantic::FromString(sem);
 		D_Assert0(semantic != USemantic::JointMatrix);
 	}
 	void Technique::UnifParam_NodeSem::exportUniform(ISemanticSet& s, const dc::JointId, const SkinBindSet_SP& bind, const IQueryMatrix_USem& qm) const {
-		qm.exportSemantic(s, node.data()->jointId, bind, semantic);
+		qm.exportSemantic(s, this->jointId, bind, semantic);
 	}
 	// ---------------------------- Technique::State ----------------------------
 	Technique::State::State(const JValue& v) {

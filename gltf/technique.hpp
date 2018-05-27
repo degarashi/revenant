@@ -56,7 +56,7 @@ namespace rev::gltf {
 		};
 		// Semantic + 明示的なノード指定
 		struct UnifParam_NodeSem : RTUniform {
-			DRef_Node		node;
+			dc::JointId		jointId;
 			USemantic		semantic;
 			// type == MAT4
 			// count == 1
