@@ -26,6 +26,7 @@ namespace rev {
 				SName	name;
 				GLuint	id;
 				GLsizei	length;
+				bool	bInteger;
 
 				GLParamInfo() = default;
 				GLParamInfo(const GLParamInfo&) = default;
@@ -86,8 +87,8 @@ namespace rev {
 
 			//! 文字列によるUniform-Id検索
 			GLint_OP getUniformId(const SName& name) const;
-			//! 文字列によるAttribute-Id検索
-			GLint_OP getAttribId(const SName& name) const;
+			//! 文字列によるAttribute検索
+			spi::Optional<const GLParamInfo&> getAttrib(const SName& name) const;
 
 			GLuint getProgramId() const noexcept;
 			const UniformMap& getUniform() const noexcept;

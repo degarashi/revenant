@@ -9,7 +9,8 @@
 namespace rev {
 	// ------------------ GLProgram::GLParamInfo ------------------
 	GLProgram::GLParamInfo::GLParamInfo(const GLSLFormatDesc& desc):
-		GLSLFormatDesc(desc)
+		GLSLFormatDesc(desc),
+		bInteger(desc.isInteger())
 	{}
 
 	// ---------------------- GLProgram ----------------------
@@ -168,10 +169,10 @@ namespace rev {
 			return itr->second.id;
 		return spi::none;
 	}
-	GLint_OP GLProgram::getAttribId(const SName& name) const {
+	spi::Optional<const GLProgram::GLParamInfo&> GLProgram::getAttrib(const SName& name) const {
 		if(const auto itr = _amap.find(name);
 			itr != _amap.end())
-			return itr->second.id;
+			return itr->second;
 		return spi::none;
 	}
 	void GLProgram::use() const {

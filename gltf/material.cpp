@@ -88,11 +88,12 @@ namespace rev::gltf {
 			VSemAttrMap vm;
 			for(auto& a : tech.param.attribute) {
 				const auto& glsl_name = tech.namecnv.attribute.at(a.first);
-				if(const auto id = prog->getAttribId(glsl_name)) {
+				if(const auto at = prog->getAttrib(glsl_name)) {
 					const auto& ap = *a.second;
 					vm.emplace(VSem_AttrId{
-						ap.semantic,
-						*id
+						.sem = ap.semantic,
+						.attrId = int(at->id),
+						.bInteger = at->bInteger
 					});
 				}
 			}

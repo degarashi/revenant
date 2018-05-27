@@ -17,6 +17,7 @@ namespace rev {
 	struct VSem_AttrId {
 		VSemantic	sem;
 		int			attrId;
+		bool		bInteger;
 
 		bool operator == (const VSem_AttrId& a) const noexcept;
 		bool operator < (const VSem_AttrId& a) const noexcept;
@@ -32,7 +33,7 @@ namespace std {
 	template <>
 	struct hash<rev::VSem_AttrId> {
 		std::size_t operator()(const rev::VSem_AttrId& m) const noexcept {
-			return lubee::hash_combine_implicit(m.sem, m.attrId);
+			return lubee::hash_combine_implicit(m.sem, m.attrId, m.bInteger);
 		}
 	};
 }

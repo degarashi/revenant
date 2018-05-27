@@ -358,14 +358,15 @@ namespace rev {
 		// 頂点セマンティクス対応リストを生成
 		for(auto& p : attrL) {
 			const char* name = p->name.c_str();
-			if(const auto at = prog->getAttribId(SName(name))) {
+			if(const auto at = prog->getAttrib(SName(name))) {
 				const auto sem = static_cast<VSemEnum::e>(p->sem);
 				VSem_AttrId a;
 				a.sem = VSemantic {
 					sem,
 					(p->index) ? *p->index : 0
 				};
-				a.attrId = *at;
+				a.attrId = at->id;
+				a.bInteger = at->bInteger;
 				vm.emplace(a);
 				uc.emplace_back(UniqueChk{a.attrId, sem, name});
 			} else {

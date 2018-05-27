@@ -15,7 +15,8 @@ namespace rev {
 
 	bool VSem_AttrId::operator == (const VSem_AttrId& a) const noexcept {
 		return sem == a.sem &&
-				attrId == a.attrId;
+				attrId == a.attrId &&
+				bInteger == a.bInteger;
 	}
 	bool VSem_AttrId::operator < (const VSem_AttrId& a) const noexcept {
 		if(sem < a.sem)

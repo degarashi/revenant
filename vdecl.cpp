@@ -85,17 +85,14 @@ namespace rev {
 					if(itr == attr.cend())
 						return;
 					const auto attrId = itr->attrId;
-					const auto* ptr = reinterpret_cast<const GLvoid*>(t2.offset);
-					bool bInteger = false;
+					const auto bInteger =
 					#ifndef USE_OPENGLES2
-					{
-						const auto typ = GLFormat::QueryGLSLInfo(t2.elemFlag)->type;
-						if(typ == GLSLType::BoolT || typ == GLSLType::IntT) {
-							// PCにおけるAMDドライバの場合、Int値はIPointerでセットしないと値が化けてしまう為
-							bInteger = true;
-						}
-					}
+						// PCにおけるAMDドライバの場合、Int値はIPointerでセットしないと値が化けてしまう為
+						itr->bInteger;
+					#else
+						false;
 					#endif
+					const auto* ptr = reinterpret_cast<const GLvoid*>(t2.offset);
 					q.add(DCmd_VPtr{
 						.attrId = attrId,
 						.elemSize = t2.elemSize,
