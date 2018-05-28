@@ -100,9 +100,6 @@ namespace rev::gltf {
 				);
 			} else
 				identity();
-			// this->refOffset().z *= -1;
-			// this->refRotation().w *= -1;
-			// this->refRotation().z *= -1;
 		}
 		bool Pose3::CanLoad(const JValue& /*v*/) noexcept {
 			return true;
