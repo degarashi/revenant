@@ -15,7 +15,7 @@ namespace rev::gltf {
 	using JValue = rapidjson::Value;
 	using JType = rapidjson::Type;
 	using JSize = rapidjson::SizeType;
-	using Tag = std::string;
+	using Name = std::string;
 	namespace loader {
 		template <class T, ENABLE_IF(HasTypeT_value_t_t<T>{})>
 		typename T::value_t UnwrapValue_TFunc(T*);
@@ -133,9 +133,9 @@ namespace rev::gltf {
 			}
 		};
 		template <class T>
-		struct Dictionary : std::unordered_map<Tag, UnwrapValue_T<T>> {
+		struct Dictionary : std::unordered_map<Name, UnwrapValue_T<T>> {
 			using child_t = UnwrapValue_T<T>;
-			using value_t = std::unordered_map<Tag, child_t>;
+			using value_t = std::unordered_map<Name, child_t>;
 			template <class... Ts>
 			Dictionary(const JValue& v, const Ts&... ts) {
 				if(!CanLoad(v))
