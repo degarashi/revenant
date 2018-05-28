@@ -11,16 +11,17 @@ namespace rev::gltf {
 	class DataRef {
 		private:
 			const T*		_data;
+			using Loader = loader::FindLoader_t<Tag_t>;
 		public:
 			DataRef(): _data(nullptr) {}
 			DataRef(const JValue& v, const Q& q):
-				_data(&(q.*FP)(loader::StdString(v)))
+				_data(&(q.*FP)(Loader(v)))
 			{}
 			DataRef(const Tag_t& tag, const Q& q):
 				_data(&(q.*FP)(tag))
 			{}
 			static bool CanLoad(const JValue& v) {
-				return loader::String::CanLoad(v);
+				return Loader::CanLoad(v);
 			}
 			const T* data() const noexcept {
 				return _data;
