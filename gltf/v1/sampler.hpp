@@ -1,16 +1,12 @@
 #pragma once
 #include "gltf/v1/resource.hpp"
-#include "gltf/json_types.hpp"
-#include "../../gl_types.hpp"
+#include "gltf/sampler.hpp"
 
 namespace rev::gltf::v1 {
-	struct Sampler : Resource {
-		int			iLinearMag,
-					iLinearMin;
-		MipState	mipLevel;
-		WrapState	wrapS,
-					wrapT;
-
+	struct Sampler :
+		gltf::Sampler,
+		Resource
+	{
 		Sampler(const JValue& v);
 		Type getType() const noexcept override;
 	};
