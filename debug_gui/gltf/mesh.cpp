@@ -1,14 +1,14 @@
-#include "../../gltf/dc_mesh.hpp"
+#include "../../gltf/v1/dc_mesh.hpp"
 #include "../sstream.hpp"
 #include "../../imgui/imgui.h"
-#include "../../gltf/rt_uniform.hpp"
+#include "../../gltf/v1/rt_uniform.hpp"
 #include "../print.hpp"
 #include "../header.hpp"
 #include "../entry_field.hpp"
 #include "../../primitive.hpp"
 #include "../../tech_if.hpp"
 
-namespace rev::gltf {
+namespace rev::gltf::v1 {
 	std::string GLTFMesh::summary_str() const {
 		StringStream s;
 		s << "\"" << _userName << "\"(";

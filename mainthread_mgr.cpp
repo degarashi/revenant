@@ -18,7 +18,7 @@
 #include "techmgr.hpp"
 #include "imgui_sdl2.hpp"
 #include "object_mgr.hpp"
-#include "gltf/mgr.hpp"
+#include "gltf/v1/mgr.hpp"
 
 namespace rev {
 	void MainThread::_InitManagers(Manager& m, const GameloopParam& param, const Window& w) {
@@ -51,7 +51,7 @@ namespace rev {
 			Mouse::OpenMouse(0),
 			w
 		);
-		m.gltf = std::make_shared<gltf::GLTFMgr>();
+		m.gltf = std::make_shared<gltf::v1::GLTFMgr>();
 	}
 	void MainThread::_LoadPathfile(const URI& uri, const bool bAppend) {
 		mgr_path.setFromText(mgr_rw.fromURI(uri, Access::Read), bAppend);

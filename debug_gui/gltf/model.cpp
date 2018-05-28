@@ -5,10 +5,10 @@
 #include "../../imgui/imgui.h"
 #include "../../dc/mesh_if.hpp"
 #include "../listview.hpp"
-#include "../../gltf/dc_model.hpp"
-#include "../../gltf/dc_mesh.hpp"
+#include "../../gltf/v1/dc_model.hpp"
+#include "../../gltf/v1/dc_mesh.hpp"
 
-namespace rev::gltf {
+namespace rev::gltf::v1 {
 	const char* GLTFModel::getDebugName() const noexcept {
 		return "GLTFModel";
 	}

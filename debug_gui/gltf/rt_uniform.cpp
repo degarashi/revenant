@@ -1,9 +1,9 @@
-#include "../../gltf/technique.hpp"
+#include "../../gltf/v1/technique.hpp"
 #include "../print.hpp"
 #include "../entry_field.hpp"
-#include "../../gltf/node.hpp"
+#include "../../gltf/v1/node.hpp"
 
-namespace rev::gltf {
+namespace rev::gltf::v1 {
 	const char* Technique::UnifParam_Sem::getDebugName() const noexcept {
 		return "UnifParam_Sem";
 	}

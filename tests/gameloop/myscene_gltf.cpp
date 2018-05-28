@@ -1,16 +1,16 @@
 #include "myscene.hpp"
-#include "../../gltf/mgr.hpp"
+#include "../../gltf/v1/mgr.hpp"
 #include "../../uri.hpp"
-#include "../../gltf/scene.hpp"
+#include "../../gltf/v1/scene.hpp"
 #include "../../dc/node.hpp"
 #include "../../dc/model_if.hpp"
-#include "../../gltf/dc_model.hpp"
+#include "../../gltf/v1/dc_model.hpp"
 #include "../../debug_gui/resource_window.hpp"
 #include "../../debug_gui/window.hpp"
 #include "../../debug_gui/print.hpp"
 #include "../../dir.hpp"
 #include "../../imgui/imgui.h"
-#include "../../gltf/animation.hpp"
+#include "../../gltf/v1/animation.hpp"
 #include <boost/format.hpp>
 
 namespace rev::test {
@@ -34,7 +34,7 @@ namespace rev::test {
 		{
 			{
 				auto sc = *(*dsc);
-				_model = gltf::GLTFModel::FromScene(sc);
+				_model = gltf::v1::GLTFModel::FromScene(sc);
 			}
 			_anim.clear();
 			for(auto& a : g->m_Animation)

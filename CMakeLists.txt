@@ -49,7 +49,7 @@ aux_source_directory(glwrapper LIBSRC_GLWRAPPER)
 aux_source_directory(parse LIBSRC_GLXPARSE)
 aux_source_directory(backup LIBSRC_BACKUP)
 aux_source_directory(imgui LIBSRC_MAIN)
-aux_source_directory(gltf LIBSRC_GLTF)
+aux_source_directory(gltf/v1 LIBSRC_GLTF)
 aux_source_directory(dc LIBSRC_DC)
 list(REMOVE_ITEM LIBSRC_MAIN ${OS_DEPENDANT_SRC} ${SOUND_DEPENDANT_SRC})
 
