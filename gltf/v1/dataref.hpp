@@ -6,17 +6,18 @@ namespace rev::gltf::v1 {
 	template <
 		class T,
 		class Tag_t,
-		const T& (IDataQuery::*FP)(const Tag_t&) const
+		class Q,
+		const T& (Q::*FP)(const Tag_t&) const
 	>
 	class DataRef {
 		private:
 			const T*		_data;
 		public:
 			DataRef(): _data(nullptr) {}
-			DataRef(const JValue& v, const IDataQuery& q):
+			DataRef(const JValue& v, const Q& q):
 				_data(&(q.*FP)(loader::StdString(v)))
 			{}
-			DataRef(const Tag_t& tag, const IDataQuery& q):
+			DataRef(const Tag_t& tag, const Q& q):
 				_data(&(q.*FP)(tag))
 			{}
 			static bool CanLoad(const JValue& v) {
@@ -36,7 +37,7 @@ namespace rev::gltf::v1 {
 			}
 	};
 	#define DEF_REF(z, ign, name) \
-		using BOOST_PP_CAT(DRef_, name) = DataRef<name, Tag, &IDataQuery::BOOST_PP_CAT(get, name)>;
+		using BOOST_PP_CAT(DRef_, name) = DataRef<name, Tag, IDataQuery, &IDataQuery::BOOST_PP_CAT(get, name)>;
 	BOOST_PP_SEQ_FOR_EACH(DEF_REF, EMPTY, SEQ_RES)
 	#undef DEF_REF
 }
