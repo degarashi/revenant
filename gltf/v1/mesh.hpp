@@ -1,6 +1,6 @@
 #pragma once
 #include "resource.hpp"
-#include "dataref.hpp"
+#include "gltf/v1/dataref.hpp"
 #include "../../gl_format.hpp"
 #include "../../gl_types.hpp"
 #include "gltf/v1/enums.hpp"

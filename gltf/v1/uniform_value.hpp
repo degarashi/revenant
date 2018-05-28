@@ -1,6 +1,6 @@
 #pragma once
 #include <boost/variant.hpp>
-#include "dataref.hpp"
+#include "gltf/v1/dataref.hpp"
 
 namespace rev {
 	class UniformEnt;

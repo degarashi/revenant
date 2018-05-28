@@ -1,5 +1,5 @@
 #pragma once
-#include "dataref.hpp"
+#include "gltf/v1/dataref.hpp"
 #include "frea/matrix.hpp"
 
 namespace rev::gltf::v1 {

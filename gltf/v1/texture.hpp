@@ -1,5 +1,5 @@
 #pragma once
-#include "dataref.hpp"
+#include "gltf/v1/dataref.hpp"
 #include "../../gl_format.hpp"
 #include "../../handle/opengl.hpp"
 
