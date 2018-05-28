@@ -5,16 +5,13 @@
 #include "lubee/wrapper.hpp"
 #include "spine/optional.hpp"
 #include "beat/pose3d.hpp"
-#include <cereal/external/rapidjson/document.h>
+#include "json_types.hpp"
 #include <vector>
 #include <unordered_map>
 #include <GL/gl.h>
 
 namespace rev::gltf {
 	DEF_HASTYPE_T(value_t)
-	using JValue = rapidjson::Value;
-	using JType = rapidjson::Type;
-	using JSize = rapidjson::SizeType;
 	using Name = std::string;
 	namespace loader {
 		template <class T, ENABLE_IF(HasTypeT_value_t_t<T>{})>

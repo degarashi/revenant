@@ -1,6 +1,6 @@
 #pragma once
 #include "gltf/v1/resource.hpp"
-#include "gltf/v1/json_types.hpp"
+#include "gltf/json_types.hpp"
 #include "../../gl_types.hpp"
 
 namespace rev::gltf::v1 {

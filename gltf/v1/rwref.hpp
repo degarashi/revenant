@@ -1,7 +1,7 @@
 #pragma once
 #include "../../handle/sdl.hpp"
 #include "../../handle/uri.hpp"
-#include "json_types.hpp"
+#include "../json_types.hpp"
 #include "spine/optional.hpp"
 
 namespace rev::gltf::v1 {

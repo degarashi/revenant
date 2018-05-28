@@ -2,7 +2,7 @@
 #include "spine/enum.hpp"
 #include "spine/optional.hpp"
 #include "spine/flyweight_item.hpp"
-#include "json_types.hpp"
+#include "../json_types.hpp"
 
 namespace rev::gltf::v1 {
 	using Name = std::string;
