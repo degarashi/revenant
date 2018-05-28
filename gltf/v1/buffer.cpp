@@ -1,4 +1,5 @@
 #include "gltf/v1/buffer.hpp"
+#include "gltf/v1/dataquery_if.hpp"
 #include "../check.hpp"
 #include "../value_loader.hpp"
 #include "../../gl_resource.hpp"

@@ -1,12 +1,12 @@
 #include "rwref.hpp"
-#include "dataquery_if.hpp"
-#include "../value_loader.hpp"
-#include "../../uri.hpp"
-#include "../../sdl_rw.hpp"
+#include "dataquery_if_base.hpp"
+#include "value_loader.hpp"
+#include "../uri.hpp"
+#include "../sdl_rw.hpp"
 
-namespace rev::gltf::v1 {
-	namespace {
-		HURI MakeURI_gltf(const IDataQuery& q, const char* s) {
+namespace rev::gltf {
+	RWRef::RWRef(const JValue& v, const IDataQueryBase& q):
+		_uri([](const IDataQueryBase& q, const char* s) -> HURI {
 			if(auto ret = DataURI::Interpret(s))
 				return ret;
 			if(auto ret = FileURI::Interpret(s))
@@ -14,10 +14,7 @@ namespace rev::gltf::v1 {
 			// ローカルパスをグローバルへ変換
 			const auto path = q.getFilePath(s);
 			return std::make_shared<FileURI>(path.plain_utf8());
-		}
-	}
-	RWRef::RWRef(const JValue& v, const IDataQuery& q):
-		_uri(MakeURI_gltf(q, loader::String(v)))
+		}(q, loader::String(v)))
 	{}
 	HRW RWRef::getRW() const {
 		return mgr_rw.fromURI(*_uri, Access::Read);

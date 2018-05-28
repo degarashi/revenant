@@ -1,11 +1,12 @@
 #pragma once
 #include "gltf/v1/resource.hpp"
-#include "gltf/v1/rwref.hpp"
+#include "gltf/rwref.hpp"
 #include "../../gl_types.hpp"
 #include "../../handle/opengl.hpp"
 #include "../../gl_header.hpp"
 
 namespace rev::gltf::v1 {
+	struct IDataQuery;
 	struct Shader :
 		Resource
 	{

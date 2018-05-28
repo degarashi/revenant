@@ -1,9 +1,10 @@
 #pragma once
 #include "gltf/v1/resource.hpp"
-#include "gltf/v1/rwref.hpp"
+#include "gltf/rwref.hpp"
 #include "../../handle/opengl.hpp"
 
 namespace rev::gltf::v1 {
+	struct IDataQuery;
 	struct Buffer :
 		Resource
 	{

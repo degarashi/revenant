@@ -1,8 +1,9 @@
 #pragma once
 #include "gltf/v1/resource.hpp"
-#include "gltf/v1/rwref.hpp"
+#include "gltf/rwref.hpp"
 
 namespace rev::gltf::v1 {
+	struct IDataQuery;
 	struct Image :
 		Resource
 	{

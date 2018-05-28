@@ -1,4 +1,5 @@
 #include "gltf/v1/image.hpp"
+#include "gltf/v1/dataquery_if.hpp"
 #include "../value_loader.hpp"
 
 namespace rev::gltf::v1 {
