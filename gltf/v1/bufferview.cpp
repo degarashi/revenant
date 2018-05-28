@@ -1,5 +1,5 @@
 #include "gltf/v1/bufferview.hpp"
-#include "gltf/v1/check.hpp"
+#include "../check.hpp"
 #include "gltf/v1/buffer.hpp"
 
 namespace rev::gltf::v1 {

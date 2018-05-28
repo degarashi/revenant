@@ -1,6 +1,6 @@
 #include "gltf/v1/camera.hpp"
-#include "gltf/v1/value_loader.hpp"
-#include "gltf/v1/check.hpp"
+#include "../value_loader.hpp"
+#include "../check.hpp"
 #include "frea/angle.hpp"
 #include "../../camera3d.hpp"
 #include "../../ovr_functor.hpp"

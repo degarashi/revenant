@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <GL/gl.h>
 
-namespace rev::gltf::v1 {
+namespace rev::gltf {
 	DEF_HASTYPE_T(value_t)
 	using JValue = rapidjson::Value;
 	using JType = rapidjson::Type;

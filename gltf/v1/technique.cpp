@@ -1,5 +1,5 @@
 #include "gltf/v1/technique.hpp"
-#include "gltf/v1/check.hpp"
+#include "../check.hpp"
 #include "gltf/v1/dc_common.hpp"
 #include "gltf/v1/node.hpp"
 #include "../../gl_if.hpp"
@@ -12,6 +12,17 @@
 
 namespace rev::gltf::v1 {
 	namespace {
+		using gltf::loader::Required;
+		using gltf::loader::GLEnum;
+		using gltf::loader::Optional;
+		using gltf::loader::OptionalDefault;
+		using gltf::loader::FindLoader_t;
+		using gltf::loader::Array;
+		using gltf::loader::Integer;
+		using gltf::loader::String;
+		using gltf::loader::StdString;
+		using gltf::loader::Dictionary;
+
 		// GLbooleanの時はunsigned char -> Integerと解釈されてしまうので特別にbool変換
 		template <class T>
 		struct GLArgCnv { using type = T; };
@@ -39,7 +50,7 @@ namespace rev::gltf::v1 {
 				HGLState _makeWithArgs(const JValue& v, std::index_sequence<Idx...>) const {
 					return MakeGL_VState(
 						func,
-						loader::FindLoader_t<TypesAt<Idx>>{
+						FindLoader_t<TypesAt<Idx>>{
 							v[rapidjson::SizeType(Idx)]
 						}...
 					);
@@ -50,7 +61,7 @@ namespace rev::gltf::v1 {
 				>
 				HGLState _make(const JValue& v) const {
 					const auto m = [&](auto& v){
-						return MakeGL_VState(func, loader::FindLoader_t<TypesAt<0>>{v});
+						return MakeGL_VState(func, FindLoader_t<TypesAt<0>>{v});
 					};
 					if(v.GetType() != rapidjson::Type::kArrayType)
 						return m(v);
@@ -132,10 +143,9 @@ namespace rev::gltf::v1 {
 			GL_SAMPLER_2D,
 		};
 	}
-	using namespace loader;
 	// ---------------------------- Technique::ParamBase ----------------------------
 	Technique::ParamBase::ParamBase(const JValue& v):
-		type(Required<loader::GLEnum>(v, "type")),
+		type(Required<GLEnum>(v, "type")),
 		count(OptionalDefault<Integer>(v, "count", 1))
 	{
 		CheckEnum(c_glsltype, type);
@@ -192,7 +202,7 @@ namespace rev::gltf::v1 {
 	// ---------------------------- Technique::State ----------------------------
 	Technique::State::State(const JValue& v) {
 		{
-			const auto bs = OptionalDefault<Array<loader::GLEnum>>(v, "enable", {});
+			const auto bs = OptionalDefault<Array<GLEnum>>(v, "enable", {});
 			for(auto& b : bs) {
 				const auto& idx = &CheckEnum(c_bool, b) - c_bool;
 				state.emplace_back(std::make_shared<GL_BState>(true, c_bool[idx]));

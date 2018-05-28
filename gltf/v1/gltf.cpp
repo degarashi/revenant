@@ -2,12 +2,12 @@
 #include "../../sdl_rw.hpp"
 
 namespace rev::gltf::v1 {
-	using loader::Required;
-	using loader::Optional;
-	using loader::OptionalDefault;
-	using loader::Dictionary;
-	using loader::GetRequiredEntry;
-	using loader::GetOptionalEntry;
+	using ::rev::gltf::loader::Required;
+	using ::rev::gltf::loader::Optional;
+	using ::rev::gltf::loader::OptionalDefault;
+	using ::rev::gltf::loader::Dictionary;
+	using ::rev::gltf::loader::GetRequiredEntry;
+	using ::rev::gltf::loader::GetOptionalEntry;
 
 	GLTF GLTF::Make(const FileURI& file) {
 		// ファイルのディレクトリをベースパスとする

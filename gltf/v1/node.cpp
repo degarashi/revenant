@@ -8,15 +8,21 @@
 #include "../../dc/node.hpp"
 
 namespace rev::gltf::v1 {
+	using gltf::loader::Required;
+	using gltf::loader::OptionalDefault;
+	using gltf::loader::Optional;
+	using gltf::loader::Array;
+	using gltf::loader::StdString;
+
 	dc::JointId Node::s_id = 1;
 
 	Node::Node(const JValue& v, const IDataQuery& q):
 		Resource(v),
-		pose(loader::Pose3(v)),
-		child(loader::OptionalDefault<loader::Array<DRef_Node>>(v, "children", {}, q)),
+		pose(gltf::loader::Pose3(v)),
+		child(OptionalDefault<Array<DRef_Node>>(v, "children", {}, q)),
 		jointId(s_id++)
 	{
-		if(const auto jn = loader::Optional<loader::StdString>(v, "jointName"))
+		if(const auto jn = Optional<StdString>(v, "jointName"))
 			jointName = *jn;
 	}
 	Resource::Type Node::getType() const noexcept {
@@ -46,7 +52,7 @@ namespace rev::gltf::v1 {
 	}
 	CameraNode::CameraNode(const JValue& v, const IDataQuery& q):
 		Node(v, q),
-		camera(loader::Required<DRef_Camera>(v, "camera", q))
+		camera(Required<DRef_Camera>(v, "camera", q))
 	{}
 	void CameraNode::visit(Visitor& v) const {
 		Node::visit(v);
@@ -58,7 +64,7 @@ namespace rev::gltf::v1 {
 	// ------------------- MeshNodeBase -------------------
 	MeshNodeBase::MeshNodeBase(const JValue& v, const IDataQuery& q):
 		Node(v, q),
-		mesh(loader::Required<loader::Array<DRef_Mesh>>(v, "meshes", q))
+		mesh(Required<Array<DRef_Mesh>>(v, "meshes", q))
 	{}
 	// ------------------- MeshNode -------------------
 	std::shared_ptr<MeshNode> MeshNode::Load(const JValue& v, const IDataQuery& q) {
@@ -97,8 +103,8 @@ namespace rev::gltf::v1 {
 	}
 	SkinMeshNode::SkinMeshNode(const JValue& v, const IDataQuery& q):
 		MeshNodeBase(v, q),
-		skin(loader::Required<DRef_Skin>(v, "skin", q)),
-		skeleton(loader::OptionalDefault<loader::Array<DRef_Node>>(v, "skeleton", {}, q))
+		skin(Required<DRef_Skin>(v, "skin", q)),
+		skeleton(OptionalDefault<Array<DRef_Node>>(v, "skeleton", {}, q))
 	{}
 	void SkinMeshNode::visit(Visitor& v) const {
 		Node::visit(v);

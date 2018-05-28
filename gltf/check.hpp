@@ -1,5 +1,5 @@
 #pragma once
-#include "gltf/v1/exceptions.hpp"
+#include "gltf/exceptions.hpp"
 #include "lubee/meta/countof.hpp"
 #include "spine/optional.hpp"
 #include <limits>

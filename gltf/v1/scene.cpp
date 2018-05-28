@@ -1,5 +1,5 @@
 #include "gltf/v1/scene.hpp"
-#include "gltf/v1/value_loader.hpp"
+#include "../value_loader.hpp"
 
 namespace rev::gltf::v1 {
 	using namespace loader;

@@ -1,6 +1,6 @@
 #pragma once
 #include "gltf/v1/resource.hpp"
-#include "gltf/v1/exceptions.hpp"
+#include "gltf/exceptions.hpp"
 #include "../../path.hpp"
 
 namespace rev::gltf::v1 {

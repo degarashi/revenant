@@ -1,5 +1,5 @@
 #include "gltf/v1/image.hpp"
-#include "gltf/v1/value_loader.hpp"
+#include "../value_loader.hpp"
 
 namespace rev::gltf::v1 {
 	using namespace loader;

@@ -1,6 +1,6 @@
 #pragma once
 #include "gltf/v1/dataquery_if.hpp"
-#include "gltf/v1/value_loader.hpp"
+#include "../value_loader.hpp"
 
 namespace rev::gltf::v1 {
 	template <

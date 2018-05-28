@@ -1,5 +1,5 @@
 #include "gltf/v1/accessor.hpp"
-#include "gltf/v1/check.hpp"
+#include "../check.hpp"
 
 namespace rev::gltf::v1 {
 	namespace {

@@ -1,6 +1,6 @@
 #include "gltf/v1/shader.hpp"
-#include "gltf/v1/check.hpp"
-#include "gltf/v1/value_loader.hpp"
+#include "../check.hpp"
+#include "../value_loader.hpp"
 #include "../../gl_resource.hpp"
 #include "../../sdl_rw.hpp"
 #include <regex>

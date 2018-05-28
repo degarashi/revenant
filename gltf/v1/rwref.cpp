@@ -1,6 +1,6 @@
 #include "rwref.hpp"
 #include "dataquery_if.hpp"
-#include "value_loader.hpp"
+#include "../value_loader.hpp"
 #include "../../uri.hpp"
 #include "../../sdl_rw.hpp"
 

@@ -1,5 +1,5 @@
 #include "enums.hpp"
-#include "check.hpp"
+#include "../check.hpp"
 #include <regex>
 
 namespace rev::gltf::v1 {

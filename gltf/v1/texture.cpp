@@ -1,6 +1,6 @@
 #include "gltf/v1/texture.hpp"
-#include "gltf/v1/value_loader.hpp"
-#include "gltf/v1/check.hpp"
+#include "../value_loader.hpp"
+#include "../check.hpp"
 #include "../../gl_resource.hpp"
 #include "gltf/v1/image.hpp"
 #include "gltf/v1/sampler.hpp"

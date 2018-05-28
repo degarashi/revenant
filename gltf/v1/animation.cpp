@@ -1,5 +1,5 @@
 #include "gltf/v1/animation.hpp"
-#include "gltf/v1/check.hpp"
+#include "../check.hpp"
 #include "gltf/v1/accessor.hpp"
 #include "dc/sampler.hpp"
 

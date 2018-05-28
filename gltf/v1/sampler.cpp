@@ -1,6 +1,6 @@
 #include "gltf/v1/sampler.hpp"
-#include "gltf/v1/value_loader.hpp"
-#include "gltf/v1/check.hpp"
+#include "../value_loader.hpp"
+#include "../check.hpp"
 
 namespace rev::gltf::v1 {
 	namespace {

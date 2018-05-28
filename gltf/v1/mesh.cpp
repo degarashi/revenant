@@ -1,5 +1,5 @@
 #include "gltf/v1/mesh.hpp"
-#include "gltf/v1/check.hpp"
+#include "../check.hpp"
 #include "../../primitive.hpp"
 #include "gltf/v1/accessor.hpp"
 #include "../../gl_resource.hpp"
