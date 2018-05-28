@@ -4,7 +4,7 @@
 #include "spine/optional.hpp"
 #include <limits>
 
-namespace rev::gltf::v1 {
+namespace rev::gltf {
 	template <class Ar, class Value, class Cmp=std::equal_to<>>
 	auto FindEnum(const Ar& ar, const Value& v, Cmp&& cmp=std::equal_to<>{}) -> spi::Optional<decltype(ar[0])> {
 		const int n = countof(ar);
