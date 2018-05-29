@@ -74,6 +74,13 @@ namespace rev::dc {
 		_initialized = true;
 		return *this;
 	}
+	void QM_Fixed::clearCache() {
+		_cache.clear();
+		_cacheV.clear();
+		_cachePtr.clear();
+		_serialId = 0;
+		_initialized = false;
+	}
 	void QM_Fixed::_register(const TfNode* node, const bool local) const {
 		Ent ent(node, local, ~0);
 		auto itr = _cache.find(ent);

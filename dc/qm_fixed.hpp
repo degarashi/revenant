@@ -58,6 +58,7 @@ namespace rev::dc {
 			QM_Fixed(const QM_Fixed&) = delete;
 			QM_Fixed(const IJointQuery& q);
 			const IQueryMatrix& prepareInterface();
+			void clearCache();
 
 			Mat4 getLocal(JointId id) const override;
 			Mat4 getGlobal(JointId id) const override;
