@@ -1,17 +1,9 @@
 #pragma once
 #include "spine/enum.hpp"
 #include "../../gl_header.hpp"
-#include "../../vertex.hpp"
 #include "spine/optional.hpp"
 
 namespace rev::gltf::v1 {
-	struct V_Semantic {
-		std::string		sem;
-
-		static spi::Optional<VSemantic> FromString(const char* s);
-		bool operator == (const std::string& s) const noexcept;
-		bool operator == (const char* s) const noexcept;
-	};
 	DefineEnum(USemantic,
 		(Local)
 		(Model)

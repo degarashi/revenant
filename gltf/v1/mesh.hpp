@@ -3,7 +3,7 @@
 #include "gltf/v1/dataref.hpp"
 #include "../../gl_format.hpp"
 #include "../../gl_types.hpp"
-#include "gltf/v1/enums.hpp"
+#include "gltf/v_semantic.hpp"
 #include "handle/opengl.hpp"
 
 namespace rev::gltf::v1 {

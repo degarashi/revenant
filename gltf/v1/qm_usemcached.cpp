@@ -2,6 +2,7 @@
 #include "../../camera3d.hpp"
 #include "../../uniform_ent.hpp"
 #include "semantic_if.hpp"
+#include "lubee/hash_combine.hpp"
 
 namespace rev::gltf::v1 {
 	// --------------------- QueryMatrix_USemCached::USemKey ---------------------
