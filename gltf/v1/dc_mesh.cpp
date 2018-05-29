@@ -8,6 +8,20 @@
 #include "../../tech_if.hpp"
 
 namespace rev::gltf::v1 {
+	namespace {
+		struct DCmd_FlipFace {
+			static void Command(const void* p);
+		};
+		void DCmd_FlipFace::Command(const void*) {
+			GLint face;
+			GL.glGetIntegerv(GL_FRONT_FACE, &face);
+			if(face == GL_CCW)
+				face = GL_CW;
+			else
+				face = GL_CCW;
+			GL.glFrontFace(face);
+		}
+	}
 	// ------------ GLTFMesh ------------
 	GLTFMesh::GLTFMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::JointId id):
 		_primitive(p),
@@ -32,7 +46,8 @@ namespace rev::gltf::v1 {
 	{
 		_bind = bind;
 	}
-	void GLTFMesh::draw(IEffect& e, const IQueryMatrix_USem& qmu) const {
+	bool GLTFMesh::draw(IEffect& e, const IQueryMatrix_USem& qmu) const {
+		bool ret = false;
 		e.setTechnique(_tech);
 		auto& rtp = *_rtParams;
 		if(!rtp.empty()) {
@@ -57,6 +72,12 @@ namespace rev::gltf::v1 {
 				}
 			};
 			SemanticSet sem(e.refUniformEnt());
+
+			if(!_flip) {
+				const auto m = qmu.getGlobal(_jointId);
+				_flip = m.calcDeterminant() > 0;
+				ret = true;
+			}
 			const auto rtpLen = rtp.size();
 			for(std::size_t i=0 ; i<rtpLen ; i++) {
 				const auto uid = _uId[i];
@@ -67,7 +88,13 @@ namespace rev::gltf::v1 {
 			}
 		}
 		e.setPrimitive(_primitive);
+
+		if(*_flip)
+			e.refQueue().add(DCmd_FlipFace());
 		e.draw();
+		if(*_flip)
+			e.refQueue().add(DCmd_FlipFace());
+		return ret;
 	}
 	HTech GLTFMesh::getTech() const {
 		return _tech;

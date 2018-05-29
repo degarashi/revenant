@@ -21,13 +21,16 @@ namespace rev::gltf::v1 {
 		const auto cam = dynamic_cast<const U_Matrix3D&>(e).getCamera();
 		const auto vp = e.getViewport().resolve([](){ return mgr_info.getScreenSize(); });
 		QueryMatrix_USemCached qmc(cam, vp, _qm.prepareInterface());
+		bool clear = false;
 
 		for(auto& m : _mesh) {
-			m->draw(e, qmc);
+			clear |= m->draw(e, qmc);
 		}
 		for(auto& m : _skinmesh) {
-			m->draw(e, qmc);
+			clear |= m->draw(e, qmc);
 		}
+		if(clear)
+			_qm.clearCache();
 	}
 	HTf GLTFModel::getNode() const {
 		return _tf;
