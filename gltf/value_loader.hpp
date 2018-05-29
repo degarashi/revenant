@@ -69,8 +69,8 @@ namespace rev::gltf {
 			name FindLoader(typ);
 		DEF_GETTER(Null, lubee::none_t);
 		DEF_GETTER(Bool, bool);
+		DEF_GETTER(Float, float);
 		DEF_GETTER(Number, double);
-		Number FindLoader(float);
 		DEF_GETTER(Integer, int64_t);
 		template <class T, ENABLE_IF(std::is_integral<T>{})>
 		Integer FindLoader(T);

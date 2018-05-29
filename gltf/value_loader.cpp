@@ -41,7 +41,14 @@ namespace rev::gltf {
 		bool Number::CanLoad(const JValue& v) noexcept {
 			return v.IsNumber();
 		}
-
+		Float::Float(const JValue& v) {
+			if(!CanLoad(v))
+				throw InvalidProperty("can't read as number");
+			this->_value = v.GetFloat();
+		}
+		bool Float::CanLoad(const JValue& v) noexcept {
+			return v.IsNumber();
+		}
 		Integer::Integer(const JValue& v) {
 			if(!CanLoad(v))
 				throw InvalidProperty("can't read as integer");
