@@ -11,6 +11,9 @@ namespace lubee {
 	using RectF = Rect<float>;
 }
 namespace rev {
+	namespace draw {
+		class IQueue;
+	}
 	struct ClearParam;
 	class UniformEnt;
 	class FBRect;
@@ -30,6 +33,7 @@ namespace rev {
 			virtual void resetFramebuffer() = 0;
 			virtual void setPrimitive(const HPrim& p) noexcept = 0;
 			virtual void clearFramebuffer(const ClearParam& param) = 0;
+			virtual draw::IQueue& refQueue() const = 0;
 			virtual void draw() = 0;
 			virtual void beginTask() = 0;
 			virtual void endTask() = 0;

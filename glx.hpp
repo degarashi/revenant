@@ -73,6 +73,7 @@ namespace rev {
 			FBRect setViewport(const FBRect& r) override;
 			const FBRect& getViewport() const noexcept override;
 			FBRect setScissor(const FBRect& r) override;
+			draw::IQueue& refQueue() const override;
 
 			// ----------------- Primitive -----------------
 			void setPrimitive(const HPrim& p) noexcept override;

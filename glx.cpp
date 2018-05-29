@@ -160,4 +160,8 @@ namespace rev {
 		_bScissor = true;
 		return prev;
 	}
+	draw::IQueue& GLEffect::refQueue() const {
+		D_Assert0(_writeEnt);
+		return *_writeEnt;
+	}
 }
