@@ -58,8 +58,8 @@ namespace rev::dc {
 				((NameToNode)(NameMap)(Node)) \
 				((IdToNode)(IdMap)(Node))
 			RFLAG_DEFINE(TfRoot, SEQ)
-			RFLAG_GETMETHOD_DEFINE(SEQ)
 		public:
+			RFLAG_GETMETHOD_DEFINE(SEQ)
 			RFLAG_REFMETHOD_DEFINE(SEQ)
 			RFLAG_SETMETHOD_DEFINE(SEQ)
 			#undef SEQ
