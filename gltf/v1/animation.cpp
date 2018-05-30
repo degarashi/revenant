@@ -2,6 +2,7 @@
 #include "../check.hpp"
 #include "gltf/v1/accessor.hpp"
 #include "dc/sampler.hpp"
+#include "../../ovr_functor.hpp"
 
 namespace rev::gltf::v1 {
 	using namespace loader;
@@ -24,24 +25,25 @@ namespace rev::gltf::v1 {
 	}
 	namespace {
 		template <class T>
-		using SVec = std::shared_ptr<std::vector<T>>;
+		using Vec = std::vector<T>;
 	}
 	void AnimSampler::_checkData() const {
 		if(!cached.output) {
-			output->getData(
+			boost::apply_visitor(
 				OVR_Functor{
-					[this](const SVec<frea::Vec3>& v) {
+					[this](const Vec<frea::Vec3>& v) {
 						cached.vec4 = false;
-						cached.output = v;
+						cached.output = &v;
 					},
-					[this](const SVec<frea::Vec4>& v) {
+					[this](const Vec<frea::Vec4>& v) {
 						cached.vec4 = true;
-						cached.output = v;
+						cached.output = &v;
 					},
 					[](const auto&) {
 						AssertF("output type must Vec3 or Vec4");
 					},
-				}
+				},
+				output->getData()
 			);
 		}
 	}
@@ -49,21 +51,21 @@ namespace rev::gltf::v1 {
 		_checkData();
 		Assert0(!cached.vec4);
 		const auto samp = std::make_shared<dc::T_Sampler>();
-		samp->value = std::static_pointer_cast<std::vector<frea::Vec3>>(cached.output);
+		samp->value = std::make_shared<Vec<frea::Vec3>>(*static_cast<const Vec<frea::Vec3>*>(cached.output));
 		return samp;
 	}
 	HSampler AnimSampler::outputAsRotation() const {
 		_checkData();
 		Assert0(cached.vec4);
 		const auto samp = std::make_shared<dc::R_Sampler>();
-		samp->value = std::static_pointer_cast<std::vector<frea::Quat>>(cached.output);
+		samp->value = std::make_shared<Vec<frea::Quat>>(*static_cast<const Vec<frea::Quat>*>(cached.output));
 		return samp;
 	}
 	HSampler AnimSampler::outputAsScaling() const {
 		_checkData();
 		Assert0(!cached.vec4);
 		const auto samp = std::make_shared<dc::S_Sampler>();
-		samp->value = std::static_pointer_cast<std::vector<frea::Vec3>>(cached.output);
+		samp->value = std::make_shared<Vec<frea::Vec3>>(*static_cast<const Vec<frea::Vec3>*>(cached.output));
 		return samp;
 	}
 
@@ -152,7 +154,7 @@ namespace rev::gltf::v1 {
 			// Sampler(input) -> PosSampler
 			{
 				auto isamp = std::make_shared<dc::PosSampler_cached>();
-				isamp->pos = c.sampler->input->template getDataAs<float>();
+				isamp->pos = std::make_shared<std::vector<float>>(c.sampler->input->getAsFloat());
 				ch->_position = isamp;
 			}
 			ret.addChannel(ch);

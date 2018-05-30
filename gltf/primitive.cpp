@@ -43,6 +43,29 @@ namespace rev::gltf {
 	bool Primitive<D_Accessor, Q>::CanLoad(const JValue&) noexcept {
 		return true;
 	}
+	namespace {
+		struct Visitor : boost::static_visitor<> {
+			HIb				_ib;
+			std::size_t		_count;
+
+			Visitor(const HIb& ib):
+				_ib(ib),
+				_count(0)
+			{}
+			template <class T, ENABLE_IF(std::is_integral_v<T>)>
+			void operator()(const std::vector<T>& t) {
+				_count = t.size();
+				_ib->initData(t);
+			}
+			template <class T, ENABLE_IF(!std::is_integral_v<T>)>
+			void operator()(const std::vector<T>&) {
+				D_Assert0(false);
+			}
+			void operator()(boost::blank) {
+				D_Assert0(false);
+			}
+		};
+	}
 	template <class D_Accessor, class Q>
 	const HPrim& Primitive<D_Accessor, Q>::getPrimitive() const {
 		if(!primitive_cache) {
@@ -70,10 +93,10 @@ namespace rev::gltf {
 							map.emplace(key, index);
 							++index;
 
-							nV = std::min(nV, acc.count);
+							nV = std::min(nV, acc._count);
 						}
 					}
-					vdinfo.emplace_back(idx, acc.byteOffset + acc.bufferView->byteOffset, acc.componentType, GL_FALSE, acc.nElem, a.first, acc.byteStride);
+					vdinfo.emplace_back(idx, acc._byteOffset + acc.bufferView->byteOffset, acc._componentType, GL_FALSE, acc._nElem, a.first, acc.byteStride);
 				}
 				vdecl = FWVDecl(vdinfo);
 				D_Assert(index <= MaxVStream, "too many vertex streams");
@@ -86,12 +109,10 @@ namespace rev::gltf {
 				// make Index-buffer
 				const HIb ib = mgr_gl.makeIBuffer(DrawType::Static);
 				auto& idata = *(*index);
-				std::size_t count;
-				idata.getData([&ib, &count](const auto& p){
-					count = p->size();
-					ib->initData(*p);
-				});
-				primitive_cache = ::rev::Primitive::MakeWithIndex(vdecl, mode, ib, count, 0, vb, nVb);
+
+				Visitor visitor(ib);
+				boost::apply_visitor(visitor, idata.getData());
+				primitive_cache = ::rev::Primitive::MakeWithIndex(vdecl, mode, ib, visitor._count, 0, vb, nVb);
 			} else {
 				primitive_cache = ::rev::Primitive::MakeWithoutIndex(vdecl, mode, 0, nV, vb, nVb);
 			}

@@ -13,10 +13,9 @@ namespace rev::gltf::v1 {
 		AnimSampler(const JValue& v, const IDataQuery& q);
 		Type getType() const noexcept override;
 
-		using Void_SP = std::shared_ptr<void>;
 		mutable struct {
 			bool		vec4;
-			Void_SP		output;
+			const void*	output =nullptr;
 		} cached;
 
 		void _checkData() const;
