@@ -76,8 +76,7 @@ namespace rev::gltf {
 			std::size_t nV = std::numeric_limits<std::size_t>::max();
 			{
 				std::size_t index=0;
-				using BView = decltype(attribute[0].second->bufferView.data());
-				std::unordered_map<BView, std::size_t> map;
+				std::unordered_map<HVb, std::size_t> map;
 
 				// BufferViewがそのままVertexBufferになる
 				VDecl::VDInfoV	 vdinfo;
@@ -85,7 +84,7 @@ namespace rev::gltf {
 					auto& acc = *a.second;
 					std::size_t idx;
 					{
-						BView key = acc.bufferView.data();
+						HVb key = acc.bufferView->getAsVb();
 						if(const auto itr = map.find(key);
 								itr != map.end())
 							idx = itr->second;
@@ -102,7 +101,7 @@ namespace rev::gltf {
 				vdecl = FWVDecl(vdinfo);
 				D_Assert(index <= MaxVStream, "too many vertex streams");
 				for(auto& m : map) {
-					vb[m.second] = m.first->getAsVb();
+					vb[m.second] = m.first;
 				}
 				nVb = map.size();
 			}
