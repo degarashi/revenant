@@ -12,7 +12,7 @@ namespace rev::gltf::v1 {
 	using GLSLNameV = std::vector<GLSLName>;
 	using MIME = std::string;
 
-	#define SEQ_RES0 \
+	#define SEQ_V1_RES0 \
 		(Accessor) \
 		(Animation) \
 		(Buffer) \
@@ -28,13 +28,13 @@ namespace rev::gltf::v1 {
 		(Shader) \
 		(Technique) \
 		(Texture)
-	#define SEQ_RES1	SEQ_RES0(AnimSampler)
-	#define SEQ_RES		SEQ_RES1(Node)
+	#define SEQ_V1_RES1	SEQ_V1_RES0(AnimSampler)
+	#define SEQ_V1_RES		SEQ_V1_RES1(Node)
 
 	struct Resource {
 		DefineEnum(
 			Type,
-			SEQ_RES
+			SEQ_V1_RES
 		);
 		spi::Optional<Name>		username;
 
@@ -46,6 +46,6 @@ namespace rev::gltf::v1 {
 	#define DEF_RES(z, ign, name) \
 		struct name; \
 		using BOOST_PP_CAT(name, _OP) = spi::Optional<name>;
-	BOOST_PP_SEQ_FOR_EACH(DEF_RES, EMPTY, SEQ_RES)
+	BOOST_PP_SEQ_FOR_EACH(DEF_RES, EMPTY, SEQ_V1_RES)
 	#undef DEF_RES
 }

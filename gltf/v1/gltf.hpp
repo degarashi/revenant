@@ -42,7 +42,7 @@ namespace rev::gltf::v1 {
 			Asset_OP			asset;
 
 			#define DEF_M(z, _, name)	std::unordered_map<Tag, BOOST_PP_CAT(name, _OP)> BOOST_PP_CAT(m_, name);
-			BOOST_PP_SEQ_FOR_EACH(DEF_M, EMPTY, SEQ_RES0)
+			BOOST_PP_SEQ_FOR_EACH(DEF_M, EMPTY, SEQ_V1_RES0)
 			#undef DEF_M
 
 			std::unordered_map<Tag, NodeMem>	m_Node;
@@ -53,7 +53,7 @@ namespace rev::gltf::v1 {
 
 			#define DEF_METHOD(z, ign, name) \
 				const name& BOOST_PP_CAT(get, name)(const Tag& tag) const override;
-			BOOST_PP_SEQ_FOR_EACH(DEF_METHOD, EMPTY, SEQ_RES0(Node))
+			BOOST_PP_SEQ_FOR_EACH(DEF_METHOD, EMPTY, SEQ_V1_RES0(Node))
 			#undef DEF_METHOD
 			PathBlock getFilePath(const Path& p) const override;
 			GLTF(GLTF&& g) = default;

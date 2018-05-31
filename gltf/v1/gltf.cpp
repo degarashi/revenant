@@ -109,7 +109,7 @@ namespace rev::gltf::v1 {
 				return *itr->second.pointer(); \
 			return IDataQuery::BOOST_PP_CAT(get, name)(tag); \
 		}
-	BOOST_PP_SEQ_FOR_EACH(DEF_QUERY, EMPTY, SEQ_RES0)
+	BOOST_PP_SEQ_FOR_EACH(DEF_QUERY, EMPTY, SEQ_V1_RES0)
 	#undef DEF_QUERY
 
 	const Node& GLTF::getNode(const Tag& tag) const {
