@@ -97,12 +97,12 @@ namespace rev::gltf {
 							nV = std::min(nV, acc._count);
 						}
 					}
-					vdinfo.emplace_back(idx, acc._byteOffset + acc.bufferView->byteOffset, acc._componentType, GL_FALSE, acc._nElem, a.first, acc.byteStride);
+					vdinfo.emplace_back(idx, acc._byteOffset, acc._componentType, GL_FALSE, acc._nElem, a.first, acc.byteStride);
 				}
 				vdecl = FWVDecl(vdinfo);
 				D_Assert(index <= MaxVStream, "too many vertex streams");
 				for(auto& m : map) {
-					vb[m.second] = m.first->src->getAsVb();
+					vb[m.second] = m.first->getAsVb();
 				}
 				nVb = map.size();
 			}

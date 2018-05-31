@@ -1,7 +1,6 @@
 #pragma once
 #include "gltf/v1/resource.hpp"
 #include "gltf/rwref.hpp"
-#include "../../handle/opengl.hpp"
 
 namespace rev::gltf::v1 {
 	struct IDataQuery;
@@ -15,8 +14,5 @@ namespace rev::gltf::v1 {
 
 		Buffer(const JValue& v, const IDataQuery& q);
 		Type getType() const noexcept override;
-
-		mutable HVb		vb_cached;
-		const HVb& getAsVb() const;
 	};
 }

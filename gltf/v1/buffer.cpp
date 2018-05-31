@@ -2,8 +2,6 @@
 #include "gltf/v1/dataquery_if.hpp"
 #include "../check.hpp"
 #include "../value_loader.hpp"
-#include "../../gl_resource.hpp"
-#include "../../gl_buffer.hpp"
 
 namespace rev::gltf::v1 {
 	namespace {
@@ -23,13 +21,5 @@ namespace rev::gltf::v1 {
 	}
 	Buffer::Type Buffer::getType() const noexcept {
 		return Resource::Type::Buffer;
-	}
-	const HVb& Buffer::getAsVb() const {
-		if(!vb_cached) {
-			const auto& buff = src.getBuffer();
-			const auto vb = vb_cached = mgr_gl.makeVBuffer(DrawType::Static);
-			vb->initData(buff, 0);
-		}
-		return vb_cached;
 	}
 }

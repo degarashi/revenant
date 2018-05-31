@@ -1,6 +1,8 @@
 #include "gltf/v1/bufferview.hpp"
 #include "../check.hpp"
 #include "gltf/v1/buffer.hpp"
+#include "../../gl_resource.hpp"
+#include "../../gl_buffer.hpp"
 
 namespace rev::gltf::v1 {
 	namespace {
@@ -31,10 +33,18 @@ namespace rev::gltf::v1 {
 		return Type::BufferView;
 	}
 	std::pair<uintptr_t, std::size_t> BufferView::getBuffer() const {
-		const auto& buff = src.data()->src.getBuffer();
+		const auto& buff = src->src.getBuffer();
 		return {
 			reinterpret_cast<uintptr_t>(buff.data()) + byteOffset,
 			byteLength
 		};
+	}
+	const HVb& BufferView::getAsVb() const {
+		if(!vb_cached) {
+			const auto buff = getBuffer();
+			const auto vb = vb_cached = mgr_gl.makeVBuffer(DrawType::Static);
+			vb->initData(reinterpret_cast<const void*>(buff.first), buff.second);
+		}
+		return vb_cached;
 	}
 }

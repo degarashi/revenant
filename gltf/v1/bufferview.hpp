@@ -3,6 +3,7 @@
 #include "gltf/v1/dataref.hpp"
 #include "../../gl_format.hpp"
 #include "../../gl_types.hpp"
+#include "../../handle/opengl.hpp"
 
 namespace rev::gltf::v1 {
 	struct BufferView :
@@ -19,5 +20,7 @@ namespace rev::gltf::v1 {
 		Type getType() const noexcept override;
 
 		std::pair<uintptr_t, std::size_t> getBuffer() const;
+		mutable HVb		vb_cached;
+		const HVb& getAsVb() const;
 	};
 }
