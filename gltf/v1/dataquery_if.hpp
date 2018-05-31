@@ -5,6 +5,7 @@
 namespace rev::gltf::v1 {
 	using Tag = std::string;
 	struct IDataQuery : gltf::IDataQueryBase {
+		using Tag_t = Tag;
 		#define DEF_METHOD(z, ign, name) \
 			virtual const name& BOOST_PP_CAT(get, name)(const Tag& tag) const { \
 				throw UnknownID("Unknown id: "s + tag); }

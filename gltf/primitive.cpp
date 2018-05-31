@@ -31,7 +31,8 @@ namespace rev::gltf {
 					c_mode, m,
 					[](auto&& c, auto&& m){ return c.first == m; }
 				).second;
-		const auto attr = L::OptionalDefault<L::Dictionary<L::String>>(v, "attributes", {});
+		using LTag = L::FindLoader_t<typename Q::Tag_t>;
+		const auto attr = L::OptionalDefault<L::Dictionary<LTag>>(v, "attributes", {});
 		for(auto& a : attr) {
 			attribute.emplace_back(
 				*V_Semantic::FromString(a.first.c_str()),
