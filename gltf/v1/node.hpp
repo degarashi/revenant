@@ -4,7 +4,6 @@
 #include "gltf/v1/dc_common.hpp"
 #include "../../handle/camera.hpp"
 #include "../../handle/model.hpp"
-#include "../../handle/opengl.hpp"
 
 namespace rev::gltf::v1 {
 	using DRef_NodeV = std::vector<DRef_Node>;
