@@ -28,4 +28,10 @@ namespace rev::gltf::v1 {
 	Resource::Type Accessor::getType() const noexcept {
 		return Type::Accessor;
 	}
+	Accessor::Vb_P Accessor::getAsVb() const {
+		return {
+			.vb = bufferView->getAsVb(),
+			.offset = _byteOffset
+		};
+	}
 }

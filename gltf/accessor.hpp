@@ -3,6 +3,7 @@
 #include "data_pair.hpp"
 #include "frea/matrix.hpp"
 #include "json_types.hpp"
+#include "../handle/opengl.hpp"
 
 namespace rev::gltf {
 	class Accessor {
@@ -43,6 +44,11 @@ namespace rev::gltf {
 				Vec<Mat3>,
 				Vec<Mat4>
 			>;
+			struct Vb_P {
+				HVb			vb;
+				std::size_t	offset;
+			};
+
 		private:
 			using FilterP = std::pair<double,double>;
 			using Filter = Vec<FilterP>;
@@ -86,5 +92,6 @@ namespace rev::gltf {
 
 			Vec<int32_t> cnvToInt32() const;
 			DataP_Unit getDataP_Unit() const;
+			virtual Vb_P getAsVb() const = 0;
 	};
 }

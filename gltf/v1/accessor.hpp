@@ -20,5 +20,6 @@ namespace rev::gltf::v1 {
 
 		Accessor(const JValue& v, const IDataQuery& q);
 		Type getType() const noexcept override;
+		Vb_P getAsVb() const override;
 	};
 }
