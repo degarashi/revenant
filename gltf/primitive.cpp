@@ -78,13 +78,13 @@ namespace rev::gltf {
 				std::size_t index=0;
 				std::unordered_map<HVb, std::size_t> map;
 
-				// BufferViewがそのままVertexBufferになる
 				VDecl::VDInfoV	 vdinfo;
 				for(auto& a : attribute) {
 					auto& acc = *a.second;
 					std::size_t idx;
+					const auto vbp = acc.getAsVb();
 					{
-						HVb key = acc.bufferView->getAsVb();
+						HVb key = vbp.vb;
 						if(const auto itr = map.find(key);
 								itr != map.end())
 							idx = itr->second;
@@ -96,7 +96,7 @@ namespace rev::gltf {
 							nV = std::min(nV, acc._count);
 						}
 					}
-					vdinfo.emplace_back(idx, acc._byteOffset, acc._componentType, GL_FALSE, acc._nElem, a.first, acc.byteStride);
+					vdinfo.emplace_back(idx, vbp.offset, acc._componentType, GL_FALSE, acc._nElem, a.first, acc.byteStride);
 				}
 				vdecl = FWVDecl(vdinfo);
 				D_Assert(index <= MaxVStream, "too many vertex streams");
