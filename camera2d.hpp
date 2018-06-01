@@ -25,7 +25,9 @@ namespace rev {
 			struct Getter : spi::RFlag_Getter<uint32_t> {
 				using RFlag_Getter::operator ();
 				counter_t operator()(const beat::g2::Pose& pose, Pose*, const Camera2D&) const {
-					return *pose.getAccum();
+					if(const auto ac = pose.getAccum())
+						return *ac;
+					return ~0;
 				}
 			};
 			using AMat3 = frea::AMat3;
