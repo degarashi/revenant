@@ -261,7 +261,7 @@ namespace rev::gltf {
 	void Accessor::_readCache() const {
 		SelectByType(_componentType, [this](auto type){
 			auto data = _getBufferData();
-			data.first += _byteOffset;
+			data.pointer += _byteOffset;
 
 			Size stride;
 			if(const auto s = _getByteStride())
@@ -271,7 +271,7 @@ namespace rev::gltf {
 
 			using SrcType = decltype(type);
 			using ItrS = ItrSingle<SrcType, BuffType>;
-			ComposeIterator itr{Cnv{}, ItrS{data.first, sizeof(SrcType)}};
+			ComposeIterator itr{Cnv{}, ItrS{data.pointer, sizeof(SrcType)}};
 
 			using SaveType = std::decay_t<decltype(*itr)>;
 			Vec<SaveType> result(_count);

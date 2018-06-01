@@ -32,18 +32,18 @@ namespace rev::gltf::v1 {
 	Resource::Type BufferView::getType() const noexcept {
 		return Type::BufferView;
 	}
-	std::pair<uintptr_t, std::size_t> BufferView::getBuffer() const {
+	DataP BufferView::getBuffer() const {
 		const auto& buff = src->src.getBuffer();
 		return {
-			reinterpret_cast<uintptr_t>(buff.data()) + byteOffset,
-			byteLength
+			.pointer = reinterpret_cast<uintptr_t>(buff.data()) + byteOffset,
+			.length = byteLength
 		};
 	}
 	const HVb& BufferView::getAsVb() const {
 		if(!vb_cached) {
 			const auto buff = getBuffer();
 			const auto vb = vb_cached = mgr_gl.makeVBuffer(DrawType::Static);
-			vb->initData(reinterpret_cast<const void*>(buff.first), buff.second);
+			vb->initData(buff.asPointer(), buff.length);
 		}
 		return vb_cached;
 	}

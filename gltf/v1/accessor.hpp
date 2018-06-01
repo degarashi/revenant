@@ -15,7 +15,7 @@ namespace rev::gltf::v1 {
 		DRef_BufferView		bufferView;
 
 		Size_OP _getByteStride() const noexcept override;
-		Data _getBufferData() const override;
+		DataP _getBufferData() const override;
 		bool _filterEnabled() const noexcept override;
 
 		Accessor(const JValue& v, const IDataQuery& q);

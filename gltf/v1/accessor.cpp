@@ -16,7 +16,7 @@ namespace rev::gltf::v1 {
 	Accessor::Size_OP Accessor::_getByteStride() const noexcept {
 		return byteStride;
 	}
-	Accessor::Data Accessor::_getBufferData() const {
+	DataP Accessor::_getBufferData() const {
 		return bufferView->getBuffer();
 	}
 	bool Accessor::_filterEnabled() const noexcept {

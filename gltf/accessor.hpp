@@ -1,5 +1,6 @@
 #pragma once
 #include "../gl_format.hpp"
+#include "data_pair.hpp"
 #include "frea/matrix.hpp"
 #include "json_types.hpp"
 
@@ -8,7 +9,6 @@ namespace rev::gltf {
 		protected:
 			using Size = std::size_t;
 			using Size_OP = spi::Optional<Size>;
-			using Data = std::pair<uintptr_t, Size>;
 
 			using Vec2 = frea::Vec2;
 			using Vec3 = frea::Vec3;
@@ -65,7 +65,7 @@ namespace rev::gltf {
 
 		private:
 			virtual Size_OP _getByteStride() const noexcept = 0;
-			virtual Data _getBufferData() const = 0;
+			virtual DataP _getBufferData() const = 0;
 			virtual bool _filterEnabled() const noexcept = 0;
 			virtual void _onCacheMaked(Cache&) const {}
 			template <class BuffType, class Cnv>

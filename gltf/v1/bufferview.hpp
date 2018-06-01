@@ -1,6 +1,7 @@
 #pragma once
 #include "resource.hpp"
 #include "gltf/v1/dataref.hpp"
+#include "../data_pair.hpp"
 #include "../../gl_format.hpp"
 #include "../../gl_types.hpp"
 #include "../../handle/opengl.hpp"
@@ -19,7 +20,7 @@ namespace rev::gltf::v1 {
 		BufferView(const JValue& v, const IDataQuery& q);
 		Type getType() const noexcept override;
 
-		std::pair<uintptr_t, std::size_t> getBuffer() const;
+		DataP getBuffer() const;
 		mutable HVb		vb_cached;
 		const HVb& getAsVb() const;
 	};
