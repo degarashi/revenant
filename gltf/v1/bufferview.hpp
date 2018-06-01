@@ -1,27 +1,18 @@
 #pragma once
 #include "resource.hpp"
 #include "gltf/v1/dataref.hpp"
-#include "../data_pair.hpp"
-#include "../../gl_format.hpp"
-#include "../../gl_types.hpp"
-#include "../../handle/opengl.hpp"
+#include "gltf/bufferview.hpp"
 
 namespace rev::gltf::v1 {
 	struct BufferView :
+		gltf::BufferView,
 		Resource
 	{
 		DRef_Buffer		src;
-		std::size_t		byteOffset,
-						byteLength;
-		// VertexBuffer or IndexBuffer
-		using BufferType_OP = spi::Optional<BufferType>;
-		BufferType_OP	target;
 
 		BufferView(const JValue& v, const IDataQuery& q);
 		Type getType() const noexcept override;
 
-		DataP getBuffer() const;
-		mutable HVb		vb_cached;
-		const HVb& getAsVb() const;
+		DataP getBuffer() const override;
 	};
 }
