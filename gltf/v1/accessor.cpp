@@ -6,10 +6,13 @@ namespace rev::gltf::v1 {
 	Accessor::Accessor(const JValue& v, const IDataQuery& q):
 		gltf::Accessor(v),
 		Resource(v),
-		byteStride(L::OptionalDefault<L::Integer>(v, "byteStride", 0)),
 		bufferView(L::Required<DRef_BufferView>(v, "bufferView", q))
 	{
-		CheckRange<std::size_t>(byteStride, 0, 255);
+		if(const auto str = L::Optional<L::Integer>(v, "byteStride")) {
+			CheckRange<std::size_t>(*str, 0, 255);
+			if(*str > 0)
+				byteStride = *str;
+		}
 		if(byteStride == 0)
 			byteStride = GLFormat::QuerySize(_componentType) * _nElem;
 	}

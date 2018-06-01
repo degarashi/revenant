@@ -96,7 +96,7 @@ namespace rev::gltf {
 							nV = std::min(nV, acc._count);
 						}
 					}
-					vdinfo.emplace_back(idx, vbp.offset, acc._componentType, GL_FALSE, acc._nElem, a.first, acc.byteStride);
+					vdinfo.emplace_back(idx, vbp.offset, acc._componentType, GL_FALSE, acc._nElem, a.first, acc.getByteStride());
 				}
 				vdecl = FWVDecl(vdinfo);
 				D_Assert(index <= MaxVStream, "too many vertex streams");

@@ -185,10 +185,10 @@ namespace rev::gltf {
 			ItrS		itr;
 			std::size_t	stride;
 
-			ComposeIterator(const Cnv cnv, const ItrS itr):
+			ComposeIterator(const Cnv cnv, const ItrS itr, const std::size_t str):
 				cnv(cnv),
 				itr(itr),
-				stride(Cnv::NElem)
+				stride(str)
 			{}
 			auto operator * () const noexcept {
 				return cnv(itr);
@@ -198,7 +198,7 @@ namespace rev::gltf {
 				return *this;
 			}
 			ComposeIterator operator + (const std::size_t n) const noexcept {
-				return {cnv, itr+n*stride};
+				return {cnv, itr+n*stride, stride};
 			}
 			intptr_t operator - (const ComposeIterator& i) const noexcept {
 				const intptr_t diff = i.itr - itr;
@@ -263,15 +263,13 @@ namespace rev::gltf {
 			auto data = _getBufferData();
 			data.pointer += _byteOffset;
 
-			Size stride;
-			if(const auto s = _getByteStride())
-				stride = *s;
-			else
-				stride = sizeof(BuffType) * _nElem;
-
 			using SrcType = decltype(type);
 			using ItrS = ItrSingle<SrcType, BuffType>;
-			ComposeIterator itr{Cnv{}, ItrS{data.pointer, sizeof(SrcType)}};
+			Size stride = getByteStride();
+			D_Assert0(stride % sizeof(SrcType) == 0);
+			stride = stride/sizeof(SrcType);
+
+			ComposeIterator itr{Cnv{}, ItrS{data.pointer, sizeof(SrcType)}, stride};
 
 			using SaveType = std::decay_t<decltype(*itr)>;
 			Vec<SaveType> result(_count);
@@ -287,59 +285,9 @@ namespace rev::gltf {
 	}
 	const Accessor::Cache& Accessor::getData() const {
 		if(_cache.which() == 0) {
-			if(_bMatrix) {
-				switch(_nElem) {
-					case 4: {
-						_readCache<GLfloat, cnv::Mat<2,2>>();
-						break; }
-					case 9:
-						_readCache<GLfloat, cnv::Mat<3,3>>();
-						break;
-					case 16:
-						_readCache<GLfloat, cnv::Mat<4,4>>();
-						break;
-					default:
-						D_Assert0(false);
-				}
-			} else {
-				if(_nElem == 1) {
-					switch(_componentType) {
-						case GL_BYTE:
-							_readCache<GLbyte, cnv::Scalar>();
-							break;
-						case GL_UNSIGNED_BYTE:
-							_readCache<GLubyte, cnv::Scalar>();
-							break;
-						case GL_SHORT:
-							_readCache<GLshort, cnv::Scalar>();
-							break;
-						case GL_UNSIGNED_SHORT:
-							_readCache<GLushort, cnv::Scalar>();
-							break;
-						default:
-							_readCache<GLfloat, cnv::Scalar>();
-					}
-				} else if(_nElem == 2) {
-					if(_bFloat) {
-						_readCache<GLfloat, cnv::Vec<2>>();
-					} else {
-						_readCache<GLint, cnv::Vec<2>>();
-					}
-				} else if(_nElem == 3) {
-					if(_bFloat) {
-						_readCache<GLfloat, cnv::Vec<3>>();
-					} else {
-						_readCache<GLint, cnv::Vec<3>>();
-					}
-				} else {
-					D_Assert0(_nElem == 4);
-					if(_bFloat) {
-						_readCache<GLfloat, cnv::Vec<4>>();
-					} else {
-						_readCache<GLint, cnv::Vec<4>>();
-					}
-				}
-			}
+			_detectType([this](auto raw, auto cnv){
+				_readCache<decltype(raw), decltype(cnv)>();
+			});
 			if(!_filter.empty() && _filterEnabled()) {
 				visitor::Filter v(_filter.data());
 				boost::apply_visitor(v, _cache);
@@ -347,6 +295,62 @@ namespace rev::gltf {
 			_onCacheMaked(_cache);
 		}
 		return _cache;
+	}
+	template <class CB>
+	void Accessor::_detectType(CB&& cb) const {
+		if(_bMatrix) {
+			switch(_nElem) {
+				case 4: {
+					cb(GLfloat{}, cnv::Mat<2,2>{});
+					break; }
+				case 9:
+					cb(GLfloat{}, cnv::Mat<3,3>{});
+					break;
+				case 16:
+					cb(GLfloat{}, cnv::Mat<4,4>{});
+					break;
+				default:
+					D_Assert0(false);
+			}
+		} else {
+			if(_nElem == 1) {
+				switch(_componentType) {
+					case GL_BYTE:
+						cb(GLbyte{}, cnv::Scalar{});
+						break;
+					case GL_UNSIGNED_BYTE:
+						cb(GLubyte{}, cnv::Scalar{});
+						break;
+					case GL_SHORT:
+						cb(GLshort{}, cnv::Scalar{});
+						break;
+					case GL_UNSIGNED_SHORT:
+						cb(GLushort{}, cnv::Scalar{});
+						break;
+					default:
+						cb(GLfloat{}, cnv::Scalar{});
+				}
+			} else if(_nElem == 2) {
+				if(_bFloat) {
+					cb(GLfloat{}, cnv::Vec<2>{});
+				} else {
+					cb(GLint{}, cnv::Vec<2>{});
+				}
+			} else if(_nElem == 3) {
+				if(_bFloat) {
+					cb(GLfloat{}, cnv::Vec<3>{});
+				} else {
+					cb(GLint{}, cnv::Vec<3>{});
+				}
+			} else {
+				D_Assert0(_nElem == 4);
+				if(_bFloat) {
+					cb(GLfloat{}, cnv::Vec<4>{});
+				} else {
+					cb(GLint{}, cnv::Vec<4>{});
+				}
+			}
+		}
 	}
 	namespace {
 		using A = Accessor;
@@ -434,5 +438,15 @@ namespace rev::gltf {
 		visitor::MakeInfo v;
 		boost::apply_visitor(v, getData());
 		return v.result;
+	}
+	A::Size A::getByteStride() const noexcept {
+		if(const auto s = _getByteStride())
+			return *s;
+
+		Size ret;
+		_detectType([&ret](auto raw, auto){
+			ret = sizeof(raw);
+		});
+		return ret * _nElem;
 	}
 }

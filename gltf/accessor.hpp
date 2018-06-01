@@ -71,6 +71,8 @@ namespace rev::gltf {
 			virtual void _onCacheMaked(Cache&) const {}
 			template <class BuffType, class Cnv>
 			void _readCache() const;
+			template <class CB>
+			void _detectType(CB&& cb) const;
 		public:
 			Accessor(const JValue& v);
 
@@ -93,5 +95,6 @@ namespace rev::gltf {
 			Vec<int32_t> cnvToInt32() const;
 			DataP_Unit getDataP_Unit() const;
 			virtual Vb_P getAsVb() const = 0;
+			Size getByteStride() const noexcept;
 	};
 }
