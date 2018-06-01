@@ -13,4 +13,7 @@ namespace rev::gltf {
 			return reinterpret_cast<const void*>(pointer);
 		}
 	};
+	struct DataP_Unit : DataP {
+		std::size_t		unitSize;
+	};
 }

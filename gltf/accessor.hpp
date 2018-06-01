@@ -48,11 +48,6 @@ namespace rev::gltf {
 			using Filter = Vec<FilterP>;
 			mutable Cache		_cache;
 		public:
-			struct DataInfo {
-				uintptr_t	pointer;
-				Size		unitSize,
-							length;
-			};
 			GLTypeFmt		_componentType;
 			Size			_byteOffset,
 							_count;
@@ -90,6 +85,6 @@ namespace rev::gltf {
 			const Vec<Vec4>& getAsVec4() const;
 
 			Vec<int32_t> cnvToInt32() const;
-			DataInfo getDataInfo() const;
+			DataP_Unit getDataP_Unit() const;
 	};
 }

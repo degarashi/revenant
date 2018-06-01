@@ -410,13 +410,15 @@ namespace rev::gltf {
 				void operator()(boost::blank) { Assert0(false); }
 			};
 			struct MakeInfo {
-				A::DataInfo result;
+				DataP_Unit result;
 				template <class T>
 				void operator()(const A::Vec<T>& t) {
 					result = {
-						.pointer = reinterpret_cast<uintptr_t>(t.data()),
+						DataP{
+							.pointer = reinterpret_cast<uintptr_t>(t.data()),
+							.length = t.size(),
+						},
 						.unitSize = sizeof(t[0]),
-						.length = t.size()
 					};
 				}
 				void operator()(boost::blank) { Assert0(false); }
@@ -428,7 +430,7 @@ namespace rev::gltf {
 		boost::apply_visitor(v, getData());
 		return std::move(v.result);
 	}
-	A::DataInfo A::getDataInfo() const {
+	DataP_Unit A::getDataP_Unit() const {
 		visitor::MakeInfo v;
 		boost::apply_visitor(v, getData());
 		return v.result;
