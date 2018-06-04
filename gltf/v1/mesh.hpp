@@ -1,12 +1,13 @@
 #pragma once
 #include "resource.hpp"
 #include "gltf/v1/dataref.hpp"
+#include "gltf/v1/v_semantic.hpp"
 #include "gltf/primitive.hpp"
 #include "../../gl_format.hpp"
 
 namespace rev::gltf::v1 {
 	struct Primitive :
-		gltf::Primitive<DRef_Accessor, IDataQuery>
+		gltf::Primitive<DRef_Accessor, IDataQuery, V_Semantic>
 	{
 		DRef_Material	material;
 

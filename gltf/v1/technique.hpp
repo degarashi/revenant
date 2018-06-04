@@ -1,7 +1,7 @@
 #pragma once
 #include "gltf/v1/resource.hpp"
 #include "gltf/v1/u_semantic.hpp"
-#include "gltf/v_semantic.hpp"
+#include "gltf/v1/v_semantic.hpp"
 #include "gltf/v1/uniform_value.hpp"
 #include "gltf/v1/rt_uniform.hpp"
 #include "../../gl_format.hpp"

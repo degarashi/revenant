@@ -153,11 +153,9 @@ namespace rev::gltf::v1 {
 
 	// ---------------------------- Technique::AttrParam ----------------------------
 	Technique::AttrParam::AttrParam(const JValue& v):
-		ParamBase(v)
-	{
-		const char* sem = Required<String>(v, "semantic");
-		semantic = *V_Semantic::FromString(sem);
-	}
+		ParamBase(v),
+		semantic(*VSemanticFromString(Required<String>(v, "semantic")))
+	{}
 
 	// ---------------------------- Technique::UnifParam_Type ----------------------------
 	Technique::UnifParam_Type::UnifParam_Type(const JValue& v):
@@ -229,7 +227,7 @@ namespace rev::gltf::v1 {
 			const auto itr = v.FindMember("semantic");
 			if(itr != v.MemberEnd()) {
 				const char* sem = itr->value.GetString();
-				if(const auto vs = V_Semantic::FromString(sem)) {
+				if(const auto vs = VSemanticFromString(sem)) {
 					// Vertex Attribute
 					return cb(std::make_unique<Technique::AttrParam>(v));
 				}

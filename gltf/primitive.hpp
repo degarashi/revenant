@@ -1,11 +1,11 @@
 #pragma once
-#include "v_semantic.hpp"
+#include "../vertex.hpp"
 #include "../gl_types.hpp"
 #include "handle/opengl.hpp"
 #include "json_types.hpp"
 
 namespace rev::gltf {
-	template <class D_Accessor, class Q>
+	template <class D_Accessor, class Q, class V>
 	struct Primitive {
 		using VSem_Accessor = std::vector<std::pair<VSemantic, D_Accessor>>;
 		using Idx_Accessor_OP = spi::Optional<D_Accessor>;

@@ -8,6 +8,7 @@
 
 #include "gltf/v1/buffer.hpp"
 #include "gltf/v1/accessor.hpp"
+#include "gltf/v1/v_semantic.hpp"
 
 namespace rev::gltf {
 	namespace {
@@ -22,8 +23,8 @@ namespace rev::gltf {
 		};
 	}
 	namespace L = gltf::loader;
-	template <class D_Accessor, class Q>
-	Primitive<D_Accessor, Q>::Primitive(const JValue& v, const Q& q):
+	template <class D_Accessor, class Q, class V>
+	Primitive<D_Accessor, Q, V>::Primitive(const JValue& v, const Q& q):
 		index(L::Optional<D_Accessor>(v, "indices", q))
 	{
 		const auto m = L::OptionalDefault<L::Integer>(v, "mode", 4);
@@ -33,15 +34,16 @@ namespace rev::gltf {
 				).second;
 		using LTag = L::FindLoader_t<typename Q::Tag_t>;
 		const auto attr = L::OptionalDefault<L::Dictionary<LTag>>(v, "attributes", {});
+		V vsem;
 		for(auto& a : attr) {
 			attribute.emplace_back(
-				*V_Semantic::FromString(a.first.c_str()),
+				vsem(a.first.c_str()),
 				D_Accessor(a.second, q)
 			);
 		}
 	}
-	template <class D_Accessor, class Q>
-	bool Primitive<D_Accessor, Q>::CanLoad(const JValue&) noexcept {
+	template <class D_Accessor, class Q, class V>
+	bool Primitive<D_Accessor, Q, V>::CanLoad(const JValue&) noexcept {
 		return true;
 	}
 	namespace {
@@ -67,8 +69,8 @@ namespace rev::gltf {
 			}
 		};
 	}
-	template <class D_Accessor, class Q>
-	const HPrim& Primitive<D_Accessor, Q>::getPrimitive() const {
+	template <class D_Accessor, class Q, class V>
+	const HPrim& Primitive<D_Accessor, Q, V>::getPrimitive() const {
 		if(!primitive_cache) {
 			FWVDecl vdecl;
 			HVb vb[MaxVStream];
@@ -121,4 +123,4 @@ namespace rev::gltf {
 	}
 }
 
-template struct rev::gltf::Primitive<rev::gltf::v1::DRef_Accessor, rev::gltf::v1::IDataQuery>;
+template struct rev::gltf::Primitive<rev::gltf::v1::DRef_Accessor, rev::gltf::v1::IDataQuery, rev::gltf::v1::V_Semantic>;

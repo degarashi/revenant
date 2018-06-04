@@ -10,7 +10,7 @@
 namespace rev::gltf::v1 {
 	namespace L = gltf::loader;
 	Primitive::Primitive(const JValue& v, const IDataQuery& q):
-		gltf::Primitive<DRef_Accessor, IDataQuery>(v, q),
+		gltf::Primitive<DRef_Accessor, IDataQuery, V_Semantic>(v, q),
 		material(L::Required<DRef_Material>(v, "material", q))
 	{}
 	Mesh::Mesh(const JValue& v, const IDataQuery& q):
