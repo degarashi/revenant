@@ -59,5 +59,4 @@ namespace rev::gltf::v1 {
 			GLTF(GLTF&& g) = default;
 			~GLTF();
 	};
-	JDocument ParseJSON(const char* json);
 }

@@ -1,4 +1,5 @@
 #include "gltf/v1/gltf.hpp"
+#include "gltf/json_parse.hpp"
 #include "../../sdl_rw.hpp"
 
 namespace rev::gltf::v1 {
@@ -123,20 +124,5 @@ namespace rev::gltf::v1 {
 			auto* np = reinterpret_cast<Node*>(n.second.data());
 			np->~Node();
 		}
-	}
-}
-#include <cereal/external/rapidjson/error/en.h>
-namespace rev::gltf::v1 {
-	JDocument ParseJSON(const char* json) {
-		JDocument doc;
-		doc.Parse(json);
-		if(doc.HasParseError()) {
-			throw SyntaxError(
-				json,
-				doc.GetErrorOffset(),
-				rapidjson::GetParseError_En(doc.GetParseError())
-			);
-		}
-		return doc;
 	}
 }
