@@ -55,7 +55,7 @@ namespace rev::gltf {
 			mutable Cache		_cache;
 		public:
 			GLTypeFmt		_componentType;
-			Size			_byteOffset,
+			Size			_byteOffset,		// for v2.0: default=0
 							_count;
 			// 値が取り得る範囲 (length == nElem)
 			Filter			_filter;

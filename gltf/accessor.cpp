@@ -45,7 +45,7 @@ namespace rev::gltf {
 	{}
 	Accessor::Accessor(const JValue& v):
 		_componentType(L::Required<L::Integer>(v, "componentType")),
-		_byteOffset(L::Required<L::Integer>(v, "byteOffset")),
+		_byteOffset(L::OptionalDefault<L::Integer>(v, "byteOffset", 0)),
 		_count(L::Required<L::Integer>(v, "count"))
 	{
 		CheckRange<Size>(_byteOffset, 0);
