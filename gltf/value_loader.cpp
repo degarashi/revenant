@@ -101,9 +101,9 @@ namespace rev::gltf {
 			}
 			else if(v.HasMember("translation")) {
 				static_cast<value_t&>(*this) = value_t(
-					Required<loader::Vec3>(v, "translation"),
-					Required<loader::Quat>(v, "rotation"),
-					Required<loader::Vec3>(v, "scale")
+					OptionalDefault<loader::Vec3>(v, "translation", {0,0,0}),
+					OptionalDefault<loader::Quat>(v, "rotation", Quat::Identity()),
+					OptionalDefault<loader::Vec3>(v, "scale", {0,0,0})
 				);
 			} else
 				identity();
