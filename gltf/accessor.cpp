@@ -100,8 +100,6 @@ namespace rev::gltf {
 		// イテレータから値を成形して出力
 		namespace cnv {
 			struct Scalar {
-				constexpr static std::size_t NElem = 1;
-
 				template <class Itr>
 				auto operator ()(Itr itr) const noexcept {
 					return *itr;
