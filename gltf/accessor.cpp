@@ -10,6 +10,7 @@ namespace rev::gltf {
 			GL_UNSIGNED_BYTE,
 			GL_SHORT,
 			GL_UNSIGNED_SHORT,
+			GL_UNSIGNED_INT,
 			GL_FLOAT
 		};
 		struct ElemType {
@@ -89,6 +90,9 @@ namespace rev::gltf {
 					break;
 				case GL_UNSIGNED_SHORT:
 					cb(GLushort{});
+					break;
+				case GL_UNSIGNED_INT:
+					cb(GLuint{});
 					break;
 				case GL_FLOAT:
 					cb(GLfloat{});
@@ -364,6 +368,9 @@ namespace rev::gltf {
 	}
 	const A::Vec<GLushort>& A::getAsUShort() const {
 		return boost::get<Vec<GLushort>>(getData());
+	}
+	const A::Vec<GLuint>& A::getAsUInt() const {
+		return boost::get<Vec<GLuint>>(getData());
 	}
 	const A::Vec<GLfloat>& A::getAsFloat() const {
 		return boost::get<Vec<GLfloat>>(getData());

@@ -33,6 +33,7 @@ namespace rev::gltf {
 				Vec<GLubyte>,
 				Vec<GLshort>,
 				Vec<GLushort>,
+				Vec<GLuint>,
 				Vec<GLfloat>,
 				Vec<Vec2>,
 				Vec<IVec2>,
@@ -81,6 +82,7 @@ namespace rev::gltf {
 			const Vec<GLubyte>& getAsUByte() const;
 			const Vec<GLshort>& getAsShort() const;
 			const Vec<GLushort>& getAsUShort() const;
+			const Vec<GLuint>& getAsUInt() const;
 			const Vec<GLfloat>& getAsFloat() const;
 			const Vec<Mat2>& getAsMat2() const;
 			const Vec<Mat3>& getAsMat3() const;
