@@ -94,7 +94,7 @@ namespace rev::gltf {
 		Pose3::Pose3(const JValue& v) {
 			if(!CanLoad(v))
 				throw InvalidProperty("can't read as pose");
-			if(auto mat = Optional<Mat4>(v, "matrix")) {
+			if(auto mat = Optional<gltf::loader::Mat4>(v, "matrix")) {
 				// 読み取った値は右からベクトルを掛けるタイプなので転置する
 				mat->transpose();
 				static_cast<value_t&>(*this) = value_t(mat->convert<4,3>());
