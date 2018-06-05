@@ -1,4 +1,5 @@
 #include "myscene.hpp"
+#include "myscene_gltf.hpp"
 #include "../../font.hpp"
 #include "../../input.hpp"
 #include "../../scene_mgr.hpp"

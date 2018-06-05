@@ -1,16 +1,22 @@
-#include "myscene.hpp"
+#include "myscene_gltf.hpp"
 #include "../../gltf/v1/mgr.hpp"
-#include "../../uri.hpp"
 #include "../../gltf/v1/scene.hpp"
+#include "../../gltf/v1/visitor_camera.hpp"
+#include "../../gltf/v1/dc_model.hpp"
+#include "../../gltf/v1/animation.hpp"
 #include "../../dc/node.hpp"
 #include "../../dc/model_if.hpp"
-#include "../../gltf/v1/dc_model.hpp"
 #include "../../debug_gui/resource_window.hpp"
 #include "../../debug_gui/window.hpp"
 #include "../../debug_gui/print.hpp"
-#include "../../dir.hpp"
 #include "../../imgui/imgui.h"
-#include "../../gltf/v1/animation.hpp"
+#include "../../uri.hpp"
+#include "../../dir.hpp"
+#include "../../u_matrix3d.hpp"
+#include "../../glx_if.hpp"
+#include "../../camera3d.hpp"
+#include "frea/affine_parts.hpp"
+#include "frea/yawpitchdist.hpp"
 #include <boost/format.hpp>
 
 namespace rev::test {
@@ -28,14 +34,26 @@ namespace rev::test {
 		}
 	}
 	void MyScene::St_glTF::_loadModel(const std::string& path) const {
+		_cameraIndex = 0;
 		auto g = mgr_gltf.loadGLTf(FileURI(path));
 		auto& dsc = g->defaultScene;
 		D_Assert0(dsc);
 		{
 			{
 				auto sc = *(*dsc);
+				// モデル
 				_model = gltf::v1::GLTFModel::FromScene(sc);
+				// カメラリスト
+				gltf::v1::Visitor_Camera c;
+				for(auto& n : sc.node) {
+					n->visit(c);
+				}
+				_camera = c.result();
+				std::sort(_camera.begin(), _camera.end(), [](const auto& e0, const auto& e1){
+					return e0.name < e1.name;
+				});
 			}
+			// アニメーション
 			_anim.clear();
 			for(auto& a : g->m_Animation)
 				_anim.append(a.second->makeAnimation());
@@ -64,6 +82,37 @@ namespace rev::test {
 				if(*sel >= 0) {
 					_loadModel(_fileFullPath[*sel]);
 				}
+			}
+		}
+		// カメラセレクタ
+		if(_model) {
+			auto& idToNode = _model->getNode()->getIdToNode();
+			if(const auto _ = debug::WindowPush("camera select")) {
+				std::size_t idx=0;
+				if(ImGui::Selectable("User", _cameraIndex==idx)) {
+					_cameraIndex = idx;
+				}
+				++idx;
+				for(auto& c : _camera) {
+					const auto _ = debug::IdPush(idx);
+					if(ImGui::Selectable(c.name.c_str(), _cameraIndex==idx)) {
+						_cameraIndex = idx;
+					}
+					++idx;
+				}
+			}
+			if(_cameraIndex > 0) {
+				auto& info = _camera[_cameraIndex-1];
+				frea::Mat4 m4 = idToNode.at(info.id)->getTransform();
+				m4 *= frea::Mat4::Scaling({1,1,-1});
+				beat::g3::Pose pose(m4);
+				auto& r = pose.refRotation();
+				r.z *= -1;
+				r.w *= -1;
+				pose.refOffset().z *= -1;
+				info.camera->setPose(pose);
+				info.camera->setAspect(St_3D::_camera->getAspect());
+				*St_3D::_camera = *info.camera;
 			}
 		}
 		if(_model)

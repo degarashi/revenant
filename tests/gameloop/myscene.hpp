@@ -53,17 +53,7 @@ namespace rev::test {
 				void onEnter(MyScene& self, ObjTypeId_OP) override;
 				void onExit(MyScene& self, ObjTypeId_OP) override;
 			};
-			struct St_glTF : StateT<St_glTF, St_3D> {
-				StrV	_fileList,
-						_fileFullPath;
-				mutable HMdl	_model;
-				mutable dc::Animation _anim;
-				mutable bool	_dirtyFlag=false;
-
-				void _loadModel(const std::string& path) const;
-				void onEnter(MyScene& self, ObjTypeId_OP) override;
-				void onDraw(const MyScene& self, IEffect& e) const override;
-			};
+			struct St_glTF;
 			void _setSceneById(std::size_t id);
 			void _makeGui();
 			void _checkQuit();
