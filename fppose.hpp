@@ -23,6 +23,9 @@ namespace rev {
 			FPPose();
 			void setSpeed(float s) noexcept;
 			void setDirSpeed(float s) noexcept;
+			DegF& yaw() noexcept;
+			DegF& pitch() noexcept;
+			DegF& roll() noexcept;
 			void update(
 				const HAct& move_x,
 				const HAct& move_y,

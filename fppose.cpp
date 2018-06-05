@@ -11,6 +11,15 @@ namespace rev {
 	{
 		identity();
 	}
+	frea::DegF& FPPose::yaw() noexcept {
+		return _yaw;
+	}
+	frea::DegF& FPPose::pitch() noexcept {
+		return _pitch;
+	}
+	frea::DegF& FPPose::roll() noexcept {
+		return _roll;
+	}
 	void FPPose::setSpeed(const float s) noexcept {
 		_speed = s;
 	}
