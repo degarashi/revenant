@@ -38,6 +38,8 @@ namespace rev::gltf::v1 {
 		);
 		spi::Optional<Name>		username;
 
+		static struct Identity_t {} Identity;
+		Resource(Identity_t);
 		Resource(const JValue& v);
 		virtual ~Resource() {}
 		virtual Type getType() const noexcept = 0;

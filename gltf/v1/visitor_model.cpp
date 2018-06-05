@@ -11,7 +11,9 @@ namespace rev::gltf::v1 {
 	void Visitor_Model::upNode() {
 		_stack.pop_back();
 	}
-	void Visitor_Model::addNode(const HTfNode& node) {
+	void Visitor_Model::addNode(const Node& n) {
+		auto node = std::make_shared<dc::TfNode>(n.jointId, n.jointName, n.username ? *n.username : Name());
+		node->setPose(n.pose);
 		if(_stack.empty()) {
 			_tfRoot->refNode().emplace_back(node);
 		} else {
@@ -25,7 +27,6 @@ namespace rev::gltf::v1 {
 	void Visitor_Model::addSkinMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const SkinBindSet_SP& bind) {
 		_skinmesh.emplace_back(new GLTFMesh(p, t, userName, rt, bind));
 	}
-	void Visitor_Model::addCamera(const HCam3&) {}
 	HMdl Visitor_Model::result() const {
 		auto* self = const_cast<Visitor_Model*>(this);
 		// メッシュをTechでソート

@@ -11,12 +11,12 @@ namespace rev::gltf::v1 {
 		Resource
 	{
 		struct Visitor {
-			virtual ~Visitor() {}
-			virtual void upNode() = 0;
-			virtual void addNode(const HTfNode& node) = 0;
-			virtual void addMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, dc::JointId id) = 0;
-			virtual void addSkinMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const SkinBindSet_SP& bind) = 0;
-			virtual void addCamera(const HCam3& c) = 0;
+			virtual ~Visitor();
+			virtual void upNode();
+			virtual void addNode(const Node& node);
+			virtual void addMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, dc::JointId id);
+			virtual void addSkinMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const SkinBindSet_SP& bind);
+			virtual void addCamera(const HCam3& c);
 		};
 		using Pose3 = beat::g3::Pose;
 
@@ -26,9 +26,11 @@ namespace rev::gltf::v1 {
 		dc::JointId			jointId;
 		static dc::JointId	s_id;
 
-		void _visit(Visitor& v) const;
+		Node();
 		Node(const JValue& v, const IDataQuery& q);
 		Type getType() const noexcept override;
+		template <class CB>
+		void _visit(Visitor& v, CB&& cb) const;
 		virtual void visit(Visitor& v) const;
 		virtual void moveTo(void* dst);
 	};

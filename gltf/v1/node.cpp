@@ -8,37 +8,43 @@
 #include "../../dc/node.hpp"
 
 namespace rev::gltf::v1 {
-	using gltf::loader::Required;
-	using gltf::loader::OptionalDefault;
-	using gltf::loader::Optional;
-	using gltf::loader::Array;
-	using gltf::loader::StdString;
+	namespace L = gltf::loader;
+	// --------------------- Node::Visitor ---------------------
+	Node::Visitor::~Visitor() {}
+	void Node::Visitor::upNode() {}
+	void Node::Visitor::addNode(const Node&) {}
+	void Node::Visitor::addMesh(const HPrim&, const HTech&, const Name&, const RTUParams_SP&, dc::JointId) {}
+	void Node::Visitor::addSkinMesh(const HPrim&, const HTech&, const Name&, const RTUParams_SP&, const SkinBindSet_SP&) {}
+	void Node::Visitor::addCamera(const HCam3&) {}
 
+	// --------------------- Node ---------------------
 	dc::JointId Node::s_id = 1;
-
+	Node::Node():
+		Resource(Resource::Identity)
+	{}
 	Node::Node(const JValue& v, const IDataQuery& q):
 		Resource(v),
 		pose(gltf::loader::Pose3(v)),
-		child(OptionalDefault<Array<DRef_Node>>(v, "children", {}, q)),
+		child(L::OptionalDefault<L::Array<DRef_Node>>(v, "children", {}, q)),
 		jointId(s_id++)
 	{
-		if(const auto jn = Optional<StdString>(v, "jointName"))
+		if(const auto jn = L::Optional<L::StdString>(v, "jointName"))
 			jointName = *jn;
 	}
 	Resource::Type Node::getType() const noexcept {
 		return Type::Node;
 	}
-	void Node::_visit(Visitor& v) const {
-		auto node = std::make_shared<dc::TfNode>(jointId, jointName, username ? *username : Name());
-		node->setPose(pose);
-		v.addNode(node);
-	}
-	void Node::visit(Visitor& v) const {
-		_visit(v);
+	template <class CB>
+	void Node::_visit(Visitor& v, CB&& cb) const {
+		v.addNode(*this);
 		for(auto& c : child) {
 			c.data()->visit(v);
 		}
+		cb();
 		v.upNode();
+	}
+	void Node::visit(Visitor& v) const {
+		_visit(v, [](){});
 	}
 	void Node::moveTo(void* dst) {
 		new(dst) Node(std::move(*this));
@@ -52,11 +58,12 @@ namespace rev::gltf::v1 {
 	}
 	CameraNode::CameraNode(const JValue& v, const IDataQuery& q):
 		Node(v, q),
-		camera(Required<DRef_Camera>(v, "camera", q))
+		camera(L::Required<DRef_Camera>(v, "camera", q))
 	{}
 	void CameraNode::visit(Visitor& v) const {
-		Node::visit(v);
-		v.addCamera(camera.data()->makeCamera());
+		_visit(v, [this, &v](){
+			v.addCamera(camera.data()->makeCamera());
+		});
 	}
 	void CameraNode::moveTo(void* dst) {
 		new(dst) CameraNode(std::move(*this));
@@ -64,7 +71,7 @@ namespace rev::gltf::v1 {
 	// ------------------- MeshNodeBase -------------------
 	MeshNodeBase::MeshNodeBase(const JValue& v, const IDataQuery& q):
 		Node(v, q),
-		mesh(Required<Array<DRef_Mesh>>(v, "meshes", q))
+		mesh(L::Required<L::Array<DRef_Mesh>>(v, "meshes", q))
 	{}
 	// ------------------- MeshNode -------------------
 	std::shared_ptr<MeshNode> MeshNode::Load(const JValue& v, const IDataQuery& q) {
@@ -76,20 +83,21 @@ namespace rev::gltf::v1 {
 		MeshNodeBase(v, q)
 	{}
 	void MeshNode::visit(Visitor& v) const {
-		Node::visit(v);
-		for(auto& m : mesh) {
-			const Name name = m->username ? *m->username : Name();
-			for(auto& p : m.data()->primitive) {
-				auto& mtl = *p.material.data();
-				v.addMesh(
-					p.getPrimitive(),
-					mtl.getTech(),
-					name,
-					mtl.getRT(),
-					jointId
-				);
+		_visit(v, [this, &v](){
+			for(auto& m : mesh) {
+				const Name name = m->username ? *m->username : Name();
+				for(auto& p : m.data()->primitive) {
+					auto& mtl = *p.material.data();
+					v.addMesh(
+						p.getPrimitive(),
+						mtl.getTech(),
+						name,
+						mtl.getRT(),
+						jointId
+					);
+				}
 			}
-		}
+		});
 	}
 	void MeshNode::moveTo(void* dst) {
 		new(dst) MeshNode(std::move(*this));
@@ -103,24 +111,25 @@ namespace rev::gltf::v1 {
 	}
 	SkinMeshNode::SkinMeshNode(const JValue& v, const IDataQuery& q):
 		MeshNodeBase(v, q),
-		skin(Required<DRef_Skin>(v, "skin", q)),
-		skeleton(OptionalDefault<Array<DRef_Node>>(v, "skeleton", {}, q))
+		skin(L::Required<DRef_Skin>(v, "skin", q)),
+		skeleton(L::OptionalDefault<L::Array<DRef_Node>>(v, "skeleton", {}, q))
 	{}
 	void SkinMeshNode::visit(Visitor& v) const {
-		Node::visit(v);
-		const auto& bind = skin.data()->getBind();
-		for(auto& m : mesh) {
-			for(auto& p : m.data()->primitive) {
-				auto& m = *p.material.data();
-				v.addSkinMesh(
-					p.getPrimitive(),
-					m.getTech(),
-					username ? *username : Name(),
-					m.getRT(),
-					bind
-				);
+		_visit(v, [this, &v](){
+			const auto& bind = skin.data()->getBind();
+			for(auto& m : mesh) {
+				for(auto& p : m.data()->primitive) {
+					auto& m = *p.material.data();
+					v.addSkinMesh(
+						p.getPrimitive(),
+						m.getTech(),
+						username ? *username : Name(),
+						m.getRT(),
+						bind
+					);
+				}
 			}
-		}
+		});
 	}
 	void SkinMeshNode::moveTo(void* dst) {
 		new(dst) SkinMeshNode(std::move(*this));

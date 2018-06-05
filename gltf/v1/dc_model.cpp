@@ -39,9 +39,11 @@ namespace rev::gltf::v1 {
 	HMdl GLTFModel::FromScene(const Scene& s) {
 		gltf::v1::Visitor_Model visitor;
 		{
-			auto node = std::make_shared<dc::TfNode>(0, SName(), "RootNode");
-			node->refPose().identity();
-			node->refPose().setScaling(frea::Vec3{1,1,-1});
+			Node node;
+			node.jointId = 0;
+			node.username = "RootNode";
+			node.pose.identity();
+			node.pose.setScaling(frea::Vec3{1,1,-1});
 			visitor.addNode(node);
 		}
 		for(auto& n : s.node) {

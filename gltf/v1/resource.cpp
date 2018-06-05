@@ -3,6 +3,7 @@
 
 namespace rev::gltf::v1 {
 	using namespace loader;
+	Resource::Resource(Identity_t) {}
 	Resource::Resource(const JValue& v):
 		username(Optional<String>(v, "name"))
 	{}
