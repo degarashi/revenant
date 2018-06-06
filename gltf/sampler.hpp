@@ -10,6 +10,7 @@ namespace rev::gltf {
 		WrapState	wrapS,
 					wrapT;
 
+		Sampler() = default;
 		Sampler(const JValue& v);
 	};
 }
