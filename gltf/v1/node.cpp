@@ -10,23 +10,16 @@
 namespace rev::gltf::v1 {
 	namespace L = gltf::loader;
 	// --------------------- Node::Visitor ---------------------
-	Node::Visitor::~Visitor() {}
-	void Node::Visitor::upNode() {}
-	void Node::Visitor::addNode(const Node&) {}
 	void Node::Visitor::addMesh(const HPrim&, const HTech&, const Name&, const RTUParams_SP&, dc::JointId) {}
 	void Node::Visitor::addSkinMesh(const HPrim&, const HTech&, const Name&, const RTUParams_SP&, const SkinBindSet_SP&) {}
-	void Node::Visitor::addCamera(const HCam3&) {}
 
 	// --------------------- Node ---------------------
-	dc::JointId Node::s_id = 1;
 	Node::Node():
 		Resource(Resource::Identity)
 	{}
 	Node::Node(const JValue& v, const IDataQuery& q):
-		Resource(v),
-		pose(gltf::loader::Pose3(v)),
-		child(L::OptionalDefault<L::Array<DRef_Node>>(v, "children", {}, q)),
-		jointId(s_id++)
+		gltf::Node<DRef_Node, IDataQuery>(v, q),
+		Resource(v)
 	{
 		if(const auto jn = L::Optional<L::StdString>(v, "jointName"))
 			jointName = *jn;
@@ -34,17 +27,8 @@ namespace rev::gltf::v1 {
 	Resource::Type Node::getType() const noexcept {
 		return Type::Node;
 	}
-	template <class CB>
-	void Node::_visit(Visitor& v, CB&& cb) const {
-		v.addNode(*this);
-		for(auto& c : child) {
-			c.data()->visit(v);
-		}
-		cb();
-		v.upNode();
-	}
 	void Node::visit(Visitor& v) const {
-		_visit(v, [](){});
+		_Visit(*this, v, [](){});
 	}
 	void Node::moveTo(void* dst) {
 		new(dst) Node(std::move(*this));
@@ -61,7 +45,7 @@ namespace rev::gltf::v1 {
 		camera(L::Required<DRef_Camera>(v, "camera", q))
 	{}
 	void CameraNode::visit(Visitor& v) const {
-		_visit(v, [this, &v](){
+		_Visit(*this, v, [this, &v](){
 			v.addCamera(camera.data()->makeCamera());
 		});
 	}
@@ -83,7 +67,7 @@ namespace rev::gltf::v1 {
 		MeshNodeBase(v, q)
 	{}
 	void MeshNode::visit(Visitor& v) const {
-		_visit(v, [this, &v](){
+		_Visit(*this, v, [this, &v](){
 			for(auto& m : mesh) {
 				const Name name = m->username ? *m->username : Name();
 				for(auto& p : m.data()->primitive) {
@@ -115,7 +99,7 @@ namespace rev::gltf::v1 {
 		skeleton(L::OptionalDefault<L::Array<DRef_Node>>(v, "skeleton", {}, q))
 	{}
 	void SkinMeshNode::visit(Visitor& v) const {
-		_visit(v, [this, &v](){
+		_Visit(*this, v, [this, &v](){
 			const auto& bind = skin.data()->getBind();
 			for(auto& m : mesh) {
 				for(auto& p : m.data()->primitive) {
@@ -133,21 +117,5 @@ namespace rev::gltf::v1 {
 	}
 	void SkinMeshNode::moveTo(void* dst) {
 		new(dst) SkinMeshNode(std::move(*this));
-	}
-
-	namespace loader {
-		Node::Node(const JValue& v, const IDataQuery& q) {
-			Node_SP& sp = *this;
-			if(!v.IsObject())
-				throw InvalidProperty("not an object");
-			if(auto node = CameraNode::Load(v, q))
-				sp = node;
-			else if(auto node = SkinMeshNode::Load(v, q))
-				sp = node;
-			else if(auto node = MeshNode::Load(v, q))
-				sp = node;
-			else
-				sp = std::make_shared<::rev::gltf::v1::Node>(v, q);
-		}
 	}
 }
