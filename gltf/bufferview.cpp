@@ -3,6 +3,7 @@
 #include "gltf/check.hpp"
 #include "../gl_resource.hpp"
 #include "../gl_buffer.hpp"
+#include "../sdl_rw.hpp"
 
 namespace rev::gltf {
 	namespace {
@@ -29,5 +30,9 @@ namespace rev::gltf {
 			vb->initData(buff.asPointer(), buff.length);
 		}
 		return vb_cached;
+	}
+	HRW BufferView::getAsRW() const {
+		const auto buff = getBuffer();
+		return mgr_rw.fromConstTemporal(buff.asPointer(), buff.length);
 	}
 }

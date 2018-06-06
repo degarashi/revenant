@@ -1,5 +1,6 @@
 #pragma once
 #include "../handle/opengl.hpp"
+#include "../handle/sdl.hpp"
 #include "../gl_types.hpp"
 #include "json_types.hpp"
 #include "data_pair.hpp"
@@ -17,5 +18,6 @@ namespace rev::gltf {
 		BufferView(const JValue& v);
 		const HVb& getAsVb() const;
 		virtual DataP getBuffer() const = 0;
+		HRW getAsRW() const;
 	};
 }
