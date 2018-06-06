@@ -16,6 +16,7 @@ namespace rev::gltf::v1 {
 		Texture(const JValue& v, const IDataQuery& q);
 		Type getType() const noexcept override;
 
-		HTex getGLResource() const;
+		mutable	HTex	tex_cached;
+		const HTex& getGLResource() const;
 	};
 }

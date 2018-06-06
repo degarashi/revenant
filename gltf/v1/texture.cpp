@@ -40,14 +40,16 @@ namespace rev::gltf::v1 {
 	Resource::Type Texture::getType() const noexcept {
 		return Type::Texture;
 	}
-	HTex Texture::getGLResource() const {
-		auto& samp = *sampler.data();
-		// URIからテクスチャ生成
-		const auto uri = source.data()->src.getUri();
-		HTex tex = mgr_gl.loadTexture(*uri, samp.mipLevel);
-		// サンプラーの設定
-		tex->setFilter(samp.iLinearMag, samp.iLinearMin);
-		tex->setUVWrap(samp.wrapS, samp.wrapT);
-		return tex;
+	const HTex& Texture::getGLResource() const {
+		if(!tex_cached) {
+			auto& samp = *sampler.data();
+			// URIからテクスチャ生成
+			const auto uri = source.data()->src.getUri();
+			const HTex tex = tex_cached = mgr_gl.loadTexture(*uri, samp.mipLevel);
+			// サンプラーの設定
+			tex->setFilter(samp.iLinearMag, samp.iLinearMin);
+			tex->setUVWrap(samp.wrapS, samp.wrapT);
+		}
+		return tex_cached;
 	}
 }
