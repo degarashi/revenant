@@ -7,6 +7,7 @@
 #include "gl_texture.hpp"
 #include "gl_shader.hpp"
 #include "glx.hpp"
+#include "sdl_surface.hpp"
 #include "sdl_rw.hpp"
 #include "systeminfo.hpp"
 
@@ -69,6 +70,11 @@ namespace rev {
 						_resourceInit(mk.pointer);
 					}
 				).first;
+	}
+	HTexMem GLRes::loadTextureFromRW(const HRW& rw) {
+		const auto sfc = Surface::Load(rw);
+		const auto buff = sfc->extractAsContinuous(SDL_PIXELFORMAT_RGBA32);
+		return makeResource<Texture_Mem>(false, GL_RGBA, sfc->getSize(), false, true);
 	}
 	// 連番キューブ: Key=(Path+@, ext) URI=(Path, ext)
 	HTexCubeURI GLRes::loadCubeTexture(const MipState miplevel, const InCompressedFmt_OP fmt,

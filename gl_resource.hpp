@@ -64,6 +64,7 @@ namespace rev {
 			HTexCubeURI loadCubeTexture(MipState miplevel, InCompressedFmt_OP fmt,
 								const URI& uri0, const URI& uri1, const URI& uri2,
 								const URI& uri3, const URI& uri4, const URI& uri5);
+			HTexMem loadTextureFromRW(const HRW& rw);
 			//! 空のテクスチャを作成
 			/*! 領域だけ確保 */
 			HTexMem createTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore);
