@@ -1,12 +1,10 @@
-#include "../../indent.hpp"
-#include "../../id.hpp"
-#include "../../../dc/model_if.hpp"
-#include "../../../dc/node.hpp"
-#include "../../../imgui/imgui.h"
-#include "../../../dc/mesh_if.hpp"
-#include "../../listview.hpp"
 #include "../../../gltf/v1/dc_model.hpp"
 #include "../../../gltf/v1/dc_mesh.hpp"
+#include "../../../dc/node.hpp"
+#include "../../../imgui/imgui.h"
+#include "../../listview.hpp"
+#include "../../indent.hpp"
+#include "../../id.hpp"
 
 namespace rev::gltf::v1 {
 	const char* GLTFModel::getDebugName() const noexcept {
