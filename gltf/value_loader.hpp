@@ -64,6 +64,7 @@ namespace rev::gltf {
 				static bool CanLoad(const JValue& v) noexcept; \
 				using base_t::base_t; \
 				using base_t::operator std::add_const_t<typ>&; \
+				using base_t::operator typ&; \
 			}; \
 			using name##_A = Array<name>; \
 			name FindLoader(typ);
@@ -111,10 +112,9 @@ namespace rev::gltf {
 				} else {
 					const auto sz = v.Size();
 					for(JSize i=0 ; i<sz ; i++) {
+						T tmp{v[i], ts...};
 						this->emplace_back(
-							static_cast<const child_t&>(
-								T{v[i], ts...}
-							)
+							std::move(static_cast<child_t&>(tmp))
 						);
 					}
 				}
