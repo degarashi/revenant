@@ -60,7 +60,10 @@ namespace rev {
 		};
 		struct TexSingle {
 			static void DCmd(draw::IQueue& q, const HTexC& tex, const int id, const int actId) {
-				tex->dcmd_export(q, id, actId);
+				if(tex)
+					tex->dcmd_export(q, id, actId);
+				else
+					IGLTexture::DCmd_ExportEmpty(q, id, actId);
 			}
 		};
 		struct TexArray {
@@ -68,7 +71,7 @@ namespace rev {
 			static void DCmd(draw::IQueue& q, Itr itr, const Itr itrE, const int id, const int actId) {
 				std::size_t idx = 0;
 				while(itr != itrE) {
-					(*itr)->dcmd_export(q, id+idx, actId+idx);
+					TexSingle::DCmd(q, *itr, id+idx, actId+idx);
 					++idx;
 					++itr;
 				}
