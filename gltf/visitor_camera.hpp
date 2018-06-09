@@ -34,7 +34,7 @@ namespace rev::gltf {
 					Ent{
 						.camera = c,
 						.id = node->jointId,
-						.name = node->username ? *node->username : Name("(noname)")
+						.name = node->getName()
 					}
 				);
 			}
