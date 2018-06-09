@@ -26,7 +26,7 @@ namespace rev::gltf::v1 {
 			{
 				const auto& desc = *desc_op;
 				VSemantic vsem;
-				vsem.sem = static_cast<VSemEnum::e>(&desc - c_v_semantic);
+				vsem.sem = desc.second;
 				if(m.empty())
 					vsem.index = 0;
 				else
