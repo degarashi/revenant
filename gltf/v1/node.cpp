@@ -30,6 +30,9 @@ namespace rev::gltf::v1 {
 	void Node::visit(Visitor& v) const {
 		_Visit(*this, v, [](){});
 	}
+	void Node::visit(VisitorBase& v) const {
+		_Visit(*this, v, [](){});
+	}
 	void Node::moveTo(void* dst) {
 		new(dst) Node(std::move(*this));
 	}
@@ -44,6 +47,11 @@ namespace rev::gltf::v1 {
 		Node(v, q),
 		camera(L::Required<DRef_Camera>(v, "camera", q))
 	{}
+	void CameraNode::visit(VisitorBase& v) const {
+		_Visit(*this, v, [this, &v](){
+			v.addCamera(camera.data()->makeCamera());
+		});
+	}
 	void CameraNode::visit(Visitor& v) const {
 		_Visit(*this, v, [this, &v](){
 			v.addCamera(camera.data()->makeCamera());

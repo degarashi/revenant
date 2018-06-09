@@ -1,7 +1,7 @@
 #include "myscene_gltf.hpp"
 #include "../../gltf/v1/mgr.hpp"
 #include "../../gltf/v1/scene.hpp"
-#include "../../gltf/v1/visitor_camera.hpp"
+#include "../../gltf/visitor_camera.hpp"
 #include "../../gltf/v1/dc_model.hpp"
 #include "../../gltf/v1/animation.hpp"
 #include "../../dc/node.hpp"
@@ -44,7 +44,7 @@ namespace rev::test {
 				// モデル
 				_model = gltf::v1::GLTFModel::FromScene(sc);
 				// カメラリスト
-				gltf::v1::Visitor_Camera c;
+				gltf::NodeVisitor_Camera<gltf::v1::Node> c;
 				for(auto& n : sc.node) {
 					n->visit(c);
 				}

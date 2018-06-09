@@ -9,11 +9,12 @@ namespace rev::dc {
 }
 namespace rev::gltf {
 	template <class N>
-	struct NodeVisitor {
-		virtual ~NodeVisitor() {}
-		virtual void upNode() {}
-		virtual void addNode(const N& /*node*/) {}
-		virtual void addCamera(const HCam3& /*c*/) {}
+	class NodeVisitor {
+		public:
+			virtual ~NodeVisitor() {}
+			virtual void upNode() {}
+			virtual void addNode(const N& /*node*/) {}
+			virtual void addCamera(const HCam3& /*c*/) {}
 	};
 	template <class D_Node, class Q>
 	class Node {

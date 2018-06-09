@@ -1,11 +1,10 @@
 #pragma once
 #include "myscene.hpp"
-#include "../../gltf/v1/visitor_camera.hpp"
+#include "../../gltf/visitor_camera.hpp"
 
 namespace rev::test {
 	struct MyScene::St_glTF : StateT<St_glTF, St_3D> {
-		using CameraV = gltf::v1::Visitor_Camera::CameraV;
-
+		using CameraV = gltf::NodeVisitor_CameraBase::CameraV;
 		StrV					_fileList,
 								_fileFullPath;
 		mutable CameraV			_camera;

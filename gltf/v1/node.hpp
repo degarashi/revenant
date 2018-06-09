@@ -12,7 +12,8 @@ namespace rev::gltf::v1 {
 		gltf::Node<DRef_Node, IDataQuery>,
 		Resource
 	{
-		struct Visitor : NodeVisitor<Node> {
+		using VisitorBase = NodeVisitor<Node>;
+		struct Visitor : VisitorBase {
 			virtual void addMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, dc::JointId id);
 			virtual void addSkinMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const SkinBindSet_SP& bind);
 		};
@@ -23,6 +24,7 @@ namespace rev::gltf::v1 {
 		Node(const JValue& v, const IDataQuery& q);
 		Type getType() const noexcept override;
 		virtual void visit(Visitor& v) const;
+		virtual void visit(VisitorBase& v) const;
 		virtual void moveTo(void* dst);
 	};
 	struct CameraNode : Node {
@@ -31,6 +33,7 @@ namespace rev::gltf::v1 {
 		static std::shared_ptr<CameraNode> Load(const JValue& v, const IDataQuery& q);
 		CameraNode(const JValue& v, const IDataQuery& q);
 		void visit(Visitor& v) const override;
+		void visit(VisitorBase& v) const override;
 		void moveTo(void* dst) override;
 	};
 	struct MeshNodeBase : Node {
