@@ -98,15 +98,12 @@ namespace rev::gltf {
 				// 読み取った値は右からベクトルを掛けるタイプなので転置する
 				mat->transpose();
 				static_cast<value_t&>(*this) = value_t(mat->convert<4,3>());
-			}
-			else if(v.HasMember("translation")) {
-				static_cast<value_t&>(*this) = value_t(
-					OptionalDefault<loader::Vec3>(v, "translation", {0,0,0}),
-					OptionalDefault<loader::Quat>(v, "rotation", Quat::Identity()),
-					OptionalDefault<loader::Vec3>(v, "scale", {0,0,0})
-				);
-			} else
+			} else {
 				identity();
+				setOffset(OptionalDefault<loader::Vec3>(v, "translation", {0,0,0}));
+				setRotation(OptionalDefault<loader::Quat>(v, "rotation", Quat::Identity()));
+				setScaling(OptionalDefault<loader::Vec3>(v, "scale", {1,1,1}));
+			}
 		}
 		bool Pose3::CanLoad(const JValue& /*v*/) noexcept {
 			return true;
