@@ -2,7 +2,6 @@
 #include "vertex.hpp"
 #include "spine/optional.hpp"
 #include "gl_buffer.hpp"
-#include "glx_const.hpp"
 #include "handle/opengl.hpp"
 
 namespace rev {
@@ -42,10 +41,11 @@ namespace rev {
 		private:
 			using Setter = std::function<void (draw::IQueue&, GLuint, const VSemAttrMap&)>;
 			using SetterV = std::vector<Setter>;
+			using OffsetV = std::vector<std::size_t>;
 			// ストリーム毎のサイズを1次元配列で格納 = 0番から並べる
 			SetterV		_setter;
-			// 各ストリームの先頭インデックス
-			std::size_t	_streamOfs[MaxVStream+1];
+			// 各ストリームの先頭インデックス(size=N_VStream+1)
+			OffsetV		_streamOfs;
 			// 元データ(シリアライズ用)
 			VDInfoV		_vdInfo;
 			friend struct std::hash<rev::VDecl>;
@@ -71,7 +71,7 @@ namespace rev {
 			//! 入力: {streamId, offset, GLFlag, bNoramalize, semantics}
 			VDecl(std::initializer_list<VDInfo> il);
 			//! OpenGLへ頂点位置を設定
-			void dcmd_export(draw::IQueue& q, const HVb (&stream)[MaxVStream], const VSemAttrMap& vmap) const;
+			void dcmd_export(draw::IQueue& q, const std::vector<HVb>& stream, const VSemAttrMap& vmap) const;
 			bool operator == (const VDecl& vd) const;
 			bool operator != (const VDecl& vd) const;
 			#ifdef DEBUGGUI_ENABLED

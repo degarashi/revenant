@@ -1,5 +1,4 @@
 #pragma once
-#include "glx_const.hpp"
 #include "gl_types.hpp"
 #include "debuggui_if.hpp"
 #include "handle/opengl.hpp"
@@ -34,9 +33,10 @@ namespace rev {
 
 				static void Command(const void* p);
 			};
+			using HVbV = std::vector<HVb>;
 
 			FWVDecl		vdecl;
-			HVb			vb[MaxVStream];
+			HVbV		vb;
 			std::size_t	vhash;
 			HIb			ib;
 			DrawMode	drawMode;
@@ -58,19 +58,15 @@ namespace rev {
 					GLsizei		count;
 				} withoutIndex;
 			};
-			constexpr static int NArray = MaxVStream + 2;
-			using CmpArray = std::array<uintptr_t, NArray>;
 
-			static void _SetVB(HVb*) {}
+			void _setVB() {}
 			template <class... VBs>
-			static void _SetVB(HVb* dst, const HVb& vb, const VBs&... vbs) {
-				*dst = vb;
-				_SetVB(dst+1, vbs...);
+			void _setVB(const HVb& vb, const VBs&... vbs) {
+				this->vb.emplace_back(vb);
+				_setVB(vbs...);
 			}
-			static void _SetVB(HVb* dst, const HVb* vb, std::size_t n) {
-				while(n-- != 0) {
-					*dst++ = *vb++;
-				}
+			void _setVB(const HVb* vb, const std::size_t n) {
+				this->vb.assign(vb, vb+n);
 			}
 			static HPrim _MakeWithIndex(const FWVDecl& vd, DrawMode mode, const HIb& ib,  const GLsizei count, const GLuint offsetElem);
 			static HPrim _MakeWithoutIndex(const FWVDecl& vd, DrawMode mode, const GLint first, const GLsizei count);
@@ -82,14 +78,14 @@ namespace rev {
 			template <class... VBs>
 			static HPrim MakeWithIndex(const FWVDecl& vd, DrawMode mode, const HIb& ib,  const GLsizei count, const GLuint offsetElem, const VBs&... vbs) {
 				HPrim ret = _MakeWithIndex(vd, mode, ib, count, offsetElem);
-				_SetVB(ret->vb, vbs...);
+				ret->_setVB(vbs...);
 				ret->_makeVHash();
 				return ret;
 			}
 			template <class... VBs>
 			static HPrim MakeWithoutIndex(const FWVDecl& vd, DrawMode mode, const GLint first, const GLsizei count, const VBs&... vbs) {
 				HPrim ret = _MakeWithoutIndex(vd, mode, first, count);
-				_SetVB(ret->vb, vbs...);
+				ret->_setVB(vbs...);
 				ret->_makeVHash();
 				return ret;
 			}
@@ -98,7 +94,6 @@ namespace rev {
 			std::pair<int,int> getDifference(const Primitive& p) const noexcept;
 			void dcmd_export(draw::IQueue& q, const FWVMap& vmap) const;
 			void dcmd_export_diff(draw::IQueue& q, const Primitive& prev, const FWVMap& vmap) const;
-			void getArray(CmpArray& dst) const noexcept;
 			bool operator == (const Primitive& p) const noexcept;
 			bool operator != (const Primitive& p) const noexcept;
 			bool operator < (const Primitive& p) const noexcept;
@@ -112,7 +107,7 @@ namespace std {
 	struct hash<rev::Primitive> {
 		std::size_t operator()(const rev::Primitive& p) const noexcept {
 			std::size_t ret = lubee::hash_combine_implicit(p.vdecl);
-			lubee::hash_combine_range(ret, p.vb, p.vb+rev::MaxVStream);
+			lubee::hash_combine_range(ret, p.vb.begin(), p.vb.end());
 			lubee::hash_combine(ret, p.ib, p.drawMode.value);
 			return ret;
 		}

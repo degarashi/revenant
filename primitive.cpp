@@ -33,7 +33,7 @@ namespace rev {
 	}
 	void Primitive::_makeVHash() {
 		std::size_t h = lubee::hash_combine_implicit(vdecl);
-		lubee::hash_combine_range(h, vb, vb+MaxVStream);
+		lubee::hash_combine_range(h, vb.begin(), vb.end());
 		vhash = h;
 	}
 	bool Primitive::operator == (const Primitive& p) const noexcept {
@@ -49,11 +49,7 @@ namespace rev {
 			return false;
 		if(vdecl != p.vdecl)
 			return false;
-		for(std::size_t i=0 ; i<countof(vb) ; i++) {
-			if(vb[i] != p.vb[i])
-				return false;
-		}
-		return true;
+		return vb == p.vb;
 	}
 	bool Primitive::indexCmp(const Primitive& p) const noexcept {
 		if(ib != p.ib)
@@ -104,20 +100,26 @@ namespace rev {
 			ib->dcmd_export(q);
 		_dcmd_export_common(q);
 	}
-	void Primitive::getArray(CmpArray& dst) const noexcept {
-		auto add = [p = dst.data()](auto& ptr) mutable {
-			*p++ = reinterpret_cast<uintptr_t>(ptr.get());
-		};
-		for(auto& v : vb)
-			add(v);
-		add(ib);
-		add(vdecl);
-	}
 	bool Primitive::operator < (const Primitive& p) const noexcept {
-		CmpArray a, b;
-		getArray(a);
-		p.getArray(b);
-		return a < b;
+		const std::array<uintptr_t, 3>	ar[2] = {
+			{
+				reinterpret_cast<uintptr_t>(vdecl.get()),
+				reinterpret_cast<uintptr_t>(ib.get()),
+				static_cast<uintptr_t>(drawMode)
+			},
+			{
+				reinterpret_cast<uintptr_t>(p.vdecl.get()),
+				reinterpret_cast<uintptr_t>(p.ib.get()),
+				static_cast<uintptr_t>(p.drawMode)
+			}
+		};
+		if(std::lexicographical_compare(
+				ar[0].begin(), ar[0].end(),
+				ar[1].begin(), ar[1].end()))
+			return true;
+		return std::lexicographical_compare(
+			vb.begin(), vb.end(),
+			p.vb.begin(), p.vb.end());
 	}
 	std::pair<int,int> Primitive::getDifference(const Primitive& p) const noexcept {
 		return std::make_pair(

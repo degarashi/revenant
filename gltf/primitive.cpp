@@ -1,7 +1,6 @@
 #include "gltf/primitive.hpp"
 #include "value_loader.hpp"
 #include "gltf/check.hpp"
-#include "../glx_const.hpp"
 #include "../vdecl.hpp"
 #include "../gl_resource.hpp"
 #include "../primitive.hpp"
@@ -73,8 +72,7 @@ namespace rev::gltf {
 	const HPrim& Primitive<D_Accessor, Q, V>::getPrimitive() const {
 		if(!primitive_cache) {
 			FWVDecl vdecl;
-			HVb vb[MaxVStream];
-			std::size_t nVb;
+			std::vector<HVb> vb;
 			std::size_t nV = std::numeric_limits<std::size_t>::max();
 			{
 				std::size_t index=0;
@@ -101,11 +99,10 @@ namespace rev::gltf {
 					vdinfo.emplace_back(idx, vbp.offset, acc._componentType, GL_FALSE, acc._nElem, a.first, acc.getByteStride());
 				}
 				vdecl = FWVDecl(vdinfo);
-				D_Assert(index <= MaxVStream, "too many vertex streams");
+				vb.resize(map.size());
 				for(auto& m : map) {
 					vb[m.second] = m.first;
 				}
-				nVb = map.size();
 			}
 			if(index) {
 				// make Index-buffer
@@ -114,9 +111,9 @@ namespace rev::gltf {
 
 				Visitor visitor(ib);
 				boost::apply_visitor(visitor, idata.getData());
-				primitive_cache = ::rev::Primitive::MakeWithIndex(vdecl, mode, ib, visitor._count, 0, vb, nVb);
+				primitive_cache = ::rev::Primitive::MakeWithIndex(vdecl, mode, ib, visitor._count, 0, vb.data(), vb.size());
 			} else {
-				primitive_cache = ::rev::Primitive::MakeWithoutIndex(vdecl, mode, 0, nV, vb, nVb);
+				primitive_cache = ::rev::Primitive::MakeWithoutIndex(vdecl, mode, 0, nV, vb.data(), vb.size());
 			}
 		}
 		return primitive_cache;

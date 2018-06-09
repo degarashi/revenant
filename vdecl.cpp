@@ -45,7 +45,11 @@ namespace rev {
 	{}
 	void VDecl::_init() {
 		// StreamId毎に集計
-		VDInfoV stream[MaxVStream];
+		std::size_t maxStr = 0;
+		for(auto& v : _vdInfo)
+			maxStr = std::max<std::size_t>(maxStr, v.streamId+1);
+		using VDInfoV2 = std::vector<VDInfoV>;
+		VDInfoV2 stream(maxStr);
 		for(auto& v : _vdInfo)
 			stream[v.streamId].push_back(v);
 
@@ -66,7 +70,8 @@ namespace rev {
 
 		_setter.resize(_vdInfo.size());
 		std::size_t cur = 0;
-		for(std::size_t i=0 ; i<countof(stream) ; i++) {
+		_streamOfs.resize(maxStr+1);
+		for(std::size_t i=0 ; i<maxStr ; i++) {
 			_streamOfs[i] = cur;
 			for(auto& t2 : stream[i]) {
 				_setter[cur] = [t2](draw::IQueue& q, const GLuint vb_stride, const VSemAttrMap& attr) {
@@ -106,7 +111,7 @@ namespace rev {
 				++cur;
 			}
 		}
-		_streamOfs[MaxVStream] = _streamOfs[MaxVStream-1];
+		_streamOfs[maxStr] = cur;
 	}
 	void VDecl::DCmd_VPtr::Command(const void* p) {
 		auto& self = *static_cast<const DCmd_VPtr*>(p);
@@ -130,17 +135,19 @@ namespace rev {
 			);
 		}
 	}
-	void VDecl::dcmd_export(draw::IQueue& q, const HVb (&stream)[MaxVStream], const VSemAttrMap& vmap) const {
-		for(std::size_t i=0 ; i<countof(stream) ; i++) {
+	void VDecl::dcmd_export(draw::IQueue& q, const std::vector<HVb> &stream, const VSemAttrMap& vmap) const {
+		const auto len = _streamOfs.size();
+		for(std::size_t i=0 ; i<len-1 ; i++) {
 			// VStreamが設定されていればBindする
-			auto& vb = stream[i];
-			if(vb) {
-				const GLuint stride = vb->getStride();
-				const auto from = _streamOfs[i],
-							to = _streamOfs[i+1];
-				vb->dcmd_export(q);
-				for(std::size_t j=from ; j<to ; j++)
-					_setter[j](q, stride, vmap);
+			if(i < stream.size()) {
+				if(auto& vb = stream[i]) {
+					const GLuint stride = vb->getStride();
+					const auto from = _streamOfs[i],
+								to = _streamOfs[i+1];
+					vb->dcmd_export(q);
+					for(std::size_t j=from ; j<to ; j++)
+						_setter[j](q, stride, vmap);
+				}
 			}
 		}
 	}

@@ -129,7 +129,8 @@ namespace rev {
 		}
 		{
 			StringStream s;
-			for(std::size_t i=0 ; i<countof(vb) ; i++) {
+			const auto len = vb.size();
+			for(std::size_t i=0 ; i<len ; i++) {
 				if(vb[i]) {
 					s << "VertexBuffer[" << i << "]";
 					const auto name = s.output();
