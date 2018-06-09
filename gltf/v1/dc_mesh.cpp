@@ -6,22 +6,9 @@
 #include "gltf/v1/qm_usemcached.hpp"
 #include "semantic_if.hpp"
 #include "../../tech_if.hpp"
+#include "../../drawcmd/flipface.hpp"
 
 namespace rev::gltf::v1 {
-	namespace {
-		struct DCmd_FlipFace {
-			static void Command(const void* p);
-		};
-		void DCmd_FlipFace::Command(const void*) {
-			GLint face;
-			GL.glGetIntegerv(GL_FRONT_FACE, &face);
-			if(face == GL_CCW)
-				face = GL_CW;
-			else
-				face = GL_CCW;
-			GL.glFrontFace(face);
-		}
-	}
 	// ------------ GLTFMesh ------------
 	GLTFMesh::GLTFMesh(const HPrim& p, const HTech& t, const Name& userName, const RTUParams_SP& rt, const dc::JointId id):
 		_primitive(p),
@@ -90,10 +77,10 @@ namespace rev::gltf::v1 {
 		e.setPrimitive(_primitive);
 
 		if(*_flip)
-			e.refQueue().add(DCmd_FlipFace());
+			e.refQueue().add(draw::FlipFace());
 		e.draw();
 		if(*_flip)
-			e.refQueue().add(DCmd_FlipFace());
+			e.refQueue().add(draw::FlipFace());
 		return ret;
 	}
 	HTech GLTFMesh::getTech() const {
