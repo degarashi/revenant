@@ -6,7 +6,7 @@
 #include "gltf/v1/qm_usemcached.hpp"
 #include "semantic_if.hpp"
 #include "../../tech_if.hpp"
-#include "../../drawcmd/flipface.hpp"
+#include "../../drawcmd/aux.hpp"
 
 namespace rev::gltf::v1 {
 	// ------------ GLTFMesh ------------
