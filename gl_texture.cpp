@@ -180,6 +180,12 @@ namespace rev {
 		q.add(cmd);
 		q.stockResource(shared_from_this());
 	}
+	void IGLTexture::DCmd_ExportEmpty(draw::IQueue& q, const GLint id, const int actId) {
+		q.add(DCmd_UniformEmpty{
+			.unifId = id,
+			.actId = actId
+		});
+	}
 	const char* IGLTexture::getResourceName() const noexcept {
 		return "IGLTexture";
 	}
@@ -406,6 +412,13 @@ namespace rev {
 			GL_REPEAT,
 			GL_MIRROR_CLAMP_TO_EDGE
 		};
+	}
+	void IGLTexture::DCmd_UniformEmpty::Command(const void* p) {
+		auto& self = *static_cast<const DCmd_UniformEmpty*>(p);
+		D_GLAssert(glActiveTexture, GL_TEXTURE0 + self.actId);
+		D_GLAssert(glBindTexture, GL_TEXTURE_2D, 0);
+		D_GLAssert(glBindTexture, GL_TEXTURE_CUBE_MAP, 0);
+		GL.glUniform1i(self.unifId, self.actId);
 	}
 	void IGLTexture::DCmd_Uniform::Command(const void* p) {
 		auto& self = *static_cast<const DCmd_Uniform*>(p);

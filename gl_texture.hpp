@@ -51,6 +51,11 @@ namespace rev {
 		public std::enable_shared_from_this<IGLTexture>
 	{
 		private:
+			struct DCmd_UniformEmpty {
+				GLint	unifId,
+						actId;
+				static void Command(const void* p);
+			};
 			struct DCmd_Uniform : TextureBase {
 				GLint	unifId;
 				static void Command(const void* p);
@@ -83,6 +88,7 @@ namespace rev {
 			ByteBuff readData(GLInFmt internalFmt, GLTypeFmt elem, int level=0, CubeFace face=CubeFace::PositiveX) const;
 			ByteBuff readRect(GLInFmt internalFmt, GLTypeFmt elem, const lubee::RectI& rect, CubeFace face=CubeFace::PositiveX) const;
 			void dcmd_export(draw::IQueue& q, const GLint id, int actId) const;
+			static void DCmd_ExportEmpty(draw::IQueue& q, const GLint id, int actId);
 	};
 	//! ユーザー定義の空テクスチャ
 	/*!
