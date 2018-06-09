@@ -43,6 +43,7 @@ namespace rev::gltf::v1 {
 		Resource(const JValue& v);
 		virtual ~Resource() {}
 		virtual Type getType() const noexcept = 0;
+		const Name& getName() const noexcept;
 	};
 
 	#define DEF_RES(z, ign, name) \

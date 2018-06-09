@@ -7,4 +7,12 @@ namespace rev::gltf::v1 {
 	Resource::Resource(const JValue& v):
 		username(Optional<String>(v, "name"))
 	{}
+	namespace {
+		const Name c_noname("(noname)");
+	}
+	const Name& Resource::getName() const noexcept {
+		if(username)
+			return *username;
+		return c_noname;
+	}
 }
