@@ -128,8 +128,7 @@ namespace rev {
 			void setUniformById(const GLint id, const M& m, const bool transpose=true) {
 				detail::MatSingle<M>::DCmd(_q, m, id, transpose);
 			}
-			template <class T>
-			void setUniformById(const GLint id, const std::shared_ptr<T>& t) {
+			void setUniformById(const GLint id, const std::shared_ptr<const IGLTexture>& t) {
 				// テクスチャユニット番号を検索
 				const auto num = _program.getTexIndex(id);
 				D_Assert0(num);
