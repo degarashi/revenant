@@ -181,27 +181,38 @@ namespace rev {
 	bool Surface::isContinuous() const noexcept {
 		return _sfc->pitch == _sfc->w * _sfc->format->BytesPerPixel;
 	}
+	ByteBuff Surface::_extractAsContinuous(const uint32_t dstFmt) const {
+		const int w = width(),
+					h = height();
+		auto lk = lock();
+		const auto upFmt = MakeUPFormat(dstFmt);
+		const size_t laneSize = upFmt->BytesPerPixel;
+		const size_t dstSize = w * h * laneSize;
+		ByteBuff buff(dstSize);
+		auto* src = reinterpret_cast<const uint8_t*>(lk.getBits());
+		auto* dst = buff.data();
+		for(int i=0 ; i<h ; i++) {
+			std::memcpy(dst, src, laneSize);
+			src += lk.getPitch();
+			dst += laneSize;
+		}
+		return buff;
+	}
 	ByteBuff Surface::extractAsContinuous(uint32_t dstFmt) const {
 		auto& myformat = getFormat();
 		if(dstFmt == 0)
 			dstFmt = myformat.format;
 
 		auto lk = lock();
-		int w = width(),
-			h = height();
 		// ピクセルデータが隙間なく詰まっていて、なおかつフォーマットも同じならそのままメモリをコピー
 		if(isContinuous() && dstFmt==myformat.format) {
+			const int w = width(),
+						h = height();
 			auto* src = reinterpret_cast<const uint8_t*>(lk.getBits());
 			return ByteBuff(src, src + w*h*myformat.BytesPerPixel);
 		}
-		auto upFmt = MakeUPFormat(dstFmt);
-		size_t dstSize = w * h * upFmt->BytesPerPixel;
-		ByteBuff dst(dstSize);
-		SDLAssert(SDL_ConvertPixels,
-					w,h,
-					myformat.format, lk.getBits(), lk.getPitch(),
-					dstFmt, &dst[0], w*upFmt->BytesPerPixel);
-		return dst;
+		const auto tmp = convert(dstFmt);
+		return tmp->_extractAsContinuous(dstFmt);
 	}
 	SDL_Surface* Surface::getSurface() const noexcept {
 		return _sfc;

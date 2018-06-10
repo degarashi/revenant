@@ -32,6 +32,7 @@ namespace rev {
 
 			Surface(SDL_Surface* sfc) noexcept;
 			Surface(SDL_Surface* sfc, ByteBuff&& buff) noexcept;
+			ByteBuff _extractAsContinuous(uint32_t dstFmt=0) const;
 		public:
 			struct LoadFailed : std::runtime_error {
 				using std::runtime_error::runtime_error;
