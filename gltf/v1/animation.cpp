@@ -1,7 +1,7 @@
 #include "gltf/v1/animation.hpp"
 #include "../check.hpp"
 #include "gltf/v1/accessor.hpp"
-#include "dc/sampler.hpp"
+#include "dc/pose_sampler.hpp"
 #include "../../ovr_functor.hpp"
 
 namespace rev::gltf::v1 {
@@ -47,24 +47,24 @@ namespace rev::gltf::v1 {
 			);
 		}
 	}
-	HSampler AnimSampler::outputAsTranslation() const {
+	HPoseSampler AnimSampler::outputAsTranslation() const {
 		_checkData();
 		Assert0(!cached.vec4);
-		const auto samp = std::make_shared<dc::T_Sampler>();
+		const auto samp = std::make_shared<dc::Pose_T_Sampler>();
 		samp->value = std::make_shared<Vec<frea::Vec3>>(*static_cast<const Vec<frea::Vec3>*>(cached.output));
 		return samp;
 	}
-	HSampler AnimSampler::outputAsRotation() const {
+	HPoseSampler AnimSampler::outputAsRotation() const {
 		_checkData();
 		Assert0(cached.vec4);
-		const auto samp = std::make_shared<dc::R_Sampler>();
+		const auto samp = std::make_shared<dc::Pose_R_Sampler>();
 		samp->value = std::make_shared<Vec<frea::Quat>>(*static_cast<const Vec<frea::Quat>*>(cached.output));
 		return samp;
 	}
-	HSampler AnimSampler::outputAsScaling() const {
+	HPoseSampler AnimSampler::outputAsScaling() const {
 		_checkData();
 		Assert0(!cached.vec4);
-		const auto samp = std::make_shared<dc::S_Sampler>();
+		const auto samp = std::make_shared<dc::Pose_S_Sampler>();
 		samp->value = std::make_shared<Vec<frea::Vec3>>(*static_cast<const Vec<frea::Vec3>*>(cached.output));
 		return samp;
 	}

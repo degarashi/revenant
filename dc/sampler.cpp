@@ -1,12 +1,12 @@
-#include "dc/sampler.hpp"
+#include "dc/pose_sampler.hpp"
 #include "frea/interpolation.hpp"
 #include "beat/pose3d.hpp"
 
 namespace rev::dc {
-	std::size_t T_Sampler::numKey() const {
+	std::size_t Pose_T_Sampler::numKey() const {
 		return value->size();
 	}
-	void T_Sampler::sample(Pose3& dst, const std::size_t idx, const float t) const {
+	void Pose_T_Sampler::sample(Pose3& dst, const std::size_t idx, const float t) const {
 		D_Assert0(lubee::IsInRange(t, 0.f, 1.f));
 		auto& val = *value;
 		frea::Vec3 v;
@@ -16,10 +16,10 @@ namespace rev::dc {
 			v = frea::Lerp(val[idx], val[idx+1], t);
 		dst.setOffset(v);
 	}
-	std::size_t R_Sampler::numKey() const {
+	std::size_t Pose_R_Sampler::numKey() const {
 		return value->size();
 	}
-	void R_Sampler::sample(Pose3& dst, const std::size_t idx, const float t) const {
+	void Pose_R_Sampler::sample(Pose3& dst, const std::size_t idx, const float t) const {
 		D_Assert0(lubee::IsInRange(t, 0.f, 1.f));
 		auto& val = *value;
 		frea::Quat q;
@@ -29,10 +29,10 @@ namespace rev::dc {
 			q = frea::Lerp(val[idx], val[idx+1], t);
 		dst.setRotation(q);
 	}
-	std::size_t S_Sampler::numKey() const {
+	std::size_t Pose_S_Sampler::numKey() const {
 		return value->size();
 	}
-	void S_Sampler::sample(Pose3& dst, const std::size_t idx, const float t) const {
+	void Pose_S_Sampler::sample(Pose3& dst, const std::size_t idx, const float t) const {
 		D_Assert0(lubee::IsInRange(t, 0.f, 1.f));
 		auto& val = *value;
 		frea::Vec3 s;

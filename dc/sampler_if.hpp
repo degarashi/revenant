@@ -10,7 +10,7 @@ namespace rev::dc {
 		virtual ~IFrame() {}
 		virtual std::size_t numKey() const = 0;
 	};
-	struct ISampler : IFrame {
+	struct IPoseSampler : IFrame {
 		virtual void sample(Pose3& dst, std::size_t idx, float t) const = 0;
 	};
 	struct IPosSampler : IFrame {

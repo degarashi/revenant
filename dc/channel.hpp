@@ -4,8 +4,8 @@
 
 namespace rev::dc {
 	struct Channel : IChannel {
-		HPosSampler	_position;
-		HSampler	_sampler;
+		HPosSampler		_position;
+		HPoseSampler	_sampler;
 		HJat		_jat;
 
 		float length() const override;
