@@ -313,7 +313,7 @@ namespace rev {
 				desc = *info;
 			}
 			const auto sdlFmt = desc.sdlFormat!=SDL_PIXELFORMAT_UNKNOWN ? desc.sdlFormat : desc.sdlLossFormat;
-			tsfc->convert(sdlFmt);
+			tsfc = tsfc->convert(sdlFmt);
 			// テクスチャ用のサイズ調整
 			auto size = tsfc->getSize();
 			const lubee::PowSize n2size{size.width, size.height};
