@@ -7,10 +7,10 @@ namespace beat::g3 {
 namespace rev::dc {
 	using Pose3 = beat::g3::Pose;
 	struct IFrame {
+		virtual ~IFrame() {}
 		virtual std::size_t numKey() const = 0;
 	};
 	struct ISampler : IFrame {
-		virtual ~ISampler() {}
 		virtual void sample(Pose3& dst, std::size_t idx, float t) const = 0;
 	};
 	struct IPosSampler : IFrame {
@@ -18,7 +18,6 @@ namespace rev::dc {
 			std::size_t	idx;
 			float		time;
 		};
-		virtual ~IPosSampler() {}
 		virtual float length() const = 0;
 		virtual PosP position(float t) const = 0;
 		virtual PosP position(std::size_t idx, float t) const = 0;
