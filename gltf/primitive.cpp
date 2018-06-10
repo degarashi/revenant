@@ -8,6 +8,7 @@
 #include "gltf/v1/buffer.hpp"
 #include "gltf/v1/accessor.hpp"
 #include "gltf/v1/v_semantic.hpp"
+#include "gltf/v1/mesh.hpp"
 
 namespace rev::gltf {
 	namespace {
@@ -22,27 +23,27 @@ namespace rev::gltf {
 		};
 	}
 	namespace L = gltf::loader;
-	template <class D_Accessor, class Q, class V>
-	Primitive<D_Accessor, Q, V>::Primitive(const JValue& v, const Q& q):
-		index(L::Optional<D_Accessor>(v, "indices", q))
+	template <class P>
+	Primitive<P>::Primitive(const JValue& v, const Query_t& q):
+		index(L::Optional<Accessor_t>(v, "indices", q))
 	{
 		const auto m = L::OptionalDefault<L::Integer>(v, "mode", 4);
 		mode = CheckEnum(
 					c_mode, m,
 					[](auto&& c, auto&& m){ return c.first == m; }
 				).second;
-		using LTag = L::FindLoader_t<typename Q::Tag_t>;
+		using LTag = L::FindLoader_t<typename Query_t::Tag_t>;
 		const auto attr = L::OptionalDefault<L::Dictionary<LTag>>(v, "attributes", {});
-		V vsem;
+		VSem_t vsem;
 		for(auto& a : attr) {
 			attribute.emplace_back(
 				vsem(a.first.c_str()),
-				D_Accessor(a.second, q)
+				Accessor_t(a.second, q)
 			);
 		}
 	}
-	template <class D_Accessor, class Q, class V>
-	bool Primitive<D_Accessor, Q, V>::CanLoad(const JValue&) noexcept {
+	template <class P>
+	bool Primitive<P>::CanLoad(const JValue&) noexcept {
 		return true;
 	}
 	namespace {
@@ -68,8 +69,8 @@ namespace rev::gltf {
 			}
 		};
 	}
-	template <class D_Accessor, class Q, class V>
-	const HPrim& Primitive<D_Accessor, Q, V>::getPrimitive() const {
+	template <class P>
+	const HPrim& Primitive<P>::getPrimitive() const {
 		if(!primitive_cache) {
 			FWVDecl vdecl;
 			std::vector<HVb> vb;
@@ -78,7 +79,8 @@ namespace rev::gltf {
 				std::size_t index=0;
 				std::unordered_map<HVb, std::size_t> map;
 
-				VDecl::VDInfoV	 vdinfo;
+				VDecl::VDInfoV		vdinfo;
+				VSemCount			vc = {};
 				for(auto& a : attribute) {
 					auto& acc = *a.second;
 					std::size_t idx;
@@ -97,12 +99,30 @@ namespace rev::gltf {
 						}
 					}
 					vdinfo.emplace_back(idx, vbp.offset, acc._componentType, GL_FALSE, acc._nElem, a.first, acc.getByteStride());
+					++vc[a.first.sem];
 				}
-				vdecl = FWVDecl(vdinfo);
 				vb.resize(map.size());
 				for(auto& m : map) {
 					vb[m.second] = m.first;
 				}
+
+				std::size_t vdIdx = vb.size();
+				P::VBuffModify(vc, [&vdIdx, &vdinfo, &vb, nV](const PrimitiveVertex& v) {
+					HVb vb0 = mgr_gl.makeVBuffer(DrawType::Static);
+					const auto unit = v.stride;
+					std::vector<uint8_t> buff(unit * nV);
+					auto* dst = buff.data();
+					for(std::size_t i=0 ; i<nV ; i++) {
+						for(std::size_t j=0 ; j<unit ; j++) {
+							*dst++ = v.value[j];
+						}
+					}
+					D_Assert0(dst == buff.data() + unit*nV);
+					vdinfo.emplace_back(vdIdx++, 0, v.type, v.normalized, v.nElem, v.vsem, unit);
+					vb0->initData(std::move(buff), unit);
+					vb.emplace_back(vb0);
+				});
+				vdecl = FWVDecl(vdinfo);
 			}
 			if(index) {
 				// make Index-buffer
@@ -120,4 +140,4 @@ namespace rev::gltf {
 	}
 }
 
-template struct rev::gltf::Primitive<rev::gltf::v1::DRef_Accessor, rev::gltf::v1::IDataQuery, rev::gltf::v1::V_Semantic>;
+template struct rev::gltf::Primitive<rev::gltf::v1::PrimitivePolicy>;

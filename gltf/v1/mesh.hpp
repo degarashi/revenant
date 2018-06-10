@@ -6,8 +6,16 @@
 #include "../../gl_format.hpp"
 
 namespace rev::gltf::v1 {
+	struct PrimitivePolicy {
+		using Accessor_t = DRef_Accessor;
+		using Query_t = IDataQuery;
+		using VSem_t = V_Semantic;
+
+		using ModCB = std::function<void (const PrimitiveVertex&)>;
+		static void VBuffModify(const VSemCount&, const ModCB&) {}
+	};
 	struct Primitive :
-		gltf::Primitive<DRef_Accessor, IDataQuery, V_Semantic>
+		gltf::Primitive<PrimitivePolicy>
 	{
 		DRef_Material	material;
 

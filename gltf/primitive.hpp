@@ -5,17 +5,41 @@
 #include "json_types.hpp"
 
 namespace rev::gltf {
-	template <class D_Accessor, class Q, class V>
+	using VSemCount = std::size_t[VSemEnum::_Num];
+	struct PrimitiveVertex {
+		constexpr static auto MaxBuff = sizeof(float)*4;
+		using Buff = std::array<uint8_t, MaxBuff>;
+
+		GLenum			type;
+		VSemantic		vsem;
+		bool			normalized;
+		std::size_t		nElem,
+						stride;
+		Buff			value;
+
+		template <class T, std::size_t N>
+		void setValue(const T (&t)[N]) {
+			D_Assert0(N <= MaxBuff);
+			auto* dst = reinterpret_cast<T*>(value.data());
+			for(std::size_t i=0 ; i<N ; i++)
+				*dst++ = t[i];
+			stride = sizeof(T)*N;
+		}
+	};
+	template <class Policy>
 	struct Primitive {
-		using VSem_Accessor = std::vector<std::pair<VSemantic, D_Accessor>>;
-		using Idx_Accessor_OP = spi::Optional<D_Accessor>;
+		using Accessor_t = typename Policy::Accessor_t;
+		using Query_t = typename Policy::Query_t;
+		using VSem_t = typename Policy::VSem_t;
+		using VSem_Accessor = std::vector<std::pair<VSemantic, Accessor_t>>;
+		using Idx_Accessor_OP = spi::Optional<Accessor_t>;
 
 		VSem_Accessor		attribute;
 		Idx_Accessor_OP		index;
 		DrawMode			mode;
 		mutable HPrim		primitive_cache;
 
-		Primitive(const JValue& v, const Q& q);
+		Primitive(const JValue& v, const Query_t& q);
 		static bool CanLoad(const JValue& v) noexcept;
 		const HPrim& getPrimitive() const;
 	};
