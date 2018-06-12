@@ -35,7 +35,6 @@ namespace rev {
 			bool isCubemap() const;
 			void dcmd_bind(draw::IQueue& q, GLuint actId) const;
 			void imm_bind(GLuint actId) const;
-			bool operator == (const TextureId& t) const;
 			const char* getResourceName() const noexcept override;
 	};
 	class TextureFilter {

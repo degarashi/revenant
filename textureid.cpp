@@ -61,7 +61,4 @@ namespace rev {
 	const char* TextureId::getResourceName() const noexcept {
 		return "TextureId";
 	}
-	bool TextureId::operator == (const TextureId& t) const {
-		return getTextureId() == t.getTextureId();
-	}
 }
