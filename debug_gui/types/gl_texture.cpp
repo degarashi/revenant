@@ -37,7 +37,7 @@ namespace rev {
 		ImGui::Columns(1);
 		if(const auto c = debug::ChildPush("texture", 0, true, ImGuiWindowFlags_HorizontalScrollbar)) {
 			ImGui::Image(
-				mgr_gui.storeTexture(shared_from_this()),
+				mgr_gui.storeTexture(std::static_pointer_cast<const IGLTexture>(shared_from_this())),
 				ImVec2(_size.width, _size.height)
 			);
 		}
@@ -55,7 +55,7 @@ namespace rev {
 			s.x = _size.width;
 			s.y = _size.height;
 		}
-		ImGui::Image(mgr_gui.storeTexture(shared_from_this()), s);
+		ImGui::Image(mgr_gui.storeTexture(std::static_pointer_cast<const IGLTexture>(shared_from_this())), s);
 	}
 	bool Texture_URI::property(const bool edit) {
 		auto field = debug::EntryField(getDebugName(), edit);

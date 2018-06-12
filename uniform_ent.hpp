@@ -61,7 +61,7 @@ namespace rev {
 		struct TexSingle {
 			static void DCmd(draw::IQueue& q, const HTexC& tex, const int id, const int actId) {
 				if(tex)
-					tex->dcmd_export(q, id, actId);
+					tex->dcmd_uniform(q, id, actId);
 				else
 					IGLTexture::DCmd_ExportEmpty(q, id, actId);
 			}

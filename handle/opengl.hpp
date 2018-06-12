@@ -5,6 +5,8 @@
 namespace rev {
 	struct IGLResource;
 	DEF_HANDLE(IGLResource, GLRes)
+	class TextureId;
+	DEF_HANDLE(TextureId, TexId)
 	class IGLTexture;
 	DEF_HANDLE(IGLTexture, Tex)
 	class Texture_Mem;

@@ -8,87 +8,96 @@
 #include "chunk.hpp"
 
 namespace rev {
-	struct TextureBase {
-		void use_begin() const;
-
-		//! [mipLevel][Nearest / Linear]
-		const static GLuint cs_Filter[3][2];
-
-		GLuint		_idTex;
-		int			_iLinearMag,	//!< Linearの場合は1, Nearestは0
-					_iLinearMin;
-		WrapState	_wrapS,
-					_wrapT;
-		MipState	_mipLevel;
-		GLuint		_actId;		//!< セットしようとしているActiveTextureId (for Use())
-		GLuint		_texFlag;	//!< TEXTURE_2D or TEXTURE_CUBE_MAP
-		float		_coeff;
-
-		GLuint getTexFlag() const;
-		//! テクスチャユニット番号を指定してBind
-		void setActiveId(GLuint n);
-		GLint getTextureId() const;
-		static bool IsMipmap(MipState level);
-		bool isMipmap() const;
-		bool isCubemap() const;
-		void setFilter(bool bLinearMag, bool bLinearMin);
-		void setMagMinFilter(bool bLinear);
-		void setAnisotropicCoeff(float coeff);
-		void setUVWrap(WrapState s, WrapState t);
-		void setWrap(WrapState st);
-	};
-	class PathBlock;
-	using ByteBuff = std::vector<uint8_t>;
-
 	namespace draw {
 		class IQueue;
 	}
-	//! OpenGLテクスチャインタフェース
-	/*!	フィルターはNEARESTとLINEARしか無いからboolで管理 */
+	class TextureId :
+		public std::enable_shared_from_this<TextureId>,
+		public IGLResource
+	{
+		protected:
+			GLuint		_idTex,
+						_texFlag;	//!< TEXTURE_2D or TEXTURE_CUBE_MAP
+
+			struct DCmd_Bind {
+				GLuint		idTex,
+							texFlag,
+							actId;
+				static void Command(const void* p);
+			};
+			bool _onDeviceReset();
+		public:
+			TextureId(GLuint idTex, GLuint texFlag);
+			virtual ~TextureId();
+			void onDeviceLost() override;
+			GLuint getTextureId() const;
+			GLuint getTexFlag() const;
+			bool isCubemap() const;
+			void dcmd_bind(draw::IQueue& q, GLuint actId) const;
+			void imm_bind(GLuint actId) const;
+			bool operator == (const TextureId& t) const;
+			const char* getResourceName() const noexcept override;
+	};
+	class TextureFilter {
+		private:
+			//! [mipLevel][Nearest / Linear]
+			const static GLuint cs_Filter[3][2];
+		protected:
+			uint32_t	_iLinearMag,	//!< Linearの場合は1, Nearestは0
+						_iLinearMin;
+			WrapState	_wrapS,
+						_wrapT;
+			MipState	_mipLevel;
+			float		_coeff;
+
+			struct DCmd_Filter;
+
+		public:
+			static bool IsMipmap(MipState level);
+			bool isMipmap() const;
+			void setFilter(bool bLinearMag, bool bLinearMin);
+			void setMagMinFilter(bool bLinear);
+			void setAnisotropicCoeff(float coeff);
+			void setUVWrap(WrapState s, WrapState t);
+			void setWrap(WrapState st);
+
+			void dcmd_filter(draw::IQueue& q, GLenum texFlag) const;
+	};
+
+	class PathBlock;
+	using ByteBuff = std::vector<uint8_t>;
 	class IGLTexture :
-		public TextureBase,
-		public IGLResource,
-		public std::enable_shared_from_this<IGLTexture>
+		public TextureId,
+		public TextureFilter
 	{
 		private:
-			struct DCmd_UniformEmpty {
+			struct DCmd_Uniform {
 				GLint	unifId,
 						actId;
 				static void Command(const void* p);
 			};
-			struct DCmd_Uniform : TextureBase {
-				GLint	unifId;
-				static void Command(const void* p);
-			};
-		protected:
 			GLuint				_faceFlag;	//!< TEXTURE_2D or TEXTURE_CUBE_MAP_POSITIVE_X
+		protected:
 			lubee::SizeI		_size;
 			InCompressedFmt_OP	_format;	//!< 値が無効 = 不定
-
-			bool _onDeviceReset();
 			IGLTexture(MipState miplevel, InCompressedFmt_OP fmt, const lubee::SizeI& sz, bool bCube);
 
 		public:
-			virtual ~IGLTexture();
 			IGLTexture(IGLTexture&& t);
-
-			const char* getResourceName() const noexcept override;
 
 			const lubee::SizeI& getSize() const;
 			const InCompressedFmt_OP& getFormat() const;
 			GLenum getFaceFlag(CubeFace face=CubeFace::PositiveX) const;
-			void onDeviceLost() override;
 
 			//! 内容をファイルに保存 (主にデバッグ用)
 			void save(const PathBlock& path, CubeFace face=CubeFace::PositiveX);
 			DEF_DEBUGGUI_PROP
 			DEF_DEBUGGUI_SUMMARY
 
-			bool operator == (const IGLTexture& t) const;
 			ByteBuff readData(GLInFmt internalFmt, GLTypeFmt elem, int level=0, CubeFace face=CubeFace::PositiveX) const;
 			ByteBuff readRect(GLInFmt internalFmt, GLTypeFmt elem, const lubee::RectI& rect, CubeFace face=CubeFace::PositiveX) const;
-			void dcmd_export(draw::IQueue& q, const GLint id, int actId) const;
-			static void DCmd_ExportEmpty(draw::IQueue& q, const GLint id, int actId);
+			void dcmd_uniform(draw::IQueue& q, const GLint id, int actId) const;
+			static void DCmd_ExportEmpty(draw::IQueue& q, GLint id, int actId);
 	};
 	//! ユーザー定義の空テクスチャ
 	/*!
@@ -101,7 +110,7 @@ namespace rev {
 		private:
 			using Buff_OP = spi::Optional<ByteBuff>;
 			using Format_OP = spi::Optional<GLTypeFmt>;
-			Buff_OP		_buff;			//!< DeviceLost時用のバッファ
+			Buff_OP			_buff;			//!< DeviceLost時用のバッファ
 			Format_OP		_typeFormat;	//!< _buffに格納されているデータの形式(Type)
 
 			// bool		_bStream;		//!< 頻繁に書き換えられるか(の、ヒント)
