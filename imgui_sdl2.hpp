@@ -61,7 +61,7 @@ namespace rev {
 			void _initFontsTexture();
 			void _initTech();
 			void _renderDrawLists(ImDrawData* draw_data);
-		public:	
+		public:
 			ImGui_SDL2(const HInput& keyboard, const HInput& mouse, const Window& w);
 			~ImGui_SDL2();
 			void newFrame(const HFx& fx, const Window& window, Duration delta);
