@@ -13,11 +13,22 @@ namespace rev {
 		};
 	}
 	using F = TextureFilter;
-	const GLuint F::cs_Filter[3][2] = {
-		{GL_NEAREST, GL_LINEAR},
-		{GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_NEAREST},
-		{GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR}
-	};
+	F::TextureFilter(
+		const uint32_t	iLinearMag,
+		const uint32_t	iLinearMin,
+		const WrapState	wrapS,
+		const WrapState	wrapT,
+		const MipState	mipLevel,
+		const float		coeff
+	):
+		_iLinearMag(iLinearMag),
+		_iLinearMin(iLinearMin),
+		_wrapS(wrapS),
+		_wrapT(wrapT),
+		_mipLevel(mipLevel),
+		_coeff(coeff),
+		_dirtyFlag(true)
+	{}
 	bool F::IsMipmap(const MipState level) {
 		return level >= MipState::MipmapNear;
 	}
@@ -27,20 +38,32 @@ namespace rev {
 	void F::setFilter(const bool bLinearMag, const bool bLinearMin) {
 		_iLinearMag = bLinearMag ? 1 : 0;
 		_iLinearMin = bLinearMin ? 1 : 0;
+		_dirtyFlag = true;
 	}
 	void F::setMagMinFilter(const bool bLinear) {
 		setFilter(bLinear, bLinear);
 	}
 	void F::setAnisotropicCoeff(const float coeff) {
 		_coeff = coeff;
+		_dirtyFlag = true;
 	}
 	void F::setUVWrap(WrapState s, WrapState t) {
 		_wrapS = s;
 		_wrapT = t;
+		_dirtyFlag = true;
 	}
 	void F::setWrap(WrapState st) {
 		setUVWrap(st, st);
 	}
+	bool F::checkDirty() const {
+		if(_dirtyFlag) {
+			_dirtyFlag = false;
+			return true;
+		}
+		return false;
+	}
+
+	// --------------- TextureFilter::DCmd_Filter ---------------
 	struct F::DCmd_Filter :
 		F
 	{
@@ -53,6 +76,14 @@ namespace rev {
 		F(src),
 		texFlag(flag)
 	{}
+	namespace {
+		// [mipLevel][Nearest / Linear]
+		const GLuint cs_Filter[3][2] = {
+			{GL_NEAREST, GL_LINEAR},
+			{GL_NEAREST_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_NEAREST},
+			{GL_NEAREST_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR}
+		};
+	}
 	void F::DCmd_Filter::Command(const void* p) {
 		auto& self = *static_cast<const F::DCmd_Filter*>(p);
 		// setAnisotropic

@@ -5,52 +5,33 @@
 #include "lubee/rect.hpp"
 #include "abstbuffer.hpp"
 #include "handle/uri.hpp"
+#include "handle/opengl.hpp"
 
 namespace rev {
 	namespace draw {
 		class IQueue;
 	}
-	class TextureId :
-		public std::enable_shared_from_this<TextureId>,
-		public IGLResource
-	{
-		protected:
-			GLuint		_idTex,
-						_texFlag;	//!< TEXTURE_2D or TEXTURE_CUBE_MAP
-
-			struct DCmd_Bind {
-				GLuint		idTex,
-							texFlag,
-							actId;
-				static void Command(const void* p);
-			};
-			bool _onDeviceReset();
-		public:
-			TextureId(GLuint idTex, GLuint texFlag);
-			virtual ~TextureId();
-			void onDeviceLost() override;
-			GLuint getTextureId() const;
-			GLuint getTexFlag() const;
-			bool isCubemap() const;
-			void dcmd_bind(draw::IQueue& q, GLuint actId) const;
-			void imm_bind(GLuint actId) const;
-			const char* getResourceName() const noexcept override;
-	};
 	class TextureFilter {
 		private:
-			//! [mipLevel][Nearest / Linear]
-			const static GLuint cs_Filter[3][2];
-		protected:
-			uint32_t	_iLinearMag,	//!< Linearの場合は1, Nearestは0
-						_iLinearMin;
-			WrapState	_wrapS,
-						_wrapT;
-			MipState	_mipLevel;
-			float		_coeff;
+			uint32_t		_iLinearMag,	//!< Linearの場合は1, Nearestは0
+							_iLinearMin;
+			WrapState		_wrapS,
+							_wrapT;
+			MipState		_mipLevel;
+			float			_coeff;
+			mutable bool	_dirtyFlag;
 
 			struct DCmd_Filter;
 
 		public:
+			TextureFilter(
+				uint32_t	iLinearMag,
+				uint32_t	iLinearMin,
+				WrapState	wrapS,
+				WrapState	wrapT,
+				MipState	mipLevel,
+				float		coeff
+			);
 			static bool IsMipmap(MipState level);
 			bool isMipmap() const;
 			void setFilter(bool bLinearMag, bool bLinearMin);
@@ -58,30 +39,55 @@ namespace rev {
 			void setAnisotropicCoeff(float coeff);
 			void setUVWrap(WrapState s, WrapState t);
 			void setWrap(WrapState st);
+			bool checkDirty() const;
 
 			void dcmd_filter(draw::IQueue& q, GLenum texFlag) const;
 	};
 
+	class ITexture :
+		public std::enable_shared_from_this<ITexture>,
+		public IGLResource
+	{
+		public:
+			virtual void dcmd_bind(draw::IQueue& q, GLuint actId) const = 0;
+			virtual void dcmd_uniform(draw::IQueue& q, const GLint id, int actId) const = 0;
+			virtual void imm_bind(GLuint actId) const = 0;
+			virtual bool isCubemap() const = 0;
+			virtual GLuint getTextureId() const = 0;
+			virtual GLuint getTextureFlag() const = 0;
+			virtual TextureFilter& filter() = 0;
+			virtual const TextureFilter& filter() const = 0;
+	};
 	class PathBlock;
 	using ByteBuff = std::vector<uint8_t>;
 	class IGLTexture :
-		public TextureId,
-		public TextureFilter
+		public ITexture
 	{
 		private:
+			struct DCmd_Bind {
+				GLuint		idTex,
+							texFlag,
+							actId;
+				static void Command(const void* p);
+			};
 			struct DCmd_Uniform {
 				GLint	unifId,
 						actId;
 				static void Command(const void* p);
 			};
-			GLuint				_faceFlag;	//!< TEXTURE_2D or TEXTURE_CUBE_MAP_POSITIVE_X
+			GLuint				_idTex,
+								_texFlag,	//!< TEXTURE_2D or TEXTURE_CUBE_MAP
+								_faceFlag;	//!< TEXTURE_2D or TEXTURE_CUBE_MAP_POSITIVE_X
 		protected:
+			TextureFilter		_filter;
 			lubee::SizeI		_size;
 			InCompressedFmt_OP	_format;	//!< 値が無効 = 不定
 			IGLTexture(MipState miplevel, InCompressedFmt_OP fmt, const lubee::SizeI& sz, bool bCube);
+			bool _onDeviceReset();
 
 		public:
 			IGLTexture(IGLTexture&& t);
+			virtual ~IGLTexture();
 
 			const lubee::SizeI& getSize() const;
 			const InCompressedFmt_OP& getFormat() const;
@@ -89,13 +95,26 @@ namespace rev {
 
 			//! 内容をファイルに保存 (主にデバッグ用)
 			void save(const PathBlock& path, CubeFace face=CubeFace::PositiveX);
-			DEF_DEBUGGUI_PROP
-			DEF_DEBUGGUI_SUMMARY
-
 			ByteBuff readData(GLInFmt internalFmt, GLTypeFmt elem, int level=0, CubeFace face=CubeFace::PositiveX) const;
 			ByteBuff readRect(GLInFmt internalFmt, GLTypeFmt elem, const lubee::RectI& rect, CubeFace face=CubeFace::PositiveX) const;
-			void dcmd_uniform(draw::IQueue& q, const GLint id, int actId) const;
+
+			// -- from ITexture --
+			void dcmd_bind(draw::IQueue& q, GLuint actId) const override;
+			void dcmd_uniform(draw::IQueue& q, const GLint id, int actId) const override;
+			void imm_bind(GLuint actId) const override;
+			bool isCubemap() const override;
+			GLuint getTextureId() const override;
+			GLuint getTextureFlag() const override;
+			TextureFilter& filter() override;
+			const TextureFilter& filter() const override;
+
+			// -- from IGLResource --
+			void onDeviceLost() override;
+			const char* getResourceName() const noexcept override;
+
 			static void DCmd_ExportEmpty(draw::IQueue& q, GLint id, int actId);
+			DEF_DEBUGGUI_PROP
+			DEF_DEBUGGUI_SUMMARY
 	};
 	//! ユーザー定義の空テクスチャ
 	/*!

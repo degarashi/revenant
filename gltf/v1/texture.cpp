@@ -47,8 +47,9 @@ namespace rev::gltf::v1 {
 			const auto uri = source.data()->src.getUri();
 			const HTex tex = tex_cached = mgr_gl.loadTexture(*uri, samp.mipLevel);
 			// サンプラーの設定
-			tex->setFilter(samp.iLinearMag, samp.iLinearMin);
-			tex->setUVWrap(samp.wrapS, samp.wrapT);
+			auto& f = tex->filter();
+			f.setFilter(samp.iLinearMag, samp.iLinearMin);
+			f.setUVWrap(samp.wrapS, samp.wrapT);
 		}
 		return tex_cached;
 	}

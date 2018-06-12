@@ -250,7 +250,7 @@ namespace rev {
 			GL_UNSIGNED_BYTE,
 			AB_Byte(pixels, size.width*size.height*4)
 		);
-		_font->setFilter(true, true);
+		_font->filter().setFilter(true, true);
 		// Store our identifier
 		io.Fonts->TexID = reinterpret_cast<ImTextureID>(cs_fontId);
 	}

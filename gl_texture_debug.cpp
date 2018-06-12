@@ -11,7 +11,8 @@ namespace rev {
 		if(_onDeviceReset()) {
 			const GLenum fmt = GLFormat::QuerySDLtoGL(this->_gen->getFormat())->format;
 			const auto size = getSize();
-			const auto loadTex = [this, fmt, size, bMip=isMipmap()](const GLenum tflag, const ByteBuff& buff){
+			const auto& f = filter();
+			const auto loadTex = [this, fmt, size, bMip=f.isMipmap()](const GLenum tflag, const ByteBuff& buff){
 				LoadTextureFromBuffer(
 					*this,
 					tflag,

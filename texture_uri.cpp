@@ -76,7 +76,7 @@ namespace rev {
 			const HSfc sfc = Surface::Load(hRW);
 			const GLenum tflag = tex.getFaceFlag(face);
 			tex.imm_bind(0);
-			return WritePixelData(tflag, sfc, tex.getFormat(), true, tex.isMipmap());
+			return WritePixelData(tflag, sfc, tex.getFormat(), true, tex.filter().isMipmap());
 		}
 	}
 	Size_Fmt LoadTextureFromBuffer(const IGLTexture& tex, const GLenum tflag, const GLenum format, const lubee::SizeI& size, const ByteBuff& buff, const bool bP2, const bool bMip) {

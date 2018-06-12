@@ -26,7 +26,7 @@ namespace rev::test {
 		for(uint32_t i=0 ; i<countof(tex) ; i++) {
 			tex[i] = mgr_gl.loadTexture(UserURI((boost::format("spr%1%.png") % i).str()), MipState::MipmapLinear);
 
-			tex[i]->setFilter(true, true);
+			tex[i]->filter().setFilter(true, true);
 		}
 		using frea::random::GenVecUnit;
 		using frea::random::GenVec;

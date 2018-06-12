@@ -1,10 +1,12 @@
 #include "gl_texture.hpp"
+#include "gl_error.hpp"
 #include "gl_if.hpp"
 #include "gl_framebuffer.hpp"
 #include "gl_resource.hpp"
 #include "drawcmd/queue_if.hpp"
 #include "sdl_surface.hpp"
 #include "sdl_rw.hpp"
+#include "handler.hpp"
 
 namespace rev {
 	// --------------- IGLTexture::DCmd_Uniform ---------------
@@ -12,9 +14,19 @@ namespace rev {
 		auto& self = *static_cast<const DCmd_Uniform*>(p);
 		GL.glUniform1i(self.unifId, self.actId);
 	}
+	// --------------- IGLTexture::DCmd_ExportEmpty ---------------
 	void IGLTexture::DCmd_ExportEmpty(draw::IQueue& q, const GLint id, const int actId) {
-		TextureId(0, GL_TEXTURE_2D).dcmd_bind(q, actId);
-		TextureId(0, GL_TEXTURE_CUBE_MAP).dcmd_bind(q, actId);
+		const auto bind = [&q, actId](const GLuint flag) {
+			q.add(
+				DCmd_Bind{
+					.idTex = 0,
+					.texFlag = flag,
+					.actId = GLuint(actId)
+				}
+			);
+		};
+		bind(GL_TEXTURE_2D);
+		bind(GL_TEXTURE_CUBE_MAP);
 		q.add(
 			DCmd_Uniform {
 				.unifId = id,
@@ -22,22 +34,40 @@ namespace rev {
 			}
 		);
 	}
+	// --------------- IGLTexture::DCmd_Bind ---------------
+	void IGLTexture::DCmd_Bind::Command(const void* p) {
+		auto& self = *static_cast<const IGLTexture::DCmd_Bind*>(p);
+		D_GLAssert(glActiveTexture, GL_TEXTURE0 + self.actId);
+		D_GLAssert(glBindTexture, self.texFlag, self.idTex);
+	}
 
 	// --------------- IGLTexture ---------------
+	bool IGLTexture::_onDeviceReset() {
+		if(_idTex == 0) {
+			GL.glGenTextures(1, &_idTex);
+			return true;
+		}
+		return false;
+	}
 	IGLTexture::IGLTexture(const MipState miplevel, const InCompressedFmt_OP fmt, const lubee::SizeI& sz, const bool bCube):
-		TextureId(0, GLuint(bCube ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D)),
+		_idTex(0),
+		_texFlag(bCube ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D),
 		_faceFlag(bCube ? GL_TEXTURE_CUBE_MAP_POSITIVE_X : GL_TEXTURE_2D),
+		_filter(
+			0,
+			0,
+			WrapState::ClampToEdge,
+			WrapState::ClampToEdge,
+			miplevel,
+			0
+		),
 		_size(sz),
 		_format(fmt)
 	{
-		_iLinearMag = 0;
-		_iLinearMin = 0;
-		_wrapS = WrapState::ClampToEdge;
-		_wrapT = WrapState::ClampToEdge;
-		_mipLevel = miplevel;
-		_coeff = 0;
-
 		Assert0(!bCube || (_size.width==_size.height));
+	}
+	IGLTexture::~IGLTexture() {
+		onDeviceLost();
 	}
 	const lubee::SizeI& IGLTexture::getSize() const {
 		return _size;
@@ -110,9 +140,20 @@ namespace rev {
 		GL.glBindFramebuffer(flag, id);
 		return buff;
 	}
+
+	void IGLTexture::dcmd_bind(draw::IQueue& q, const GLuint actId) const {
+		q.add(
+			DCmd_Bind {
+				.idTex = getTextureId(),
+				.texFlag = getTextureFlag(),
+				.actId = actId
+			}
+		);
+		q.stockResource(shared_from_this());
+	}
 	void IGLTexture::dcmd_uniform(draw::IQueue& q, const GLint id, const int actId) const {
 		dcmd_bind(q, actId);
-		dcmd_filter(q, getTexFlag());
+		_filter.dcmd_filter(q, getTextureFlag());
 		q.add(
 			DCmd_Uniform{
 				.unifId = id,
@@ -120,5 +161,37 @@ namespace rev {
 			}
 		);
 		q.stockResource(shared_from_this());
+	}
+	void IGLTexture::imm_bind(const GLuint actId) const {
+		GL.glActiveTexture(GL_TEXTURE0 + actId);
+		GL.glBindTexture(getTextureFlag(), getTextureId());
+	}
+	bool IGLTexture::isCubemap() const {
+		return _texFlag != GL_TEXTURE_2D;
+	}
+	GLuint IGLTexture::getTextureId() const {
+		return _idTex;
+	}
+	GLuint IGLTexture::getTextureFlag() const {
+		return _texFlag;
+	}
+	TextureFilter& IGLTexture::filter() {
+		return _filter;
+	}
+	const TextureFilter& IGLTexture::filter() const {
+		return _filter;
+	}
+	void IGLTexture::onDeviceLost() {
+		if(_idTex != 0) {
+			GLW.getDrawHandler().postExecNoWait([buffId=getTextureId()](){
+				GLuint id = buffId;
+				GL.glDeleteTextures(1, &id);
+			});
+			_idTex = 0;
+			D_GLWarn0();
+		}
+	}
+	const char* IGLTexture::getResourceName() const noexcept {
+		return "IGLTexture";
 	}
 }

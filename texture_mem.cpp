@@ -17,7 +17,7 @@ namespace rev {
 		return info;
 	}
 	void Texture_Mem::onDeviceLost() {
-		if(_idTex != 0) {
+		if(getTextureId() != 0) {
 			if(!mgr_gl.isInDtor() && _bRestore) {
 				auto& info = _prepareBuffer();
 				_buff = readData(info.baseType, info.elementType, 0);
@@ -55,7 +55,7 @@ namespace rev {
 		const auto size = getSize();
 		Assert0(buff.getLength() >= size.width * size.height * szInput);
 		// DeviceLost中でなければすぐにテクスチャを作成するが、そうでなければ内部バッファにコピーするのみ
-		if(_idTex != 0) {
+		if(getTextureId() != 0) {
 			// テクスチャに転送
 			auto& tfm = getFormat();
 			auto& sz = getSize();
@@ -80,7 +80,7 @@ namespace rev {
 			const auto sz = buff.getLength();
 			D_Assert0(sz >= bs*rect.width()*rect.height());
 		#endif
-		if(_idTex != 0) {
+		if(getTextureId() != 0) {
 			auto& fmt = getFormat();
 			imm_bind(0);
 			// GLテクスチャに転送

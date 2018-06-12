@@ -10,7 +10,8 @@ namespace rev {
 		return "Texture_Mem";
 	}
 
-	bool IGLTexture::property(const bool edit) {
+	bool IGLTexture::property(const bool /*edit*/) {
+		/*
 		auto field = debug::EntryField("IGLTexture", edit);
 		field.show( "OpenGL Id", _idTex);
 		{
@@ -43,6 +44,8 @@ namespace rev {
 			);
 		}
 		return field.modified();
+		*/
+		return false;
 	}
 	void IGLTexture::summary() const {
 		ImVec2 s;
