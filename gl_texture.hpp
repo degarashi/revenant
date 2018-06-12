@@ -4,8 +4,7 @@
 #include "lubee/size.hpp"
 #include "lubee/rect.hpp"
 #include "abstbuffer.hpp"
-#include "uri.hpp"
-#include "chunk.hpp"
+#include "handle/uri.hpp"
 
 namespace rev {
 	namespace draw {

@@ -3,6 +3,7 @@
 #include "../../imgui_sdl2.hpp"
 #include "../entry_field.hpp"
 #include "../child.hpp"
+#include "../../uri.hpp"
 
 namespace rev {
 	const char* Texture_Mem::getDebugName() const noexcept {
