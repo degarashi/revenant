@@ -5,14 +5,6 @@
 #include "../gl_framebuffer.hpp"
 
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
-	rev::IGLTexture, IGLTexture,
-	LUAIMPLEMENT_BASE,
-	NOTHING,
-	NOTHING,
-	(getResourceName)(getTextureId)
-	(getSize)(getTextureId)(getTextureFlag)(getFaceFlag)(save)(isCubemap)
-)
-DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	rev::GLRBuffer, GLRBuffer,
 	LUAIMPLEMENT_BASE,
 	NOTHING,
@@ -26,19 +18,10 @@ DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	NOTHING,
 	(attachRBuffer)(attachTexture)(attachTextureFace)(detach)
 )
-DEF_LUAIMPLEMENT_PTR_NOCTOR(
-	rev::GLRes, GLRes,
-	LUAIMPLEMENT_BASE,
-	NOTHING,
-	NOTHING,
-	(loadTexture)(loadCubeTexture)(createTexture)(createCubeTexture)(makeFBuffer)(makeRBuffer)
-)
 
 namespace rev {
 	void LuaImport::RegisterOpenGLClass(LuaState& lsc) {
-		RegisterClass<IGLTexture>(lsc);
 		RegisterClass<GLRBuffer>(lsc);
 		RegisterClass<GLFBuffer>(lsc);
-		ImportClass(lsc, "System", "glres", &mgr_gl);
 	}
 }
