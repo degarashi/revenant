@@ -64,6 +64,9 @@ namespace rev {
 	const FBInfo_OP& GLRes::getDefaultColor() const {
 		return _defaultColor;
 	}
+	HTexF GLRes::createTexFilter() {
+		return std::make_shared<TextureFilter>();
+	}
 	HTex GLRes::attachTexFilter(const HTexSrcC& src, const HTexF& filter) {
 		return makeResource<GLTexture>(src, filter);
 	}

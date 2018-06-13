@@ -52,6 +52,7 @@ namespace rev {
 
 			static void LuaExport(LuaState& lsc);
 			// ------------ Texture ------------
+			HTexF createTexFilter();
 			HTex attachTexFilter(const HTexSrcC& src, const HTexF& filter);
 			//! ファイルからテクスチャを読み込む
 			/*!
