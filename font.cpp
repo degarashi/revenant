@@ -3,7 +3,7 @@
 #include "lane.hpp"
 #include "emplace.hpp"
 #include "gl_resource.hpp"
-#include "gl_texture.hpp"
+#include "texturesrc_mem.hpp"
 #include "gl_buffer.hpp"
 #include "drawtag.hpp"
 #include <boost/lexical_cast.hpp>
@@ -20,12 +20,12 @@ namespace rev {
 		using LAlloc = LaneAlloc<6,4,2>;
 	}
 	// --------------------------- Face::DepPair ---------------------------
-	Face::DepPair::DepPair(const String_SP& name, const lubee::PowSize& sfcSize, CCoreID cid):
+	Face::DepPair::DepPair(const String_SP& name, const lubee::PowSize& sfcSize, const CCoreID cid):
 		dep(*name, cid), cplane(sfcSize, dep.height(), LaneAlloc_UP(new LAlloc()))
 	{}
 	// --------------------------- Face ---------------------------
 	// フォントのHeightとラインのHeightは違う！
-	Face::Face(const String_SP& name, const lubee::PowSize& size, CCoreID cid, FontChMap& m):
+	Face::Face(const String_SP& name, const lubee::PowSize& size, const CCoreID cid, FontChMap& m):
 		faceName(name),
 		coreID(cid),
 		sfcSize(size),
@@ -37,16 +37,16 @@ namespace rev {
 	bool Face::operator ==(const std::string& name) const {
 		return *faceName == name;
 	}
-	bool Face::operator != (CCoreID cid) const {
+	bool Face::operator != (const CCoreID cid) const {
 		return !(this->operator == (cid));
 	}
-	bool Face::operator == (CCoreID cid) const {
+	bool Face::operator == (const CCoreID cid) const {
 		return coreID == cid;
 	}
-	Face::DepPair& Face::getDepPair(CCoreID coreID) {
+	Face::DepPair& Face::getDepPair(const CCoreID coreID) {
 		return TryEmplace(depMap, coreID, faceName, sfcSize, coreID).first->second;
 	}
-	const CharPos* Face::getCharPos(CharID chID) {
+	const CharPos* Face::getCharPos(const CharID chID) {
 		// キャッシュが既にあればそれを使う
 		auto itr = fontMap.find(chID);
 		if(itr != fontMap.end())
@@ -64,14 +64,14 @@ namespace rev {
 		cp.space = dp.dep.width(chID.code);
 		if(res.second.width() <= 0) {
 			cp.uv *= 0;
-			cp.hTex = mgr_gl.getEmptyTexture();
+			cp.hTex = mgr_gl.getEmptyTexture()->texture();
 		} else {
 			LaneRaw lraw;
 			dp.cplane.rectAlloc(lraw, res.second.width());
 			cp.hTex = lraw.hTex;
 
 			// ビットデータをglTexSubImage2Dで書き込む
-			auto* u = reinterpret_cast<Texture_Mem*>(lraw.hTex.get());
+			auto* u = lraw.hTex.get();
 			lraw.rect.x1 = lraw.rect.x0 + res.second.width();
 			lraw.rect.y1 = lraw.rect.y0 + res.second.height();
 			u->writeRect(AB_Byte(std::move(res.first)), lraw.rect, GL_UNSIGNED_BYTE);
@@ -121,7 +121,7 @@ namespace rev {
 			{}
 		};
 		// テクスチャが複数枚に渡る時はフォント頂点(座標)を使いまわし、UV-tだけを差し替え
-		std::unordered_map<HTex, std::vector<CPair>>	tpM;
+		std::unordered_map<HTexSrcC, std::vector<CPair>>	tpM;
 		{
 			const auto& dp = face.getDepPair(_coreID);
 			const int height = dp.dep.height();
@@ -178,7 +178,7 @@ namespace rev {
 			}
 
 			auto& ds = _drawSet[i];
-			ds.hTex = itr->first;
+			ds.hTex = mgr_gl.attachTexFilter(itr->first, g_filter);
 			ds.nChar = nC;
 
 			HVb vb = mgr_gl.makeVBuffer(DrawType::Static);
@@ -317,4 +317,6 @@ namespace rev {
 				}
 			).first;
 	}
+
+	std::shared_ptr<TextureFilter> g_filter = std::make_shared<TextureFilter>();
 }

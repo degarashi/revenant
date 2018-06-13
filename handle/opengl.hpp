@@ -5,16 +5,20 @@
 namespace rev {
 	struct IGLResource;
 	DEF_HANDLE(IGLResource, GLRes)
-	class ITexture;
-	DEF_HANDLE(ITexture, TexId)
-	class IGLTexture;
-	DEF_HANDLE(IGLTexture, Tex)
-	class Texture_Mem;
-	DEF_HANDLE(Texture_Mem, TexMem)
-	class Texture_URI;
-	DEF_HANDLE(Texture_URI, TexURI)
-	class Texture_CubeURI;
-	DEF_HANDLE(Texture_CubeURI, TexCubeURI)
+
+	class ITextureSource;
+	DEF_HANDLE(ITextureSource, TexSrc)
+	class GLTexture;
+	DEF_HANDLE(GLTexture, Tex)
+	class TextureSrc_Mem;
+	DEF_HANDLE(TextureSrc_Mem, TexMem)
+	class TextureSrc_URI;
+	DEF_HANDLE(TextureSrc_URI, TexURI)
+	class TextureSrc_CubeURI;
+	DEF_HANDLE(TextureSrc_CubeURI, TexCubeURI)
+	class TextureFilter;
+	DEF_HANDLE(TextureFilter, TexF)
+
 	class GLVBuffer;
 	DEF_HANDLE(GLVBuffer, Vb)
 	class GLIBuffer;

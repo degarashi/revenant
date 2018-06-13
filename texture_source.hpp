@@ -1,18 +1,34 @@
 #pragma once
-#include "texture_source.hpp"
-#include "texture_filter.hpp"
-#include "handle/opengl.hpp"
+#include "texturesrc_if.hpp"
 
 namespace rev {
-	// TextureSource + Filter
-	class GLTexture :
+	class TextureSource :
 		public ITextureSource
 	{
 		private:
-			HTexSrcC		_src;
-			HTexF			_filter;
+			struct DCmd_Bind {
+				GLuint		idTex,
+							texFlag,
+							actId;
+				static void Command(const void* p);
+			};
+			struct DCmd_Uniform {
+				GLint	unifId,
+						actId;
+				static void Command(const void* p);
+			};
+			GLuint				_idTex,
+								_texFlag,	//!< TEXTURE_2D or TEXTURE_CUBE_MAP
+								_faceFlag;	//!< TEXTURE_2D or TEXTURE_CUBE_MAP_POSITIVE_X
+		protected:
+			lubee::SizeI		_size;
+			InCompressedFmt_OP	_format;	//!< 値が無効 = 不定
+			TextureSource(InCompressedFmt_OP fmt, const lubee::SizeI& sz, bool bCube);
+			bool _onDeviceReset();
+
 		public:
-			GLTexture(const HTexSrcC& src, const HTexF& filter);
+			TextureSource(TextureSource&& t);
+			virtual ~TextureSource();
 
 			// -- from ITextureSource --
 			void dcmd_bind(draw::IQueue& q, GLuint actId) const override;
@@ -28,10 +44,12 @@ namespace rev {
 			ByteBuff readData(GLInFmt internalFmt, GLTypeFmt elem, int level=0, CubeFace face=CubeFace::PositiveX) const override;
 			ByteBuff readRect(GLInFmt internalFmt, GLTypeFmt elem, const lubee::RectI& rect, CubeFace face=CubeFace::PositiveX) const override;
 
-			const HTexSrcC& texture() const noexcept;
-			HTexF& filter() noexcept;
-			const HTexF& filter() const noexcept;
+			// -- from IGLResource --
+			void onDeviceLost() override;
+			const char* getResourceName() const noexcept override;
+
+			static void DCmd_ExportEmpty(draw::IQueue& q, GLint id, int actId);
+			DEF_DEBUGGUI_PROP
+			DEF_DEBUGGUI_SUMMARY
 	};
-	using Size_Fmt = std::pair<lubee::SizeI, GLInCompressedFmt>;
-	Size_Fmt LoadTextureFromBuffer(const TextureSource& tex, GLenum tflag, GLenum format, const lubee::SizeI& size, const ByteBuff& buff, bool bP2, bool bMip);
 }

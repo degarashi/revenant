@@ -4,7 +4,8 @@
 #include "gl_renderbuffer.hpp"
 #include "gl_program.hpp"
 #include "gl_buffer.hpp"
-#include "gl_texture.hpp"
+#include "texturesrc_uri.hpp"
+#include "texturesrc_mem.hpp"
 #include "gl_shader.hpp"
 #include "glx.hpp"
 #include "sdl_surface.hpp"
@@ -41,7 +42,8 @@ namespace rev {
 
 		// EmptyTexture = 1x1の単色テクスチャ
 		const uint32_t buff1 = 0xffffffff;
-		_hEmptyTex = createTextureInit(
+		auto filter = std::make_shared<TextureFilter>();
+		auto src = createTextureInit(
 						lubee::SizeI(1,1),
 						GL_RGBA,
 						false,
@@ -49,6 +51,7 @@ namespace rev {
 						GL_UNSIGNED_BYTE,
 						AB_Byte(&buff1, sizeof(buff1))
 					);
+		_hEmptyTex = attachTexFilter(src, filter);
 	}
 	GLRes::~GLRes() {
 		// 破棄フラグを立ててからOnDeviceLost関数を呼ぶ
@@ -61,23 +64,26 @@ namespace rev {
 	const FBInfo_OP& GLRes::getDefaultColor() const {
 		return _defaultColor;
 	}
-	HTexURI GLRes::loadTexture(const URI& uri, const MipState miplevel, const InCompressedFmt_OP fmt) {
+	HTex GLRes::attachTexFilter(const HTexSrcC& src, const HTexF& filter) {
+		return makeResource<GLTexture>(src, filter);
+	}
+	HTexSrc GLRes::loadTexture(const URI& uri, const MipState miplevel, const InCompressedFmt_OP fmt) {
 		_setResourceTypeId(ResourceType::Texture);
-		return loadResourceApp<Texture_URI>(
-					uri,
-					[this, miplevel, fmt](auto& uri, auto&& mk){
-						mk(uri.uri, miplevel, fmt);
-						_resourceInit(mk.pointer);
-					}
-				).first;
+		return loadResourceApp<TextureSrc_URI>(
+			uri,
+			[this, &miplevel, fmt](auto& uri, auto&& mk){
+				mk(uri.uri, TextureFilter::IsMipmap(miplevel), fmt);
+				_resourceInit(mk.pointer);
+			}
+		).first;
 	}
 	HTexMem GLRes::loadTextureFromRW(const HRW& rw) {
 		const auto sfc = Surface::Load(rw);
 		const auto buff = sfc->extractAsContinuous(SDL_PIXELFORMAT_RGBA32);
-		return makeResource<Texture_Mem>(false, GL_RGBA, sfc->getSize(), false, true);
+		return makeResource<TextureSrc_Mem>(false, GL_RGBA, sfc->getSize(), false, true);
 	}
 	// 連番キューブ: Key=(Path+@, ext) URI=(Path, ext)
-	HTexCubeURI GLRes::loadCubeTexture(const MipState miplevel, const InCompressedFmt_OP fmt,
+	HTexSrc GLRes::loadCubeTexture(const MipState miplevel, const InCompressedFmt_OP fmt,
 								const URI& uri0, const URI& uri1, const URI& uri2,
 								const URI& uri3, const URI& uri4, const URI& uri5)
 	{
@@ -89,7 +95,7 @@ namespace rev {
 		fn(uri1); fn(uri2); fn(uri3); fn(uri4); fn(uri5);
 
 		return
-			loadResourceApp<Texture_CubeURI>(
+			loadResourceApp<TextureSrc_CubeURI>(
 				FileURI(tmp),
 				[&](auto& /*uri*/, auto&& mk){
 					mk(uri0.clone(), uri1.clone(), uri2.clone(),
@@ -99,14 +105,21 @@ namespace rev {
 				}
 			).first;
 	}
-	HTexMem GLRes::createCubeTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore) {
-		return makeResource<Texture_Mem>(true, fmt, size, bStream, bRestore);
+	HTexMem GLRes::createCubeTexture(const lubee::SizeI& size, const GLInSizedFmt fmt, const bool bStream,const  bool bRestore) {
+		return makeResource<TextureSrc_Mem>(true, fmt, size, bStream, bRestore);
 	}
-	HTexMem GLRes::createTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore) {
-		return makeResource<Texture_Mem>(false, fmt, size, bStream, bRestore);
+	HTexMem GLRes::createTexture(const lubee::SizeI& size, const GLInSizedFmt fmt, const bool bStream, const bool bRestore) {
+		return makeResource<TextureSrc_Mem>(false, fmt, size, bStream, bRestore);
 	}
-	HTexMem GLRes::createTextureInit(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore, GLTypeFmt srcFmt, AB_Byte data) {
-		auto h = createTexture(size, fmt, bStream, bRestore);
+	HTexMem GLRes::createTextureInit(
+		const lubee::SizeI& size,
+		const GLInSizedFmt fmt,
+		const bool bStream,
+		const bool bRestore,
+		const GLTypeFmt srcFmt,
+		const AB_Byte data
+	) {
+		auto h = std::static_pointer_cast<TextureSrc_Mem>(createTexture(size, fmt, bStream, bRestore));
 		h->writeData(data, srcFmt);
 		return h;
 	}
@@ -129,7 +142,7 @@ namespace rev {
 	GLFBufferTmp& GLRes::getTmpFramebuffer() const {
 		return *_tmpFb;
 	}
-	HTexMem GLRes::getEmptyTexture() const {
+	HTex GLRes::getEmptyTexture() const {
 		return _hEmptyTex;
 	}
 	bool GLRes::deviceStatus() const {

@@ -1,6 +1,5 @@
-#include "gl_texture.hpp"
+#include "texture_filter.hpp"
 #include "gl_if.hpp"
-#include "drawcmd/queue_if.hpp"
 
 namespace rev {
 	namespace {
@@ -26,8 +25,7 @@ namespace rev {
 		_wrapS(wrapS),
 		_wrapT(wrapT),
 		_mipLevel(mipLevel),
-		_coeff(coeff),
-		_dirtyFlag(true)
+		_coeff(coeff)
 	{}
 	bool F::IsMipmap(const MipState level) {
 		return level >= MipState::MipmapNear;
@@ -38,29 +36,19 @@ namespace rev {
 	void F::setFilter(const bool bLinearMag, const bool bLinearMin) {
 		_iLinearMag = bLinearMag ? 1 : 0;
 		_iLinearMin = bLinearMin ? 1 : 0;
-		_dirtyFlag = true;
 	}
 	void F::setMagMinFilter(const bool bLinear) {
 		setFilter(bLinear, bLinear);
 	}
 	void F::setAnisotropicCoeff(const float coeff) {
 		_coeff = coeff;
-		_dirtyFlag = true;
 	}
 	void F::setUVWrap(WrapState s, WrapState t) {
 		_wrapS = s;
 		_wrapT = t;
-		_dirtyFlag = true;
 	}
 	void F::setWrap(WrapState st) {
 		setUVWrap(st, st);
-	}
-	bool F::checkDirty() const {
-		if(_dirtyFlag) {
-			_dirtyFlag = false;
-			return true;
-		}
-		return false;
 	}
 
 	// --------------- TextureFilter::DCmd_Filter ---------------
@@ -101,5 +89,9 @@ namespace rev {
 	}
 	void F::dcmd_filter(draw::IQueue& q, const GLenum texFlag) const {
 		q.add(DCmd_Filter(*this, texFlag));
+	}
+	void F::imm_filter(const GLenum texFlag) const {
+		const auto f = DCmd_Filter(*this, texFlag);
+		DCmd_Filter::Command(&f);
 	}
 }

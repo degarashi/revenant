@@ -3,16 +3,16 @@
 
 namespace rev {
 	// ------------------------- Texture_Debug -------------------------
-	Texture_Debug::Texture_Debug(ITDGen* gen, const lubee::SizeI& size, bool bCube, MipState miplevel):
-		IGLTexture(miplevel, GLFormat::QuerySDLtoGL(gen->getFormat())->format, size, bCube),
-		_gen(gen)
+	Texture_Debug::Texture_Debug(ITDGen* gen, const lubee::SizeI& size, const bool bCube, const bool mip):
+		TextureSource(GLFormat::QuerySDLtoGL(gen->getFormat())->format, size, bCube),
+		_gen(gen),
+		_mip(mip)
 	{}
 	void Texture_Debug::onDeviceReset() {
 		if(_onDeviceReset()) {
 			const GLenum fmt = GLFormat::QuerySDLtoGL(this->_gen->getFormat())->format;
 			const auto size = getSize();
-			const auto& f = filter();
-			const auto loadTex = [this, fmt, size, bMip=f.isMipmap()](const GLenum tflag, const ByteBuff& buff){
+			const auto loadTex = [this, fmt, size](const GLenum tflag, const ByteBuff& buff){
 				LoadTextureFromBuffer(
 					*this,
 					tflag,
@@ -20,7 +20,7 @@ namespace rev {
 					size,
 					buff,
 					true,
-					bMip
+					_mip
 				);
 			};
 			if(isCubemap()) {

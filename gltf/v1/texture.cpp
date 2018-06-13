@@ -45,11 +45,11 @@ namespace rev::gltf::v1 {
 			auto& samp = *sampler.data();
 			// URIからテクスチャ生成
 			const auto uri = source.data()->src.getUri();
-			const HTex tex = tex_cached = mgr_gl.loadTexture(*uri, samp.mipLevel);
 			// サンプラーの設定
-			auto& f = tex->filter();
-			f.setFilter(samp.iLinearMag, samp.iLinearMin);
-			f.setUVWrap(samp.wrapS, samp.wrapT);
+			auto f = std::make_shared<TextureFilter>();
+			f->setFilter(samp.iLinearMag, samp.iLinearMin);
+			f->setUVWrap(samp.wrapS, samp.wrapT);
+			tex_cached = mgr_gl.attachTexFilter(mgr_gl.loadTexture(*uri, samp.mipLevel), f);
 		}
 		return tex_cached;
 	}

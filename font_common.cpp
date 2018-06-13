@@ -73,6 +73,7 @@ namespace rev {
 	}
 	// ------------------- Lane-------------------
 	Lane::Lane(const HTexMem& hT, const lubee::RectI& r):
-		LaneRaw{hT, r}
+		LaneRaw{hT, r},
+		pNext(nullptr)
 	{}
 }

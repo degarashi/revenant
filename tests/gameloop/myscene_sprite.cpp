@@ -23,10 +23,11 @@ namespace rev::test {
 		auto rfi = mt.getUniformF<int>();
 		auto rf = mt.getUniformF<float>();
 		HTex tex[6];
+		auto filter = std::make_shared<TextureFilter>();
+		filter->setFilter(true, true);
 		for(uint32_t i=0 ; i<countof(tex) ; i++) {
-			tex[i] = mgr_gl.loadTexture(UserURI((boost::format("spr%1%.png") % i).str()), MipState::MipmapLinear);
-
-			tex[i]->filter().setFilter(true, true);
+			auto src = mgr_gl.loadTexture(UserURI((boost::format("spr%1%.png") % i).str()), MipState::MipmapLinear);
+			tex[i] = mgr_gl.attachTexFilter(src, filter);
 		}
 		using frea::random::GenVecUnit;
 		using frea::random::GenVec;

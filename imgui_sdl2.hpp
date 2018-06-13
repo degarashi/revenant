@@ -40,7 +40,7 @@ namespace rev {
 					{}
 				};
 				using TexIdToHdl = std::unordered_map<uintptr_t, TexF>;
-				using TexPtrToId = std::unordered_map<const IGLTexture*, uintptr_t>;
+				using TexPtrToId = std::unordered_map<const GLTexture*, uintptr_t>;
 				TexIdToHdl	idToHdl;
 				TexPtrToId	ptrToId;
 

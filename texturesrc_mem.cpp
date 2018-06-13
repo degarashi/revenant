@@ -1,31 +1,31 @@
-#include "gl_texture.hpp"
+#include "texturesrc_mem.hpp"
+#include "gl_error.hpp"
 #include "gl_resource.hpp"
 #include "gl_if.hpp"
-#include "gl_error.hpp"
 
 namespace rev {
-	Texture_Mem::Texture_Mem(const bool bCube, GLInSizedFmt fmt, const lubee::SizeI& sz, const bool /*bStream*/, const bool bRestore):
-		IGLTexture(MipState::NoMipmap, fmt, sz, bCube),
+	TextureSrc_Mem::TextureSrc_Mem(const bool bCube, GLInSizedFmt fmt, const lubee::SizeI& sz, const bool /*bStream*/, const bool bRestore):
+		TextureSource(fmt, sz, bCube),
 		// _bStream(bStream),
 		_bRestore(bRestore)
 	{}
-	const GLFormatDesc& Texture_Mem::_prepareBuffer() {
+	const GLFormatDesc& TextureSrc_Mem::_prepareBuffer() {
 		auto& info = *GLFormat::QueryInfo(*getFormat());
 		_typeFormat = info.elementType;
 		const auto size = getSize();
 		_buff = ByteBuff(size.width * size.height * GLFormat::QuerySize(info.elementType) * info.numElem);
 		return info;
 	}
-	void Texture_Mem::onDeviceLost() {
+	void TextureSrc_Mem::onDeviceLost() {
 		if(getTextureId() != 0) {
 			if(!mgr_gl.isInDtor() && _bRestore) {
 				auto& info = _prepareBuffer();
 				_buff = readData(info.baseType, info.elementType, 0);
 			}
-			IGLTexture::onDeviceLost();
+			TextureSource::onDeviceLost();
 		}
 	}
-	void Texture_Mem::onDeviceReset() {
+	void TextureSrc_Mem::onDeviceReset() {
 		if(_onDeviceReset()) {
 			const auto size = getSize();
 			const auto format = getFormat();
@@ -49,7 +49,7 @@ namespace rev {
 		}
 	}
 	// DeviceLostの時にこのメソッドを読んでも無意味
-	void Texture_Mem::writeData(AB_Byte buff, const GLTypeFmt srcFmt, const CubeFace face) {
+	void TextureSrc_Mem::writeData(AB_Byte buff, const GLTypeFmt srcFmt, const CubeFace face) {
 		// バッファ容量がサイズ以上かチェック
 		const auto szInput = GLFormat::QuerySize(srcFmt);
 		const auto size = getSize();
@@ -57,8 +57,8 @@ namespace rev {
 		// DeviceLost中でなければすぐにテクスチャを作成するが、そうでなければ内部バッファにコピーするのみ
 		if(getTextureId() != 0) {
 			// テクスチャに転送
-			auto& tfm = getFormat();
-			auto& sz = getSize();
+			const auto tfm = getFormat();
+			const auto sz = getSize();
 			imm_bind(0);
 			GL.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 			GL.glTexImage2D(getFaceFlag(face), 0, tfm.get(), sz.width, sz.height,
@@ -72,7 +72,7 @@ namespace rev {
 			}
 		}
 	}
-	void Texture_Mem::writeRect(AB_Byte buff, const lubee::RectI& rect, const GLTypeFmt srcFmt, const CubeFace face) {
+	void TextureSrc_Mem::writeRect(AB_Byte buff, const lubee::RectI& rect, const GLTypeFmt srcFmt, const CubeFace face) {
 		const auto size = getSize();
 		const auto format = getFormat();
 		#ifdef DEBUG
@@ -81,7 +81,7 @@ namespace rev {
 			D_Assert0(sz >= bs*rect.width()*rect.height());
 		#endif
 		if(getTextureId() != 0) {
-			auto& fmt = getFormat();
+			const auto fmt = getFormat();
 			imm_bind(0);
 			// GLテクスチャに転送
 			const GLenum baseFormat = GLFormat::QueryInfo(fmt.get())->baseType;

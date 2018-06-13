@@ -63,7 +63,7 @@ namespace rev {
 				if(tex)
 					tex->dcmd_uniform(q, id, actId);
 				else
-					IGLTexture::DCmd_ExportEmpty(q, id, actId);
+					TextureSource::DCmd_ExportEmpty(q, id, actId);
 			}
 		};
 		struct TexArray {
@@ -128,7 +128,7 @@ namespace rev {
 			void setUniformById(const GLint id, const M& m, const bool transpose=true) {
 				detail::MatSingle<M>::DCmd(_q, m, id, transpose);
 			}
-			void setUniformById(const GLint id, const std::shared_ptr<const IGLTexture>& t) {
+			void setUniformById(const GLint id, const std::shared_ptr<const GLTexture>& t) {
 				// テクスチャユニット番号を検索
 				const auto num = _program.getTexIndex(id);
 				D_Assert0(num);

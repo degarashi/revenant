@@ -85,7 +85,7 @@ namespace rev {
 		lubee::RectI	rect;	//!< 管理している領域
 	};
 	struct Lane : LaneRaw {
-		Lane	*pNext = nullptr;
+		Lane			*pNext;
 		Lane(const HTexMem& hT, const lubee::RectI& r);
 	};
 	struct ILaneAlloc {
@@ -97,7 +97,7 @@ namespace rev {
 	using LaneAlloc_UP = std::unique_ptr<ILaneAlloc>;
 	//! CharPlaneと、その位置
 	struct CharPos {
-		HTexMem			hTex;		//!< フォントが格納されているテクスチャ (ハンドル所有権は別途CharPlaneが持つ)
+		HTexSrcC		hTex;		//!< フォントが格納されているテクスチャ (ハンドル所有権は別途CharPlaneが持つ)
 		lubee::RectF	uv;			//!< 参照すべきUV値
 		lubee::RectI	box;		//!< フォント原点に対する相対描画位置 (サイズ)
 		int				space;		//!< カーソルを進めるべき距離

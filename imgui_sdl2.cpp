@@ -4,7 +4,7 @@
 #include "imgui/imgui.h"
 #include "input.hpp"
 #include "gl_resource.hpp"
-#include "gl_texture.hpp"
+#include "texturesrc_mem.hpp"
 #include "gl_shader.hpp"
 #include "gl_program.hpp"
 #include "vdecl.hpp"
@@ -242,15 +242,20 @@ namespace rev {
 		io.Fonts->GetTexDataAsRGBA32(&pixels, &size.width, &size.height);
 
 		// Upload texture to graphics system
-		_font = mgr_gl.createTextureInit(
-			size,
-			GL_RGBA,
-			false,
-			true,
-			GL_UNSIGNED_BYTE,
-			AB_Byte(pixels, size.width*size.height*4)
-		);
-		_font->filter().setFilter(true, true);
+		{
+			auto fontSrc = mgr_gl.createTextureInit(
+					size,
+					GL_RGBA,
+					false,
+					true,
+					GL_UNSIGNED_BYTE,
+					AB_Byte(pixels, size.width*size.height*4)
+					);
+			auto filter = std::make_shared<TextureFilter>();
+			filter->setFilter(true, true);
+			_font = mgr_gl.attachTexFilter(fontSrc, filter);
+		}
+
 		// Store our identifier
 		io.Fonts->TexID = reinterpret_cast<ImTextureID>(cs_fontId);
 	}

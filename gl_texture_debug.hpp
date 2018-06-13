@@ -40,12 +40,15 @@ namespace rev {
 	//! デバッグ用のテクスチャ
 	/*! DeviceLost時:
 		再度生成し直す */
-	class Texture_Debug : public IGLTexture {
+	class Texture_Debug :
+		public TextureSource
+	{
 		private:
 			// デバッグ用なので他との共有を考えず、UniquePtrとする
 			TDGen_UP		_gen;
+			bool			_mip;
 		public:
-			Texture_Debug(ITDGen* gen, const lubee::SizeI& size, bool bCube, MipState miplevel);
+			Texture_Debug(ITDGen* gen, const lubee::SizeI& size, bool bCube, bool mip);
 			void onDeviceReset() override;
 	};
 }

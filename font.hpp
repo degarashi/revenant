@@ -51,6 +51,7 @@ namespace rev {
 }
 
 namespace rev {
+	extern std::shared_ptr<TextureFilter>	g_filter;
 	//! 文章の描画に必要なフォントや頂点を用意
 	/*!
 		TriangleList形式。とりあえず改行だけ対応

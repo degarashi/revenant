@@ -24,7 +24,7 @@ namespace rev {
 											_defaultColor;
 			//! 空のテクスチャ (何もテクスチャをセットしない事を示す)
 			/*! デバッグで色を変えたりしてチェックできる */
-			HTexMem							_hEmptyTex;
+			HTex							_hEmptyTex;
 			//! DeviceLost/Resetの状態管理
 			bool	_bInit;
 			//! デストラクタ内の時はtrue
@@ -52,22 +52,24 @@ namespace rev {
 
 			static void LuaExport(LuaState& lsc);
 			// ------------ Texture ------------
+			HTex attachTexFilter(const HTexSrcC& src, const HTexF& filter);
 			//! ファイルからテクスチャを読み込む
 			/*!
 				圧縮テクスチャはファイルヘッダで判定
 				\param[in] fmt OpenGLの内部フォーマット(not ファイルのフォーマット)<br>
 								指定しなければファイルから推定
 			*/
-			HTexURI loadTexture(const URI& uri, MipState miplevel=MipState::NoMipmap, InCompressedFmt_OP fmt=spi::none);
+			HTexSrc loadTexture(const URI& uri, MipState miplevel=MipState::NoMipmap, InCompressedFmt_OP fmt=spi::none);
 			//! 個別のファイルからキューブテクスチャを作成
 			/*! 画像サイズとフォーマットは全て一致していなければならない */
-			HTexCubeURI loadCubeTexture(MipState miplevel, InCompressedFmt_OP fmt,
+			HTexSrc loadCubeTexture(MipState miplevel, InCompressedFmt_OP fmt,
 								const URI& uri0, const URI& uri1, const URI& uri2,
 								const URI& uri3, const URI& uri4, const URI& uri5);
 			HTexMem loadTextureFromRW(const HRW& rw);
 			//! 空のテクスチャを作成
 			/*! 領域だけ確保 */
 			HTexMem createTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore);
+
 			/*! 用意したデータで初期化 */
 			HTexMem createTextureInit(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore, GLTypeFmt srcFmt, AB_Byte data);
 			//! 空のキューブテクスチャを作成
@@ -94,7 +96,7 @@ namespace rev {
 			//! インデックスバッファの確保
 			HIb makeIBuffer(DrawType dtype);
 
-			HTexMem getEmptyTexture() const;
+			HTex getEmptyTexture() const;
 			GLFBufferTmp& getTmpFramebuffer() const;
 			// --- from ResMgrBase ---
 			HRes loadResource(const URI& uri) override;

@@ -1,7 +1,7 @@
-#include "gl_texture.hpp"
-#include "gl_if.hpp"
+#include "texturesrc_uri.hpp"
 #include "sdl_surface.hpp"
 #include "sdl_rw.hpp"
+#include "gl_if.hpp"
 
 namespace rev {
 	namespace {
@@ -72,14 +72,14 @@ namespace rev {
 			return std::make_pair(tsize, desc.format);
 		}
 		//! texのfaceにhRWのピクセルデータを書き込む
-		Size_Fmt LoadTexture(const IGLTexture& tex, const HRW& hRW, const CubeFace face) {
+		Size_Fmt LoadTexture(const TextureSource& tex, const HRW& hRW, const bool mip, const CubeFace face) {
 			const HSfc sfc = Surface::Load(hRW);
 			const GLenum tflag = tex.getFaceFlag(face);
 			tex.imm_bind(0);
-			return WritePixelData(tflag, sfc, tex.getFormat(), true, tex.filter().isMipmap());
+			return WritePixelData(tflag, sfc, tex.getFormat(), true, mip);
 		}
 	}
-	Size_Fmt LoadTextureFromBuffer(const IGLTexture& tex, const GLenum tflag, const GLenum format, const lubee::SizeI& size, const ByteBuff& buff, const bool bP2, const bool bMip) {
+	Size_Fmt LoadTextureFromBuffer(const TextureSource& tex, const GLenum tflag, const GLenum format, const lubee::SizeI& size, const ByteBuff& buff, const bool bP2, const bool bMip) {
 		// 簡単の為に一旦SDL_Surfaceに変換
 		const auto info = GLFormat::QueryInfo(format);
 		const int pixelsize = info->numElem* GLFormat::QuerySize(info->baseType);
@@ -88,30 +88,38 @@ namespace rev {
 		return WritePixelData(tflag, sfc, spi::none, bP2, bMip);
 	}
 
-	// ------------------------- Texture_URI -------------------------
-	Texture_URI::Texture_URI(const HURI& uri, const MipState miplevel, const InCompressedFmt_OP fmt):
-		IGLTexture(miplevel, fmt, lubee::SizeI(0,0), false),
-		_uri(uri)
+	// ------------------------- TextureSrc_URI -------------------------
+	TextureSrc_URI::TextureSrc_URI(const HURI& uri, const bool mip, const InCompressedFmt_OP fmt):
+		TextureSource(fmt, lubee::SizeI(0,0), false),
+		_uri(uri),
+		_mip(mip)
 	{}
-	void Texture_URI::onDeviceReset() {
+	void TextureSrc_URI::onDeviceReset() {
 		if(_onDeviceReset())
-			std::tie(_size, _format) = LoadTexture(*this, mgr_rw.fromURI(*_uri, Access::Read), CubeFace::PositiveX);
+			std::tie(_size, _format) = LoadTexture(
+											*this,
+											mgr_rw.fromURI(*_uri, Access::Read),
+											_mip,
+											CubeFace::PositiveX
+										);
 	}
-	// ------------------------- Texture_CubeURI -------------------------
-	Texture_CubeURI::Texture_CubeURI(
+	// ------------------------- TextureSrc_CubeURI -------------------------
+	TextureSrc_CubeURI::TextureSrc_CubeURI(
 		const HURI& uri0, const HURI& uri1, const HURI& uri2,
 		const HURI& uri3, const HURI& uri4, const HURI& uri5,
-		const MipState miplevel, const InCompressedFmt_OP fmt
+		bool mip, const InCompressedFmt_OP fmt
 	):
-		IGLTexture(miplevel, fmt, lubee::SizeI(0,0), true),
-		_uri{uri0, uri1, uri2, uri3, uri4, uri5}
+		TextureSource(fmt, lubee::SizeI(0,0), true),
+		_uri{uri0, uri1, uri2, uri3, uri4, uri5},
+		_mip(mip)
 	{}
-	void Texture_CubeURI::onDeviceReset() {
+	void TextureSrc_CubeURI::onDeviceReset() {
 		if(_onDeviceReset()) {
 			for(int i=0 ; i<6 ; i++) {
 				const auto size_fmt = LoadTexture(
 					*this,
 					mgr_rw.fromURI(*_uri[i], Access::Read),
+					_mip,
 					static_cast<CubeFace::e>(i)
 				);
 				if(i==0)
