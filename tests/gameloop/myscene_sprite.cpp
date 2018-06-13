@@ -23,7 +23,7 @@ namespace rev::test {
 		auto rfi = mt.getUniformF<int>();
 		auto rf = mt.getUniformF<float>();
 		HTex tex[6];
-		auto filter = std::make_shared<TextureFilter>();
+		auto filter = mgr_gl.createTexFilter();
 		filter->setFilter(true, true);
 		for(uint32_t i=0 ; i<countof(tex) ; i++) {
 			auto src = mgr_gl.loadTexture(UserURI((boost::format("spr%1%.png") % i).str()), MipState::MipmapLinear);

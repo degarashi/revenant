@@ -42,7 +42,7 @@ namespace rev {
 
 		// EmptyTexture = 1x1の単色テクスチャ
 		const uint32_t buff1 = 0xffffffff;
-		auto filter = std::make_shared<TextureFilter>();
+		auto filter = mgr_gl.createTexFilter();
 		auto src = createTextureInit(
 						lubee::SizeI(1,1),
 						GL_RGBA,

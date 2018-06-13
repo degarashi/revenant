@@ -251,7 +251,7 @@ namespace rev {
 					GL_UNSIGNED_BYTE,
 					AB_Byte(pixels, size.width*size.height*4)
 					);
-			auto filter = std::make_shared<TextureFilter>();
+			auto filter = mgr_gl.createTexFilter();
 			filter->setFilter(true, true);
 			_font = mgr_gl.attachTexFilter(fontSrc, filter);
 		}

@@ -51,7 +51,6 @@ namespace rev {
 }
 
 namespace rev {
-	extern std::shared_ptr<TextureFilter>	g_filter;
 	//! 文章の描画に必要なフォントや頂点を用意
 	/*!
 		TriangleList形式。とりあえず改行だけ対応
@@ -82,6 +81,7 @@ namespace rev {
 		void _init(Face &face);
 		// デフォルト描画シェーダー
 		const static SingletonDataLazy<ITech, TextObj, 0>	s_defaultTech;
+		const static SingletonDataLazy<TextureFilter, TextObj, 1>	s_filter;
 
 		public:
 			TextObj(TextObj&& t) = default;
@@ -103,6 +103,7 @@ namespace rev {
 			const lubee::SizeF& getSize() const;
 			void exportDrawTag(DrawTag& d) const;
 			static HTech MakeData(lubee::IConst<0>);
+			static HTexF MakeData(lubee::IConst<1>);
 			static HTech GetDefaultTech();
 	};
 

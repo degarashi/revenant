@@ -178,7 +178,7 @@ namespace rev {
 			}
 
 			auto& ds = _drawSet[i];
-			ds.hTex = mgr_gl.attachTexFilter(itr->first, g_filter);
+			ds.hTex = mgr_gl.attachTexFilter(itr->first, s_filter.GetData());
 			ds.nChar = nC;
 
 			HVb vb = mgr_gl.makeVBuffer(DrawType::Static);
@@ -241,6 +241,9 @@ namespace rev {
 	}
 	HTech TextObj::GetDefaultTech() {
 		return s_defaultTech.GetData();
+	}
+	HTexF TextObj::MakeData(lubee::IConst<1>) {
+		return mgr_gl.createTexFilter();
 	}
 
 	// --------------------------- FontGen ---------------------------
@@ -317,6 +320,4 @@ namespace rev {
 				}
 			).first;
 	}
-
-	std::shared_ptr<TextureFilter> g_filter = std::make_shared<TextureFilter>();
 }

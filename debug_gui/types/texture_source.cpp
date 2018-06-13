@@ -26,7 +26,7 @@ namespace rev {
 
 		ImGui::Columns(1);
 		if(const auto c = debug::ChildPush("texture", 0, true, ImGuiWindowFlags_HorizontalScrollbar)) {
-			auto filter = std::make_shared<TextureFilter>();
+			auto filter = mgr_gl.createTexFilter();
 			ImGui::Image(
 				mgr_gui.storeTexture(
 					mgr_gl.attachTexFilter(
@@ -51,7 +51,7 @@ namespace rev {
 			s.x = _size.width;
 			s.y = _size.height;
 		}
-		auto f = std::make_shared<TextureFilter>();
+		auto f = mgr_gl.createTexFilter();
 		auto tex = mgr_gl.attachTexFilter(shared_from_this(), f);
 		ImGui::Image(mgr_gui.storeTexture(tex), s);
 	}
