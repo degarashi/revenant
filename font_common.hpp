@@ -106,8 +106,6 @@ namespace rev {
 	/*! 縦幅は固定。横は必要に応じて確保 */
 	class CharPlane {
 		private:
-			using PlaneVec = std::vector<HTexMem>;
-			PlaneVec		_plane;
 			lubee::PowSize	_sfcSize;
 			const int		_fontH;		//!< フォント縦幅 (=height)
 			LaneAlloc_UP	_lalloc;	//!< レーンの残り幅管理
