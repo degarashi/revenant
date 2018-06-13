@@ -33,23 +33,6 @@ namespace rev {
 			// テクスチャ用のサイズ調整
 			auto size = tsfc->getSize();
 			const lubee::PowSize n2size{size.width, size.height};
-			using CB = std::function<void (const void*)>;
-			std::function<void (CB)>	func;
-			// 2乗サイズ合わせではなくpitchが詰めてある場合は変換しなくていい
-			if(!bP2 && tsfc->isContinuous()) {
-				func = [&tsfc](CB cb) {
-					auto lk = tsfc->lock();
-					cb(lk.getBits());
-				};
-			} else {
-				// 2乗サイズ合わせ
-				if(bP2 && size != n2size)
-					tsfc = tsfc->resize(n2size);
-				func = [&tsfc, sdlFmt](CB cb) {
-					auto buff = tsfc->extractAsContinuous(sdlFmt);
-					cb(&buff[0]);
-				};
-			}
 			// ミップマップの場合はサイズを縮小しながらテクスチャを書き込む
 			const auto tsize = tsfc->getSize();
 			size = tsize;
@@ -58,15 +41,32 @@ namespace rev {
 				GL.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 				GL.glTexImage2D(tflag, layer++, desc.format, size.width, size.height, 0, desc.baseType, desc.elementType, data);
 			};
+			std::function<void (const HSfc&)>	func;
+			// 2乗サイズ合わせではなくpitchが詰めてある場合は変換しなくていい
+			if(!bP2 && tsfc->isContinuous()) {
+				func = [&make](const HSfc& s) {
+					auto lk = s->lock();
+					make(lk.getBits());
+				};
+			} else {
+				// 2乗サイズ合わせ
+				if(bP2 && size != n2size)
+					tsfc = tsfc->resize(n2size);
+				func = [sdlFmt, &make](const HSfc& s) {
+					auto buff = s->extractAsContinuous(sdlFmt);
+					make(&buff[0]);
+				};
+			}
 			if(!bMip)
-				func(make);
+				func(tsfc);
 			else {
+				HSfc tsfc2 = tsfc;
 				for(;;) {
-					func(make);
+					func(tsfc2);
 					if(size.width==1 && size.height==1)
 						break;
 					size.shiftR_one(1);
-					tsfc = tsfc->resize(size);
+					tsfc2 = tsfc->resize(size);
 				}
 			}
 			return std::make_pair(tsize, desc.format);
