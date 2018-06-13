@@ -11,8 +11,8 @@ namespace rev {
 			GL_MIRROR_CLAMP_TO_EDGE
 		};
 	}
-	using F = TextureFilter;
-	F::TextureFilter(
+	using FI = TextureFilter_In;
+	FI::TextureFilter_In(
 		const uint32_t	iLinearMag,
 		const uint32_t	iLinearMin,
 		const WrapState	wrapS,
@@ -27,41 +27,42 @@ namespace rev {
 		_mipLevel(mipLevel),
 		_coeff(coeff)
 	{}
-	bool F::IsMipmap(const MipState level) {
+	bool FI::IsMipmap(const MipState level) {
 		return level >= MipState::MipmapNear;
 	}
-	bool F::isMipmap() const {
+	bool FI::isMipmap() const {
 		return  IsMipmap(_mipLevel);
 	}
-	void F::setFilter(const bool bLinearMag, const bool bLinearMin) {
+	void FI::setFilter(const bool bLinearMag, const bool bLinearMin) {
 		_iLinearMag = bLinearMag ? 1 : 0;
 		_iLinearMin = bLinearMin ? 1 : 0;
 	}
-	void F::setMagMinFilter(const bool bLinear) {
+	void FI::setMagMinFilter(const bool bLinear) {
 		setFilter(bLinear, bLinear);
 	}
-	void F::setAnisotropicCoeff(const float coeff) {
+	void FI::setAnisotropicCoeff(const float coeff) {
 		_coeff = coeff;
 	}
-	void F::setUVWrap(WrapState s, WrapState t) {
+	void FI::setUVWrap(WrapState s, WrapState t) {
 		_wrapS = s;
 		_wrapT = t;
 	}
-	void F::setWrap(WrapState st) {
+	void FI::setWrap(WrapState st) {
 		setUVWrap(st, st);
 	}
 
 	// --------------- TextureFilter::DCmd_Filter ---------------
+	using F = TextureFilter;
 	struct F::DCmd_Filter :
-		F
+		TextureFilter_In
 	{
 		GLuint	texFlag;
 
-		DCmd_Filter(const F& src, const GLuint flag);
+		DCmd_Filter(const FI& src, const GLuint flag);
 		static void Command(const void* p);
 	};
-	F::DCmd_Filter::DCmd_Filter(const F& src, const GLuint flag):
-		F(src),
+	F::DCmd_Filter::DCmd_Filter(const FI& src, const GLuint flag):
+		FI(src),
 		texFlag(flag)
 	{}
 	namespace {

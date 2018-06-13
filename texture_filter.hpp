@@ -3,8 +3,8 @@
 #include "drawcmd/queue_if.hpp"
 
 namespace rev {
-	class TextureFilter {
-		private:
+	class TextureFilter_In {
+		protected:
 			uint32_t		_iLinearMag,	//!< Linearの場合は1, Nearestは0
 							_iLinearMin;
 			WrapState		_wrapS,
@@ -12,10 +12,8 @@ namespace rev {
 			MipState		_mipLevel;
 			float			_coeff;
 
-			struct DCmd_Filter;
-
 		public:
-			TextureFilter(
+			TextureFilter_In(
 				uint32_t	iLinearMag = 0,
 				uint32_t	iLinearMin = 0,
 				WrapState	wrapS	= WrapState::Repeat,
@@ -23,6 +21,7 @@ namespace rev {
 				MipState	mipLevel= MipState::NoMipmap,
 				float		coeff	= 0
 			);
+
 			static bool IsMipmap(MipState level);
 			bool isMipmap() const;
 			void setFilter(bool bLinearMag, bool bLinearMin);
@@ -30,11 +29,21 @@ namespace rev {
 			void setAnisotropicCoeff(float coeff);
 			void setUVWrap(WrapState s, WrapState t);
 			void setWrap(WrapState st);
+	};
+	class TextureFilter :
+		public TextureFilter_In,
+		public IDebugGui
+	{
+		private:
+			struct DCmd_Filter;
+
+		public:
+			using TextureFilter_In::TextureFilter_In;
 
 			void dcmd_filter(draw::IQueue& q, GLenum texFlag) const;
 			void imm_filter(GLenum texFlag) const;
 
-			const char* getDebugName() const noexcept;
-			bool property(bool edit);
+			DEF_DEBUGGUI_NAME
+			DEF_DEBUGGUI_PROP
 	};
 }
