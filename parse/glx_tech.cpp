@@ -174,7 +174,7 @@ namespace rev {
 			}
 			template <class T, ENABLE_IF(!frea::is_vector<T>{})>
 			void _outputArgR(const T& t) const {
-				_os << '=' << t << std::endl;
+				_os << '=' << t << ';' << std::endl;
 			}
 			template <class T>
 			void operator()(const T& value) const {
