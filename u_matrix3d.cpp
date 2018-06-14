@@ -87,13 +87,16 @@ namespace rev {
 	UniformSetF U_Matrix3D::getUniformF(const GLProgram& prog) const {
 		UniformSetF_V fv;
 
-		#define DEF_SETUNIF(name) \
-			if(const auto id = prog.getUniformId(s3d::name)) { \
-				fv.emplace_back([id=*id](const void* p, UniformEnt& u){ \
-					auto* self = static_cast<const U_Matrix3D*>(p); \
-					u.setUniformById(id, spi::UnwrapAcValue(self->get##name())); \
-				}); \
+		const auto set = [&fv, &prog](const auto& name, const auto& cb) {
+			if(const auto id = prog.getUniformId(name)) {
+				fv.emplace_back([id=*id, &cb](const void* p, UniformEnt& u){
+					auto* self = static_cast<const U_Matrix3D*>(p);
+					u.setUniformById(id, spi::UnwrapAcValue(cb(*self)));
+				});
 			}
+		};
+		#define DEF_SETUNIF(name) \
+			set(s3d::name, [](auto& s)->decltype(auto){ return s.get##name(); });
 		DEF_SETUNIF(World)
 		DEF_SETUNIF(WorldInv)
 		DEF_SETUNIF(Transform)
@@ -103,32 +106,15 @@ namespace rev {
 		#undef DEF_SETUNIF
 
 		#define DEF_SETUNIF(name) \
-			if(const auto id = prog.getUniformId(s3d::name)) { \
-				fv.emplace_back([id=*id](const void* p, UniformEnt& u){ \
-					auto* self = static_cast<const U_Matrix3D*>(p); \
-					u.setUniformById(id, spi::UnwrapAcValue(self->getCamera()->get##name())); \
-				}); \
-			}
+			set(s3d::name, [](auto& s)->decltype(auto){ return s.getCamera()->get##name(); });
 		DEF_SETUNIF(View)
 		DEF_SETUNIF(Proj)
 		DEF_SETUNIF(ViewProj)
 		DEF_SETUNIF(ViewProjInv)
 		#undef DEF_SETUNIF
 
-		if(const auto id = prog.getUniformId(s3d::EyePos)) {
-			fv.emplace_back([id=*id](const void* p, UniformEnt& u){
-				auto* self = static_cast<const U_Matrix3D*>(p);
-				auto& ps = self->getCamera()->getPose();
-				u.setUniformById(id, ps.getOffset());
-			});
-		}
-		if(const auto id = prog.getUniformId(s3d::EyePos)) {
-			fv.emplace_back([id=*id](const void* p, UniformEnt& u){
-				auto* self = static_cast<const U_Matrix3D*>(p);
-				auto& ps = self->getCamera()->getPose();
-				u.setUniformById(id, ps.getRotation().getZAxis());
-			});
-		}
+		set(s3d::EyePos, [](auto& s)->decltype(auto){ return s.getCamera()->getPose().getOffset(); });
+		set(s3d::EyeDir, [](auto& s)->decltype(auto){ return s.getCamera()->getPose().getRotation().getZAxis(); });
 
 		if(!fv.empty()) {
 			return [fv = std::move(fv)](const void* p, UniformEnt& u){
