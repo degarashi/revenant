@@ -41,19 +41,42 @@ namespace rev {
 		}
 
 		namespace {
-			struct PrintVisitor : boost::static_visitor<> {
+			struct ConstVisitor : boost::static_visitor<> {
 				std::ostream& _dst;
-				PrintVisitor(std::ostream& dst): _dst(dst) {}
+				ConstVisitor(std::ostream& dst): _dst(dst) {}
 
-				template <class T>
-				void operator()(const T& t) const {
-					_dst << t;
+				static char _Prefix(bool) { return 'b'; }
+				static char _Prefix(float) { return ' '; }
+				static char _Prefix(int) { return 'i'; }
+				void operator()(const bool b) const {
+					_dst << std::boolalpha <<  b;
+				}
+				template <class V, ENABLE_IF(std::is_integral<V>{} || std::is_floating_point<V>{})>
+				void operator()(const V& v) const {
+					_dst << v;
+				}
+				template <class V, ENABLE_IF(frea::is_vector<V>{} && (V::size==1))>
+				void operator()(const V& v) const {
+					(*this)(v.x);
+				}
+				template <class V, ENABLE_IF(frea::is_vector<V>{} && (V::size>1))>
+				void operator()(const V& v) const {
+					_dst << _Prefix(v.x) << "vec" << V::size << '(';
+					bool first = true;
+					for(auto& val : v) {
+						if(!first)
+							_dst << ',';
+						else
+							first = false;
+						(*this)(val);
+					}
+					_dst << ')';
 				}
 			};
 		}
 		std::ostream& operator << (std::ostream& os, const ConstEntry& e) {
 			os << "const " << static_cast<const EntryBase&>(e) << '=';
-			boost::apply_visitor(PrintVisitor(os), e.defVal);
+			boost::apply_visitor(ConstVisitor(os), e.defVal);
 			return os << ';';
 		}
 
@@ -131,8 +154,16 @@ namespace rev {
 				PrintIt(os, t);
 				os << "-------------" << std::endl;
 			}
-		}
+			struct PrintVisitor : boost::static_visitor<> {
+				std::ostream& _dst;
+				PrintVisitor(std::ostream& dst): _dst(dst) {}
 
+				template <class T>
+				void operator()(const T& t) const {
+					_dst << t;
+				}
+			};
+		}
 		std::ostream& operator << (std::ostream& os, const ShSetting& s) {
 			os << c_shType[s.type] << "= " << s.shName << std::endl << "args: ";
 			for(auto& a : s.args) {
