@@ -174,5 +174,5 @@ if(NOT without-unittest)
 endif()
 
 if(NOT without-test)
-	add_subdirectory(tests/gameloop)
+	add_subdirectory(testprog/gameloop)
 endif()
