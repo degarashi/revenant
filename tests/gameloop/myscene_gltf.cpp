@@ -27,6 +27,7 @@ namespace rev::test {
 
 		// サンプルglTFファイルを列挙
 		_fileFullPath = Dir::EnumEntryWildCard(Dir::GetProgramDir() + "/resource/gltf_sample/1.0/*/glTF/*.gltf");
+		std::sort(_fileFullPath.begin(), _fileFullPath.end());
 		const std::size_t len = _fileFullPath.size();
 		_fileList.resize(len);
 		for(std::size_t i=0 ; i<len ; i++) {
