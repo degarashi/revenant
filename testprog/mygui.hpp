@@ -1,6 +1,6 @@
 #pragma once
-#include "../../debug_gui/logger.hpp"
-#include "../../drawable.hpp"
+#include "../debug_gui/logger.hpp"
+#include "../drawable.hpp"
 
 namespace rev {
 	class GPUInfo;

@@ -1,5 +1,6 @@
+#include "resmgr_app.hpp"
 #include "param.hpp"
-#include "myscene.hpp"
+#include "cube_scene.hpp"
 #include "../../uri.hpp"
 #include "../../glx.hpp"
 #include "../../gl_resource.hpp"
@@ -44,7 +45,7 @@ namespace rev {
 			return true;
 		}
 		HScene Param::makeFirstScene() const {
-			return rev_mgr_obj.emplace<MyScene>();
+			return rev_mgr_obj.emplace<CubeScene>();
 		}
 	}
 }

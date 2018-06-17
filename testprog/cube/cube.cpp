@@ -1,10 +1,10 @@
 #include "cube.hpp"
 #include "../../vdecl.hpp"
 #include "../../gl_resource.hpp"
-#include "lubee/meta/countof.hpp"
 #include "../../techmgr.hpp"
 #include "../../glx.hpp"
 #include "../../u_matrix3d.hpp"
+#include "lubee/meta/countof.hpp"
 
 // ---------------------- Cube頂点宣言 ----------------------
 const rev::FWVDecl vertex::cube::s_vdecl(

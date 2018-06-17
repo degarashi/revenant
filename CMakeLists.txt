@@ -174,5 +174,7 @@ if(NOT without-unittest)
 endif()
 
 if(NOT without-test)
-	add_subdirectory(testprog/gameloop)
+	add_subdirectory(testprog/sprite)
+	add_subdirectory(testprog/cube)
+	add_subdirectory(testprog/gltf1)
 endif()

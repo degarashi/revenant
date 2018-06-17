@@ -1,14 +1,11 @@
-#include "myscene.hpp"
-#include "../../systeminfo.hpp"
-#include "../../camera3d.hpp"
-#include "../../input.hpp"
-#include "../../imgui_sdl2.hpp"
-#include "../../u_matrix3d.hpp"
-#include "../../glx_if.hpp"
+#include "fpcamera.hpp"
+#include "../systeminfo.hpp"
+#include "../camera3d.hpp"
+#include "../input.hpp"
+#include "../imgui_sdl2.hpp"
 
 namespace rev::test {
-	void MyScene::St_3D::onEnter(MyScene& self, ObjTypeId_OP id) {
-		St_Base::onEnter(self, id);
+	FPCamera::FPCamera() {
 		{
 			const auto scr = mgr_info.getScreenSize();
 			_camera = Camera3D::NewS();
@@ -35,11 +32,9 @@ namespace rev::test {
 		}
 		_fp.setSpeed(.5f);
 		_fp.setDirSpeed(100.f);
-		_fp.setOffset(Vec3(0.5f,0.5f,-3));
+		_fp.setOffset(frea::Vec3(0.5f,0.5f,-3));
 	}
-	void MyScene::St_3D::onUpdate(MyScene& self) {
-		St_Base::onUpdate(self);
-
+	void FPCamera::update() {
 		const auto hM = Mouse::OpenMouse(0);
 		if(_act[Act::DirBtn]->isKeyPressed()) {
 			if(!mgr_gui.pointerOnGUI()) {
@@ -61,12 +56,9 @@ namespace rev::test {
 				}
 			}
 		}
-	}
-	void MyScene::St_3D::onDraw(const MyScene& self, IEffect& e) const {
-		St_Base::onDraw(self, e);
-
-		auto& e3 = dynamic_cast<U_Matrix3D&>(e);
-		e3.setCamera(_camera);
 		_camera->setPose(_fp);
+	}
+	const HCam3& FPCamera::getCamera() const noexcept {
+		return _camera;
 	}
 }

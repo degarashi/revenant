@@ -1,6 +1,5 @@
-#ifdef DEBUGGUI_ENABLED
 #include "corner_overlay.hpp"
-#include "../../imgui/imgui.h"
+#include "../imgui/imgui.h"
 
 namespace rev {
 	int CornerOverlay::applyWindowPos() const {
@@ -25,4 +24,3 @@ namespace rev {
 			ImGuiWindowFlags_NoFocusOnAppearing;
 	}
 }
-#endif
