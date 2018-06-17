@@ -23,6 +23,7 @@ namespace rev::test {
 	using SName = spi::FlyweightItem<std::string>;
 	void MyScene::St_glTF::onEnter(MyScene& self, ObjTypeId_OP id) {
 		St_3D::onEnter(self, id);
+		_cameraBkup = St_3D::_camera;
 
 		// サンプルglTFファイルを列挙
 		_fileFullPath = Dir::EnumEntryWildCard(Dir::GetProgramDir() + "/resource/gltf_sample/1.0/*/glTF/*.gltf");
@@ -91,6 +92,7 @@ namespace rev::test {
 				std::size_t idx=0;
 				if(ImGui::Selectable("User", _cameraIndex==idx)) {
 					_cameraIndex = idx;
+					const_cast<St_glTF&>(*this).St_3D::_camera = _cameraBkup;
 				}
 				++idx;
 				for(auto& c : _camera) {
@@ -112,7 +114,7 @@ namespace rev::test {
 				pose.refOffset().z *= -1;
 				info.camera->setPose(pose);
 				info.camera->setAspect(St_3D::_camera->getAspect());
-				*St_3D::_camera = *info.camera;
+				const_cast<St_glTF&>(*this).St_3D::_camera = info.camera;
 			}
 		}
 		if(_model)

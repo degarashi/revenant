@@ -7,6 +7,7 @@ namespace rev::test {
 		using CameraV = gltf::NodeVisitor_CameraBase::CameraV;
 		StrV					_fileList,
 								_fileFullPath;
+		mutable HCam3			_cameraBkup;
 		mutable CameraV			_camera;
 		mutable std::size_t		_cameraIndex;
 		mutable HMdl			_model;
