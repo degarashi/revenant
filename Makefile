@@ -19,10 +19,11 @@ ADDITIONAL_CMD				= \
 							  ln -sf $(PWD)/resource $(WORK_DIR)/testprog/sprite; \
 							  ln -sf $(PWD)/resource $(WORK_DIR)/testprog/cube; \
 							  ln -sf $(PWD)/resource $(WORK_DIR)/testprog/gltf1; \
+							  ln -sf $(PWD)/resource $(WORK_DIR)/testprog/gltf2; \
 							  ln -sf $(PWD)/resource $(WORK_DIR);
 include lubee/common.make
 
 # 動作テスト
 gameloop:
-	-pkill sprite
-	$(WORK_DIR)/testprog/sprite/sprite
+	-pkill gltf2
+	$(WORK_DIR)/testprog/gltf2/gltf2

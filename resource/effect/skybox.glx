@@ -1,0 +1,35 @@
+attribute SkyboxAttr {
+	highp vec3 a_pos : POSITION;
+}
+varying SkyboxVary {
+	highp vec3 v_pos;
+}
+uniform SkyboxUnif {
+	highp mat4		sys_mTrans;
+	samplerCube		u_texDiffuse;
+}
+vertexshader(400) SkyboxVS() {
+	v_pos = a_pos;
+	gl_Position = vec4(a_pos, 1) * sys_mTrans;
+}
+fragmentshader(400) SkyboxFS() {
+	vec4 color = textureCube(u_texDiffuse, v_pos);
+	gl_FragColor = vec4(color);
+}
+
+technique Skybox {
+	PolygonMode = Fill;
+	CullFace = true;
+	FrontFace = ccw;
+	Blend = false;
+	DepthTest = false;
+	DepthMask = false;
+	Attribute = SkyboxAttr;
+	Varying = SkyboxVary;
+	Uniform = SkyboxUnif;
+
+	pass Default {
+		VertexShader = SkyboxVS();
+		FragmentShader = SkyboxFS();
+	}
+}
