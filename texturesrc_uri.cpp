@@ -50,8 +50,10 @@ namespace rev {
 				};
 			} else {
 				// 2乗サイズ合わせ
-				if(bP2 && size != n2size)
+				if(bP2 && size != n2size) {
 					tsfc = tsfc->resize(n2size);
+					size = n2size;
+				}
 				func = [sdlFmt, &make](const HSfc& s) {
 					auto buff = s->extractAsContinuous(sdlFmt);
 					make(&buff[0]);
