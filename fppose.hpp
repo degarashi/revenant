@@ -27,11 +27,11 @@ namespace rev {
 			DegF& pitch() noexcept;
 			DegF& roll() noexcept;
 			void update(
-				const HAct& move_x,
-				const HAct& move_y,
-				const HAct& move_z,
-				const HAct& dir_x,
-				const HAct& dir_y
+				const HActC& move_x,
+				const HActC& move_y,
+				const HActC& move_z,
+				const HActC& dir_x,
+				const HActC& dir_y
 			);
 	};
 }
