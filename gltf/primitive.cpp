@@ -47,7 +47,7 @@ namespace rev::gltf {
 		return true;
 	}
 	namespace {
-		struct Visitor : boost::static_visitor<> {
+		struct Visitor {
 			HIb				_ib;
 			std::size_t		_count;
 
@@ -56,15 +56,12 @@ namespace rev::gltf {
 				_count(0)
 			{}
 			template <class T, ENABLE_IF(std::is_integral_v<T>)>
-			void operator()(const std::vector<T>& t) {
-				_count = t.size();
-				_ib->initData(t);
+			void operator()(const T* t, const std::size_t len) {
+				_count = len;
+				_ib->initData(t, len);
 			}
 			template <class T, ENABLE_IF(!std::is_integral_v<T>)>
-			void operator()(const std::vector<T>&) {
-				D_Assert0(false);
-			}
-			void operator()(boost::blank) {
+			void operator()(const T*, std::size_t) {
 				D_Assert0(false);
 			}
 		};
@@ -130,7 +127,7 @@ namespace rev::gltf {
 				auto& idata = *(*index);
 
 				Visitor visitor(ib);
-				boost::apply_visitor(visitor, idata.getData());
+				idata.getData(visitor);
 				primitive_cache = ::rev::Primitive::MakeWithIndex(vdecl, mode, ib, visitor._count, 0, vb.data(), vb.size());
 			} else {
 				primitive_cache = ::rev::Primitive::MakeWithoutIndex(vdecl, mode, 0, nV, vb.data(), vb.size());

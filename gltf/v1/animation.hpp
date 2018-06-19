@@ -16,6 +16,7 @@ namespace rev::gltf::v1 {
 		mutable struct {
 			bool		vec4;
 			const void*	output =nullptr;
+			std::size_t	length;
 		} cached;
 
 		void _checkData() const;

@@ -31,11 +31,12 @@ namespace rev::gltf::v1 {
 			bc.bind.resize(n);
 			bc.bs_m = bindShapeMat.transposition();
 
-			const auto& mat = invBindMat->getAsMat4();
+			const auto& mat = invBindMat->getAs<frea::Mat4>();
+			const auto* m = reinterpret_cast<const frea::Mat4*>(mat.pointer);
 			auto* dst = bc.bind.data();
 			for(int i=0 ; i<n ; i++) {
 				dst->jointName = jointName[i];
-				dst->invmat = mat[i].transposition();
+				dst->invmat = m[i].transposition();
 				++dst;
 			}
 		}

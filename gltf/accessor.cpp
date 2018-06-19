@@ -5,6 +5,46 @@
 
 namespace rev::gltf {
 	namespace {
+		using A = Accessor;
+	}
+	template <class V>
+	struct A::Filter : A::IFilter {
+		const V		_min,
+					_max;
+
+		Filter(const V min, const V max):
+			_min(min),
+			_max(max)
+		{}
+		void filter(const uintptr_t data) noexcept override {
+			auto& d = *reinterpret_cast<V*>(data);
+			d = std::min(std::max(d, _min), _max);
+		}
+	};
+	template <class V>
+	struct A::FilterG : A::IFilter {
+		using FV = std::vector<Filter<V>>;
+		FV			_filter;
+		std::size_t	_cursor;
+
+		FilterG(FV&& f):
+			_filter(std::move(f)),
+			_cursor(0)
+		{}
+		void filter(const uintptr_t data) noexcept override {
+			_filter[_cursor].filter(data);
+			_cursor = (_cursor+1) % _filter.size();
+		}
+	};
+
+	namespace {
+		template <class To, class From>
+		std::size_t Cnv(uintptr_t dst, uintptr_t src) noexcept {
+			auto* srcP = reinterpret_cast<const From*>(src);
+			auto* dstP = reinterpret_cast<To*>(dst);
+			*dstP = *srcP;
+			return sizeof(To);
+		}
 		const GLenum c_componentType[] = {
 			GL_BYTE,
 			GL_UNSIGNED_BYTE,
@@ -27,15 +67,15 @@ namespace rev::gltf {
 			{"VEC2", false, 2},
 			{"VEC3", false, 3},
 			{"VEC4", false, 4},
-			{"MAT2", true, 4},
-			{"MAT3", true, 9},
-			{"MAT4", true, 16}
+			{"MAT2", true, 2},
+			{"MAT3", true, 3},
+			{"MAT4", true, 4}
 		};
 	}
 	namespace L = gltf::loader;
-	Accessor::Accessor(
+	A::Accessor(
 		Temporary_t,
-		const Accessor& self
+		const A& self
 	):
 		_componentType(self._componentType),
 		_byteOffset(self._byteOffset),
@@ -44,7 +84,7 @@ namespace rev::gltf {
 		_bMatrix(self._bMatrix),
 		_bFloat(self._bFloat)
 	{}
-	Accessor::Accessor(const JValue& v):
+	A::Accessor(const JValue& v):
 		_componentType(L::Required<L::Integer>(v, "componentType")),
 		_byteOffset(L::OptionalDefault<L::Integer>(v, "byteOffset", 0)),
 		_count(L::Required<L::Integer>(v, "count"))
@@ -55,403 +95,197 @@ namespace rev::gltf {
 		_bFloat = _componentType == GL_FLOAT;
 
 		const auto& typ = CheckEnum(c_elemtype, L::Required<L::String>(v, "type"));
+		_bMatrix = typ.bMat;
+		_nElem = typ.nElem;
+
 		if(const auto& max = L::GetOptionalEntry(v, "max")) {
 			const auto& min = L::GetRequiredEntry(v, "min");
 			const auto n = max->Size();
 			if(n != min.Size() ||
-				typ.nElem != n)
+				getActualNElem() != n)
 				throw InvalidProperty("size(max) and size(min) differs");
 
 			const auto maxV = L::Required<L::Array<L::Number>>(v, "max");
 			const auto minV = L::Required<L::Array<L::Number>>(v, "min");
 			D_Assert0(maxV.size() == minV.size());
 
-			_filter.resize(n);
-			for(Size i=0 ; i<n ; i++)
-				_filter[i] = {minV[i], maxV[i]};
+			Filter_S filter;
+			_SelectByType(_componentType, [&filter, &minV, &maxV](auto type){
+				using Type = decltype(type);
+				std::vector<Filter<Type>> fl;
+				const auto len = minV.size();
+				for(std::size_t i=0 ; i<len ; i++) {
+					fl.emplace_back(minV[i], maxV[i]);
+				}
+				filter = std::make_shared<FilterG<Type>>(std::move(fl));
+			});
+			_filter = filter;
 		}
-		_bMatrix = typ.bMat;
-		_nElem = typ.nElem;
-		D_Assert0(lubee::IsInRange<Size>(_nElem, 1, 16));
+		D_Assert0(lubee::IsInRange<Size>(_nElem, 1, 4));
 	}
-
-	namespace {
-		template <class CB>
-		void SelectByType(const GLTypeFmt type, CB&& cb) {
-			switch(type) {
-				case GL_BYTE:
-					cb(GLubyte{});
-					break;
-				case GL_UNSIGNED_BYTE:
-					cb(GLubyte{});
-					break;
-				case GL_SHORT:
-					cb(GLshort{});
-					break;
-				case GL_UNSIGNED_SHORT:
-					cb(GLushort{});
-					break;
-				case GL_UNSIGNED_INT:
-					cb(GLuint{});
-					break;
-				case GL_FLOAT:
-					cb(GLfloat{});
-					break;
-				default:
-					Assert0(false);
-			}
-		}
-		// イテレータから値を成形して出力
-		namespace cnv {
-			struct Scalar {
-				template <class Itr>
-				auto operator ()(Itr itr) const noexcept {
-					return *itr;
-				}
-			};
-			// イテレータからベクトル値<Dim>を出力
-			template <std::size_t Dim>
-			struct Vec {
-				constexpr static std::size_t NElem = Dim;
-
-				template <class Itr>
-				auto operator ()(Itr itr) const noexcept {
-					using value_t = frea::Vec_t<std::decay_t<decltype(*itr)>, Dim, false>;
-					value_t ret;
-					for(std::size_t i=0 ; i<Dim ; i++) {
-						ret.m[i] = *itr;
-						++itr;
-					}
-					return ret;
-				}
-			};
-			template <std::size_t DimM, std::size_t DimN>
-			struct Mat {
-				constexpr static std::size_t NElem = DimM*DimN;
-
-				template <class Itr>
-				auto operator ()(Itr itr) const noexcept {
-					using value_t = frea::Mat_t<std::decay_t<decltype(*itr)>, DimM, DimN, false>;
-					value_t ret;
-					for(std::size_t i=0 ; i<DimM ; i++) {
-						auto& vec = ret.m[i];
-						for(std::size_t j=0 ; j<DimN ; j++) {
-							vec.m[j] = *itr;
-							++itr;
-						}
-					}
-					// column-major -> row-majorへの変換
-					ret.transpose();
-					return ret;
-				}
-			};
-		}
-		template <class Src_Unit, class Dst_Unit>
-		struct ItrSingle {
-			uintptr_t		cur;
-			std::size_t		stride;
-
-			ItrSingle(const uintptr_t t, const std::size_t stride):
-				cur(t),
-				stride(stride)
-			{}
-			ItrSingle& operator ++ () noexcept {
-				cur += stride;
-				return *this;
-			}
-			ItrSingle& operator += (const std::size_t n) noexcept {
-				cur += stride*n;
-				return *this;
-			}
-			ItrSingle operator + (const std::size_t n) const noexcept {
-				return {cur+stride*n, stride};
-			}
-			intptr_t operator - (const ItrSingle& itr) const noexcept {
-				const intptr_t diff = itr.cur - cur;
-				D_Assert0(diff % stride == 0);
-				return diff / stride;
-			}
-			Dst_Unit operator * () const noexcept {
-				return *reinterpret_cast<Src_Unit*>(cur);
-			}
-			bool operator == (const ItrSingle& itr) const noexcept {
-				return cur == itr.cur;
-			}
-			bool operator != (const ItrSingle& itr) const noexcept {
-				return !(this->operator ==(itr));
-			}
-		};
-		template <class Cnv, class ItrS>
-		struct ComposeIterator {
-			Cnv			cnv;
-			ItrS		itr;
-			std::size_t	stride;
-
-			ComposeIterator(const Cnv cnv, const ItrS itr, const std::size_t str):
-				cnv(cnv),
-				itr(itr),
-				stride(str)
-			{}
-			auto operator * () const noexcept {
-				return cnv(itr);
-			}
-			ComposeIterator& operator ++ () noexcept {
-				itr += stride;
-				return *this;
-			}
-			ComposeIterator operator + (const std::size_t n) const noexcept {
-				return {cnv, itr+n*stride, stride};
-			}
-			intptr_t operator - (const ComposeIterator& i) const noexcept {
-				const intptr_t diff = i.itr - itr;
-				D_Assert0(diff % stride == 0);
-				return diff / stride;
-			}
-			bool operator == (const ComposeIterator& i) const noexcept {
-				return itr == i.itr;
-			}
-			bool operator != (const ComposeIterator& i) const noexcept {
-				return !(this->operator ==(i));
-			}
-		};
+	std::size_t A::getActualNElem() const {
+		if(_bMatrix)
+			return _nElem*_nElem;
+		return _nElem;
 	}
-	namespace {
-		namespace visitor {
-			struct Filter {
-				using FilterP = std::pair<double,double>;
-				using Size = std::size_t;
-				const FilterP* filter;
-
-				Filter(const FilterP* filter):
-					filter(filter)
-				{}
-				void operator()(boost::blank) const {
-					Assert0(false);
-				}
-				template <class T, ENABLE_IF(lubee::is_number<T>{})>
-				void operator()(std::vector<T>& data) const {
-					const auto f = filter[0];
-					for(auto& d : data) {
-						d = lubee::Saturate<double>(d, f.first, f.second);
-					}
-				}
-				template <class T, ENABLE_IF(frea::is_vector<T>{})>
-				void operator()(std::vector<T>& data) const {
-					for(auto& d : data) {
-						for(Size i=0 ; i<T::size ; i++) {
-							auto& f = filter[i];
-							d[i] = lubee::Saturate<double>(d[i], f.first, f.second);
-						}
-					}
-				}
-				template <class T, ENABLE_IF(frea::is_matrix<T>{})>
-				void operator()(std::vector<T>& data) const {
-					for(auto& d : data) {
-						for(Size i=0 ; i<T::dim_m ; i++) {
-							auto& row = d[i];
-							for(Size j=0 ; j<T::dim_n ; j++) {
-								auto& f = filter[j*T::dim_n + i];
-								row[j] = lubee::Saturate<double>(row[j], f.first, f.second);
-							}
-						}
-					}
-				}
-			};
-		}
-	}
-	template <class BuffType, class Cnv>
-	void Accessor::_readCache() const {
-		SelectByType(_componentType, [this](auto type){
+	const A::Cache& A::_getCache() const {
+		if(_cache.empty()) {
 			auto data = _getBufferData();
 			data.pointer += _byteOffset;
+			const Size stride = getByteStride();
+			const auto count = _count,
+					nElem = _nElem;
 
-			using SrcType = decltype(type);
-			using ItrS = ItrSingle<SrcType, BuffType>;
-			Size stride = getByteStride();
-			D_Assert0(stride % sizeof(SrcType) == 0);
-			stride = stride/sizeof(SrcType);
-
-			ComposeIterator itr{Cnv{}, ItrS{data.pointer, sizeof(SrcType)}, stride};
-
-			using SaveType = std::decay_t<decltype(*itr)>;
-			Vec<SaveType> result(_count);
-			auto* dst = result.data();
-			const auto itrE = itr + _count;
-			while(itr != itrE) {
-				*dst++ = *itr;
-				++itr;
-			}
-			D_Assert0(dst == result.data()+result.size());
-			_cache = std::move(result);
-		});
-	}
-	const Accessor::Cache& Accessor::getData() const {
-		if(_cache.which() == 0) {
-			_detectType([this](auto raw, auto cnv){
-				_readCache<decltype(raw), decltype(cnv)>();
+			Size unit;
+			_SelectByType(_componentType, [&unit](auto type){
+				using Type = decltype(type);
+				unit = sizeof(Type);
 			});
-			if(!_filter.empty() && _filterEnabled()) {
-				visitor::Filter v(_filter.data());
-				boost::apply_visitor(v, _cache);
+
+			_cache.resize(unit * getActualNElem() * count);
+			auto dst = reinterpret_cast<uintptr_t>(_cache.data());
+			if(_bMatrix) {
+				D_Assert0(_bFloat);
+				for(Size i=0 ; i<count ; i++) {
+					auto src = data.pointer;
+					for(Size j=0 ; j<nElem ; j++) {
+						src = (src+3) / 4 * 4;
+						for(Size k=0 ; k<nElem ; k++) {
+							dst += Cnv<float, float>(dst, src);
+							src += sizeof(float);
+						}
+					}
+					data.pointer += stride;
+				}
+				_applyFilter();
+				_matrixTranspose();
+			} else {
+				if(nElem == 1) {
+					_SelectByType(_componentType,
+						[
+							&dst,
+							count,
+							nElem,
+							src=data.pointer,
+							stride
+						](auto type) mutable {
+							using Type = decltype(type);
+							for(Size i=0 ; i<count*nElem ; i++) {
+								dst += Cnv<Type, Type>(dst, src);
+								src += stride;
+							}
+						}
+					);
+				} else {
+					auto load = [count, data, &dst, nElem, stride](auto dsttype) mutable {
+						using DstType = decltype(dsttype);
+						for(Size i=0 ; i<count ; i++) {
+							auto src = data.pointer;
+							for(Size j=0 ; j<nElem ; j++) {
+								dst += Cnv<DstType, float>(dst, src);
+								src += sizeof(float);
+							}
+							data.pointer += stride;
+						}
+					};
+					if(_bFloat) {
+						load(float{});
+					} else {
+						load(int32_t{});
+					}
+				}
+				_applyFilter();
 			}
+			D_Assert0(dst == reinterpret_cast<uintptr_t>(_cache.data() + _cache.size()));
 			_onCacheMaked(_cache);
 		}
 		return _cache;
 	}
-	template <class CB>
-	void Accessor::_detectType(CB&& cb) const {
-		if(_bMatrix) {
-			switch(_nElem) {
-				case 4: {
-					cb(GLfloat{}, cnv::Mat<2,2>{});
-					break; }
-				case 9:
-					cb(GLfloat{}, cnv::Mat<3,3>{});
-					break;
-				case 16:
-					cb(GLfloat{}, cnv::Mat<4,4>{});
-					break;
-				default:
-					D_Assert0(false);
+	void A::_applyFilter() const {
+		if(_filter && _filterEnabled()) {
+			const auto len = _count * getActualNElem();
+			const auto unit = getUnitSize();
+			auto data = reinterpret_cast<uintptr_t>(_cache.data());
+			for(std::size_t i=0 ; i<len ; i++) {
+				_filter->filter(data);
+				data += unit;
 			}
+			D_Assert0(data == reinterpret_cast<uintptr_t>(_cache.data() + _cache.size()));
+		}
+	}
+	void A::_matrixTranspose() const {
+		const auto proc = [this](auto* type){
+			using Type = std::remove_pointer_t<decltype(type)>;
+			auto* data = _cache.data();
+			for(Size i=0 ; i<_count ; i++) {
+				reinterpret_cast<Type*>(data)->transpose();
+				// column-major -> row-majorへの変換
+				data += sizeof(Type);
+			}
+		};
+		if(_nElem == 2) {
+			proc((frea::Mat2*)nullptr);
+		} else if(_nElem == 3) {
+			proc((frea::Mat3*)nullptr);
 		} else {
-			if(_nElem == 1) {
-				switch(_componentType) {
-					case GL_BYTE:
-						cb(GLbyte{}, cnv::Scalar{});
-						break;
-					case GL_UNSIGNED_BYTE:
-						cb(GLubyte{}, cnv::Scalar{});
-						break;
-					case GL_SHORT:
-						cb(GLshort{}, cnv::Scalar{});
-						break;
-					case GL_UNSIGNED_SHORT:
-						cb(GLushort{}, cnv::Scalar{});
-						break;
-					default:
-						cb(GLfloat{}, cnv::Scalar{});
-				}
-			} else if(_nElem == 2) {
-				if(_bFloat) {
-					cb(GLfloat{}, cnv::Vec<2>{});
-				} else {
-					cb(GLint{}, cnv::Vec<2>{});
-				}
-			} else if(_nElem == 3) {
-				if(_bFloat) {
-					cb(GLfloat{}, cnv::Vec<3>{});
-				} else {
-					cb(GLint{}, cnv::Vec<3>{});
-				}
-			} else {
-				D_Assert0(_nElem == 4);
-				if(_bFloat) {
-					cb(GLfloat{}, cnv::Vec<4>{});
-				} else {
-					cb(GLint{}, cnv::Vec<4>{});
-				}
-			}
+			proc((frea::Mat4*)nullptr);
 		}
 	}
 	namespace {
-		using A = Accessor;
-	}
-	const A::Vec<GLbyte>& A::getAsByte() const {
-		return boost::get<Vec<GLbyte>>(getData());
-	}
-	const A::Vec<GLubyte>& A::getAsUByte() const {
-		return boost::get<Vec<GLubyte>>(getData());
-	}
-	const A::Vec<GLshort>& A::getAsShort() const {
-		return boost::get<Vec<GLshort>>(getData());
-	}
-	const A::Vec<GLushort>& A::getAsUShort() const {
-		return boost::get<Vec<GLushort>>(getData());
-	}
-	const A::Vec<GLuint>& A::getAsUInt() const {
-		return boost::get<Vec<GLuint>>(getData());
-	}
-	const A::Vec<GLfloat>& A::getAsFloat() const {
-		return boost::get<Vec<GLfloat>>(getData());
-	}
-	const A::Vec<A::Mat2>& A::getAsMat2() const {
-		return boost::get<Vec<Mat2>>(getData());
-	}
-	const A::Vec<A::Mat3>& A::getAsMat3() const {
-		return boost::get<Vec<Mat3>>(getData());
-	}
-	const A::Vec<A::Mat4>& A::getAsMat4() const {
-		return boost::get<Vec<Mat4>>(getData());
-	}
-	const A::Vec<A::IVec2>& A::getAsIVec2() const {
-		return boost::get<Vec<IVec2>>(getData());
-	}
-	const A::Vec<A::IVec3>& A::getAsIVec3() const {
-		return boost::get<Vec<IVec3>>(getData());
-	}
-	const A::Vec<A::IVec4>& A::getAsIVec4() const {
-		return boost::get<Vec<IVec4>>(getData());
-	}
-	const A::Vec<A::Vec2>& A::getAsVec2() const {
-		return boost::get<Vec<Vec2>>(getData());
-	}
-	const A::Vec<A::Vec3>& A::getAsVec3() const {
-		return boost::get<Vec<Vec3>>(getData());
-	}
-	const A::Vec<A::Vec4>& A::getAsVec4() const {
-		return boost::get<Vec<Vec4>>(getData());
-	}
-	namespace {
 		namespace visitor {
-			struct CnvInt32 {
-				A::Vec<int32_t> result;
+			template <class To>
+			struct Cnv {
+				A::Vec<To> result;
 				template <class T, ENABLE_IF(lubee::is_number<T>{})>
-				void operator()(const A::Vec<T>& t) {
-					const auto len = t.size();
+				void operator()(const T* t, const std::size_t len) {
 					result.resize(len);
 					for(std::size_t i=0 ; i<len ; i++) {
 						result[i] = t[i];
 					}
 				}
 				template <class T, ENABLE_IF(!lubee::is_number<T>{})>
-				void operator()(const A::Vec<T>&){ Assert0(false); }
-				void operator()(boost::blank) { Assert0(false); }
+				void operator()(const T*, std::size_t){ Assert0(false); }
 			};
 			struct MakeInfo {
 				DataP_Unit result;
 				template <class T>
-				void operator()(const A::Vec<T>& t) {
+				void operator()(const T* t, const std::size_t len) {
 					result = {
 						DataP{
-							.pointer = reinterpret_cast<uintptr_t>(t.data()),
-							.length = t.size(),
+							.pointer = reinterpret_cast<uintptr_t>(t),
+							.length = len
 						},
 						.unitSize = sizeof(t[0]),
 					};
 				}
-				void operator()(boost::blank) { Assert0(false); }
 			};
 		}
 	}
 	A::Vec<int32_t> A::cnvToInt32() const {
-		visitor::CnvInt32 v;
-		boost::apply_visitor(v, getData());
-		return std::move(v.result);
+		visitor::Cnv<int32_t> cnv;
+		getData(cnv);
+		return std::move(cnv.result);
+	}
+	A::Vec<float> A::cnvToFloat() const {
+		visitor::Cnv<float> cnv;
+		getData(cnv);
+		return std::move(cnv.result);
 	}
 	DataP_Unit A::getDataP_Unit() const {
 		visitor::MakeInfo v;
-		boost::apply_visitor(v, getData());
+		getData(v);
 		return v.result;
+	}
+	std::size_t A::getUnitSize() const {
+		Size ret;
+		_SelectByType(_componentType, [&ret](auto raw){
+			ret = sizeof(raw);
+		});
+		return ret;
 	}
 	A::Size A::getByteStride() const noexcept {
 		if(const auto s = _getByteStride())
 			return *s;
-
-		Size ret;
-		_detectType([&ret](auto raw, auto){
-			ret = sizeof(raw);
-		});
-		return ret * _nElem;
+		return getUnitSize() * getActualNElem();
 	}
 }
