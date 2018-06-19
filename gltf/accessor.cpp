@@ -235,7 +235,8 @@ namespace rev::gltf {
 		namespace visitor {
 			template <class To>
 			struct Cnv {
-				A::Vec<To> result;
+				A::Vec<To>		result;
+
 				template <class T, ENABLE_IF(lubee::is_number<T>{})>
 				void operator()(const T* t, const std::size_t len) {
 					result.resize(len);
@@ -243,8 +244,14 @@ namespace rev::gltf {
 						result[i] = t[i];
 					}
 				}
-				template <class T, ENABLE_IF(!lubee::is_number<T>{})>
-				void operator()(const T*, std::size_t){ Assert0(false); }
+				template <class V, ENABLE_IF(frea::is_vector<V>{})>
+				void operator()(const V* v, const std::size_t len) {
+					return (*this)(reinterpret_cast<const typename V::value_t*>(&v), len*V::size);
+				}
+				template <class M, ENABLE_IF(frea::is_matrix<M>{})>
+				void operator()(const M* m, const std::size_t len) {
+					return (*this)(reinterpret_cast<const typename M::value_t*>(&m), len*M::dim_m*M::dim_n);
+				}
 			};
 			struct MakeInfo {
 				DataP_Unit result;
