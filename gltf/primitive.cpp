@@ -73,7 +73,7 @@ namespace rev::gltf {
 			std::vector<HVb> vb;
 			std::size_t nV = std::numeric_limits<std::size_t>::max();
 			{
-				std::size_t index=0;
+				std::size_t attrIndex=0;
 				std::unordered_map<HVb, std::size_t> map;
 
 				VDecl::VDInfoV		vdinfo;
@@ -88,9 +88,9 @@ namespace rev::gltf {
 								itr != map.end())
 							idx = itr->second;
 						else {
-							idx = index;
-							map.emplace(key, index);
-							++index;
+							idx = attrIndex;
+							map.emplace(key, attrIndex);
+							++attrIndex;
 
 							nV = std::min(nV, acc._count);
 						}
