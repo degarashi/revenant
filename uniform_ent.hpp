@@ -85,6 +85,7 @@ namespace rev {
 		GLuint NumberCnv(T);
 		template <class T, ENABLE_IF(std::is_integral_v<T> && std::is_signed_v<T>)>
 		GLint NumberCnv(T);
+		bool NumberCnv(bool);
 		template <class T>
 		using NumberCnv_t = decltype(NumberCnv(std::declval<T>()));
 
