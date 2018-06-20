@@ -130,6 +130,9 @@ namespace rev {
 	bool Primitive::hasIndex() const noexcept {
 		return static_cast<bool>(ib);
 	}
+	const FWVDecl& Primitive::getVDecl() const noexcept {
+		return vdecl;
+	}
 }
 #include "gl_if.hpp"
 #include "gl_error.hpp"

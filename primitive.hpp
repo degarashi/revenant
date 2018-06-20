@@ -75,6 +75,7 @@ namespace rev {
 			void _makeVHash();
 
 		public:
+			const FWVDecl& getVDecl() const noexcept;
 			template <class... VBs>
 			static HPrim MakeWithIndex(const FWVDecl& vd, DrawMode mode, const HIb& ib,  const GLsizei count, const GLuint offsetElem, const VBs&... vbs) {
 				HPrim ret = _MakeWithIndex(vd, mode, ib, count, offsetElem);
