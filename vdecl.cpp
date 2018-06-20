@@ -158,4 +158,11 @@ namespace rev {
 	bool VDecl::operator != (const VDecl& vd) const {
 		return !(this->operator == (vd));
 	}
+	bool VDecl::hasAttribute(const VSemantic v) const {
+		for(auto& vd : _vdInfo) {
+			if(vd.sem == v)
+				return true;
+		}
+		return false;
+	}
 }

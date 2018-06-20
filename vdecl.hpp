@@ -74,6 +74,7 @@ namespace rev {
 			void dcmd_export(draw::IQueue& q, const std::vector<HVb>& stream, const VSemAttrMap& vmap) const;
 			bool operator == (const VDecl& vd) const;
 			bool operator != (const VDecl& vd) const;
+			bool hasAttribute(VSemantic v) const;
 			#ifdef DEBUGGUI_ENABLED
 				using CBProp = std::function<void (const VDInfo&)>;
 				void property(const CBProp& cb) const;
