@@ -10,6 +10,9 @@
 #include "gltf/v1/v_semantic.hpp"
 #include "gltf/v1/mesh.hpp"
 
+#include "mk.hpp"
+#include <numeric>
+
 namespace rev::gltf {
 	namespace {
 		const std::pair<GLenum, DrawMode::e> c_mode[] = {
@@ -65,10 +68,123 @@ namespace rev::gltf {
 				D_Assert0(false);
 			}
 		};
+		std::vector<int32_t> MakeSequence(const std::size_t n) {
+			std::vector<int32_t> ret(n);
+			std::iota(ret.begin(), ret.end(), 0);
+			return ret;
+		}
+	}
+	template <class P>
+	const HPrim& Primitive<P>::getPrimitiveWithTangent() const {
+		if(!cache.tangent) {
+			struct TangentInput {
+				const Accessor_t	*pos,
+									*normal,
+									*uv;
+
+				bool canGenerate() const noexcept {
+					return pos && normal && uv;
+				}
+			} t_input = {};
+			bool hasTangent = false;
+			for(auto& a : attribute) {
+				if(a.first == VSemantic{VSemEnum::POSITION, 0})
+					t_input.pos = &a.second;
+				else if(a.first == VSemantic{VSemEnum::NORMAL, 0})
+					t_input.normal = &a.second;
+				else if(a.first == VSemantic{VSemEnum::TEXCOORD, 0})
+					t_input.uv = &a.second;
+				else if(a.first == VSemantic{VSemEnum::TANGENT, 0})
+					hasTangent = true;
+			}
+			// 既にtangentベクトルを持っていたら通常のprimitive生成
+			if(hasTangent) {
+				cache.tangent = getPrimitive();
+				return *cache.tangent;
+			}
+
+			if(!(mode == DrawMode::Triangles) ||
+				!t_input.canGenerate())
+			{
+				// 生成できないのでnullをセット
+				cache.tangent = nullptr;
+				return *cache.tangent;
+			}
+
+			MKInput mki(
+				index ? (*index)->cnvToInt32() : MakeSequence((*t_input.pos)->_count),
+				(*t_input.pos)->cnvToFloat(),
+				(*t_input.normal)->cnvToFloat(),
+				(*t_input.uv)->cnvToFloat()
+			);
+			const auto res = mki.calcResult();
+			const auto nV = res.maxIndex+1;
+			std::vector<float>	vstream;
+			struct VEnt {
+				VSemantic		vsem;
+				std::size_t		offset,
+								nElem;
+			};
+			using VData = std::vector<VEnt>;
+			VData vdata;
+			// 全ての頂点情報を列挙して再構築(一本のストリームにする)
+			for(auto& a : attribute) {
+				auto& acc = *a.second;
+				const auto nelem = acc.getActualNElem();
+				auto ar = acc.cnvToFloat();
+				ar.resize(nV * nelem);
+
+				for(auto& cp : res.copy) {
+					for(std::size_t i=0 ; i<nelem ; i++)
+						ar[cp.to*nelem+i] = ar[cp.from*nelem+i];
+				}
+				vdata.emplace_back(VEnt{
+					.vsem = a.first,
+					.offset = vstream.size() * sizeof(float),
+					.nElem = nelem
+				});
+				std::copy(ar.begin(), ar.end(), std::back_inserter(vstream));
+			}
+			// tangentを付加
+			{
+				std::vector<float>	tanV(nV*4);
+				for(auto& cp : res.copy) {
+					D_Assert0(cp.from < cp.to || cp.from < res.prevLen);
+					for(std::size_t i=0 ; i<4 ; i++)
+						tanV[cp.to*4+i] = cp.tangent[i];
+				}
+				vdata.emplace_back(VEnt{
+					.vsem = VSemantic{VSemEnum::TANGENT, 0},
+					.offset = vstream.size() * sizeof(float),
+					.nElem = 4
+				});
+				std::copy(tanV.begin(), tanV.end(), std::back_inserter(vstream));
+			}
+			// make vertex buffer
+			VDecl::VDInfoV		vdinfo;
+			for(auto& v : vdata) {
+				vdinfo.emplace_back(0, v.offset, GL_FLOAT, GL_FALSE, v.nElem, v.vsem, v.nElem*sizeof(float));
+			}
+			const HVb vb = mgr_gl.makeVBuffer(DrawType::Static);
+			vb->initData(std::move(vstream), 0);
+			// make index buffer
+			const HIb ib = mgr_gl.makeIBuffer(DrawType::Static);
+			const auto idxLen = res.index.size();
+			ib->initData(std::move(res.index));
+			cache.tangent = ::rev::Primitive::MakeWithIndex(
+								FWVDecl(vdinfo),
+								DrawMode::Triangles,
+								ib,
+								idxLen,
+								0,
+								vb
+							);
+		}
+		return *cache.tangent;
 	}
 	template <class P>
 	const HPrim& Primitive<P>::getPrimitive() const {
-		if(!primitive_cache) {
+		if(!cache.normal) {
 			FWVDecl vdecl;
 			std::vector<HVb> vb;
 			std::size_t nV = std::numeric_limits<std::size_t>::max();
@@ -142,12 +258,12 @@ namespace rev::gltf {
 
 				IB_Visitor visitor(ib);
 				idata.getData(visitor);
-				primitive_cache = ::rev::Primitive::MakeWithIndex(vdecl, mode, ib, visitor._count, 0, vb.data(), vb.size());
+				cache.normal = ::rev::Primitive::MakeWithIndex(vdecl, mode, ib, visitor._count, 0, vb.data(), vb.size());
 			} else {
-				primitive_cache = ::rev::Primitive::MakeWithoutIndex(vdecl, mode, 0, nV, vb.data(), vb.size());
+				cache.normal = ::rev::Primitive::MakeWithoutIndex(vdecl, mode, 0, nV, vb.data(), vb.size());
 			}
 		}
-		return primitive_cache;
+		return cache.normal;
 	}
 }
 

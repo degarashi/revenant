@@ -54,10 +54,15 @@ namespace rev::gltf {
 		VSem_Accessor		attribute;
 		Idx_Accessor_OP		index;
 		DrawMode			mode;
-		mutable HPrim		primitive_cache;
+		mutable struct {
+			using Prim_Op = spi::Optional<HPrim>;
+			HPrim		normal;
+			Prim_Op		tangent;
+		} cache;
 
 		Primitive(const JValue& v, const Query_t& q);
 		static bool CanLoad(const JValue& v) noexcept;
 		const HPrim& getPrimitive() const;
+		const HPrim& getPrimitiveWithTangent() const;
 	};
 }
