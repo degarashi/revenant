@@ -2,6 +2,7 @@
 #include "../imgui/imgui.h"
 #include "frea/vector.hpp"
 #include <cstring>
+#include "../color.hpp"
 
 namespace rev {
 	namespace debug {
@@ -34,6 +35,14 @@ namespace rev {
 			}
 			void _Show(const lubee::SizeF& s) {
 				_Show(reinterpret_cast<const frea::Vec2&>(s));
+			}
+			void _Show(const RGBColor& c) {
+				auto tmp = c;
+				ImGui::ColorEdit3("", &tmp.x, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoPicker);
+			}
+			void _Show(const RGBAColor& c) {
+				auto tmp = c;
+				ImGui::ColorEdit4("", &tmp.x, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoPicker);
 			}
 
 			bool _Edit(bool& b) {
@@ -78,6 +87,12 @@ namespace rev {
 			}
 			bool _Edit(lubee::SizeF& s) {
 				return _Edit(reinterpret_cast<frea::Vec2&>(s));
+			}
+			bool _Edit(RGBColor& c) {
+				return ImGui::ColorEdit3("", &c.x);
+			}
+			bool _Edit(RGBAColor& c) {
+				return ImGui::ColorEdit4("", &c.x, ImGuiColorEditFlags_AlphaPreviewHalf);
 			}
 
 			bool _Slider(float& f, const float v_min, const float v_max) {

@@ -30,6 +30,8 @@ namespace spi {
 	class ResMgrName;
 }
 namespace rev {
+	struct RGBColor;
+	struct RGBAColor;
 	struct IDebugGui;
 	namespace debug {
 		DEF_HASMETHOD(ToStr)
@@ -80,6 +82,8 @@ namespace rev {
 			void _Show(const lubee::SizeF& s);
 			void _Show(const beat::g2::Pose& p);
 			void _Show(const beat::g3::Pose& p);
+			void _Show(const RGBColor& c);
+			void _Show(const RGBAColor& c);
 			void _Show(IDebugGui& g);
 			template <class TAG, class V>
 			void _Show(const frea::Angle<TAG,V>& a);
@@ -140,6 +144,8 @@ namespace rev {
 			bool _Edit(IDebugGui& g);
 			bool _Edit(beat::g2::Pose& p);
 			bool _Edit(beat::g3::Pose& p);
+			bool _Edit(RGBColor& c);
+			bool _Edit(RGBAColor& c);
 			template <class TAG, class V>
 			bool _Edit(frea::Angle<TAG,V>& a);
 
