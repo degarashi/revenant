@@ -47,11 +47,11 @@ namespace rev::gltf {
 		return true;
 	}
 	namespace {
-		struct Visitor {
+		struct IB_Visitor {
 			HIb				_ib;
 			std::size_t		_count;
 
-			Visitor(const HIb& ib):
+			IB_Visitor(const HIb& ib):
 				_ib(ib),
 				_count(0)
 			{}
@@ -140,7 +140,7 @@ namespace rev::gltf {
 				const HIb ib = mgr_gl.makeIBuffer(DrawType::Static);
 				auto& idata = *(*index);
 
-				Visitor visitor(ib);
+				IB_Visitor visitor(ib);
 				idata.getData(visitor);
 				primitive_cache = ::rev::Primitive::MakeWithIndex(vdecl, mode, ib, visitor._count, 0, vb.data(), vb.size());
 			} else {
