@@ -18,6 +18,22 @@ namespace rev::gltf {
 		Buff			value;
 
 		template <class T, std::size_t N>
+		PrimitiveVertex(
+			const GLenum type,
+			const VSemantic vsem,
+			const bool normalized,
+			const std::size_t nElem,
+			const T (&t)[N]
+		):
+			type(type),
+			vsem(vsem),
+			normalized(normalized),
+			nElem(nElem)
+		{
+			setValue(t);
+		}
+
+		template <class T, std::size_t N>
 		void setValue(const T (&t)[N]) {
 			D_Assert0(N <= MaxBuff);
 			auto* dst = reinterpret_cast<T*>(value.data());
@@ -26,6 +42,7 @@ namespace rev::gltf {
 			stride = sizeof(T)*N;
 		}
 	};
+	using PrimitiveVertexV = std::vector<PrimitiveVertex>;
 	template <class Policy>
 	struct Primitive {
 		using Accessor_t = typename Policy::Accessor_t;

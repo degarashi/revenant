@@ -104,19 +104,33 @@ namespace rev::gltf {
 				}
 
 				std::size_t vdIdx = vb.size();
-				P::VBuffModify(vc, [&vdIdx, &vdinfo, &vb, nV](const PrimitiveVertex& v) {
-					HVb vb0 = mgr_gl.makeVBuffer(DrawType::Static);
-					const auto unit = v.stride;
-					std::vector<uint8_t> buff(unit * nV);
-					auto* dst = buff.data();
-					for(std::size_t i=0 ; i<nV ; i++) {
-						for(std::size_t j=0 ; j<unit ; j++) {
-							*dst++ = v.value[j];
-						}
+				P::VBuffModify(vc, [&vdIdx, &vdinfo, &vb, nV](const PrimitiveVertexV& v) {
+					if(v.empty())
+						return;
+					std::size_t stride = 0;
+					for(auto& v0 : v)
+						stride += v0.stride;
+
+					std::vector<uint8_t> unit(stride);
+					auto* dst = unit.data();
+					std::size_t ofs = 0;
+					for(auto& v0 : v) {
+						const std::size_t size = v0.stride;
+						for(std::size_t i=0 ; i<size ; i++)
+							*dst++ = v0.value[i];
+						vdinfo.emplace_back(vdIdx, ofs, v0.type, v0.normalized, v0.nElem, v0.vsem, stride);
+						ofs += size;
 					}
-					D_Assert0(dst == buff.data() + unit*nV);
-					vdinfo.emplace_back(vdIdx++, 0, v.type, v.normalized, v.nElem, v.vsem, unit);
-					vb0->initData(std::move(buff), unit);
+					D_Assert0(dst == unit.data() + stride);
+					++vdIdx;
+
+					std::vector<uint8_t> buff(stride * nV);
+					for(std::size_t i=0 ; i<nV ; i++) {
+						std::memcpy(buff.data()+i*stride, unit.data(), stride);
+					}
+
+					HVb vb0 = mgr_gl.makeVBuffer(DrawType::Static);
+					vb0->initData(std::move(buff), stride);
 					vb.emplace_back(vb0);
 				});
 				vdecl = FWVDecl(vdinfo);

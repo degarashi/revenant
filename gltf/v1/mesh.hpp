@@ -11,7 +11,7 @@ namespace rev::gltf::v1 {
 		using Query_t = IDataQuery;
 		using VSem_t = V_Semantic;
 
-		using ModCB = std::function<void (const PrimitiveVertex&)>;
+		using ModCB = std::function<void (const PrimitiveVertexV&)>;
 		static void VBuffModify(const VSemCount&, const ModCB&) {}
 	};
 	struct Primitive :
