@@ -85,8 +85,10 @@ namespace rev::gltf {
 					return pos && normal && uv;
 				}
 			} t_input = {};
+			VSemCount	vc = {};
 			bool hasTangent = false;
 			for(auto& a : attribute) {
+				++vc[a.first.sem];
 				if(a.first == VSemantic{VSemEnum::POSITION, 0})
 					t_input.pos = &a.second;
 				else if(a.first == VSemantic{VSemEnum::NORMAL, 0})
@@ -164,8 +166,12 @@ namespace rev::gltf {
 			for(auto& v : vdata) {
 				vdinfo.emplace_back(0, v.offset, GL_FLOAT, GL_FALSE, v.nElem, v.vsem, v.nElem*sizeof(float));
 			}
-			const HVb vb = mgr_gl.makeVBuffer(DrawType::Static);
-			vb->initData(std::move(vstream), 0);
+			HVb vb[2];
+			vb[0] = mgr_gl.makeVBuffer(DrawType::Static);
+			vb[0]->initData(std::move(vstream), 0);
+			P::VBuffModify(vc, [&vdinfo, &vb=vb[1], nV](const PrimitiveVertexV& v) {
+				vb = VBuffProc(vdinfo, 1, nV, v);
+			});
 			// make index buffer
 			const HIb ib = mgr_gl.makeIBuffer(DrawType::Static);
 			const auto idxLen = res.index.size();
@@ -176,7 +182,8 @@ namespace rev::gltf {
 								ib,
 								idxLen,
 								0,
-								vb
+								vb,
+								vb[1] ? 2 : 1
 							);
 		}
 		return *cache.tangent;
