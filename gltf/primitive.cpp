@@ -1,7 +1,6 @@
 #include "gltf/primitive.hpp"
 #include "value_loader.hpp"
 #include "gltf/check.hpp"
-#include "../vdecl.hpp"
 #include "../gl_resource.hpp"
 #include "../primitive.hpp"
 
@@ -183,6 +182,35 @@ namespace rev::gltf {
 		return *cache.tangent;
 	}
 	template <class P>
+	HVb Primitive<P>::VBuffProc(VDecl::VDInfoV& vdinfo, const std::size_t streamId, const std::size_t nV, const PrimitiveVertexV& v) {
+		if(v.empty())
+			return nullptr;
+		std::size_t stride = 0;
+		for(auto& v0 : v)
+			stride += v0.stride;
+
+		std::vector<uint8_t> unit(stride);
+		auto* dst = unit.data();
+		std::size_t ofs = 0;
+		for(auto& v0 : v) {
+			const std::size_t size = v0.stride;
+			for(std::size_t i=0 ; i<size ; i++)
+				*dst++ = v0.value[i];
+			vdinfo.emplace_back(streamId, ofs, v0.type, v0.normalized, v0.nElem, v0.vsem, stride);
+			ofs += size;
+		}
+		D_Assert0(dst == unit.data() + stride);
+
+		std::vector<uint8_t> buff(stride * nV);
+		for(std::size_t i=0 ; i<nV ; i++) {
+			std::memcpy(buff.data()+i*stride, unit.data(), stride);
+		}
+
+		HVb vb = mgr_gl.makeVBuffer(DrawType::Static);
+		vb->initData(std::move(buff), stride);
+		return vb;
+	}
+	template <class P>
 	const HPrim& Primitive<P>::getPrimitive() const {
 		if(!cache.normal) {
 			FWVDecl vdecl;
@@ -219,35 +247,9 @@ namespace rev::gltf {
 					vb[m.second] = m.first;
 				}
 
-				std::size_t vdIdx = vb.size();
-				P::VBuffModify(vc, [&vdIdx, &vdinfo, &vb, nV](const PrimitiveVertexV& v) {
-					if(v.empty())
-						return;
-					std::size_t stride = 0;
-					for(auto& v0 : v)
-						stride += v0.stride;
-
-					std::vector<uint8_t> unit(stride);
-					auto* dst = unit.data();
-					std::size_t ofs = 0;
-					for(auto& v0 : v) {
-						const std::size_t size = v0.stride;
-						for(std::size_t i=0 ; i<size ; i++)
-							*dst++ = v0.value[i];
-						vdinfo.emplace_back(vdIdx, ofs, v0.type, v0.normalized, v0.nElem, v0.vsem, stride);
-						ofs += size;
-					}
-					D_Assert0(dst == unit.data() + stride);
-					++vdIdx;
-
-					std::vector<uint8_t> buff(stride * nV);
-					for(std::size_t i=0 ; i<nV ; i++) {
-						std::memcpy(buff.data()+i*stride, unit.data(), stride);
-					}
-
-					HVb vb0 = mgr_gl.makeVBuffer(DrawType::Static);
-					vb0->initData(std::move(buff), stride);
-					vb.emplace_back(vb0);
+				P::VBuffModify(vc, [&vdinfo, &vb, nV](const PrimitiveVertexV& v) {
+					if(auto vb0 = VBuffProc(vdinfo, vb.size(), nV, v))
+						vb.emplace_back(vb0);
 				});
 				vdecl = FWVDecl(vdinfo);
 			}

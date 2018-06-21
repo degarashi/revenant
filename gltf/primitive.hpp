@@ -1,6 +1,7 @@
 #pragma once
 #include "../vertex.hpp"
 #include "../gl_types.hpp"
+#include "../vdecl.hpp"
 #include "handle/opengl.hpp"
 #include "json_types.hpp"
 
@@ -59,6 +60,7 @@ namespace rev::gltf {
 			HPrim		normal;
 			Prim_Op		tangent;
 		} cache;
+		static HVb VBuffProc(VDecl::VDInfoV& vdinfo, std::size_t streamId, std::size_t nV, const PrimitiveVertexV& v);
 
 		Primitive(const JValue& v, const Query_t& q);
 		static bool CanLoad(const JValue& v) noexcept;
