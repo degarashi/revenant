@@ -90,7 +90,7 @@ namespace rev {
 								const URI& uri0, const URI& uri1, const URI& uri2,
 								const URI& uri3, const URI& uri4, const URI& uri5)
 	{
-		// 個別指定CubeTextureの場合はリソース名はUriを全部つなげた文字列とする
+		// リソース名はUriを全部つなげた文字列とする
 		std::string tmp(uri0.plain());
 		const auto fn = [&tmp](const URI& u) {
 			tmp.append(u.plain());
@@ -101,9 +101,18 @@ namespace rev {
 			loadResourceApp<TextureSrc_CubeURI>(
 				FileURI(tmp),
 				[&](auto& /*uri*/, auto&& mk){
-					mk(uri0.clone(), uri1.clone(), uri2.clone(),
-						uri3.clone(), uri4.clone(), uri5.clone(),
-						miplevel,fmt);
+					// UserURIをFileURIへ変換
+					const auto cnvURI = [this](const URI& u){
+						URIWrap wrap(u);
+						_modifyResourceName(wrap);
+						return wrap.uri;
+					};
+					mk(
+						cnvURI(uri0), cnvURI(uri1), cnvURI(uri2),
+						cnvURI(uri3), cnvURI(uri4), cnvURI(uri5),
+						miplevel,
+						fmt
+					);
 					_resourceInit(mk.pointer);
 				}
 			).first;
