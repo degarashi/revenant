@@ -5,6 +5,7 @@
 #include "json_types.hpp"
 #include "../handle/opengl.hpp"
 #include "lubee/compare.hpp"
+#include "../dc/bbox.hpp"
 
 namespace rev::gltf {
 	class Accessor {
@@ -36,6 +37,8 @@ namespace rev::gltf {
 
 			// 値が取り得る範囲 (length == nElem)
 			Filter_S		_filter;
+			// (POSITION用)バウンディングボックス
+			dc::BBox_Op		_bbox;
 			mutable Cache	_cache;
 		public:
 			GLTypeFmt		_componentType;
@@ -149,6 +152,7 @@ namespace rev::gltf {
 				return visitor;
 			}
 
+			const dc::BBox_Op& getBBox() const;
 			std::size_t getActualNElem() const;
 			std::size_t getUnitSize() const;
 			Vec<float> cnvToFloat() const;

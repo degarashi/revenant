@@ -109,6 +109,13 @@ namespace rev::gltf {
 			const auto minV = L::Required<L::Array<L::Number>>(v, "min");
 			D_Assert0(maxV.size() == minV.size());
 
+			if(minV.size() == 3) {
+				_bbox = dc::BBox{
+					{minV[0], minV[1], minV[2]},
+					{maxV[0], maxV[1], maxV[2]}
+				};
+			}
+
 			Filter_S filter;
 			_SelectByType(_componentType, [&filter, &minV, &maxV](auto type){
 				using Type = decltype(type);
@@ -267,6 +274,9 @@ namespace rev::gltf {
 				}
 			};
 		}
+	}
+	const dc::BBox_Op& A::getBBox() const {
+		return _bbox;
 	}
 	A::Vec<int32_t> A::cnvToInt32() const {
 		visitor::Cnv<int32_t> cnv;
