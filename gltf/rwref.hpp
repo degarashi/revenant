@@ -19,4 +19,5 @@ namespace rev::gltf {
 
 			const ByteV& getBuffer() const;
 	};
+	using RWRef_OP = spi::Optional<RWRef>;
 }

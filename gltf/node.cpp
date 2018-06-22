@@ -23,6 +23,8 @@ namespace rev::gltf {
 }
 
 #include "gltf/v1/node.hpp"
+#include "gltf/v2/node.hpp"
 namespace rev::gltf {
 	template class Node<v1::DRef_Node, v1::IDataQuery>;
+	template class Node<v2::DRef_Node, v2::IDataQuery>;
 }

@@ -8,8 +8,13 @@
 #include "gltf/v1/accessor.hpp"
 #include "gltf/v1/v_semantic.hpp"
 #include "gltf/v1/mesh.hpp"
+#include "gltf/v2/buffer.hpp"
+#include "gltf/v2/accessor.hpp"
+#include "gltf/v2/v_semantic.hpp"
+#include "gltf/v2/mesh.hpp"
 
 #include "mk.hpp"
+
 #include <numeric>
 
 namespace rev::gltf {
@@ -335,3 +340,4 @@ namespace rev::gltf {
 }
 
 template struct rev::gltf::Primitive<rev::gltf::v1::PrimitivePolicy>;
+template struct rev::gltf::Primitive<rev::gltf::v2::PrimitivePolicy>;

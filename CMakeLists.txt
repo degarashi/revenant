@@ -33,6 +33,7 @@ if(${WITH_DEBUGGUI})
 	aux_source_directory(debug_gui LIBSRC_GUI)
 	aux_source_directory(debug_gui/types LIBSRC_GUI)
 	aux_source_directory(debug_gui/gltf/v1 LIBSRC_GLTF_V1)
+	aux_source_directory(debug_gui/gltf/v2 LIBSRC_GLTF_V2)
 	aux_source_directory(debug_gui/dc LIBSRC_DC)
 endif()
 if(${WITH_PROFILER})
@@ -52,6 +53,7 @@ aux_source_directory(imgui LIBSRC_MAIN)
 aux_source_directory(gltf LIBSRC_GLTF)
 aux_source_directory(external LIBSRC_GLTF)
 aux_source_directory(gltf/v1 LIBSRC_GLTF_V1)
+aux_source_directory(gltf/v2 LIBSRC_GLTF_V2)
 aux_source_directory(dc LIBSRC_DC)
 list(REMOVE_ITEM LIBSRC_MAIN ${OS_DEPENDANT_SRC} ${SOUND_DEPENDANT_SRC})
 
@@ -138,6 +140,7 @@ MakeLib(revenant_glxparse LIBSRC_GLXPARSE)
 MakeLib(revenant_backup LIBSRC_BACKUP)
 MakeLib(revenant_gltf LIBSRC_GLTF)
 MakeLib(revenant_gltfv1 LIBSRC_GLTF_V1)
+MakeLib(revenant_gltfv2 LIBSRC_GLTF_V2)
 MakeLib(revenant_dc LIBSRC_DC)
 
 # ------ テストコード生成 ------
@@ -150,6 +153,7 @@ set(TESTEXE_LIB
 	revenant_glwrapper
 	revenant_glxparse
 	revenant_backup
+	revenant_gltfv2
 	revenant_gltfv1
 	revenant_gltf
 	revenant_dc

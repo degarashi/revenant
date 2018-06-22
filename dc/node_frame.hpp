@@ -26,4 +26,10 @@ namespace rev::dc {
 		std::size_t getNUnit() const noexcept override;
 		void output(TfNode& dst, std::size_t idx, float t) const override;
 	};
+	struct Node_W_FrameOut : Node_FrameOut {
+		mutable std::size_t		nWeight;
+
+		std::size_t getNUnit() const noexcept override;
+		void output(TfNode& dst, std::size_t idx, float t) const override;
+	};
 }

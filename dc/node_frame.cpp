@@ -62,4 +62,14 @@ namespace rev::dc {
 		auto* res = reinterpret_cast<const frea::Vec3*>(_calcValue(idx, t));
 		dst.refPose().setScaling(*res);
 	}
+
+	std::size_t Node_W_FrameOut::getNUnit() const noexcept {
+		return nWeight;
+	}
+	void Node_W_FrameOut::output(TfNode& dst, const std::size_t idx, const float t) const {
+		auto* dsf = static_cast<std::vector<float>*>(dst.userData.get());
+		nWeight = dsf->size();
+		auto* res = _calcValue(idx, t);
+		dsf->assign(res, res+nWeight);
+	}
 }
