@@ -120,7 +120,12 @@ namespace rev {
 	}
 	HSfc Surface::Load(HRW hRW) {
 		SDL_RWops* rw = hRW->getOps();
-		SDL_Surface *const sfc = IMGThrow(LoadFailed, IMG_Load_RW, rw, 0);
+		SDL_Surface* sfc;
+		try {
+			sfc = IMGThrow(LoadFailed, IMG_Load_RW, rw, 0);
+		} catch(const LoadFailed& e) {
+			sfc = IMGThrow(LoadFailed, IMG_LoadTGA_RW, rw);
+		}
 		return HSfc(new Surface(sfc));
 	}
 	void Surface::saveAsBMP(HRW hDst) const {
