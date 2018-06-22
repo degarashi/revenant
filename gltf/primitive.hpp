@@ -4,6 +4,7 @@
 #include "../vdecl.hpp"
 #include "handle/opengl.hpp"
 #include "json_types.hpp"
+#include "../dc/bbox.hpp"
 
 namespace rev::gltf {
 	using VSemCount = std::size_t[VSemEnum::_Num];
@@ -55,10 +56,13 @@ namespace rev::gltf {
 		VSem_Accessor		attribute;
 		Idx_Accessor_OP		index;
 		DrawMode			mode;
+
 		mutable struct {
 			using Prim_Op = spi::Optional<HPrim>;
 			HPrim		normal;
 			Prim_Op		tangent;
+			dc::BBox_Op	bbox;
+			bool		noBBox;
 		} cache;
 		static HVb VBuffProc(VDecl::VDInfoV& vdinfo, std::size_t streamId, std::size_t nV, const PrimitiveVertexV& v);
 
@@ -66,5 +70,6 @@ namespace rev::gltf {
 		static bool CanLoad(const JValue& v) noexcept;
 		const HPrim& getPrimitive() const;
 		const HPrim& getPrimitiveWithTangent() const;
+		dc::BBox_Op getBBox() const;
 	};
 }

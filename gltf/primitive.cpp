@@ -218,6 +218,29 @@ namespace rev::gltf {
 		return vb;
 	}
 	template <class P>
+	dc::BBox_Op Primitive<P>::getBBox() const {
+		if(!cache.bbox) {
+			const auto itr = std::find_if(attribute.begin(), attribute.end(), [](auto& a){
+				return a.first==VSemantic{VSemEnum::POSITION, 0};
+			});
+			if(itr == attribute.end())
+				throw std::runtime_error("can't calculate bounding-box (has not POSITION)");
+			auto& acc = itr->second;
+			if(acc->getActualNElem() != 3)
+				throw std::runtime_error("position accessor's: nElem is not 3");
+
+			cache.bbox = acc->getBBox();
+			if(!cache.bbox) {
+				cache.bbox = dc::BBox{};
+				cache.noBBox = true;
+			}
+			cache.noBBox = false;
+		}
+		if(cache.noBBox)
+			return spi::none;
+		return cache.bbox;
+	}
+	template <class P>
 	const HPrim& Primitive<P>::getPrimitive() const {
 		if(!cache.normal) {
 			FWVDecl vdecl;
