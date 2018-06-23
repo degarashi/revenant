@@ -34,6 +34,7 @@ namespace rev {
 			#undef SEQ_SYSUNI3D
 
 			U_Matrix3D();
+			void resetWorld();
 			UniformSetF getUniformF(const GLProgram& prog) const override;
 	};
 }

@@ -84,6 +84,9 @@ namespace rev {
 		setWorld(im);
 		setTransform(im);
 	}
+	void U_Matrix3D::resetWorld() {
+		setWorld(frea::AMat4::Identity());
+	}
 	UniformSetF U_Matrix3D::getUniformF(const GLProgram& prog) const {
 		UniformSetF_V fv;
 
