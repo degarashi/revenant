@@ -5,18 +5,20 @@
 namespace rev::test {
 	class FPCamera {
 		private:
-			DefineEnum(Act,
-				(MoveX)(MoveY)(MoveZ)
-				(DirX)(DirY)(DirBtn)
-			);
-			HAct	_act[Act::_Num];
 			HCam3	_camera;
 			FPPose	_fp;
 			bool	_press;
 
 		public:
 			FPCamera();
-			void update();
+			void update(
+				const HActC& move_x,
+				const HActC& move_y,
+				const HActC& move_z,
+				const HActC& dir_x,
+				const HActC& dir_y,
+				const HActC& dir
+			);
 			const HCam3& getCamera() const noexcept;
 	};
 }

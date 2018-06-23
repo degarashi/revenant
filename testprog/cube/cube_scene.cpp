@@ -2,6 +2,7 @@
 #include "cube.hpp"
 #include "../../u_matrix3d.hpp"
 #include "../../glx_if.hpp"
+#include "shared.hpp"
 
 namespace rev::test {
 	struct CubeScene::St_Default : StateT<CubeScene, St_Base> {
@@ -14,7 +15,15 @@ namespace rev::test {
 		}
 		void onUpdate(CubeScene& self) override {
 			St_Base::onUpdate(self);
-			self._fpc.update();
+			auto& sh = *tls_shared;
+			self._fpc.update(
+				sh.act[UserShare::Act::CMoveX],
+				sh.act[UserShare::Act::CMoveY],
+				sh.act[UserShare::Act::CMoveZ],
+				sh.act[UserShare::Act::CDirX],
+				sh.act[UserShare::Act::CDirY],
+				sh.act[UserShare::Act::CDirBtn]
+			);
 		}
 		void onExit(CubeScene& self, const ObjTypeId_OP id) override {
 			auto dg = self.getDrawGroup();

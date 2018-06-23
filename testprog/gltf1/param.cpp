@@ -7,6 +7,7 @@
 #include "../../u_matrix2d.hpp"
 #include "../../u_matrix3d.hpp"
 #include "../../u_common.hpp"
+#include "shared.hpp"
 
 namespace rev::test {
 	HFx Param::makeEffect() const {
@@ -21,6 +22,10 @@ namespace rev::test {
 		>();
 	}
 	HScene Param::makeFirstScene() const {
+		tls_shared = UserShare();
 		return rev_mgr_obj.emplace<glTF1Scene>();
+	}
+	Param::~Param() {
+		tls_shared.terminate();
 	}
 }

@@ -21,4 +21,5 @@ namespace rev::test {
 	HScene Param::makeFirstScene() const {
 		return rev_mgr_obj.emplace<SpriteScene>();
 	}
+	Param::~Param() {}
 }

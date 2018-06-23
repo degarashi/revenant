@@ -11,6 +11,7 @@
 #include "../../camera3d.hpp"
 #include "../../u_matrix3d.hpp"
 #include "../../glx_if.hpp"
+#include "shared.hpp"
 
 namespace rev::test {
 	glTF1Scene::glTF1Scene() {
@@ -61,8 +62,17 @@ namespace rev::test {
 		}
 		void onUpdate(glTF1Scene& self) override {
 			St_Base::onUpdate(self);
-			if(self._cameraIndex == 0)
-				self._fpc.update();
+			if(self._cameraIndex == 0) {
+				auto& sh = *tls_shared;
+				self._fpc.update(
+					sh.act[UserShare::Act::CMoveX],
+					sh.act[UserShare::Act::CMoveY],
+					sh.act[UserShare::Act::CMoveZ],
+					sh.act[UserShare::Act::CDirX],
+					sh.act[UserShare::Act::CDirY],
+					sh.act[UserShare::Act::CDirBtn]
+				);
+			}
 		}
 		void onDraw(const glTF1Scene& self, IEffect& e) const override {
 			St_Base::onDraw(self, e);

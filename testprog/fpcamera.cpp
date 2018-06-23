@@ -14,29 +14,20 @@ namespace rev::test {
 			c.setFov(frea::DegF(90));
 			c.setZPlane(1e-2f, 1e3f);
 		}
-		{
-			const auto hKb = Keyboard::OpenKeyboard();
-			const auto hM = Mouse::OpenMouse(0);
-			_act[Act::MoveX] = mgr_input.makeAction("move_x");
-			_act[Act::MoveX]->linkButtonAsAxis(hKb, VKey::A, VKey::D);
-			_act[Act::MoveY] = mgr_input.makeAction("move_y");
-			_act[Act::MoveY]->linkButtonAsAxis(hKb, VKey::Lshift, VKey::Space);
-			_act[Act::MoveZ] = mgr_input.makeAction("move_z");
-			_act[Act::MoveZ]->linkButtonAsAxis(hKb, VKey::S, VKey::W);
-			_act[Act::DirX] = mgr_input.makeAction("dir_x");
-			_act[Act::DirX]->addLink(hM, InputFlag::Axis, 0);
-			_act[Act::DirY] = mgr_input.makeAction("dir_y");
-			_act[Act::DirY]->addLink(hM, InputFlag::Axis, 1);
-			_act[Act::DirBtn] = mgr_input.makeAction("dir_b");
-			_act[Act::DirBtn]->addLink(hM, InputFlag::Button, 0);
-		}
 		_fp.setSpeed(.5f);
 		_fp.setDirSpeed(100.f);
 		_fp.setOffset(frea::Vec3(0.5f,0.5f,-3));
 	}
-	void FPCamera::update() {
+	void FPCamera::update(
+		const HActC& move_x,
+		const HActC& move_y,
+		const HActC& move_z,
+		const HActC& dir_x,
+		const HActC& dir_y,
+		const HActC& dir
+	) {
 		const auto hM = Mouse::OpenMouse(0);
-		if(_act[Act::DirBtn]->isKeyPressed()) {
+		if(dir->isKeyPressed()) {
 			if(!mgr_gui.pointerOnGUI()) {
 				if(!_press) {
 					hM->setMouseMode(MouseMode::Relative);
@@ -46,10 +37,10 @@ namespace rev::test {
 		}
 		if(_press) {
 			_fp.update(
-				_act[Act::MoveX], _act[Act::MoveY], _act[Act::MoveZ],
-				_act[Act::DirX], _act[Act::DirY]
+				move_x, move_y, move_z,
+				dir_x, dir_y
 			);
-			if(!_act[Act::DirBtn]->isKeyPressing()) {
+			if(!dir->isKeyPressing()) {
 				if(_press) {
 					hM->setMouseMode(MouseMode::Absolute);
 					_press = false;
