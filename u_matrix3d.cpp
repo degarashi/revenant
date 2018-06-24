@@ -70,26 +70,27 @@ namespace rev {
 		}
 		return true;
 	}
-	bool U_Matrix3D::_refresh(frea::AMat4& m, TransformInv*) const {
+	bool U_Matrix3D::_refresh(M4& m, TransformInv*) const {
 		m = getTransform().inversion();
 		return true;
 	}
-	bool U_Matrix3D::_refresh(frea::AMat4& m, WorldInv*) const {
+	bool U_Matrix3D::_refresh(M4& m, WorldInv*) const {
 		m = getWorld().inversion();
 		return true;
 	}
 
 	U_Matrix3D::U_Matrix3D() {
-		const auto im = frea::AMat4::Identity();
+		const auto im = M4::Identity();
 		setWorld(im);
 		setTransform(im);
 	}
 	void U_Matrix3D::resetWorld() {
-		setWorld(frea::AMat4::Identity());
+		setWorld(M4::Identity());
 	}
 	namespace {
-		const frea::AMat4& GetIdentityMat4() {
-			const static frea::AMat4 mat = frea::AMat4::Identity();
+		using M4 = frea::AMat4;
+		const M4& GetIdentityMat4() {
+			const static M4 mat = M4::Identity();
 			return mat;
 		}
 	}
@@ -115,7 +116,7 @@ namespace rev {
 		#undef DEF_SETUNIF
 
 		#define DEF_SETUNIF(name) \
-			set(s3d::name, [](auto& s)-> const frea::AMat4& { \
+			set(s3d::name, [](auto& s)-> const M4& { \
 				if(const auto& c = s.getCamera()) \
 					return c->get##name(); \
 				return GetIdentityMat4(); });

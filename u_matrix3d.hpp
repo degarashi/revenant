@@ -11,20 +11,22 @@ namespace rev {
 		public IUniformSetter
 	{
 		private:
+			using V3 = frea::Vec3;
+			using M4 = frea::AMat4;
 			struct Camera;
 			struct Getter : spi::RFlag_Getter<uint32_t> {
 				using RFlag_Getter::operator();
 				counter_t operator()(const HCam3& c, Camera*, const U_Matrix3D&) const;
 			};
-			using Transform_t = spi::AcCheck<frea::AMat4, Getter>;
+			using Transform_t = spi::AcCheck<M4, Getter>;
 			#define SEQ_SYSUNI3D \
-				((World)(frea::AMat4)) \
-				((WorldInv)(frea::AMat4)(World)) \
+				((World)(M4)) \
+				((WorldInv)(M4)(World)) \
 				((Camera)(HCam3)) \
 				((ViewInv)(Transform_t)(Camera)) \
 				((ProjInv)(Transform_t)(Camera)) \
 				((Transform)(Transform_t)(World)(Camera)) \
-				((TransformInv)(frea::AMat4)(Transform))
+				((TransformInv)(M4)(Transform))
 			RFLAG_DEFINE(U_Matrix3D, SEQ_SYSUNI3D)
 			RFLAG_SETMETHOD(Transform)
 		public:
