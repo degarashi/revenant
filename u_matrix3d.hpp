@@ -13,6 +13,7 @@ namespace rev {
 		private:
 			using V3 = frea::Vec3;
 			using M4 = frea::AMat4;
+			using M4V = std::vector<M4, lubee::AlignedPool<M4>>;
 			struct Camera;
 			struct Getter : spi::RFlag_Getter<uint32_t> {
 				using RFlag_Getter::operator();
@@ -26,7 +27,8 @@ namespace rev {
 				((ViewInv)(Transform_t)(Camera)) \
 				((ProjInv)(Transform_t)(Camera)) \
 				((Transform)(Transform_t)(World)(Camera)) \
-				((TransformInv)(M4)(Transform))
+				((TransformInv)(M4)(Transform)) \
+				((Joint)(M4V))
 			RFLAG_DEFINE(U_Matrix3D, SEQ_SYSUNI3D)
 			RFLAG_SETMETHOD(Transform)
 		public:

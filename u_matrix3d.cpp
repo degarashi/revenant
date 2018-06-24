@@ -27,7 +27,8 @@ namespace rev {
 							World("sys_mWorld"),
 							WorldInv("sys_mWorldInv"),
 							EyePos("sys_vEyePos"),
-							EyeDir("sys_vEyeDir");
+							EyeDir("sys_vEyeDir"),
+							Joint("sys_mJoint");
 		}
 	}
 	namespace unif3d {
@@ -113,6 +114,7 @@ namespace rev {
 		DEF_SETUNIF(TransformInv)
 		DEF_SETUNIF(ViewInv)
 		DEF_SETUNIF(ProjInv)
+		DEF_SETUNIF(Joint)
 		#undef DEF_SETUNIF
 
 		#define DEF_SETUNIF(name) \
