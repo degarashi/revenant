@@ -31,14 +31,6 @@ namespace rev {
 							Joint("sys_mJoint");
 		}
 	}
-	namespace unif3d {
-		namespace texture {
-			const UniformName
-							Specular("u_texSpecular"),
-							Normal("u_texNormal"),
-							Emissive("u_texEmissive");
-		}
-	}
 
 	bool U_Matrix3D::_refresh(typename ViewInv::value_t& m, ViewInv*) const {
 		auto ret = _rflag.getWithCheck(this, m);
