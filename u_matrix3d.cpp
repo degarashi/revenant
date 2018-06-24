@@ -87,6 +87,12 @@ namespace rev {
 	void U_Matrix3D::resetWorld() {
 		setWorld(frea::AMat4::Identity());
 	}
+	namespace {
+		const frea::AMat4& GetIdentityMat4() {
+			const static frea::AMat4 mat = frea::AMat4::Identity();
+			return mat;
+		}
+	}
 	UniformSetF U_Matrix3D::getUniformF(const GLProgram& prog) const {
 		UniformSetF_V fv;
 
@@ -109,15 +115,24 @@ namespace rev {
 		#undef DEF_SETUNIF
 
 		#define DEF_SETUNIF(name) \
-			set(s3d::name, [](auto& s)->decltype(auto){ return s.getCamera()->get##name(); });
+			set(s3d::name, [](auto& s)-> const frea::AMat4& { \
+				if(const auto& c = s.getCamera()) \
+					return c->get##name(); \
+				return GetIdentityMat4(); });
 		DEF_SETUNIF(View)
 		DEF_SETUNIF(Proj)
 		DEF_SETUNIF(ViewProj)
 		DEF_SETUNIF(ViewProjInv)
 		#undef DEF_SETUNIF
 
-		set(s3d::EyePos, [](auto& s)->decltype(auto){ return s.getCamera()->getPose().getOffset(); });
-		set(s3d::EyeDir, [](auto& s)->decltype(auto){ return s.getCamera()->getPose().getRotation().getZAxis(); });
+		set(s3d::EyePos, [](auto& s)-> frea::Vec3 {
+							if(const auto& c = s.getCamera())
+								return c->getPose().getOffset();
+							return {0,0,0}; });
+		set(s3d::EyeDir, [](auto& s)-> frea::Vec3 {
+							if(const auto& c = s.getCamera())
+								return c->getPose().getRotation().getZAxis();
+							return {0,1,0}; });
 
 		if(!fv.empty()) {
 			return [fv = std::move(fv)](const void* p, UniformEnt& u){
