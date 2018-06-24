@@ -2,7 +2,7 @@
 #include "sprite2d.hpp"
 
 DEF_LUAIMPLEMENT_PTR(
-	Sprite2D, Sprite2D,
+	rev::test::Sprite2D, Sprite2D,
 	rev::luaNS::DrawableObj,
 	NOTHING,
 	NOTHING,
@@ -15,7 +15,7 @@ DEF_LUAIMPLEMENT_PTR(
 	(const rev::HTex&)(float)
 )
 DEF_LUAIMPLEMENT_PTR(
-	Sprite2DObj, Sprite2DObj,
+	rev::test::Sprite2DObj, Sprite2DObj,
 	"Sprite2D",
 	NOTHING,
 	NOTHING,
@@ -25,7 +25,7 @@ DEF_LUAIMPLEMENT_PTR(
 
 #include "bsprite.hpp"
 DEF_LUAIMPLEMENT_PTR(
-	BoundingSprite, BoundingSprite,
+	rev::test::BoundingSprite, BoundingSprite,
 	"Sprite2DObj",
 	NOTHING,
 	NOTHING,
