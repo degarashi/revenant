@@ -27,6 +27,7 @@ namespace rev::gltf {
 			NodeV				child;
 			dc::JointId			jointId;
 			static dc::JointId	s_id;
+			const Node*			parent;
 
 		protected:
 			template <class Self, class V, class CB>
@@ -41,6 +42,8 @@ namespace rev::gltf {
 
 			Node() = default;
 			Node(const JValue& v, const Q& q);
+		public:
+			void setParent();
 	};
 }
 

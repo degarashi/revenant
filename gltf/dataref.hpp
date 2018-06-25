@@ -9,6 +9,8 @@ namespace rev::gltf {
 		const T& (Q::*FP)(const Tag_t&) const
 	>
 	class DataRef {
+		public:
+			using data_t = T;
 		private:
 			const T*		_data;
 			using Loader = loader::FindLoader_t<Tag_t>;

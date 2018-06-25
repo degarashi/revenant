@@ -85,6 +85,10 @@ namespace rev::gltf::v1 {
 				auto& mem = m_Node.at(nd.first);
 				nd.second->moveTo(mem.data());
 			}
+			for(auto& n : m_Node) {
+				auto* np = reinterpret_cast<Node*>(n.second.data());
+				np->setParent();
+			}
 		}
 		defaultScene = Optional<DRef_Scene>(v, "scene", *this);
 	}
