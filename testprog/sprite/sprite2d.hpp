@@ -22,8 +22,8 @@ namespace rev::test {
 	//! 表示テスト用のスプライト
 	class Sprite2D : public beat::g2::Pose {
 		private:
-			using Tech = SingletonData<ITech, Sprite2D, 1>;
-			using Prim = SingletonData<Primitive, Sprite2D, 0>;
+			using Tech = SingletonData<ITech, Sprite2D>;
+			using Prim = SingletonData<Primitive, Sprite2D>;
 			Prim	_primitive;
 			Tech	_tech;
 
@@ -33,8 +33,8 @@ namespace rev::test {
 								_alpha;
 
 		public:
-			static HPrim MakeData(lubee::IConst<0>);
-			static HTech MakeData(lubee::IConst<1>);
+			static HPrim MakeData(Prim*);
+			static HTech MakeData(Tech*);
 
 			Sprite2D(const HTex& t, float z);
 			void draw(IEffect& e) const;

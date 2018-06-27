@@ -80,8 +80,10 @@ namespace rev {
 		//! フォントテクスチャと描画用頂点を用意
 		void _init(Face &face);
 		// デフォルト描画シェーダー
-		const static SingletonDataLazy<ITech, TextObj, 0>	s_defaultTech;
-		const static SingletonDataLazy<TextureFilter, TextObj, 1>	s_filter;
+		using DefaultTech = SingletonDataLazy<ITech, TextObj>;
+		const static DefaultTech	s_defaultTech;
+		using DefaultFilter = SingletonDataLazy<TextureFilter, TextObj>;
+		const static DefaultFilter	s_filter;
 
 		public:
 			TextObj(TextObj&& t) = default;
@@ -102,8 +104,8 @@ namespace rev {
 			void draw(IEffect& gle) const;
 			const lubee::SizeF& getSize() const;
 			void exportDrawTag(DrawTag& d) const;
-			static HTech MakeData(lubee::IConst<0>);
-			static HTexF MakeData(lubee::IConst<1>);
+			static HTech MakeData(DefaultTech*);
+			static HTexF MakeData(DefaultFilter*);
 			static HTech GetDefaultTech();
 	};
 

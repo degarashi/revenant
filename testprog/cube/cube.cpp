@@ -146,7 +146,7 @@ namespace {
 Cube::Cube():
 	_flat(false)
 {}
-std::shared_ptr<rev::Primitive> Cube::MakeData(lubee::IConst<Data::Flat>) {
+std::shared_ptr<rev::Primitive> Cube::MakeData(Flat*) {
 	return rev::Primitive::MakeWithIndex(
 		vertex::cube::s_vdecl,
 		rev::DrawMode::Triangles,
@@ -157,7 +157,7 @@ std::shared_ptr<rev::Primitive> Cube::MakeData(lubee::IConst<Data::Flat>) {
 		MakeFlatNormalVB()
 	);
 }
-std::shared_ptr<rev::Primitive> Cube::MakeData(lubee::IConst<Data::Gouraud>) {
+std::shared_ptr<rev::Primitive> Cube::MakeData(Gouraud*) {
 	return rev::Primitive::MakeWithIndex(
 		vertex::cube::s_vdecl,
 		rev::DrawMode::Triangles,
@@ -168,7 +168,7 @@ std::shared_ptr<rev::Primitive> Cube::MakeData(lubee::IConst<Data::Gouraud>) {
 		MakeGouraudNormalVB()
 	);
 }
-rev::HTech Cube::MakeData(lubee::IConst<Data::Tech>) {
+rev::HTech Cube::MakeData(Tech*) {
 	return mgr_tech.loadTechPass("cube.glx")->getTechnique("Cube|Default");
 }
 void Cube::outputDrawTag(rev::DrawTag& d) const {

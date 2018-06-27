@@ -232,17 +232,17 @@ namespace rev {
 	const lubee::SizeF& TextObj::getSize() const {
 		return _rectSize;
 	}
-	const SingletonDataLazy<ITech, TextObj, 0> TextObj::s_defaultTech;
+	const SingletonDataLazy<ITech, TextObj> TextObj::s_defaultTech;
 	namespace {
 		const Name Tech_Id("Text|Default");
 	}
-	HTech TextObj::MakeData(lubee::IConst<0>) {
+	HTech TextObj::MakeData(DefaultTech*) {
 		return mgr_tech.loadTechPass("text.glx")->getTechnique(Tech_Id);
 	}
 	HTech TextObj::GetDefaultTech() {
 		return s_defaultTech.GetData();
 	}
-	HTexF TextObj::MakeData(lubee::IConst<1>) {
+	HTexF TextObj::MakeData(DefaultFilter*) {
 		return mgr_gl.createTexFilter();
 	}
 

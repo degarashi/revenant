@@ -15,15 +15,10 @@ class Cube : public beat::g3::Pose,
 			public lubee::AAllocator<Cube>
 {
 	private:
-		DefineEnum(Data,
-			(Flat)
-			(Gouraud)
-			(Tech)
-		);
 		using Vec3 = frea::Vec3;
-		using Flat = rev::SingletonData<rev::Primitive, Cube, Data::Flat>;
-		using Gouraud = rev::SingletonData<rev::Primitive, Cube, Data::Gouraud>;
-		using Tech = rev::SingletonData<rev::ITech, Cube, Data::Tech>;
+		using Flat = rev::SingletonData<rev::Primitive, Cube, 0>;
+		using Gouraud = rev::SingletonData<rev::Primitive, Cube, 1>;
+		using Tech = rev::SingletonData<rev::ITech, Cube, 2>;
 		Flat	_p_flat;
 		Gouraud	_p_gouraud;
 		Tech	_tech;
@@ -31,9 +26,9 @@ class Cube : public beat::g3::Pose,
 		rev::HPrim _getPrimitive() const noexcept;
 
 	public:
-		static std::shared_ptr<rev::Primitive> MakeData(lubee::IConst<Data::Flat>);
-		static std::shared_ptr<rev::Primitive> MakeData(lubee::IConst<Data::Gouraud>);
-		static rev::HTech MakeData(lubee::IConst<Data::Tech>);
+		static rev::HPrim MakeData(Flat*);
+		static rev::HPrim MakeData(Gouraud*);
+		static rev::HTech MakeData(Tech*);
 
 		Cube();
 		void setFlat(bool flat);

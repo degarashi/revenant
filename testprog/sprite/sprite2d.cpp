@@ -9,7 +9,7 @@
 
 namespace rev::test {
 	// ----------------------- Sprite -----------------------
-	HPrim Sprite2D::MakeData(lubee::IConst<0>) {
+	HPrim Sprite2D::MakeData(Prim*) {
 		// 大きさ1の矩形を定義して後でスケーリング
 		const vertex::sprite tmpV[] = {
 			{{0,1}, {0,0}},
@@ -33,7 +33,7 @@ namespace rev::test {
 			vb
 		);
 	}
-	HTech Sprite2D::MakeData(lubee::IConst<1>) {
+	HTech Sprite2D::MakeData(Tech*) {
 		return mgr_tech.loadTechPass("sprite2d.glx")->getTechnique("Sprite|Default");
 	}
 	Sprite2D::Sprite2D(const HTex& t, const float z) {
