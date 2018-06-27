@@ -346,7 +346,7 @@ namespace rev {
 	namespace parse {
 		namespace {
 			std::regex re_comment(R"(//[^\n$]+)"),		//!< 一行コメント
-						re_comment2(R"(/\*[^\*]*\*/)");		//!< 範囲コメント
+						re_comment2(R"(/\*.*?\*/)");	//!< 範囲コメント
 			const char* c_result[2] = {
 				"------- analysis failed! -------",
 				"------- analysis succeeded! -------"
