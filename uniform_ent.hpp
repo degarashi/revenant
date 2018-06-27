@@ -140,6 +140,10 @@ namespace rev {
 			void setUniformById(const GLint id, const std::vector<T, Alc>& t, Ts&&... ts) {
 				setUniformById(id, t.begin(), t.end(), std::forward<Ts>(ts)...);
 			}
+			template <class T, std::size_t N, class... Ts>
+			void setUniformById(const GLint id, const std::array<T, N>& t, Ts&&... ts) {
+				setUniformById(id, t.begin(), t.end(), std::forward<Ts>(ts)...);
+			}
 
 			template <
 				class Itr,
