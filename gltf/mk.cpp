@@ -51,7 +51,7 @@ namespace rev::gltf {
 				uvLen % 2 == 0);
 		D_Assert0(pLen/3 == nLen/3 &&
 				pLen/3 == uvLen/2);
-		_result.prevLen = pLen/3;
+		_dupl.prevLen = pLen/3;
 	}
 	void MKInput::_makeInterface(IF& i) const {
 		i = IF{
@@ -84,25 +84,27 @@ namespace rev::gltf {
 			},
 			.m_setTSpaceBasic = [](const Ctx* ctx, const float tangent[], const float fSign, const int iFace, const int iVert) {
 				auto* mk = reinterpret_cast<MKInput*>(ctx->m_pUserData);
-				auto& res = mk->_result;
+				auto& dupl = mk->_dupl;
 				const uint32_t from = mk->_index[iFace*3 + iVert];
 				const frea::Vec4 tan(tangent[0], tangent[1], tangent[2], -fSign);
 
 				const auto ni = mk->_stack.addTangent(from, tan);
-				res.copy.emplace_back(
-					Result::Ent {
+				dupl.copy.emplace_back(
+					DuplInfo::Ent {
 						.from = from,
-						.to = ni,
-						.tangent = tan
+						.to = ni
 					}
 				);
-				res.index.emplace_back(ni);
-				res.maxIndex = std::max(res.maxIndex, ni);
+				mk->_tangent.emplace_back(tan);
+				dupl.index.emplace_back(ni);
+				dupl.postLen = std::max(dupl.postLen, ni+1);
 			}
 		};
 	}
-	const MKInput::Result& MKInput::calcResult() {
-		_result.maxIndex = 0;
+	void MKInput::calcResult() {
+		_dupl.postLen = 0;
+		_tangent.clear();
+
 		IF i_f;
 		_makeInterface(i_f);
 		Ctx ctx {
@@ -110,6 +112,11 @@ namespace rev::gltf {
 			.m_pUserData = this
 		};
 		genTangSpaceDefault(&ctx);
-		return _result;
+	}
+	const DuplInfo& MKInput::getDuplInfo() const noexcept {
+		return _dupl;
+	}
+	const MKInput::TangentV& MKInput::getTangent() const noexcept {
+		return _tangent;
 	}
 }

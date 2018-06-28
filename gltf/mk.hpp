@@ -23,6 +23,19 @@ namespace rev::gltf {
 			MKStack(const std::size_t len);
 			uint32_t addTangent(const uint32_t index, const Vec4& tangent);
 	};
+	struct DuplInfo {
+		using Idx = std::vector<int32_t>;
+		struct Ent {
+			uint32_t	from,
+						to;
+		};
+		using EntV = std::vector<Ent>;
+
+		EntV		copy;			//!< 頂点複製情報
+		Idx			index;			//!< 拡張後のインデックスバッファ
+		uint32_t	postLen,		//!< 拡張後の頂点個数
+					prevLen;		//!< 拡張前の頂点個数
+	};
 	class MKInput {
 		private:
 			using Idx = std::vector<int32_t>;
@@ -37,21 +50,14 @@ namespace rev::gltf {
 			using IF = SMikkTSpaceInterface;
 			void _makeInterface(IF& i) const;
 
-			struct Result {
-				struct Ent {
-					uint32_t	from,
-								to;
-					frea::Vec4	tangent;
-				};
-				using EntV = std::vector<Ent>;
-				EntV		copy;
-				Idx			index;
-				uint32_t	maxIndex,
-							prevLen;
-			};
-			Result			_result;
+			DuplInfo	_dupl;
+			using TangentV = std::vector<frea::Vec4>;
+			TangentV	_tangent;
+
 		public:
 			MKInput(Idx&& idx, FV&& pos, FV&& nml, FV&& uv);
-			const Result& calcResult();
+			void calcResult();
+			const DuplInfo& getDuplInfo() const noexcept;
+			const TangentV& getTangent() const noexcept;
 	};
 }

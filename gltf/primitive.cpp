@@ -118,8 +118,9 @@ namespace rev::gltf {
 				(*t_input.normal)->cnvToFloat(),
 				(*t_input.uv)->cnvToFloat()
 			);
-			const auto res = mki.calcResult();
-			const auto nV = res.maxIndex+1;
+			mki.calcResult();
+			const auto& dupl = mki.getDuplInfo();
+			const auto nV = dupl.postLen;
 			std::vector<float>	vstream;
 			struct VEnt {
 				VSemantic		vsem;
@@ -135,7 +136,7 @@ namespace rev::gltf {
 				auto ar = acc.cnvToFloat();
 				ar.resize(nV * nelem);
 
-				for(auto& cp : res.copy) {
+				for(auto& cp : dupl.copy) {
 					for(std::size_t i=0 ; i<nelem ; i++)
 						ar[cp.to*nelem+i] = ar[cp.from*nelem+i];
 				}
@@ -148,16 +149,22 @@ namespace rev::gltf {
 			}
 			// tangentを付加
 			{
-				std::vector<float>	tanV(nV*4);
-				for(auto& cp : res.copy) {
-					D_Assert0(cp.from < cp.to || cp.from < res.prevLen);
-					for(std::size_t i=0 ; i<4 ; i++)
-						tanV[cp.to*4+i] = cp.tangent[i];
+				const auto& tan_v = mki.getTangent();
+				constexpr auto TSize = frea::Vec4::size;
+				std::vector<float>	tanV(nV*TSize);
+				const auto copyLen = dupl.copy.size();
+				D_Assert0(tan_v.size() == copyLen);
+				for(std::size_t i=0 ; i<copyLen ; i++) {
+					auto& cp = dupl.copy[i];
+					D_Assert0(cp.from < cp.to || cp.from < dupl.prevLen);
+					auto& tan = tan_v[i];
+					for(std::size_t j=0 ; j<TSize ; j++)
+						tanV[cp.to*TSize+j] = tan[j];
 				}
 				vdata.emplace_back(VEnt{
 					.vsem = VSemantic{VSemEnum::TANGENT, 0},
 					.offset = vstream.size() * sizeof(float),
-					.nElem = 4
+					.nElem = TSize
 				});
 				std::copy(tanV.begin(), tanV.end(), std::back_inserter(vstream));
 			}
@@ -174,8 +181,8 @@ namespace rev::gltf {
 			});
 			// make index buffer
 			const HIb ib = mgr_gl.makeIBuffer(DrawType::Static);
-			const auto idxLen = res.index.size();
-			ib->initData(std::move(res.index));
+			const auto idxLen = dupl.index.size();
+			ib->initData(std::move(dupl.index));
 			cache.tangent = ::rev::Primitive::MakeWithIndex(
 								FWVDecl(vdinfo),
 								DrawMode::Triangles,
