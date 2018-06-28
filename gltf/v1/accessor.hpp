@@ -9,7 +9,7 @@ namespace rev::gltf::v1 {
 		gltf::Accessor,
 		Resource
 	{
-		// BufferViewに対するオフセット、間隔
+		// BufferViewに対する間隔
 		Size_OP				byteStride;
 		// 参照元のバイナリデータ
 		DRef_BufferView		bufferView;
