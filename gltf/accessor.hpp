@@ -56,7 +56,28 @@ namespace rev::gltf {
 			virtual void _onCacheMaked(Cache&) const {}
 
 			const Cache& _getCache() const;
-			void _matrixTranspose() const;
+
+			template <class Type>
+			static void _MatrixTranspose0(
+				void* data,
+				const std::size_t dim,
+				const std::size_t n
+			) {
+				constexpr auto Unit = sizeof(Type);
+				auto data_i = reinterpret_cast<uintptr_t>(data);
+				for(std::size_t i=0 ; i<n ; i++) {
+					for(std::size_t j=0 ; j<dim ; j++) {
+						for(std::size_t k=j+1 ; k<dim ; k++) {
+							auto& d0 = *reinterpret_cast<Type*>(data_i + (j*dim + k)*Unit);
+							auto& d1 = *reinterpret_cast<Type*>(data_i + (k*dim + j)*Unit);
+							std::swap(d0, d1);
+						}
+					}
+					data_i += dim * dim * Unit;
+				}
+			}
+			// column-major -> row-majorへの変換
+			static void _MatrixTranspose(void* data, const Size unit, const Size dim, const Size n);
 			void _applyFilter() const;
 
 		protected:

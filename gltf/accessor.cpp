@@ -135,6 +135,21 @@ namespace rev::gltf {
 			return _nElem*_nElem;
 		return _nElem;
 	}
+	void A::_MatrixTranspose(
+		void* data,
+		const Size unit,
+		const Size dim,
+		const Size n
+	) {
+		if(unit == 1)
+			_MatrixTranspose0<uint8_t>(data, dim, n);
+		else if(unit == 2)
+			_MatrixTranspose0<uint16_t>(data, dim, n);
+		else if(unit == 4)
+			_MatrixTranspose0<uint32_t>(data, dim, n);
+		else
+			D_Assert0(false);
+	}
 	const A::Cache& A::_getCache() const {
 		if(_cache.empty()) {
 			auto data = _getBufferData();
@@ -165,7 +180,7 @@ namespace rev::gltf {
 					data.pointer += stride;
 				}
 				_applyFilter();
-				_matrixTranspose();
+				_MatrixTranspose(_cache.data(), sizeof(float), nElem, count);
 			} else {
 				if(nElem == 1) {
 					_SelectByType(_componentType,
@@ -218,24 +233,6 @@ namespace rev::gltf {
 				data += unit;
 			}
 			D_Assert0(data == reinterpret_cast<uintptr_t>(_cache.data() + _cache.size()));
-		}
-	}
-	void A::_matrixTranspose() const {
-		const auto proc = [this](auto* type){
-			using Type = std::remove_pointer_t<decltype(type)>;
-			auto* data = _cache.data();
-			for(Size i=0 ; i<_count ; i++) {
-				reinterpret_cast<Type*>(data)->transpose();
-				// column-major -> row-majorへの変換
-				data += sizeof(Type);
-			}
-		};
-		if(_nElem == 2) {
-			proc((frea::Mat2*)nullptr);
-		} else if(_nElem == 3) {
-			proc((frea::Mat3*)nullptr);
-		} else {
-			proc((frea::Mat4*)nullptr);
 		}
 	}
 	namespace {
