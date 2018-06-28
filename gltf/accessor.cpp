@@ -158,12 +158,7 @@ namespace rev::gltf {
 			const auto count = _count,
 					nElem = _nElem;
 
-			Size unit;
-			_SelectByType(_componentType, [&unit](auto type){
-				using Type = decltype(type);
-				unit = sizeof(Type);
-			});
-
+			const Size unit = getUnitSize();
 			_cache.resize(unit * getActualNElem() * count);
 			auto dst = reinterpret_cast<uintptr_t>(_cache.data());
 			if(_bMatrix) {
