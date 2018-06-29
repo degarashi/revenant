@@ -252,16 +252,10 @@ namespace rev::gltf {
 			auto dst = reinterpret_cast<uintptr_t>(_cache.data());
 			if(_bMatrix) {
 				D_Assert0(_bFloat);
-				for(Size i=0 ; i<count ; i++) {
-					auto src = data.pointer;
-					for(Size j=0 ; j<nElem ; j++) {
-						src = (src+3) / 4 * 4;
-						for(Size k=0 ; k<nElem ; k++) {
-							dst += Cnv<float, float>(dst, src);
-							src += sizeof(float);
-						}
-					}
-					data.pointer += stride;
+				auto itr = begin(),
+					 itrE = end();
+				while(*itr != *itrE) {
+					dst += itr->readAndIncrement(dst);
 				}
 				_applyFilter();
 				_MatrixTranspose(_cache.data(), sizeof(float), nElem, count);
