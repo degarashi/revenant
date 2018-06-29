@@ -25,14 +25,16 @@ namespace rev {
 		next();
 		debug::Show(nullptr, elemSize);
 		next();
+		debug::Show(nullptr, strideOvr);
+		next();
 	}
 	void VDecl::property(const CBProp& cb) const {
 		constexpr char popup_id[] = "VDecl";
 		const std::size_t n = _vdInfo.size();
 		{
-			auto f = debug::EntryField("VDecl", false, 7);
+			auto f = debug::EntryField("VDecl", false, 8);
 			ImGui::Separator();
-			f.show("Id", "Semantic", "StreamId", "Offset", "Format", "Normalize", "Size");
+			f.show("Id", "Semantic", "StreamId", "Offset", "Format", "Normalize", "Size", "StrideOvr");
 			ImGui::Separator();
 			for(std::size_t i=0 ; i<n ; i++) {
 				const auto _ = debug::IdPush(i);
