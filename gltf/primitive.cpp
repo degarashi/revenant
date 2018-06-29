@@ -121,31 +121,50 @@ namespace rev::gltf {
 			mki.calcResult();
 			const auto& dupl = mki.getDuplInfo();
 			const auto nV = dupl.postLen;
-			std::vector<float>	vstream;
+			ByteV	vstream;
 			struct VEnt {
 				VSemantic		vsem;
 				std::size_t		offset,
 								nElem;
+				GLenum			type;
+				bool			normalize;
 			};
 			using VData = std::vector<VEnt>;
 			VData vdata;
 			// 全ての頂点情報を列挙して再構築(一本のストリームにする)
 			for(auto& a : attribute) {
 				auto& acc = *a.second;
+				const auto unit = acc.getUnitSize();
 				const auto nelem = acc.getActualNElem();
-				auto ar = acc.cnvToFloat();
-				ar.resize(nV * nelem);
+				const auto elemSize = unit * nelem;
 
-				for(auto& cp : dupl.copy) {
-					for(std::size_t i=0 ; i<nelem ; i++)
-						ar[cp.to*nelem+i] = ar[cp.from*nelem+i];
+				ByteV ar(acc._count * elemSize);
+				auto dst = reinterpret_cast<uintptr_t>(ar.data());
+				auto itr = acc.begin(),
+					 itrE = acc.end();
+				while(*itr != *itrE) {
+					dst += itr->readAndIncrement(dst);
 				}
+				D_Assert0(dst == reinterpret_cast<uintptr_t>(ar.data())+ar.size());
+
+				ar.resize(nV * elemSize);
+				for(auto& cp : dupl.copy) {
+					std::memcpy(ar.data() + elemSize * cp.to,
+								ar.data() + elemSize * cp.from,
+								elemSize);
+				}
+				const auto prevLen = vstream.size();
 				vdata.emplace_back(VEnt{
 					.vsem = a.first,
-					.offset = vstream.size() * sizeof(float),
-					.nElem = nelem
+					.offset = prevLen,
+					.nElem = nelem,
+					.type = acc._componentType,
+					.normalize = acc.isNormalized()
 				});
-				std::copy(ar.begin(), ar.end(), std::back_inserter(vstream));
+				vstream.resize(prevLen + ar.size());
+				std::memcpy(vstream.data()+prevLen,
+							ar.data(),
+							ar.size());
 			}
 			// tangentを付加
 			{
@@ -163,15 +182,21 @@ namespace rev::gltf {
 				}
 				vdata.emplace_back(VEnt{
 					.vsem = VSemantic{VSemEnum::TANGENT, 0},
-					.offset = vstream.size() * sizeof(float),
-					.nElem = TSize
+					.offset = vstream.size(),
+					.nElem = TSize,
+					.type = GL_FLOAT,
+					.normalize = false
 				});
-				std::copy(tanV.begin(), tanV.end(), std::back_inserter(vstream));
+				const auto prevLen = vstream.size();
+				vstream.resize(prevLen + tanV.size()*sizeof(float));
+				std::memcpy(vstream.data()+prevLen,
+							tanV.data(),
+							tanV.size()*sizeof(float));
 			}
 			// make vertex buffer
 			VDecl::VDInfoV		vdinfo;
 			for(auto& v : vdata) {
-				vdinfo.emplace_back(0, v.offset, GL_FLOAT, GL_FALSE, v.nElem, v.vsem, v.nElem*sizeof(float));
+				vdinfo.emplace_back(0, v.offset, v.type, v.normalize, v.nElem, v.vsem, v.nElem*GLFormat::QuerySize(v.type));
 			}
 			HVb vb[2];
 			vb[0] = mgr_gl.makeVBuffer(DrawType::Static);
