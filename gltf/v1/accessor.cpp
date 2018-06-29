@@ -37,4 +37,7 @@ namespace rev::gltf::v1 {
 			.offset = _byteOffset
 		};
 	}
+	bool Accessor::isNormalized() const noexcept {
+		return false;
+	}
 }

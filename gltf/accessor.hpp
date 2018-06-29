@@ -200,6 +200,7 @@ namespace rev::gltf {
 			Vec<int32_t> cnvToInt32() const;
 			DataP_Unit getDataP_Unit() const;
 			virtual Vb_P getAsVb() const = 0;
+			virtual bool isNormalized() const = 0;
 			Size getByteStride() const noexcept;
 	};
 }
