@@ -11,8 +11,8 @@ namespace rev::gltf::v1 {
 		using Query_t = IDataQuery;
 		using VSem_t = V_Semantic;
 
-		using ModCB = std::function<void (const PrimitiveVertexV&)>;
-		static void VBuffModify(const VSemCount&, const ModCB&) {}
+		using DummyCB = std::function<void (const DummyVertexV&)>;
+		static void VBuffDummy(const VSemCount&, const DummyCB&) {}
 	};
 	struct Primitive :
 		gltf::Primitive<PrimitivePolicy>

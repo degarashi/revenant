@@ -176,8 +176,8 @@ namespace rev::gltf {
 			HVb vb[2];
 			vb[0] = mgr_gl.makeVBuffer(DrawType::Static);
 			vb[0]->initData(std::move(vstream), 0);
-			P::VBuffModify(vc, [&vdinfo, &vb=vb[1], nV](const PrimitiveVertexV& v) {
-				vb = VBuffProc(vdinfo, 1, nV, v);
+			P::VBuffDummy(vc, [&vdinfo, &vb=vb[1], nV](const DummyVertexV& v) {
+				vb = ProcDummyVertex(vdinfo, 1, nV, v);
 			});
 			// make index buffer
 			const HIb ib = mgr_gl.makeIBuffer(DrawType::Static);
@@ -196,7 +196,7 @@ namespace rev::gltf {
 		return *cache.tangent;
 	}
 	template <class P>
-	HVb Primitive<P>::VBuffProc(VDecl::VDInfoV& vdinfo, const std::size_t streamId, const std::size_t nV, const PrimitiveVertexV& v) {
+	HVb Primitive<P>::ProcDummyVertex(VDecl::VDInfoV& vdinfo, const std::size_t streamId, const std::size_t nV, const DummyVertexV& v) {
 		if(v.empty())
 			return nullptr;
 		std::size_t stride = 0;
@@ -284,8 +284,8 @@ namespace rev::gltf {
 					vb[m.second] = m.first;
 				}
 
-				P::VBuffModify(vc, [&vdinfo, &vb, nV](const PrimitiveVertexV& v) {
-					if(auto vb0 = VBuffProc(vdinfo, vb.size(), nV, v))
+				P::VBuffDummy(vc, [&vdinfo, &vb, nV](const DummyVertexV& v) {
+					if(auto vb0 = ProcDummyVertex(vdinfo, vb.size(), nV, v))
 						vb.emplace_back(vb0);
 				});
 				vdecl = FWVDecl(vdinfo);

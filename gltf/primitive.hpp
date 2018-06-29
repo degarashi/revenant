@@ -8,7 +8,7 @@
 
 namespace rev::gltf {
 	using VSemCount = std::size_t[VSemEnum::_Num];
-	struct PrimitiveVertex {
+	struct DummyVertex {
 		constexpr static auto MaxBuff = sizeof(float)*4;
 		using Buff = std::array<uint8_t, MaxBuff>;
 
@@ -20,7 +20,7 @@ namespace rev::gltf {
 		Buff			value;
 
 		template <class T, std::size_t N>
-		PrimitiveVertex(
+		DummyVertex(
 			const GLenum type,
 			const VSemantic vsem,
 			const bool normalized,
@@ -44,7 +44,7 @@ namespace rev::gltf {
 			stride = sizeof(T)*N;
 		}
 	};
-	using PrimitiveVertexV = std::vector<PrimitiveVertex>;
+	using DummyVertexV = std::vector<DummyVertex>;
 	template <class Policy>
 	struct Primitive {
 		using Accessor_t = typename Policy::Accessor_t;
@@ -64,7 +64,7 @@ namespace rev::gltf {
 			dc::BBox_Op	bbox;
 			bool		noBBox;
 		} cache;
-		static HVb VBuffProc(VDecl::VDInfoV& vdinfo, std::size_t streamId, std::size_t nV, const PrimitiveVertexV& v);
+		static HVb ProcDummyVertex(VDecl::VDInfoV& vdinfo, std::size_t streamId, std::size_t nV, const DummyVertexV& v);
 
 		Primitive(const JValue& v, const Query_t& q);
 		static bool CanLoad(const JValue& v) noexcept;
