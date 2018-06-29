@@ -40,6 +40,24 @@ namespace rev::gltf {
 			// (POSITION用)バウンディングボックス
 			dc::BBox_Op		_bbox;
 			mutable Cache	_cache;
+
+			struct Iterator {
+				Size		nElem,
+							stride;
+				uintptr_t	pointer;
+
+				virtual ~Iterator() {}
+				Iterator(Size nE, Size str, uintptr_t ptr);
+				bool operator == (const Iterator& itr) const noexcept;
+				bool operator != (const Iterator& itr) const noexcept;
+				virtual Size readAndIncrement(uintptr_t dst) noexcept = 0;
+			};
+			template <class Unit>
+			struct VecIterator;
+			template <class Unit>
+			struct MatIterator;
+			using Iterator_U = std::unique_ptr<Iterator>;
+
 		public:
 			GLTypeFmt		_componentType;
 			Size			_byteOffset,		// for v2.0: default=0
@@ -143,6 +161,8 @@ namespace rev::gltf {
 			}
 		public:
 			Accessor(const JValue& v);
+			Iterator_U begin() const noexcept;
+			Iterator_U end() const noexcept;
 			template <class CB>
 			void getData(CB&& cb) const {
 				_selectByType([

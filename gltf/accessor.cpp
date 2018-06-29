@@ -7,6 +7,94 @@ namespace rev::gltf {
 	namespace {
 		using A = Accessor;
 	}
+	namespace size {
+		uint8_t ToType(lubee::SZConst<1>);
+		uint16_t ToType(lubee::SZConst<2>);
+		uint32_t ToType(lubee::SZConst<4>);
+	}
+	// ---------- Iterator ----------
+	A::Iterator::Iterator(const Size nE, const Size str, const uintptr_t ptr):
+		nElem(nE),
+		stride(str),
+		pointer(ptr)
+	{}
+	bool A::Iterator::operator == (const Iterator& itr) const noexcept {
+		return pointer == itr.pointer;
+	}
+	bool A::Iterator::operator != (const Iterator& itr) const noexcept {
+		return !(this->operator == (itr));
+	}
+	// ---------- VecIterator ----------
+	template <class Unit>
+	struct A::VecIterator : A::Iterator {
+		constexpr static auto UnitSize = sizeof(Unit);
+
+		using Iterator::Iterator;
+		Size readAndIncrement(uintptr_t dst) noexcept override {
+			const auto nE = nElem;
+			auto src = pointer;
+			for(Size i=0 ; i<nE ; i++) {
+				*reinterpret_cast<Unit*>(dst) = *reinterpret_cast<const Unit*>(src);
+				src += UnitSize;
+				dst += UnitSize;
+			}
+			pointer += stride;
+			return UnitSize * nE;
+		}
+	};
+	// ---------- MatIterator ----------
+	template <class Unit>
+	struct A::MatIterator : A::Iterator {
+		constexpr static auto UnitSize = sizeof(Unit);
+		Size	nRow;
+
+		MatIterator(const Size nE, const Size str, const uintptr_t ptr, const Size nRow):
+			Iterator(nE, str, ptr),
+			nRow(nRow)
+		{}
+		Size readAndIncrement(uintptr_t dst) noexcept override {
+			const auto nE = nElem;
+			auto src = pointer;
+			for(Size i=0 ; i<nRow ; i++) {
+				// alignment
+				src = (src+3) & ~0x03;
+				for(Size j=0 ; j<nE ; j++) {
+					*reinterpret_cast<Unit*>(dst) = *reinterpret_cast<const Unit*>(src);
+					src += UnitSize;
+					dst += UnitSize;
+				}
+			}
+			pointer += stride;
+			return UnitSize * nE * nRow;
+		}
+	};
+	// ----------------- Accessor -----------------
+	A::Iterator_U A::begin() const noexcept {
+		auto data = _getBufferData();
+		data.pointer += _byteOffset;
+		const auto stride = getByteStride(),
+					nElem = _nElem;
+		Iterator_U ret;
+		if(_bMatrix) {
+			_SelectByType(_componentType, [nElem, stride, data, &ret](auto type){
+				using Type = decltype(size::ToType(lubee::SZConst<sizeof(type)>{}));
+				ret = Iterator_U(new MatIterator<Type>(nElem, stride, data.pointer, nElem));
+			});
+		} else {
+			_SelectByType(_componentType, [nElem, stride, data, &ret](auto type){
+				using Type = decltype(size::ToType(lubee::SZConst<sizeof(type)>{}));
+				ret = Iterator_U(new VecIterator<Type>(nElem, stride, data.pointer));
+			});
+		}
+		return ret;
+	}
+	A::Iterator_U A::end() const noexcept {
+		auto itr = begin();
+		itr->pointer += _count * getByteStride();
+		return itr;
+	}
+
+	// ----------- Filter -----------
 	template <class V>
 	struct A::Filter : A::IFilter {
 		const V		_min,
@@ -21,6 +109,7 @@ namespace rev::gltf {
 			d = std::min(std::max(d, _min), _max);
 		}
 	};
+	// ----------- FilterG -----------
 	template <class V>
 	struct A::FilterG : A::IFilter {
 		using FV = std::vector<Filter<V>>;
