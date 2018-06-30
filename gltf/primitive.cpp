@@ -45,6 +45,8 @@ namespace rev::gltf {
 		}
 	}
 	template <class P>
+	void Primitive<P>::_getDummyVertex(const VSemCount&, DummyVertexV&) const {}
+	template <class P>
 	bool Primitive<P>::CanLoad(const JValue&) noexcept {
 		return true;
 	}
@@ -201,9 +203,9 @@ namespace rev::gltf {
 			HVb vb[2];
 			vb[0] = mgr_gl.makeVBuffer(DrawType::Static);
 			vb[0]->initData(std::move(vstream), 0);
-			P::VBuffDummy(vc, [&vdinfo, &vb=vb[1], nV](const DummyVertexV& v) {
-				vb = ProcDummyVertex(vdinfo, 1, nV, v);
-			});
+			DummyVertexV dum_v;
+			_getDummyVertex(vc, dum_v);
+			vb[1] = ProcDummyVertex(vdinfo, 1, nV, dum_v);
 			// make index buffer
 			const HIb ib = mgr_gl.makeIBuffer(DrawType::Static);
 			const auto idxLen = dupl.index.size();
@@ -308,11 +310,12 @@ namespace rev::gltf {
 				for(auto& m : map) {
 					vb[m.second] = m.first;
 				}
-
-				P::VBuffDummy(vc, [&vdinfo, &vb, nV](const DummyVertexV& v) {
-					if(auto vb0 = ProcDummyVertex(vdinfo, vb.size(), nV, v))
+				{
+					DummyVertexV dum_v;
+					_getDummyVertex(vc, dum_v);
+					if(auto vb0 = ProcDummyVertex(vdinfo, vb.size(), nV, dum_v))
 						vb.emplace_back(vb0);
-				});
+				}
 				vdecl = FWVDecl(vdinfo);
 			}
 			if(index) {

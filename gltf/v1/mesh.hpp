@@ -10,9 +10,6 @@ namespace rev::gltf::v1 {
 		using Accessor_t = DRef_Accessor;
 		using Query_t = IDataQuery;
 		using VSem_t = V_Semantic;
-
-		using DummyCB = std::function<void (const DummyVertexV&)>;
-		static void VBuffDummy(const VSemCount&, const DummyCB&) {}
 	};
 	struct Primitive :
 		gltf::Primitive<PrimitivePolicy>

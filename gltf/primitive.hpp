@@ -57,6 +57,9 @@ namespace rev::gltf {
 		Idx_Accessor_OP		index;
 		DrawMode			mode;
 
+		virtual void _getDummyVertex(const VSemCount& vc, DummyVertexV& v) const;
+		virtual ~Primitive() {}
+
 		mutable struct {
 			using Prim_Op = spi::Optional<HPrim>;
 			HPrim		normal;
