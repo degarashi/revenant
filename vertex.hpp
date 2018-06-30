@@ -2,7 +2,7 @@
 #include "spine/enum.hpp"
 #include "lubee/hash_combine.hpp"
 
-#define SEQ_VSEM (POSITION)(NORMAL)(TEXCOORD)(COLOR)(JOINT)(WEIGHT)(BINORMAL)(TANGENT)
+#define SEQ_VSEM (POSITION)(NORMAL)(TEXCOORD)(COLOR)(JOINT)(WEIGHT)(BINORMAL)(TANGENT)(MORPH)
 
 namespace rev {
 	DefineEnum(VSemEnum, SEQ_VSEM);
