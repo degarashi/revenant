@@ -61,6 +61,10 @@ namespace rev {
 
 				static void Command(const void* p);
 			};
+			struct DCmd_Disable {
+				uint_fast8_t	nAttr;
+				static void Command(const void* p);
+			};
 
 			static VDInfoV _ToVector(std::initializer_list<VDInfo>& il);
 			void _init();

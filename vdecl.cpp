@@ -135,7 +135,14 @@ namespace rev {
 			);
 		}
 	}
+	void VDecl::DCmd_Disable::Command(const void* p) {
+		auto& self = *static_cast<const DCmd_Disable*>(p);
+		for(uint_fast8_t i=0 ; i<self.nAttr ; i++)
+			GL.glDisableVertexAttribArray(i);
+	}
 	void VDecl::dcmd_export(draw::IQueue& q, const std::vector<HVb> &stream, const VSemAttrMap& vmap) const {
+		q.add(DCmd_Disable{uint_fast8_t(16)});
+
 		const auto len = _streamOfs.size();
 		for(std::size_t i=0 ; i<len-1 ; i++) {
 			// VStreamが設定されていればBindする
