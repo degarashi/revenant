@@ -144,13 +144,13 @@ namespace rev::gltf::v1 {
 			// Sampler(output) -> (T or R or S)_Sampler
 			switch(c.target.path) {
 				case Channel::Target::TRS::Translation:
-					ch->_sampler = c.sampler->outputAsTranslation();
+					ch->_output = c.sampler->outputAsTranslation();
 					break;
 				case Channel::Target::TRS::Rotation:
-					ch->_sampler = c.sampler->outputAsRotation();
+					ch->_output = c.sampler->outputAsRotation();
 					break;
 				case Channel::Target::TRS::Scale:
-					ch->_sampler = c.sampler->outputAsScaling();
+					ch->_output = c.sampler->outputAsScaling();
 					break;
 				default:
 					Assert0(false);
@@ -159,7 +159,7 @@ namespace rev::gltf::v1 {
 			{
 				auto isamp = std::make_shared<dc::SeekFrame_cached>();
 				isamp->pos = std::make_shared<std::vector<float>>(c.sampler->input->cnvToFloat());
-				ch->_position = isamp;
+				ch->_seek = isamp;
 			}
 			ret.addChannel(ch);
 		}

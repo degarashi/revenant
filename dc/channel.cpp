@@ -7,12 +7,12 @@
 
 namespace rev::dc {
 	float Channel::length() const {
-		return _position->length();
+		return _seek->length();
 	}
 	void Channel::apply(const IJointQuery& q, const float t) const {
-		D_Assert0(_position->numFrame() == _sampler->numFrame());
-		const auto pos = _position->position(t);
+		D_Assert0(_seek->numFrame() == _output->numFrame());
+		const auto pos = _seek->position(t);
 		auto& node = _jat->findJoint(q);
-		_sampler->sample(node.refPose(), pos.idx, pos.time);
+		_output->sample(node.refPose(), pos.idx, pos.time);
 	}
 }

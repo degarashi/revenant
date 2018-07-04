@@ -4,9 +4,9 @@
 
 namespace rev::dc {
 	struct Channel : IChannel {
-		HSeekFrame		_position;
-		HPoseFrame	_sampler;
-		HJat		_jat;
+		HSeekFrame		_seek;
+		HPoseFrame		_output;
+		HJat			_jat;
 
 		float length() const override;
 		void apply(const IJointQuery& q, const float t) const override;
