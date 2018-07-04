@@ -6,7 +6,7 @@ namespace rev::dc {
 	std::size_t Pose_T_Sampler::numFrame() const {
 		return value->size();
 	}
-	void Pose_T_Sampler::sample(Pose3& dst, const std::size_t idx, const float t) const {
+	void Pose_T_Sampler::output(Pose3& dst, const std::size_t idx, const float t) const {
 		D_Assert0(lubee::IsInRange(t, 0.f, 1.f));
 		auto& val = *value;
 		frea::Vec3 v;
@@ -19,7 +19,7 @@ namespace rev::dc {
 	std::size_t Pose_R_Sampler::numFrame() const {
 		return value->size();
 	}
-	void Pose_R_Sampler::sample(Pose3& dst, const std::size_t idx, const float t) const {
+	void Pose_R_Sampler::output(Pose3& dst, const std::size_t idx, const float t) const {
 		D_Assert0(lubee::IsInRange(t, 0.f, 1.f));
 		auto& val = *value;
 		frea::Quat q;
@@ -32,7 +32,7 @@ namespace rev::dc {
 	std::size_t Pose_S_Sampler::numFrame() const {
 		return value->size();
 	}
-	void Pose_S_Sampler::sample(Pose3& dst, const std::size_t idx, const float t) const {
+	void Pose_S_Sampler::output(Pose3& dst, const std::size_t idx, const float t) const {
 		D_Assert0(lubee::IsInRange(t, 0.f, 1.f));
 		auto& val = *value;
 		frea::Vec3 s;

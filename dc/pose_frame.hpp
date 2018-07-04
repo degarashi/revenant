@@ -9,18 +9,18 @@ namespace rev::dc {
 		SVec<frea::Vec3>	value;
 
 		std::size_t numFrame() const override;
-		void sample(Pose3& dst, std::size_t idx, float t) const override;
+		void output(Pose3& dst, std::size_t idx, float t) const override;
 	};
 	struct Pose_R_Sampler : IPoseFrame {
 		SVec<frea::Quat>	value;
 
 		std::size_t numFrame() const override;
-		void sample(Pose3& dst, std::size_t idx, float t) const override;
+		void output(Pose3& dst, std::size_t idx, float t) const override;
 	};
 	struct Pose_S_Sampler : IPoseFrame {
 		SVec<frea::Vec3>	value;
 
 		std::size_t numFrame() const override;
-		void sample(Pose3& dst, std::size_t idx, float t) const override;
+		void output(Pose3& dst, std::size_t idx, float t) const override;
 	};
 }

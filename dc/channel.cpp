@@ -13,6 +13,6 @@ namespace rev::dc {
 		D_Assert0(_seek->numFrame() == _output->numFrame());
 		const auto pos = _seek->position(t);
 		auto& node = _jat->findJoint(q);
-		_output->sample(node.refPose(), pos.idx, pos.time);
+		_output->output(node.refPose(), pos.idx, pos.time);
 	}
 }
