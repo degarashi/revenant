@@ -1,5 +1,6 @@
 #include "channel.hpp"
-#include "sampler_if.hpp"
+#include "seekframe_if.hpp"
+#include "dc/pose_sampler.hpp"
 #include "lubee/error.hpp"
 #include "jat_if.hpp"
 #include "dc/node.hpp"

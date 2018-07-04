@@ -1,5 +1,5 @@
 #pragma once
-#include "sampler_if.hpp"
+#include "seekframe_if.hpp"
 #include <memory>
 #include <vector>
 

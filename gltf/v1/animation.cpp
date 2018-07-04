@@ -126,7 +126,7 @@ namespace rev::gltf::v1 {
 		return Type::Animation;
 	}
 }
-#include "dc/pos_sampler.hpp"
+#include "dc/seekframe.hpp"
 #include "dc/channel.hpp"
 #include "dc/joint_at.hpp"
 #include "gltf/v1/node.hpp"

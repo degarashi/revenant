@@ -14,7 +14,7 @@
 #include "../drawthread.hpp"
 #include "../mainthread.hpp"
 #include <iomanip>
-#include "../dc/pos_sampler.hpp"
+#include "../dc/seekframe.hpp"
 #include "frea/interpolation.hpp"
 #include "style.hpp"
 
@@ -22,8 +22,10 @@ namespace rev::debug {
 	namespace {
 		template <class T>
 		using Vec = std::vector<T>;
+		template <class T>
+		using SVec = std::shared_ptr<std::vector<T>>;
 		const Vec<float> g_posV = {0, 25, 50, 75, 100};
-		const dc::SVec<float>	g_posSV = std::make_shared<Vec<float>>(g_posV);
+		const SVec<float>	g_posSV = std::make_shared<Vec<float>>(g_posV);
 		const dc::SeekFrame g_posSamp(g_posSV);
 
 		struct ColSampler : dc::FrameArray {
