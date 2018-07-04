@@ -5,7 +5,7 @@
 namespace rev::dc {
 	struct Channel : IChannel {
 		HSeekFrame		_position;
-		HPoseSampler	_sampler;
+		HPoseFrame	_sampler;
 		HJat		_jat;
 
 		float length() const override;

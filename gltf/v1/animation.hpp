@@ -20,9 +20,9 @@ namespace rev::gltf::v1 {
 		} cached;
 
 		void _checkData() const;
-		HPoseSampler outputAsTranslation() const;
-		HPoseSampler outputAsRotation() const;
-		HPoseSampler outputAsScaling() const;
+		HPoseFrame outputAsTranslation() const;
+		HPoseFrame outputAsRotation() const;
+		HPoseFrame outputAsScaling() const;
 	};
 	struct Animation :
 		Resource

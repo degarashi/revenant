@@ -7,7 +7,7 @@ namespace beat::g3 {
 namespace rev::dc {
 	using Pose3 = beat::g3::Pose;
 	//! フレーム番号 + dt を受け取り、Poseに出力
-	struct IPoseSampler : FrameArray {
+	struct IPoseFrame : FrameArray {
 		virtual void sample(Pose3& dst, std::size_t idx, float t) const = 0;
 	};
 }

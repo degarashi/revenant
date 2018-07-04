@@ -9,7 +9,7 @@ namespace rev {
 		struct IMesh;
 		struct IChannel;
 		struct IJointAt;
-		struct IPoseSampler;
+		struct IPoseFrame;
 		struct ISeekFrame;
 	}
 	DEF_HANDLE(dc::TfRoot, Tf)
@@ -18,6 +18,6 @@ namespace rev {
 	DEF_HANDLE(dc::IMesh, Mesh)
 	DEF_HANDLE(dc::IChannel, Channel)
 	DEF_HANDLE(dc::IJointAt, Jat)
-	DEF_HANDLE(dc::IPoseSampler, PoseSampler)
+	DEF_HANDLE(dc::IPoseFrame, PoseFrame)
 	DEF_HANDLE(dc::ISeekFrame, SeekFrame)
 }
