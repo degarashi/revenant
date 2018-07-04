@@ -1,4 +1,4 @@
-#include "dc/pose_sampler.hpp"
+#include "dc/pose_frame.hpp"
 #include "frea/interpolation.hpp"
 #include "beat/pose3d.hpp"
 

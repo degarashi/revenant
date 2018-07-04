@@ -1,7 +1,7 @@
 #include "gltf/v1/animation.hpp"
 #include "../check.hpp"
 #include "gltf/v1/accessor.hpp"
-#include "dc/pose_sampler.hpp"
+#include "dc/pose_frame.hpp"
 #include "../../ovr_functor.hpp"
 
 namespace rev::gltf::v1 {
