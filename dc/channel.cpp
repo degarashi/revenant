@@ -6,10 +6,10 @@
 #include "dc/node.hpp"
 
 namespace rev::dc {
-	float Channel::length() const {
+	float IChannel::length() const {
 		return _seek->length();
 	}
-	void Channel::apply(const IJointQuery& q, const float t) const {
+	void JChannel::apply(const IJointQuery& q, const float t) const {
 		D_Assert0(_seek->numFrame() == _output->numFrame());
 		const auto pos = _seek->position(t);
 		auto& node = _jat->findJoint(q);

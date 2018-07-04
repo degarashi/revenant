@@ -6,14 +6,14 @@
 namespace rev::dc {
 	class Animation {
 		private:
-			using Ch = std::vector<HChannel>;
+			using JCh = std::vector<HJChannel>;
 			using Float_OP = spi::Optional<float>;
-			Ch					_channel;
+			JCh					_channel;
 			float				_time;
 			mutable Float_OP	_length;
 		public:
 			Animation();
-			void addChannel(const HChannel& c);
+			void addChannel(const HJChannel& c);
 			void append(const Animation& a);
 			void clear();
 			bool empty() const noexcept;

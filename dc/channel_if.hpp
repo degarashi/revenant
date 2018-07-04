@@ -1,10 +1,13 @@
 #pragma once
 
 namespace rev::dc {
-	struct IJointQuery;
 	struct IChannel {
+		HSeekFrame		_seek;
 		virtual ~IChannel () {}
-		virtual float length() const = 0;
-		virtual void apply(const IJointQuery& q, float t) const = 0;
+		float length() const;
+	};
+	template <class Query>
+	struct IChannelT : IChannel {
+		virtual void apply(const Query& q, float t) const = 0;
 	};
 }

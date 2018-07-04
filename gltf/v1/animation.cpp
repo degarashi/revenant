@@ -134,7 +134,7 @@ namespace rev::gltf::v1 {
 	dc::Animation Animation::makeAnimation() const {
 		dc::Animation ret;
 		for(auto& c : channel) {
-			auto ch = std::make_shared<dc::Channel>();
+			auto ch = std::make_shared<dc::JChannel>();
 			// Joint At
 			{
 				const auto jat = std::make_shared<dc::Jat_Id>();
