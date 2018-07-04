@@ -1,4 +1,5 @@
 #pragma once
+#include "jointquery_if.hpp"
 #include "jat_if.hpp"
 
 namespace rev::dc {

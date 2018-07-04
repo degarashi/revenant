@@ -1,16 +1,9 @@
 #pragma once
-#include <string>
-#include "spine/flyweight_item.hpp"
+#include <stdexcept>
 
 namespace rev::dc {
-	using SName = spi::FlyweightItem<std::string>;
-	using JointId = uint32_t;
 	class TfNode;
-	struct IJointQuery {
-		virtual ~IJointQuery() {}
-		virtual TfNode* queryJoint(JointId id) const = 0;
-		virtual TfNode* queryJoint(const SName& name) const = 0;
-	};
+	struct IJointQuery;
 	struct IJointAt {
 		struct JointNotFound : std::runtime_error {
 			using std::runtime_error::runtime_error;

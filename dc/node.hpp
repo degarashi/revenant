@@ -4,7 +4,7 @@
 #include "../handle/model.hpp"
 #include "qm_if.hpp"
 #include "../debuggui_if.hpp"
-#include "jat_if.hpp"
+#include "jointquery_if.hpp"
 
 namespace rev::dc {
 	using Name = std::string;
