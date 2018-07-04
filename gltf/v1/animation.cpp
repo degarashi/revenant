@@ -155,9 +155,9 @@ namespace rev::gltf::v1 {
 				default:
 					Assert0(false);
 			}
-			// Sampler(input) -> PosSampler
+			// Sampler(input) -> SeekFrame
 			{
-				auto isamp = std::make_shared<dc::PosSampler_cached>();
+				auto isamp = std::make_shared<dc::SeekFrame_cached>();
 				isamp->pos = std::make_shared<std::vector<float>>(c.sampler->input->cnvToFloat());
 				ch->_position = isamp;
 			}

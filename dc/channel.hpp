@@ -4,7 +4,7 @@
 
 namespace rev::dc {
 	struct Channel : IChannel {
-		HPosSampler		_position;
+		HSeekFrame		_position;
 		HPoseSampler	_sampler;
 		HJat		_jat;
 

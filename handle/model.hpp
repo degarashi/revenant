@@ -10,7 +10,7 @@ namespace rev {
 		struct IChannel;
 		struct IJointAt;
 		struct IPoseSampler;
-		struct IPosSampler;
+		struct ISeekFrame;
 	}
 	DEF_HANDLE(dc::TfRoot, Tf)
 	DEF_HANDLE(dc::TfNode, TfNode)
@@ -19,5 +19,5 @@ namespace rev {
 	DEF_HANDLE(dc::IChannel, Channel)
 	DEF_HANDLE(dc::IJointAt, Jat)
 	DEF_HANDLE(dc::IPoseSampler, PoseSampler)
-	DEF_HANDLE(dc::IPosSampler, PosSampler)
+	DEF_HANDLE(dc::ISeekFrame, SeekFrame)
 }

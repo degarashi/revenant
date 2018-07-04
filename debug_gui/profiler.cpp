@@ -24,7 +24,7 @@ namespace rev::debug {
 		using Vec = std::vector<T>;
 		const Vec<float> g_posV = {0, 25, 50, 75, 100};
 		const dc::SVec<float>	g_posSV = std::make_shared<Vec<float>>(g_posV);
-		const dc::PosSampler g_posSamp(g_posSV);
+		const dc::SeekFrame g_posSamp(g_posSV);
 
 		struct ColSampler : dc::FrameArray {
 			Vec<frea::Vec4>	value;

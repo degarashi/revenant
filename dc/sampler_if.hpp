@@ -13,7 +13,7 @@ namespace rev::dc {
 	struct IPoseSampler : FrameArray {
 		virtual void sample(Pose3& dst, std::size_t idx, float t) const = 0;
 	};
-	struct IPosSampler : FrameArray {
+	struct ISeekFrame : FrameArray {
 		struct PosP {
 			std::size_t	idx;
 			float		time;

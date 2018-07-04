@@ -3,14 +3,14 @@
 #include "spine/optional.hpp"
 
 namespace rev::dc {
-	// ----------------- PosSampler -----------------
-	PosSampler::PosSampler(const SVec<float>& p):
+	// ----------------- SeekFrame -----------------
+	SeekFrame::SeekFrame(const SVec<float>& p):
 		pos(p)
 	{}
-	float PosSampler::length() const {
+	float SeekFrame::length() const {
 		return pos->back();
 	}
-	std::size_t PosSampler::numFrame() const {
+	std::size_t SeekFrame::numFrame() const {
 		return pos->size();
 	}
 	namespace {
@@ -32,15 +32,15 @@ namespace rev::dc {
 			return std::make_pair(cur, Ratio(t, *cur, *cur1));
 		}
 		template <class P>
-			spi::Optional<PosSampler::PosP> CheckOutOfRange(const P& pos, const float t) {
+			spi::Optional<SeekFrame::PosP> CheckOutOfRange(const P& pos, const float t) {
 				if(pos.size()<2 || t<=pos.front()) {
-					return PosSampler::PosP {
+					return SeekFrame::PosP {
 						.idx = 0,
 						.time = 0
 					};
 				}
 				if(t >= pos.back()) {
-					return PosSampler::PosP {
+					return SeekFrame::PosP {
 						.idx = pos.size()-1,
 						.time = 0
 					};
@@ -48,7 +48,7 @@ namespace rev::dc {
 				return spi::none;
 			}
 	}
-	PosSampler::PosP PosSampler::position(const float t) const {
+	SeekFrame::PosP SeekFrame::position(const float t) const {
 		if(const auto ret = CheckOutOfRange(*pos, t))
 			return *ret;
 
@@ -59,10 +59,10 @@ namespace rev::dc {
 			.time = p.second
 		};
 	}
-	PosSampler::PosP PosSampler::position(const std::size_t idx, const float t) const {
+	SeekFrame::PosP SeekFrame::position(const std::size_t idx, const float t) const {
 		auto& ps = *pos;
 		if(t < ps[idx]) {
-			return PosSampler::position(t);
+			return SeekFrame::position(t);
 		}
 
 		if(const auto ret = CheckOutOfRange(*pos, t))
@@ -90,11 +90,11 @@ namespace rev::dc {
 		};
 	}
 
-	// ----------------- PosSampler_cached -----------------
-	PosSampler_cached::PosSampler_cached():
+	// ----------------- SeekFrame_cached -----------------
+	SeekFrame_cached::SeekFrame_cached():
 		_prevFrame(0)
 	{}
-	PosSampler_cached::PosP PosSampler_cached::position(const float t) const {
+	SeekFrame_cached::PosP SeekFrame_cached::position(const float t) const {
 		const auto ret = position(_prevFrame, t);
 		_prevFrame = ret.idx;
 		return ret;
