@@ -1,4 +1,4 @@
-#include "sampler_if.hpp"
+#include "pose_sampler_if.hpp"
 #include "frea/quaternion.hpp"
 
 namespace rev::dc {
