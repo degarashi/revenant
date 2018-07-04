@@ -23,6 +23,7 @@ namespace rev::dc {
 			float time() const noexcept;
 			void loop();
 
-			bool update(const IJointQuery& q, float dt);
+			void update(const IJointQuery& q);
+			bool advance(float dt);
 	};
 }

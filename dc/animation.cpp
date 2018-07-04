@@ -39,11 +39,12 @@ namespace rev::dc {
 	void Animation::loop() {
 		_time = std::fmod(_time, length());
 	}
-
-	bool Animation::update(const IJointQuery& q, const float dt) {
-		_time += dt;
+	void Animation::update(const IJointQuery& q) {
 		for(auto& c : _channel)
 			c->apply(q, _time);
+	}
+	bool Animation::advance(const float dt) {
+		_time += dt;
 		return _time >= length();
 	}
 }

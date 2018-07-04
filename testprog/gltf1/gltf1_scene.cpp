@@ -135,7 +135,9 @@ namespace rev::test {
 			if(!self._anim.empty()) {
 				auto& node = *self._model->getNode();
 				constexpr float dt = 1.f / 60;
-				if(self._anim.update(node, dt))
+				const auto ended = self._anim.advance(dt);
+				self._anim.update(node);
+				if(ended)
 					self._anim.loop();
 			}
 		}
