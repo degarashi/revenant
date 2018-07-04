@@ -1,5 +1,5 @@
 #pragma once
-#include "../handle/model.hpp"
+#include "../handle/animation.hpp"
 #include "channel_if.hpp"
 
 namespace rev::dc {

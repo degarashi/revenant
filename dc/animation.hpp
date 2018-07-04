@@ -1,8 +1,7 @@
 #pragma once
-#include "../handle/model.hpp"
+#include "../handle/animation.hpp"
 #include "channel_if.hpp"
 #include "spine/optional.hpp"
-#include <vector>
 
 namespace rev::dc {
 	class Animation {

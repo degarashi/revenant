@@ -7,17 +7,9 @@ namespace rev {
 		class TfNode;
 		struct IModel;
 		struct IMesh;
-		struct IChannel;
-		struct IJointAt;
-		struct IPoseFrame;
-		struct ISeekFrame;
 	}
 	DEF_HANDLE(dc::TfRoot, Tf)
 	DEF_HANDLE(dc::TfNode, TfNode)
 	DEF_HANDLE(dc::IModel, Mdl)
 	DEF_HANDLE(dc::IMesh, Mesh)
-	DEF_HANDLE(dc::IChannel, Channel)
-	DEF_HANDLE(dc::IJointAt, Jat)
-	DEF_HANDLE(dc::IPoseFrame, PoseFrame)
-	DEF_HANDLE(dc::ISeekFrame, SeekFrame)
 }
