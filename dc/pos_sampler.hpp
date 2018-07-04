@@ -13,7 +13,7 @@ namespace rev::dc {
 		PosSampler() = default;
 		PosSampler(const SVec<float>& p);
 		float length() const override;
-		std::size_t numKey() const override;
+		std::size_t numFrame() const override;
 		PosP position(float t) const override;
 		PosP position(std::size_t idx, float t) const override;
 	};

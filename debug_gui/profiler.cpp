@@ -26,13 +26,13 @@ namespace rev::debug {
 		const dc::SVec<float>	g_posSV = std::make_shared<Vec<float>>(g_posV);
 		const dc::PosSampler g_posSamp(g_posSV);
 
-		struct ColSampler : dc::IFrame {
+		struct ColSampler : dc::FrameArray {
 			Vec<frea::Vec4>	value;
 
 			ColSampler(const Vec<frea::Vec4>& v):
 				value(v)
 			{}
-			std::size_t numKey() const override {
+			std::size_t numFrame() const override {
 				return value.size();
 			}
 			ImVec4 sample(std::size_t idx, float t) const {

@@ -3,7 +3,7 @@
 #include "beat/pose3d.hpp"
 
 namespace rev::dc {
-	std::size_t Pose_T_Sampler::numKey() const {
+	std::size_t Pose_T_Sampler::numFrame() const {
 		return value->size();
 	}
 	void Pose_T_Sampler::sample(Pose3& dst, const std::size_t idx, const float t) const {
@@ -16,7 +16,7 @@ namespace rev::dc {
 			v = frea::Lerp(val[idx], val[idx+1], t);
 		dst.setOffset(v);
 	}
-	std::size_t Pose_R_Sampler::numKey() const {
+	std::size_t Pose_R_Sampler::numFrame() const {
 		return value->size();
 	}
 	void Pose_R_Sampler::sample(Pose3& dst, const std::size_t idx, const float t) const {
@@ -29,7 +29,7 @@ namespace rev::dc {
 			q = frea::Lerp(val[idx], val[idx+1], t);
 		dst.setRotation(q);
 	}
-	std::size_t Pose_S_Sampler::numKey() const {
+	std::size_t Pose_S_Sampler::numFrame() const {
 		return value->size();
 	}
 	void Pose_S_Sampler::sample(Pose3& dst, const std::size_t idx, const float t) const {

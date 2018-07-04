@@ -10,7 +10,7 @@ namespace rev::dc {
 	float PosSampler::length() const {
 		return pos->back();
 	}
-	std::size_t PosSampler::numKey() const {
+	std::size_t PosSampler::numFrame() const {
 		return pos->size();
 	}
 	namespace {

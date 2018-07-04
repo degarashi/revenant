@@ -9,7 +9,7 @@ namespace rev::dc {
 		return _position->length();
 	}
 	void Channel::apply(const IJointQuery& q, const float t) const {
-		D_Assert0(_position->numKey() == _sampler->numKey());
+		D_Assert0(_position->numFrame() == _sampler->numFrame());
 		const auto pos = _position->position(t);
 		auto& node = _jat->findJoint(q);
 		_sampler->sample(node.refPose(), pos.idx, pos.time);
