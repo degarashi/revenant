@@ -4,6 +4,13 @@
 #include "dc/animation.hpp"
 
 namespace rev::gltf::v1 {
+	DefineEnum(AnimPath,
+		(Translation)
+		(Rotation)
+		(Scale)
+	);
+	using FVec = std::shared_ptr<std::vector<float>>;
+
 	struct AnimSampler :
 		Resource
 	{
@@ -13,16 +20,11 @@ namespace rev::gltf::v1 {
 		AnimSampler(const JValue& v, const IDataQuery& q);
 		Type getType() const noexcept override;
 
-		mutable struct {
-			bool		vec4;
-			const void*	output =nullptr;
-			std::size_t	length;
-		} cached;
+		mutable FVec	cached;
+		mutable bool	bVec4;
+		const FVec& _getCache() const;
 
-		void _checkData() const;
-		HFrameOut outputAsTranslation() const;
-		HFrameOut outputAsRotation() const;
-		HFrameOut outputAsScaling() const;
+		HFrameOut asFrameOut(AnimPath type) const;
 	};
 	struct Animation :
 		Resource
@@ -31,13 +33,8 @@ namespace rev::gltf::v1 {
 
 		struct Channel {
 			struct Target {
-				DefineEnum(TRS,
-					(Translation)
-					(Rotation)
-					(Scale)
-				);
-				DRef_Node	node;
-				TRS			path;
+				DRef_Node		node;
+				AnimPath		path;
 
 				Target(const JValue& v, const IDataQuery& q);
 			};

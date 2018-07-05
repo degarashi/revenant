@@ -27,19 +27,19 @@ namespace rev::gltf::v1 {
 		template <class T>
 		using Vec = std::vector<T>;
 	}
-	void AnimSampler::_checkData() const {
-		if(!cached.output) {
+	const FVec& AnimSampler::_getCache() const {
+		if(!cached) {
 			output->getData(
 				OVR_Functor{
 					[this](const frea::Vec3* v, const auto len) {
-						cached.vec4 = false;
-						cached.output = v;
-						cached.length = len;
+						auto* fp = reinterpret_cast<const float*>(v);
+						cached = std::make_shared<std::vector<float>>(fp, fp+len*3);
+						bVec4 = false;
 					},
 					[this](const frea::Vec4* v, const auto len) {
-						cached.vec4 = true;
-						cached.output = v;
-						cached.length = len;
+						auto* fp = reinterpret_cast<const float*>(v);
+						cached = std::make_shared<std::vector<float>>(fp, fp+len*4);
+						bVec4 = true;
 					},
 					[](const auto&, auto) {
 						AssertF("output type must Vec3 or Vec4");
@@ -47,30 +47,26 @@ namespace rev::gltf::v1 {
 				}
 			);
 		}
+		return cached;
 	}
-	HFrameOut AnimSampler::outputAsTranslation() const {
-		_checkData();
-		Assert0(!cached.vec4);
-		const auto samp = std::make_shared<dc::Pose_T_Sampler>();
-		const auto* src = static_cast<const frea::Vec3*>(cached.output);
-		samp->value = std::make_shared<Vec<frea::Vec3>>(src , src+cached.length);
-		return samp;
-	}
-	HFrameOut AnimSampler::outputAsRotation() const {
-		_checkData();
-		Assert0(cached.vec4);
-		const auto samp = std::make_shared<dc::Pose_R_Sampler>();
-		const auto* src = static_cast<const frea::Quat*>(cached.output);
-		samp->value = std::make_shared<Vec<frea::Quat>>(src, src+cached.length);
-		return samp;
-	}
-	HFrameOut AnimSampler::outputAsScaling() const {
-		_checkData();
-		Assert0(!cached.vec4);
-		const auto samp = std::make_shared<dc::Pose_S_Sampler>();
-		const auto* src = static_cast<const frea::Vec3*>(cached.output);
-		samp->value = std::make_shared<Vec<frea::Vec3>>(src, src+cached.length);
-		return samp;
+	HFrameOut AnimSampler::asFrameOut(const AnimPath type) const {
+		const auto& c = _getCache();
+		if(type == AnimPath::Translation) {
+			Assert0(!bVec4);
+			const auto samp = std::make_shared<dc::Pose_T_Sampler>();
+			samp->value = c;
+			return samp;
+		} else if(type == AnimPath::Rotation) {
+			Assert0(bVec4);
+			const auto samp = std::make_shared<dc::Pose_R_Sampler>();
+			samp->value = c;
+			return samp;
+		} else {
+			Assert0(!bVec4 && type == AnimPath::Scale);
+			const auto samp = std::make_shared<dc::Pose_S_Sampler>();
+			samp->value = c;
+			return samp;
+		}
 	}
 
 	namespace {
@@ -84,7 +80,7 @@ namespace rev::gltf::v1 {
 	Animation::Channel::Target::Target(const JValue& v, const IDataQuery& q):
 		node(Required<DRef_Node>(v, "id", q))
 	{
-		path = static_cast<TRS::e>(&CheckEnum(c_path, static_cast<const char*>(Required<String>(v, "path"))) - c_path);
+		path = static_cast<AnimPath::e>(&CheckEnum(c_path, static_cast<const char*>(Required<String>(v, "path"))) - c_path);
 	}
 	// ---------------------- Animation::Channel ----------------------
 	Animation::Channel::Channel(const JValue& v, const IDataQuery& q):
@@ -142,19 +138,7 @@ namespace rev::gltf::v1 {
 				ch->_jat = jat;
 			}
 			// Sampler(output) -> (T or R or S)_Sampler
-			switch(c.target.path) {
-				case Channel::Target::TRS::Translation:
-					ch->_output = c.sampler->outputAsTranslation();
-					break;
-				case Channel::Target::TRS::Rotation:
-					ch->_output = c.sampler->outputAsRotation();
-					break;
-				case Channel::Target::TRS::Scale:
-					ch->_output = c.sampler->outputAsScaling();
-					break;
-				default:
-					Assert0(false);
-			}
+			ch->_output = c.sampler->asFrameOut(c.target.path);
 			// Sampler(input) -> SeekFrame
 			{
 				auto isamp = std::make_shared<dc::SeekFrame_cached>();
