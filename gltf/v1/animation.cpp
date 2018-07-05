@@ -1,7 +1,7 @@
 #include "gltf/v1/animation.hpp"
 #include "../check.hpp"
 #include "gltf/v1/accessor.hpp"
-#include "dc/pose_frame.hpp"
+#include "dc/node_frame.hpp"
 #include "../../ovr_functor.hpp"
 
 namespace rev::gltf::v1 {
@@ -53,17 +53,17 @@ namespace rev::gltf::v1 {
 		const auto& c = _getCache();
 		if(type == AnimPath::Translation) {
 			Assert0(!bVec4);
-			const auto samp = std::make_shared<dc::Pose_T_Sampler>();
+			const auto samp = std::make_shared<dc::Node_T_FrameOut>();
 			samp->value = c;
 			return samp;
 		} else if(type == AnimPath::Rotation) {
 			Assert0(bVec4);
-			const auto samp = std::make_shared<dc::Pose_R_Sampler>();
+			const auto samp = std::make_shared<dc::Node_R_FrameOut>();
 			samp->value = c;
 			return samp;
 		} else {
 			Assert0(!bVec4 && type == AnimPath::Scale);
-			const auto samp = std::make_shared<dc::Pose_S_Sampler>();
+			const auto samp = std::make_shared<dc::Node_S_FrameOut>();
 			samp->value = c;
 			return samp;
 		}

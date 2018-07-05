@@ -1,6 +1,6 @@
 #include "channel.hpp"
 #include "seekframe_if.hpp"
-#include "dc/pose_frame.hpp"
+#include "dc/node_frame.hpp"
 #include "lubee/error.hpp"
 #include "jat_if.hpp"
 #include "dc/node.hpp"
