@@ -11,12 +11,12 @@ namespace rev::dc {
 		D_Assert0(lubee::IsInRange(t, 0.f, 1.f));
 		const auto NUnit = getNUnit();
 		auto& val = *value;
-		D_Assert0((idx+1)*NUnit < val.size());
 
 		if(t == 0.f)
 			for(std::size_t i=0 ; i<NUnit ; i++)
 				tmp[i] = val[idx * NUnit + i];
 		else {
+			D_Assert0((idx+1)*NUnit < val.size());
 			frea::Lerp(
 				tmp,
 				val.data() + idx*NUnit,
