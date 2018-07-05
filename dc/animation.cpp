@@ -6,7 +6,7 @@ namespace rev::dc {
 		_time(0)
 	{}
 
-	void Animation::addChannel(const HJChannel& c) {
+	void Animation::addChannel(const HChannel& c) {
 		_channel.emplace_back(c);
 		_length = spi::none;
 	}

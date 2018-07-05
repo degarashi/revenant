@@ -48,7 +48,7 @@ namespace rev::gltf::v1 {
 			);
 		}
 	}
-	HPoseFrame AnimSampler::outputAsTranslation() const {
+	HFrameOut AnimSampler::outputAsTranslation() const {
 		_checkData();
 		Assert0(!cached.vec4);
 		const auto samp = std::make_shared<dc::Pose_T_Sampler>();
@@ -56,7 +56,7 @@ namespace rev::gltf::v1 {
 		samp->value = std::make_shared<Vec<frea::Vec3>>(src , src+cached.length);
 		return samp;
 	}
-	HPoseFrame AnimSampler::outputAsRotation() const {
+	HFrameOut AnimSampler::outputAsRotation() const {
 		_checkData();
 		Assert0(cached.vec4);
 		const auto samp = std::make_shared<dc::Pose_R_Sampler>();
@@ -64,7 +64,7 @@ namespace rev::gltf::v1 {
 		samp->value = std::make_shared<Vec<frea::Quat>>(src, src+cached.length);
 		return samp;
 	}
-	HPoseFrame AnimSampler::outputAsScaling() const {
+	HFrameOut AnimSampler::outputAsScaling() const {
 		_checkData();
 		Assert0(!cached.vec4);
 		const auto samp = std::make_shared<dc::Pose_S_Sampler>();
@@ -134,7 +134,7 @@ namespace rev::gltf::v1 {
 	dc::Animation Animation::makeAnimation() const {
 		dc::Animation ret;
 		for(auto& c : channel) {
-			auto ch = std::make_shared<dc::JChannel>();
+			auto ch = std::make_shared<dc::Channel>();
 			// Joint At
 			{
 				const auto jat = std::make_shared<dc::Jat_Id>();
