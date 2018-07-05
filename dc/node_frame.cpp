@@ -39,8 +39,19 @@ namespace rev::dc {
 		return 4;
 	}
 	void Node_R_FrameOut::output(TfNode& dst, const std::size_t idx, const float t) const {
-		auto* res = reinterpret_cast<const frea::Quat*>(_calcValue(idx, t));
-		dst.refPose().setRotation(*res);
+		D_Assert0(lubee::IsInRange(t, 0.f, 1.f));
+		auto& val = *value;
+
+		frea::Quat q;
+		if(t == 0.f)
+			q = *reinterpret_cast<const frea::Quat*>(val.data() + idx*4);
+		else {
+			D_Assert0((idx+1)*4 < val.size());
+			q = frea::Lerp(*reinterpret_cast<const frea::Quat*>(val.data() + idx*4),
+							*reinterpret_cast<const frea::Quat*>(val.data() + (idx+1)*4),
+							t);
+		}
+		dst.refPose().setRotation(q);
 	}
 	std::size_t Node_S_FrameOut::getNUnit() const noexcept {
 		return 3;
