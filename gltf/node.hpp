@@ -6,6 +6,7 @@
 namespace rev::dc {
 	class TfNode;
 	using JointId = uint32_t;
+	using Void_S = std::shared_ptr<void>;
 }
 namespace rev::gltf {
 	template <class N>
@@ -26,6 +27,7 @@ namespace rev::gltf {
 			Pose3				pose;
 			NodeV				child;
 			dc::JointId			jointId;
+			dc::Void_S			userData;
 			static dc::JointId	s_id;
 			const Node*			parent;
 
