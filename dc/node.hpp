@@ -8,6 +8,7 @@
 
 namespace rev::dc {
 	using Name = std::string;
+	using Void_S = std::shared_ptr<void>;
 	class TfNode :
 		public lubee::CheckAlign<TfNode>,
 		public lubee::AAllocator<TfNode>,
@@ -33,6 +34,7 @@ namespace rev::dc {
 			JointId		id;
 			SName		jointName;
 			Name		userName;
+			Void_S		userData;
 
 			TfNode(JointId id, const SName& jointName, const Name& userName);
 			static void OnParentChange(spi::TreeNode<TfNode>* self, const HTfNode& node);
