@@ -1,28 +1,28 @@
 #include "frameout_if.hpp"
-#include "frea/quaternion.hpp"
+#include <vector>
+#include <memory>
 
 namespace rev::dc {
 	using FVec = std::shared_ptr<std::vector<float>>;
 
-	struct Pose_T_Sampler : IFrameOut {
-		constexpr static std::size_t NUnit = 3;
+	struct Pose_FrameOut : IFrameOut {
 		FVec		value;
 
+		virtual std::size_t getNUnit() const noexcept = 0;
 		std::size_t numFrame() const override;
+		template <class Res>
+		Res _calcValue(std::size_t idx, float t) const;
+	};
+	struct Pose_T_Sampler : Pose_FrameOut {
+		std::size_t getNUnit() const noexcept override;
 		void output(TfNode& dst, std::size_t idx, float t) const override;
 	};
-	struct Pose_R_Sampler : IFrameOut {
-		constexpr static std::size_t NUnit = 4;
-		FVec		value;
-
-		std::size_t numFrame() const override;
+	struct Pose_R_Sampler : Pose_FrameOut {
+		std::size_t getNUnit() const noexcept override;
 		void output(TfNode& dst, std::size_t idx, float t) const override;
 	};
-	struct Pose_S_Sampler : IFrameOut {
-		constexpr static std::size_t NUnit = 3;
-		FVec		value;
-
-		std::size_t numFrame() const override;
+	struct Pose_S_Sampler : Pose_FrameOut {
+		std::size_t getNUnit() const noexcept override;
 		void output(TfNode& dst, std::size_t idx, float t) const override;
 	};
 }
