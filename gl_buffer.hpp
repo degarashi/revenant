@@ -108,6 +108,8 @@ namespace rev {
 			using GLBuffer::initData;
 			void initData(const GLubyte* src, std::size_t nElem);
 			void initData(const GLushort* src, std::size_t nElem);
+			void initData(const GLuint* src, std::size_t nElem);
+			void initData(const void* src, std::size_t nElem) = delete;
 
 			void updateData(const GLushort* src, std::size_t nElem, GLuint offset);
 			void updateData(const GLubyte* src, std::size_t nElem, GLuint offset);

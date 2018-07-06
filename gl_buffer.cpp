@@ -115,10 +115,13 @@ namespace rev {
 		GLBuffer(BufferType::Index, dtype)
 	{}
 	void GLIBuffer::initData(const GLubyte* src, const std::size_t nElem) {
-		GLBuffer::initData(src, nElem, sizeof(GLubyte));
+		GLBuffer::initData(src, nElem, sizeof(*src));
 	}
 	void GLIBuffer::initData(const GLushort* src, const std::size_t nElem) {
-		GLBuffer::initData(src, nElem, sizeof(GLushort));
+		GLBuffer::initData(src, nElem, sizeof(*src));
+	}
+	void GLIBuffer::initData(const GLuint* src, const std::size_t nElem) {
+		GLBuffer::initData(src, nElem, sizeof(*src));
 	}
 	void GLIBuffer::updateData(const GLubyte* src, const std::size_t nElem, const GLuint offset) {
 		GLBuffer::updateData(src, nElem, offset*sizeof(GLubyte));
