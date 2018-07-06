@@ -90,12 +90,15 @@ namespace rev {
 								const URI& uri0, const URI& uri1, const URI& uri2,
 								const URI& uri3, const URI& uri4, const URI& uri5)
 	{
-		// リソース名はUriを全部つなげた文字列とする
-		std::string tmp(uri0.plain());
+		// リソース名はmiplevel, fmt, Uriを全部つなげた文字列とする
+		std::string tmp;
+		tmp.append(miplevel.toStr());
+		if(fmt)
+			tmp.append(std::to_string(uint32_t(*fmt)));
 		const auto fn = [&tmp](const URI& u) {
 			tmp.append(u.plain());
 		};
-		fn(uri1); fn(uri2); fn(uri3); fn(uri4); fn(uri5);
+		fn(uri0); fn(uri1); fn(uri2); fn(uri3); fn(uri4); fn(uri5);
 
 		return
 			loadResourceApp<TextureSrc_CubeURI>(
