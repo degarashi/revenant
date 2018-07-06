@@ -47,9 +47,11 @@ namespace rev::dc {
 			q = *reinterpret_cast<const frea::Quat*>(val.data() + idx*4);
 		else {
 			D_Assert0((idx+1)*4 < val.size());
-			q = frea::Lerp(*reinterpret_cast<const frea::Quat*>(val.data() + idx*4),
-							*reinterpret_cast<const frea::Quat*>(val.data() + (idx+1)*4),
-							t);
+			auto q0 = *reinterpret_cast<const frea::Quat*>(val.data() + idx*4),
+				q1 = *reinterpret_cast<const frea::Quat*>(val.data() + (idx+1)*4);
+			if(q0.dot(q1) < 0)
+				q1 *= -1;
+			q = frea::Lerp(q0, q1, t);
 		}
 		dst.refPose().setRotation(q);
 	}
