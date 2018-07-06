@@ -64,12 +64,12 @@ namespace rev::gltf {
 				_ib(ib),
 				_count(0)
 			{}
-			template <class T, ENABLE_IF(std::is_integral_v<T>)>
+			template <class T, ENABLE_IF(std::is_unsigned_v<T> && std::is_integral_v<T>)>
 			void operator()(const T* t, const std::size_t len) {
 				_count = len;
 				_ib->initData(t, len);
 			}
-			template <class T, ENABLE_IF(!std::is_integral_v<T>)>
+			template <class T, ENABLE_IF(!(std::is_unsigned_v<T> && std::is_integral_v<T>))>
 			void operator()(const T*, std::size_t) {
 				D_Assert0(false);
 			}
