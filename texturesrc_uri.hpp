@@ -13,10 +13,12 @@ namespace rev {
 	{
 		private:
 			HURI				_uri;
+			std::size_t			_miplevel;
 			bool				_mip;
 		public:
 			TextureSrc_URI(const HURI& uri, bool mip, InCompressedFmt_OP fmt);
 			void onDeviceReset() override;
+			std::size_t getMipLevels() const override;
 			DEF_DEBUGGUI_PROP
 			DEF_DEBUGGUI_NAME
 	};
@@ -26,6 +28,7 @@ namespace rev {
 	{
 		private:
 			HURI				_uri[6];
+			std::size_t			_miplevel;
 			bool				_mip;
 		public:
 			TextureSrc_CubeURI(
@@ -34,8 +37,7 @@ namespace rev {
 				bool mip, InCompressedFmt_OP fmt
 			);
 			void onDeviceReset() override;
+			std::size_t getMipLevels() const override;
 			DEF_DEBUGGUI_NAME
 	};
-	using Size_Fmt = std::pair<lubee::SizeI, GLInCompressedFmt>;
-	Size_Fmt LoadTextureFromBuffer(const TextureSource& tex, GLenum tflag, GLenum format, const lubee::SizeI& size, const ByteBuff& buff, bool bP2, bool bMip);
 }

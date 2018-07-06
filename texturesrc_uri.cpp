@@ -12,7 +12,7 @@ namespace rev {
 			\param[in]	bP2		trueなら2の乗数サイズへ変換
 			\param[in]	bMip	trueならミップマップ生成
 		*/
-		Size_Fmt WritePixelData(const GLenum tflag, const HSfc& sfc, const InCompressedFmt_OP fmt, const bool bP2, const bool bMip) {
+		TextureLoadResult WritePixelData(const GLenum tflag, const HSfc& sfc, const InCompressedFmt_OP fmt, const bool bP2, const bool bMip) {
 			// SDLフォーマットから適したOpenGLフォーマットへ変換
 			HSfc tsfc = sfc;
 			GLFormatDesc desc;
@@ -59,6 +59,7 @@ namespace rev {
 					make(&buff[0]);
 				};
 			}
+			std::size_t miplevel = 1;
 			if(!bMip)
 				func(tsfc);
 			else {
@@ -67,21 +68,26 @@ namespace rev {
 					func(tsfc2);
 					if(size.width==1 && size.height==1)
 						break;
+					++miplevel;
 					size.shiftR_one(1);
 					tsfc2 = tsfc->resize(size);
 				}
 			}
-			return std::make_pair(tsize, desc.format);
+			return {
+				.size = tsize,
+				.format = desc.format,
+				.miplevel = miplevel
+			};
 		}
 		//! texのfaceにhRWのピクセルデータを書き込む
-		Size_Fmt LoadTexture(const TextureSource& tex, const HRW& hRW, const bool mip, const CubeFace face) {
+		TextureLoadResult LoadTexture(const TextureSource& tex, const HRW& hRW, const bool mip, const CubeFace face) {
 			const HSfc sfc = Surface::Load(hRW);
 			const GLenum tflag = tex.getFaceFlag(face);
 			tex.imm_bind(0);
 			return WritePixelData(tflag, sfc, tex.getFormat(), true, mip);
 		}
 	}
-	Size_Fmt LoadTextureFromBuffer(const TextureSource& tex, const GLenum tflag, const GLenum format, const lubee::SizeI& size, const ByteBuff& buff, const bool bP2, const bool bMip) {
+	TextureLoadResult LoadTextureFromBuffer(const TextureSource& tex, const GLenum tflag, const GLenum format, const lubee::SizeI& size, const ByteBuff& buff, const bool bP2, const bool bMip) {
 		// 簡単の為に一旦SDL_Surfaceに変換
 		const auto info = GLFormat::QueryInfo(format);
 		const int pixelsize = info->numElem* GLFormat::QuerySize(info->baseType);
@@ -94,16 +100,24 @@ namespace rev {
 	TextureSrc_URI::TextureSrc_URI(const HURI& uri, const bool mip, const InCompressedFmt_OP fmt):
 		TextureSource(fmt, lubee::SizeI(0,0), false),
 		_uri(uri),
+		_miplevel(0),
 		_mip(mip)
 	{}
 	void TextureSrc_URI::onDeviceReset() {
-		if(_onDeviceReset())
-			std::tie(_size, _format) = LoadTexture(
-											*this,
-											mgr_rw.fromURI(*_uri, Access::Read),
-											_mip,
-											CubeFace::PositiveX
-										);
+		if(_onDeviceReset()) {
+			const auto res = LoadTexture(
+								*this,
+								mgr_rw.fromURI(*_uri, Access::Read),
+								_mip,
+								CubeFace::PositiveX
+							);
+			_size = res.size;
+			_format = res.format;
+			_miplevel = res.miplevel;
+		}
+	}
+	std::size_t TextureSrc_URI::getMipLevels() const {
+		return _miplevel;
 	}
 	// ------------------------- TextureSrc_CubeURI -------------------------
 	TextureSrc_CubeURI::TextureSrc_CubeURI(
@@ -113,20 +127,27 @@ namespace rev {
 	):
 		TextureSource(fmt, lubee::SizeI(0,0), true),
 		_uri{uri0, uri1, uri2, uri3, uri4, uri5},
+		_miplevel(0),
 		_mip(mip)
 	{}
 	void TextureSrc_CubeURI::onDeviceReset() {
 		if(_onDeviceReset()) {
 			for(int i=0 ; i<6 ; i++) {
-				const auto size_fmt = LoadTexture(
+				const auto res = LoadTexture(
 					*this,
 					mgr_rw.fromURI(*_uri[i], Access::Read),
 					_mip,
 					static_cast<CubeFace::e>(i)
 				);
-				if(i==0)
-					std::tie(_size, _format) = size_fmt;
+				if(i==0) {
+					_size = res.size;
+					_format = res.format;
+					_miplevel = res.miplevel;
+				}
 			}
 		}
+	}
+	std::size_t TextureSrc_CubeURI::getMipLevels() const {
+		return _miplevel;
 	}
 }

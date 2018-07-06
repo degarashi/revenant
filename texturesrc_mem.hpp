@@ -37,6 +37,7 @@ namespace rev {
 				\param[in] srcFmt 入力フォーマット(Type)
 				\param[in] face Cubemapにおける面 */
 			void writeRect(AB_Byte buff, const lubee::RectI& rect, GLTypeFmt srcFmt, CubeFace face=CubeFace::PositiveX);
+			std::size_t getMipLevels() const override;
 
 			// -- from IGLResource --
 			void onDeviceReset() override;

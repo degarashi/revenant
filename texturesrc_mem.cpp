@@ -107,4 +107,7 @@ namespace rev {
 			}
 		}
 	}
+	std::size_t TextureSrc_Mem::getMipLevels() const {
+		return 1;
+	}
 }

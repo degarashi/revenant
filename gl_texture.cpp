@@ -53,4 +53,7 @@ namespace rev {
 	const HTexSrcC& GLTexture::texture() const noexcept {
 		return _src;
 	}
+	std::size_t GLTexture::getMipLevels() const {
+		return _src->getMipLevels();
+	}
 }
