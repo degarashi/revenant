@@ -116,9 +116,6 @@ namespace rev {
 			_miplevel = res.miplevel;
 		}
 	}
-	bool TextureSrc_URI::hasMipmap() const {
-		return _mip;
-	}
 	bool TextureSrc_URI::isCubemap() const {
 		return false;
 	}
@@ -152,9 +149,6 @@ namespace rev {
 				}
 			}
 		}
-	}
-	bool TextureSrc_CubeURI::hasMipmap() const {
-		return _mip;
 	}
 	bool TextureSrc_CubeURI::isCubemap() const {
 		return true;

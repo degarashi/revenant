@@ -18,7 +18,6 @@ namespace rev {
 		public:
 			TextureSrc_URI(const HURI& uri, bool mip, InCompressedFmt_OP fmt);
 			void onDeviceReset() override;
-			bool hasMipmap() const override;
 			bool isCubemap() const override;
 			std::size_t getMipLevels() const override;
 			DEF_DEBUGGUI_PROP
@@ -39,7 +38,6 @@ namespace rev {
 				bool mip, InCompressedFmt_OP fmt
 			);
 			void onDeviceReset() override;
-			bool hasMipmap() const override;
 			bool isCubemap() const override;
 			std::size_t getMipLevels() const override;
 			DEF_DEBUGGUI_NAME

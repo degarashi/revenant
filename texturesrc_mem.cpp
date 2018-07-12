@@ -108,9 +108,6 @@ namespace rev {
 			}
 		}
 	}
-	bool TextureSrc_Mem::hasMipmap() const {
-		return false;
-	}
 	bool TextureSrc_Mem::isCubemap() const {
 		return _cube;
 	}
