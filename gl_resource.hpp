@@ -66,15 +66,15 @@ namespace rev {
 			HTexSrc loadCubeTexture(MipState miplevel, InCompressedFmt_OP fmt,
 								const URI& uri0, const URI& uri1, const URI& uri2,
 								const URI& uri3, const URI& uri4, const URI& uri5);
-			HTexMem loadTextureFromRW(const HRW& rw);
+			HTexMem2D loadTextureFromRW(const HRW& rw);
 			//! 空のテクスチャを作成
 			/*! 領域だけ確保 */
-			HTexMem createTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore);
+			HTexMem2D createTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool mip, bool bRestore);
 
 			/*! 用意したデータで初期化 */
-			HTexMem createTextureInit(const lubee::SizeI& size, GLInSizedFmt fmt, bool bStream, bool bRestore, GLTypeFmt srcFmt, AB_Byte data);
+			HTexMem2D createTextureInit(const lubee::SizeI& size, GLInSizedFmt fmt, bool mip, bool bRestore, GLTypeFmt srcFmt, AB_Byte data);
 			//! 空のキューブテクスチャを作成
-			HTexMem createCubeTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool bRestore, bool bStream);
+			HTexMemCube createCubeTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool mip, bool bRestore);
 
 			// ------------ Shader ------------
 			//! 文字列からシェーダーを作成

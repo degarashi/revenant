@@ -12,6 +12,10 @@ namespace rev {
 	DEF_HANDLE(GLTexture, Tex)
 	class TextureSrc_Mem;
 	DEF_HANDLE(TextureSrc_Mem, TexMem)
+	class TextureSrc_Mem2D;
+	DEF_HANDLE(TextureSrc_Mem2D, TexMem2D)
+	class TextureSrc_MemCube;
+	DEF_HANDLE(TextureSrc_MemCube, TexMemCube)
 	class TextureSrc_URI;
 	DEF_HANDLE(TextureSrc_URI, TexURI)
 	class TextureSrc_CubeURI;

@@ -81,17 +81,17 @@ namespace std {
 }
 namespace rev {
 	struct LaneRaw {
-		HTexMem			hTex;
+		HTexMem2D		hTex;
 		lubee::RectI	rect;	//!< 管理している領域
 	};
 	struct Lane : LaneRaw {
 		Lane			*pNext;
-		Lane(const HTexMem& hT, const lubee::RectI& r);
+		Lane(const HTexMem2D& hT, const lubee::RectI& r);
 	};
 	struct ILaneAlloc {
 		virtual ~ILaneAlloc() {}
 		virtual bool alloc(LaneRaw& dst, std::size_t w) = 0;
-		virtual void addFreeLane(const HTexMem& hTex, const lubee::RectI& rect) = 0;
+		virtual void addFreeLane(const HTexMem2D& hTex, const lubee::RectI& rect) = 0;
 		virtual void clear() = 0;
 	};
 	using LaneAlloc_UP = std::unique_ptr<ILaneAlloc>;

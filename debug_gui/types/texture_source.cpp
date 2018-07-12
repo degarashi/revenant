@@ -65,8 +65,11 @@ namespace rev {
 	const char* TextureSrc_URI::getDebugName() const noexcept {
 		return "TextureSrc_URI";
 	}
-	const char* TextureSrc_Mem::getDebugName() const noexcept {
-		return "TextureSrc_Mem";
+	const char* TextureSrc_Mem2D::getDebugName() const noexcept {
+		return "TextureSrc_Mem2D";
+	}
+	const char* TextureSrc_MemCube::getDebugName() const noexcept {
+		return "TextureSrc_MemCube";
 	}
 	const char* TextureSrc_CubeURI::getDebugName() const noexcept {
 		return "TextureSrc_CubeURI";

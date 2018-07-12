@@ -80,10 +80,10 @@ namespace rev {
 			}
 		).first;
 	}
-	HTexMem GLRes::loadTextureFromRW(const HRW& rw) {
+	HTexMem2D GLRes::loadTextureFromRW(const HRW& rw) {
 		const auto sfc = Surface::Load(rw);
 		const auto buff = sfc->extractAsContinuous(SDL_PIXELFORMAT_RGBA32);
-		return makeResource<TextureSrc_Mem>(false, GL_RGBA, sfc->getSize(), false, true);
+		return makeResource<TextureSrc_Mem2D>(GL_RGBA, sfc->getSize(), false, true);
 	}
 	// 連番キューブ: Key=(Path+@, ext) URI=(Path, ext)
 	HTexSrc GLRes::loadCubeTexture(const MipState miplevel, const InCompressedFmt_OP fmt,
@@ -120,21 +120,21 @@ namespace rev {
 				}
 			).first;
 	}
-	HTexMem GLRes::createCubeTexture(const lubee::SizeI& size, const GLInSizedFmt fmt, const bool bStream,const  bool bRestore) {
-		return makeResource<TextureSrc_Mem>(true, fmt, size, bStream, bRestore);
+	HTexMemCube GLRes::createCubeTexture(const lubee::SizeI& size, const GLInSizedFmt fmt, const bool mip, const  bool bRestore) {
+		return makeResource<TextureSrc_MemCube>(fmt, size, mip, bRestore);
 	}
-	HTexMem GLRes::createTexture(const lubee::SizeI& size, const GLInSizedFmt fmt, const bool bStream, const bool bRestore) {
-		return makeResource<TextureSrc_Mem>(false, fmt, size, bStream, bRestore);
+	HTexMem2D GLRes::createTexture(const lubee::SizeI& size, const GLInSizedFmt fmt, const bool mip, const bool bRestore) {
+		return makeResource<TextureSrc_Mem2D>(fmt, size, mip, bRestore);
 	}
-	HTexMem GLRes::createTextureInit(
+	HTexMem2D GLRes::createTextureInit(
 		const lubee::SizeI& size,
 		const GLInSizedFmt fmt,
-		const bool bStream,
+		const bool mip,
 		const bool bRestore,
 		const GLTypeFmt srcFmt,
 		const AB_Byte data
 	) {
-		auto h = std::static_pointer_cast<TextureSrc_Mem>(createTexture(size, fmt, bStream, bRestore));
+		auto h = std::static_pointer_cast<TextureSrc_Mem2D>(createTexture(size, fmt, mip, bRestore));
 		h->writeData(data, srcFmt);
 		return h;
 	}
