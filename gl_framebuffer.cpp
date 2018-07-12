@@ -169,10 +169,10 @@ namespace rev {
 	void GLFBuffer::attachRBuffer(const Att::e att, const HRb& hRb) {
 		_attachIt(att, HRb(hRb));
 	}
-	void GLFBuffer::attachTextureFace(const Att::e att, const HTex& hTex, const CubeFace face) {
+	void GLFBuffer::attachTextureFace(const Att::e att, const HTexSrc& hTex, const CubeFace face) {
 		_attachIt(att, TexRes(hTex, face));
 	}
-	void GLFBuffer::attachTexture(const Att::e att, const HTex& hTex) {
+	void GLFBuffer::attachTexture(const Att::e att, const HTexSrc& hTex) {
 		attachTextureFace(att, hTex, CubeFace::PositiveX);
 	}
 	void GLFBuffer::attachRawRBuffer(const Att::e att, const GLuint idRb) {
@@ -224,10 +224,10 @@ namespace rev {
 				return lubee::SizeI(w,h);
 			}
 		};
-		struct GetTex_Visitor : boost::static_visitor<HTex> {
+		struct GetTex_Visitor : boost::static_visitor<HTexSrc> {
 			template <class T>
-			HTex operator()(const T&) const { return HTex(); }
-			HTex operator()(const GLFBufferCore::TexRes& t) const { return t.first; }
+			HTexSrc operator()(const T&) const { return HTexSrc(); }
+			HTexSrc operator()(const GLFBufferCore::TexRes& t) const { return t.first; }
 		};
 		struct GetRb_Visitor : boost::static_visitor<HRb> {
 			template <class T>
@@ -244,7 +244,7 @@ namespace rev {
 	const char* GLFBuffer::getResourceName() const noexcept {
 		return "GLFBuffer";
 	}
-	HTex GLFBuffer::getAttachmentAsTexture(const Att::e id) const {
+	HTexSrc GLFBuffer::getAttachmentAsTexture(const Att::e id) const {
 		return boost::apply_visitor(GetTex_Visitor(), _attachment[id]);
 	}
 	HRb GLFBuffer::getAttachmentAsRBuffer(const Att::e id) const {

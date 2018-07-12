@@ -35,7 +35,8 @@ namespace rev {
 			void _attachRenderbuffer(Att::e aId, GLuint rb);
 			void _attachCubeTexture(Att::e aId, GLuint faceFlag, GLuint tb);
 			void _attachTexture(Att::e aId, GLuint tb);
-			using TexRes = std::pair<HTex, CubeFace>;
+			using TexRes = std::pair<HTexSrc, CubeFace>;
+
 			struct RawTex : lubee::Wrapper<GLuint> {
 				using Wrapper::Wrapper;
 				using Wrapper::operator =;
@@ -107,8 +108,8 @@ namespace rev {
 			GLFBuffer();
 			~GLFBuffer();
 			void attachRBuffer(Att::e att, const HRb& hRb);
-			void attachTexture(Att::e att, const HTex& hTex);
-			void attachTextureFace(Att::e att, const HTex& hTex, CubeFace face);
+			void attachTexture(Att::e att, const HTexSrc& hTex);
+			void attachTextureFace(Att::e att, const HTexSrc& hTex, CubeFace face);
 			void attachRawRBuffer(Att::e att, GLuint idRb);
 			void attachRawTexture(Att::e att, GLuint idTex);
 			void attachOther(Att::e attDst, Att::e attSrc, HFb hFb);
@@ -118,7 +119,7 @@ namespace rev {
 			void onDeviceLost() override;
 			void dcmd_export(draw::IQueue& q) const;
 			const Res& getAttachment(Att::e att) const;
-			HTex getAttachmentAsTexture(Att::e id) const;
+			HTexSrc getAttachmentAsTexture(Att::e id) const;
 			HRb getAttachmentAsRBuffer(Att::e id) const;
 			Size_OP getAttachmentSize(Att::e att) const;
 			const char* getResourceName() const noexcept override;
