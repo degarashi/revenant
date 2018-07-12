@@ -23,6 +23,10 @@ namespace rev {
 				Occlusion("u_occlusionFactor"),
 				Emissive("u_emissiveFactor");
 		}
+		namespace levels {
+			const UniformName
+				Environment("u_environmentLevels");
+		}
 		namespace coord {
 			const UniformName
 				Color("u_colorCoord"),
@@ -101,6 +105,7 @@ namespace rev {
 			return false;
 		});
 		set(texture::Environment, [](auto& s){ return s.environment; });
+		set(levels::Environment, [](auto& s) -> int32_t { return s.environment->texture()->getMipLevels(); });
 
 		if(!fv.empty()) {
 			return [fv = std::move(fv)](const void* p, UniformEnt& u){
