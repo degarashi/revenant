@@ -46,9 +46,11 @@ namespace rev {
 		private:
 			// デバッグ用なので他との共有を考えず、UniquePtrとする
 			TDGen_UP		_gen;
-			bool			_mip;
+			bool			_mip,
+							_cube;
 		public:
 			Texture_Debug(ITDGen* gen, const lubee::SizeI& size, bool bCube, bool mip);
 			void onDeviceReset() override;
+			bool isCubemap() const override;
 	};
 }

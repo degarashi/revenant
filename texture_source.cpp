@@ -22,15 +22,11 @@ namespace rev {
 	}
 
 	// --------------- TextureSource ---------------
-	TextureSource::TextureSource(const InCompressedFmt_OP fmt, const lubee::SizeI& sz, const bool bCube):
+	TextureSource::TextureSource(const InCompressedFmt_OP fmt, const lubee::SizeI& sz):
 		_idTex(0),
-		_texFlag(bCube ? GL_TEXTURE_CUBE_MAP : GL_TEXTURE_2D),
-		_faceFlag(bCube ? GL_TEXTURE_CUBE_MAP_POSITIVE_X : GL_TEXTURE_2D),
 		_size(sz),
 		_format(fmt)
-	{
-		Assert0(!bCube || (_size.width==_size.height));
-	}
+	{}
 	bool TextureSource::_onDeviceReset() {
 		if(_idTex == 0) {
 			GL.glGenTextures(1, &_idTex);
@@ -40,8 +36,6 @@ namespace rev {
 	}
 	TextureSource::TextureSource(TextureSource&& t):
 		_idTex(t._idTex),
-		_texFlag(t._texFlag),
-		_faceFlag(t._faceFlag),
 		_size(t._size),
 		_format(t._format)
 	{
@@ -72,14 +66,13 @@ namespace rev {
 		GL.glActiveTexture(GL_TEXTURE0 + actId);
 		GL.glBindTexture(getTextureFlag(), getTextureId());
 	}
-	bool TextureSource::isCubemap() const {
-		return _texFlag != GL_TEXTURE_2D;
-	}
 	GLuint TextureSource::getTextureId() const {
 		return _idTex;
 	}
 	GLuint TextureSource::getTextureFlag() const {
-		return _texFlag;
+		if(isCubemap())
+			return GL_TEXTURE_CUBE_MAP;
+		return GL_TEXTURE_2D;
 	}
 	lubee::SizeI TextureSource::getSize() const {
 		return _size;
@@ -89,8 +82,8 @@ namespace rev {
 	}
 	GLenum TextureSource::getFaceFlag(const CubeFace face) const {
 		if(isCubemap())
-			return _faceFlag + static_cast<int>(face) - static_cast<int>(CubeFace::PositiveX);
-		return _faceFlag;
+			return GL_TEXTURE_CUBE_MAP_POSITIVE_X + static_cast<int>(face) - static_cast<int>(CubeFace::PositiveX);
+		return GL_TEXTURE_2D;
 	}
 	void TextureSource::save(const PathBlock& path, const CubeFace face) const {
 		auto buff = readData(GL_BGRA, GL_UNSIGNED_BYTE, 0, face);

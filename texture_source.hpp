@@ -17,13 +17,11 @@ namespace rev {
 						actId;
 				static void Command(const void* p);
 			};
-			GLuint				_idTex,
-								_texFlag,	//!< TEXTURE_2D or TEXTURE_CUBE_MAP
-								_faceFlag;	//!< TEXTURE_2D or TEXTURE_CUBE_MAP_POSITIVE_X
+			GLuint				_idTex;
 		protected:
 			lubee::SizeI		_size;
 			InCompressedFmt_OP	_format;	//!< 値が無効 = 不定
-			TextureSource(InCompressedFmt_OP fmt, const lubee::SizeI& sz, bool bCube);
+			TextureSource(InCompressedFmt_OP fmt, const lubee::SizeI& sz);
 			bool _onDeviceReset();
 
 		public:
@@ -34,7 +32,6 @@ namespace rev {
 			void dcmd_bind(draw::IQueue& q, GLuint actId) const override;
 			void dcmd_uniform(draw::IQueue& q, GLint id, int actId) const override;
 			void imm_bind(GLuint actId) const override;
-			bool isCubemap() const override;
 			GLuint getTextureId() const override;
 			GLuint getTextureFlag() const override;
 			lubee::SizeI getSize() const override;

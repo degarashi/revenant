@@ -13,11 +13,11 @@ namespace rev {
 		auto field = debug::EntryField("TextureSource", edit);
 		field.show( "OpenGL Id", _idTex);
 		field.show("Size", _size);
-		field.show("Cube", _texFlag != GL_TEXTURE_2D);
+		field.show("Cube", getTextureFlag() != GL_TEXTURE_2D);
 		field.show(
 			"CubeFace",
-			(_faceFlag == GL_TEXTURE_2D) ?
-			-1 : int(_faceFlag - GL_TEXTURE_CUBE_MAP_POSITIVE_X)
+			(getFaceFlag() == GL_TEXTURE_2D) ?
+			-1 : int(getFaceFlag() - GL_TEXTURE_CUBE_MAP_POSITIVE_X)
 		);
 		if(_format)
 			field.show("Format", GLFormat::QueryEnumString(*_format));

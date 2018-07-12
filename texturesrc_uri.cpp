@@ -98,7 +98,7 @@ namespace rev {
 
 	// ------------------------- TextureSrc_URI -------------------------
 	TextureSrc_URI::TextureSrc_URI(const HURI& uri, const bool mip, const InCompressedFmt_OP fmt):
-		TextureSource(fmt, lubee::SizeI(0,0), false),
+		TextureSource(fmt, lubee::SizeI(0,0)),
 		_uri(uri),
 		_miplevel(0),
 		_mip(mip)
@@ -119,6 +119,9 @@ namespace rev {
 	bool TextureSrc_URI::hasMipmap() const {
 		return _mip;
 	}
+	bool TextureSrc_URI::isCubemap() const {
+		return false;
+	}
 	std::size_t TextureSrc_URI::getMipLevels() const {
 		return _miplevel;
 	}
@@ -128,7 +131,7 @@ namespace rev {
 		const HURI& uri3, const HURI& uri4, const HURI& uri5,
 		bool mip, const InCompressedFmt_OP fmt
 	):
-		TextureSource(fmt, lubee::SizeI(0,0), true),
+		TextureSource(fmt, lubee::SizeI(0,0)),
 		_uri{uri0, uri1, uri2, uri3, uri4, uri5},
 		_miplevel(0),
 		_mip(mip)
@@ -152,6 +155,9 @@ namespace rev {
 	}
 	bool TextureSrc_CubeURI::hasMipmap() const {
 		return _mip;
+	}
+	bool TextureSrc_CubeURI::isCubemap() const {
+		return true;
 	}
 	std::size_t TextureSrc_CubeURI::getMipLevels() const {
 		return _miplevel;

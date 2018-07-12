@@ -5,9 +5,10 @@
 
 namespace rev {
 	TextureSrc_Mem::TextureSrc_Mem(const bool bCube, GLInSizedFmt fmt, const lubee::SizeI& sz, const bool /*bStream*/, const bool bRestore):
-		TextureSource(fmt, sz, bCube),
+		TextureSource(fmt, sz),
 		// _bStream(bStream),
-		_bRestore(bRestore)
+		_bRestore(bRestore),
+		_cube(bCube)
 	{}
 	const GLFormatDesc& TextureSrc_Mem::_prepareBuffer() {
 		auto& info = *GLFormat::QueryInfo(*getFormat());
@@ -109,6 +110,9 @@ namespace rev {
 	}
 	bool TextureSrc_Mem::hasMipmap() const {
 		return false;
+	}
+	bool TextureSrc_Mem::isCubemap() const {
+		return _cube;
 	}
 	std::size_t TextureSrc_Mem::getMipLevels() const {
 		return 1;

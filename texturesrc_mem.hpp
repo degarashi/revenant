@@ -20,7 +20,8 @@ namespace rev {
 			Format_OP		_typeFormat;	//!< _buffに格納されているデータの形式(Type)
 
 			// bool		_bStream;		//!< 頻繁に書き換えられるか(の、ヒント)
-			bool		_bRestore;
+			bool		_bRestore,
+						_cube;
 			//! テクスチャフォーマットから必要なサイズを計算してバッファを用意する
 			const GLFormatDesc& _prepareBuffer();
 		public:
@@ -38,6 +39,7 @@ namespace rev {
 				\param[in] face Cubemapにおける面 */
 			void writeRect(AB_Byte buff, const lubee::RectI& rect, GLTypeFmt srcFmt, CubeFace face=CubeFace::PositiveX);
 			bool hasMipmap() const override;
+			bool isCubemap() const override;
 			std::size_t getMipLevels() const override;
 
 			// -- from IGLResource --

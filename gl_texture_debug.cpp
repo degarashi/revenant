@@ -4,10 +4,14 @@
 namespace rev {
 	// ------------------------- Texture_Debug -------------------------
 	Texture_Debug::Texture_Debug(ITDGen* gen, const lubee::SizeI& size, const bool bCube, const bool mip):
-		TextureSource(GLFormat::QuerySDLtoGL(gen->getFormat())->format, size, bCube),
+		TextureSource(GLFormat::QuerySDLtoGL(gen->getFormat())->format, size),
 		_gen(gen),
-		_mip(mip)
+		_mip(mip),
+		_cube(bCube)
 	{}
+	bool Texture_Debug::isCubemap() const {
+		return _cube;
+	}
 	void Texture_Debug::onDeviceReset() {
 		if(_onDeviceReset()) {
 			const GLenum fmt = GLFormat::QuerySDLtoGL(this->_gen->getFormat())->format;
