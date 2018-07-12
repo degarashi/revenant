@@ -11,39 +11,29 @@ namespace rev {
 		GLFBufferCore(idFb),
 		_size(s)
 	{}
-	void GLFBufferTmp::attachRBuffer(const Att::Id att, const GLuint rb) {
-		#ifdef USE_OPENGLES2
-			D_Assert0(att != Att::DEPTH_STENCIL);
-		#endif
+	void GLFBufferTmp::attachRBuffer(const Att::e att, const GLuint rb) {
 		_attachRenderbuffer(att, rb);
 	}
-	void GLFBufferTmp::attachTexture(const Att::Id att, const GLuint id) {
-		#ifdef USE_OPENGLES2
-			D_Assert0(att != Att::DEPTH_STENCIL);
-		#endif
+	void GLFBufferTmp::attachTexture(const Att::e att, const GLuint id) {
 		_attachTexture(att, id);
 	}
-	void GLFBufferTmp::attachCubeTexture(const Att::Id att, const GLuint id, const GLuint face) {
-		#ifdef USE_OPENGLES2
-			D_Assert0(att != Att::DEPTH_STENCIL);
-		#endif
+	void GLFBufferTmp::attachCubeTexture(const Att::e att, const GLuint id, const GLuint face) {
 		_attachCubeTexture(att, face, id);
 	}
 	void GLFBufferTmp::dcmd_export(draw::IQueue& q) const {
 		DCmd_Fb::AddTmp(q, getBufferId());
 	}
-
 	// ------------------------- GLFBufferCore -------------------------
 	GLFBufferCore::GLFBufferCore(GLuint id):
 		_idFbo(id)
 	{}
-	void GLFBufferCore::_attachRenderbuffer(const Att::Id aId, const GLuint rb) {
+	void GLFBufferCore::_attachRenderbuffer(const Att::e aId, const GLuint rb) {
 		GLAssert(glFramebufferRenderbuffer, GL_FRAMEBUFFER, _AttIdtoGL(aId), GL_RENDERBUFFER, rb);
 	}
-	void GLFBufferCore::_attachCubeTexture(const Att::Id aId, const GLuint faceFlag, const GLuint tb) {
+	void GLFBufferCore::_attachCubeTexture(const Att::e aId, const GLuint faceFlag, const GLuint tb) {
 		GL.glFramebufferTexture2D(GL_FRAMEBUFFER, _AttIdtoGL(aId), faceFlag, tb, 0);
 	}
-	void GLFBufferCore::_attachTexture(const Att::Id aId, const GLuint tb) {
+	void GLFBufferCore::_attachTexture(const Att::e aId, const GLuint tb) {
 		_attachCubeTexture(aId, GL_TEXTURE_2D, tb);
 	}
 	void GLFBufferCore::use_begin() const {
@@ -111,7 +101,7 @@ namespace rev {
 			{&FBInfo::stencilSize, GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE}
 		};
 	}
-	FBInfo GLFBufferCore::GetCurrentInfo(Att::Id att) {
+	FBInfo GLFBufferCore::GetCurrentInfo(const Att::e att) {
 		FBInfo res;
 		auto att_id = _AttIdtoGL(att);
 		GLint ret;
@@ -120,10 +110,10 @@ namespace rev {
 			att_id = GL_BACK_LEFT;
 		GL.glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, att_id, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE, &ret);
 		if(ret == GL_FRAMEBUFFER_DEFAULT) {
-			if(att < Att::DEPTH) {
+			if(att < Att::Depth) {
 				att_id = GL_BACK_LEFT;
 			} else {
-				Assert0(att==Att::DEPTH);
+				Assert0(att==Att::Depth);
 				att_id = GL_DEPTH;
 			}
 		}
@@ -138,8 +128,8 @@ namespace rev {
 
 		return res;
 	}
-	GLenum GLFBufferCore::_AttIdtoGL(Att::Id att) {
-		const GLenum c_num[Att::NUM_ATTACHMENT] = {
+	GLenum GLFBufferCore::_AttIdtoGL(const Att::e att) {
+		const GLenum c_num[Att::NumAttachment] = {
 			GL_COLOR_ATTACHMENT0,
 			#ifndef USE_OPENGLES2
 				GL_COLOR_ATTACHMENT1,
@@ -155,9 +145,9 @@ namespace rev {
 		if(_idFbo != 0) {
 			GLW.getDrawHandler().postExecNoWait([buffId=getBufferId()](){
 				D_GLWarn(glBindFramebuffer, GL_FRAMEBUFFER, buffId);
-				for(int i=0 ; i<Att::NUM_ATTACHMENT ; i++) {
+				for(int i=0 ; i<Att::NumAttachment ; i++) {
 					// AttachmentのDetach
-					D_GLWarn(glFramebufferRenderbuffer, GL_FRAMEBUFFER, _AttIdtoGL(Att::Id(i)), GL_RENDERBUFFER, 0);
+					D_GLWarn(glFramebufferRenderbuffer, GL_FRAMEBUFFER, _AttIdtoGL(Att::e(i)), GL_RENDERBUFFER, 0);
 				}
 				D_GLWarn(glBindFramebuffer, GL_FRAMEBUFFER, 0);
 				D_GLWarn(glDeleteFramebuffers, 1, &buffId);
@@ -168,39 +158,39 @@ namespace rev {
 		}
 	}
 	template <class T>
-	void GLFBuffer::_attachIt(Att::Id att, const T& arg) {
-		if(att == Att::DEPTH_STENCIL) {
+	void GLFBuffer::_attachIt(const Att::e att, const T& arg) {
+		if(att == Att::DepthStencil) {
 			// DepthとStencilそれぞれにhTexをセットする
-			_attachIt(Att::DEPTH, arg);
-			_attachIt(Att::STENCIL, arg);
+			_attachIt(Att::Depth, arg);
+			_attachIt(Att::Stencil, arg);
 		} else
 			_attachment[att] = arg;
 	}
-	void GLFBuffer::attachRBuffer(Att::Id att, HRb hRb) {
+	void GLFBuffer::attachRBuffer(const Att::e att, const HRb hRb) {
 		_attachIt(att, HRb(hRb));
 	}
-	void GLFBuffer::attachTextureFace(Att::Id att, HTex hTex, const CubeFace face) {
+	void GLFBuffer::attachTextureFace(const Att::e att, const HTex hTex, const CubeFace face) {
 		_attachIt(att, TexRes(hTex, face));
 	}
-	void GLFBuffer::attachTexture(Att::Id att, HTex hTex) {
+	void GLFBuffer::attachTexture(const Att::e att, HTex hTex) {
 		attachTextureFace(att, hTex, CubeFace::PositiveX);
 	}
-	void GLFBuffer::attachRawRBuffer(Att::Id att, GLuint idRb) {
+	void GLFBuffer::attachRawRBuffer(const Att::e att, const GLuint idRb) {
 		_attachIt(att, RawRb(idRb));
 	}
-	void GLFBuffer::attachRawTexture(Att::Id att, GLuint idTex) {
+	void GLFBuffer::attachRawTexture(const Att::e att, const GLuint idTex) {
 		_attachIt(att, RawTex(idTex));
 	}
-	void GLFBuffer::attachOther(Att::Id attDst, Att::Id attSrc, HFb hFb) {
+	void GLFBuffer::attachOther(const Att::e attDst, const Att::e attSrc, const HFb hFb) {
 		_attachment[attDst] = hFb->getAttachment(attSrc);
 	}
-	void GLFBuffer::detach(Att::Id att) {
+	void GLFBuffer::detach(const Att::e att) {
 		_attachment[att] = boost::blank();
 	}
 	void GLFBuffer::dcmd_export(draw::IQueue& q) const {
 		DCmd_Fb::Add(q, shared_from_this(), _attachment);
 	}
-	const GLFBuffer::Res& GLFBuffer::getAttachment(Att::Id att) const {
+	const GLFBuffer::Res& GLFBuffer::getAttachment(const Att::e att) const {
 		return _attachment[att];
 	}
 	namespace {
@@ -245,19 +235,19 @@ namespace rev {
 			HRb operator()(const HRb& r) const { return r; }
 		};
 	}
-	Size_OP GLFBuffer::GetAttachmentSize(const Res (&att)[Att::NUM_ATTACHMENT], Att::Id id) {
+	Size_OP GLFBuffer::GetAttachmentSize(const Res (&att)[Att::NumAttachment], const Att::e id) {
 		return boost::apply_visitor(GetSize_Visitor(), att[id]);
 	}
-	Size_OP GLFBuffer::getAttachmentSize(Att::Id att) const {
+	Size_OP GLFBuffer::getAttachmentSize(const Att::e att) const {
 		return GetAttachmentSize(_attachment, att);
 	}
 	const char* GLFBuffer::getResourceName() const noexcept {
 		return "GLFBuffer";
 	}
-	HTex GLFBuffer::getAttachmentAsTexture(Att::Id id) const {
+	HTex GLFBuffer::getAttachmentAsTexture(const Att::e id) const {
 		return boost::apply_visitor(GetTex_Visitor(), _attachment[id]);
 	}
-	HRb GLFBuffer::getAttachmentAsRBuffer(Att::Id id) const {
+	HRb GLFBuffer::getAttachmentAsRBuffer(const Att::e id) const {
 		return boost::apply_visitor(GetRb_Visitor(), _attachment[id]);
 	}
 
@@ -274,15 +264,19 @@ namespace rev {
 namespace rev {
 	void GLFBuffer::LuaExport(LuaState& lsc) {
 		auto tbl = std::make_shared<LCTable>();
-		(*tbl)["Color0"] = lua_Integer(Att::COLOR0);
+
+		const auto reg = [&tbl](const Att flag) {
+			(*tbl)[flag.toStr()] = lua_Integer(flag);
+		};
+		reg(Att::Color0);
 		#ifndef USE_OPENGLES2
-			(*tbl)["Color1"] = lua_Integer(Att::COLOR1);
-			(*tbl)["Color2"] = lua_Integer(Att::COLOR2);
-			(*tbl)["Color3"] = lua_Integer(Att::COLOR3);
+			reg(Att::Color1);
+			reg(Att::Color2);
+			reg(Att::Color3);
 		#endif
-		(*tbl)["Depth"] = lua_Integer(Att::DEPTH);
-		(*tbl)["Stencil"] = lua_Integer(Att::STENCIL);
-		(*tbl)["DepthStencil"] = lua_Integer(Att::DEPTH_STENCIL);
+		reg(Att::Depth);
+		reg(Att::Stencil);
+		reg(Att::DepthStencil);
 		lsc.setField(-1, "Attribute", tbl);
 	}
 }

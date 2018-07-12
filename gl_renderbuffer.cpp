@@ -50,7 +50,7 @@ namespace rev {
 		#ifndef USE_OPENGLES2
 			[](GLFBufferTmp& fb, GLRBuffer& rb) {		// RESTORE
 				fb.use_begin();
-				fb.attachRBuffer(GLFBufferTmp::Att::Id::COLOR0, rb._idRbo);
+				fb.attachRBuffer(GLFBufferTmp::Att::Color0, rb._idRbo);
 				GLFormat::Info_OP op = GLFormat::QueryInfo(rb._fmt.get());
 				int texSize;
 				if(op) {
@@ -97,7 +97,7 @@ namespace rev {
 			const frea::Vec4& c = boost::get<frea::Vec4>(rb._restoreInfo);
 			GL.glClearColor(c.x, c.y, c.z, c.w);
 			fb.use_begin();
-			fb.attachRBuffer(GLFBuffer::Att::Id::COLOR0, rb._idRbo);
+			fb.attachRBuffer(GLFBuffer::Att::Color0, rb._idRbo);
 			GL.glClear(GL_COLOR_BUFFER_BIT);
 		},
 		// OpenGL ES2ではglDrawPixelsが使えないので、ひとまず無効化
@@ -105,7 +105,7 @@ namespace rev {
 			[](GLFBufferTmp& fb, GLRBuffer& rb) {		// RESTORE
 				auto& buff = boost::get<ByteBuff>(rb._restoreInfo);
 				fb.use_begin();
-				fb.attachRBuffer(GLFBuffer::Att::Id::COLOR0, rb._idRbo);
+				fb.attachRBuffer(GLFBuffer::Att::Color0, rb._idRbo);
 				GL.glDrawPixels(0,0, rb._fmt.get(), rb._buffFmt, &buff[0]);
 				rb._restoreInfo = boost::blank();
 			}

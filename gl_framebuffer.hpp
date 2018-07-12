@@ -16,25 +16,25 @@ namespace rev {
 			void use_begin() const;
 			static TLS<lubee::SizeI> s_fbSize;
 
-			struct Att {
-				enum Id {
-					COLOR0,
-					#ifndef USE_OPENGLES2
-						COLOR1,
-						COLOR2,
-						COLOR3,
-					#endif
-					DEPTH,
-					STENCIL,
-					NUM_ATTACHMENT,
-					DEPTH_STENCIL = 0xffff
-				};
-			};
-			static FBInfo GetCurrentInfo(Att::Id att);
-			static GLenum _AttIdtoGL(Att::Id att);
-			void _attachRenderbuffer(Att::Id aId, GLuint rb);
-			void _attachCubeTexture(Att::Id aId, GLuint faceFlag, GLuint tb);
-			void _attachTexture(Att::Id aId, GLuint tb);
+			DefineEnumPair(Att,
+				((Color0)(0x00))
+				#ifndef USE_OPENGLES2
+					((Color1)(0x01))
+					((Color2)(0x02))
+					((Color3)(0x03))
+				#endif
+				((Depth)(0x04))
+				((Stencil)(0x05))
+				((NumAttachment)(0x06))
+				#ifndef USE_OPENGLES2
+					((DepthStencil)(0x07))
+				#endif
+			);
+			static FBInfo GetCurrentInfo(Att::e att);
+			static GLenum _AttIdtoGL(Att::e att);
+			void _attachRenderbuffer(Att::e aId, GLuint rb);
+			void _attachCubeTexture(Att::e aId, GLuint faceFlag, GLuint tb);
+			void _attachTexture(Att::e aId, GLuint tb);
 			using TexRes = std::pair<HTex, CubeFace>;
 			struct RawTex : lubee::Wrapper<GLuint> {
 				using Wrapper::Wrapper;
@@ -65,12 +65,12 @@ namespace rev {
 					faceFlag;
 		};
 
-		Pair			ent[Att::NUM_ATTACHMENT];
+		Pair			ent[Att::NumAttachment];
 		lubee::SizeI	size;	//!< Colo0バッファのサイズ
 
 		using GLFBufferCore::GLFBufferCore;
 		DCmd_Fb() = default;
-		static void Add(draw::IQueue& q, const HFbC& fb, const Res (&att)[Att::NUM_ATTACHMENT]);
+		static void Add(draw::IQueue& q, const HFbC& fb, const Res (&att)[Att::NumAttachment]);
 		static void AddTmp(draw::IQueue& q, const GLuint id);
 		static void Command(const void* p);
 	};
@@ -81,9 +81,9 @@ namespace rev {
 			const lubee::SizeI	_size;
 		public:
 			GLFBufferTmp(GLuint idFb, const lubee::SizeI& s);
-			void attachRBuffer(Att::Id att, GLuint rb);
-			void attachTexture(Att::Id att, GLuint id);
-			void attachCubeTexture(Att::Id att, GLuint id, GLuint face);
+			void attachRBuffer(Att::e att, GLuint rb);
+			void attachTexture(Att::e att, GLuint id);
+			void attachCubeTexture(Att::e att, GLuint id, GLuint face);
 
 			void dcmd_export(draw::IQueue& q) const;
 	};
@@ -97,30 +97,30 @@ namespace rev {
 	{
 		private:
 			// GLuintは内部処理用 = RenderbufferのId
-			Res	_attachment[Att::NUM_ATTACHMENT];
+			Res	_attachment[Att::NumAttachment];
 			template <class T>
-			void _attachIt(Att::Id att, const T& arg);
+			void _attachIt(Att::e att, const T& arg);
 
 		public:
-			static Size_OP GetAttachmentSize(const Res (&att)[Att::NUM_ATTACHMENT], Att::Id id);
+			static Size_OP GetAttachmentSize(const Res (&att)[Att::NumAttachment], Att::e id);
 			static void LuaExport(LuaState& lsc);
 			GLFBuffer();
 			~GLFBuffer();
-			void attachRBuffer(Att::Id att, HRb hRb);
-			void attachTexture(Att::Id att, HTex hTex);
-			void attachTextureFace(Att::Id att, HTex hTex, CubeFace face);
-			void attachRawRBuffer(Att::Id att, GLuint idRb);
-			void attachRawTexture(Att::Id att, GLuint idTex);
-			void attachOther(Att::Id attDst, Att::Id attSrc, HFb hFb);
-			void detach(Att::Id att);
+			void attachRBuffer(Att::e att, HRb hRb);
+			void attachTexture(Att::e att, HTex hTex);
+			void attachTextureFace(Att::e att, HTex hTex, CubeFace face);
+			void attachRawRBuffer(Att::e att, GLuint idRb);
+			void attachRawTexture(Att::e att, GLuint idTex);
+			void attachOther(Att::e attDst, Att::e attSrc, HFb hFb);
+			void detach(Att::e att);
 
 			void onDeviceReset() override;
 			void onDeviceLost() override;
 			void dcmd_export(draw::IQueue& q) const;
-			const Res& getAttachment(Att::Id att) const;
-			HTex getAttachmentAsTexture(Att::Id id) const;
-			HRb getAttachmentAsRBuffer(Att::Id id) const;
-			Size_OP getAttachmentSize(Att::Id att) const;
+			const Res& getAttachment(Att::e att) const;
+			HTex getAttachmentAsTexture(Att::e id) const;
+			HRb getAttachmentAsRBuffer(Att::e id) const;
+			Size_OP getAttachmentSize(Att::e att) const;
 			const char* getResourceName() const noexcept override;
 	};
 }

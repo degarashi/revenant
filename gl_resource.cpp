@@ -182,8 +182,8 @@ namespace rev {
 	void GLRes::_initDefaultInfo() {
 		GL.glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		using Att = GLFBufferCore::Att;
-		_defaultColor = GLFBufferCore::GetCurrentInfo(Att::COLOR0);
-		_defaultDepth = GLFBufferCore::GetCurrentInfo(Att::DEPTH);
+		_defaultColor = GLFBufferCore::GetCurrentInfo(Att::Color0);
+		_defaultDepth = GLFBufferCore::GetCurrentInfo(Att::Depth);
 	}
 	void GLRes::_clearDefaultInfo() {
 		_defaultDepth = spi::none;

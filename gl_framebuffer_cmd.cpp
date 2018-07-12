@@ -43,11 +43,11 @@ namespace rev {
 			}
 		};
 	}
-	void DCmd_Fb::Add(draw::IQueue& q, const HFbC& fb, const Res (&att)[Att::NUM_ATTACHMENT]) {
+	void DCmd_Fb::Add(draw::IQueue& q, const HFbC& fb, const Res (&att)[Att::NumAttachment]) {
 		q.stockResource(fb);
 		DCmd_Fb fbc(fb->getBufferId());
-		fbc.size = *GLFBuffer::GetAttachmentSize(att, Att::COLOR0);
-		for(std::size_t i=0 ; i<Att::NUM_ATTACHMENT ; i++)
+		fbc.size = *GLFBuffer::GetAttachmentSize(att, Att::Color0);
+		for(std::size_t i=0 ; i<Att::NumAttachment ; i++)
 			boost::apply_visitor(Visitor(fbc.ent[i], q), att[i]);
 		q.add(fbc);
 	}
@@ -61,10 +61,10 @@ namespace rev {
 	void DCmd_Fb::Command(const void* p) {
 		auto& self = *static_cast<const DCmd_Fb*>(p);
 		self.use_begin();
-		for(std::size_t i=0 ; i<Att::NUM_ATTACHMENT ; i++) {
+		for(std::size_t i=0 ; i<Att::NumAttachment ; i++) {
 			auto& p = self.ent[i];
 			if(p.resId != 0) {
-				const auto flag = _AttIdtoGL(Att::Id(i));
+				const auto flag = _AttIdtoGL(Att::e(i));
 				if(p.bTex)
 					GLAssert(glFramebufferTexture2D, GL_FRAMEBUFFER, flag, p.faceFlag, p.resId, 0);
 				else
