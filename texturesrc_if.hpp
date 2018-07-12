@@ -27,6 +27,7 @@ namespace rev {
 			virtual void save(const PathBlock& path, CubeFace face=CubeFace::PositiveX) const = 0;
 			virtual ByteBuff readData(GLInFmt internalFmt, GLTypeFmt elem, int level=0, CubeFace face=CubeFace::PositiveX) const = 0;
 			virtual ByteBuff readRect(GLInFmt internalFmt, GLTypeFmt elem, const lubee::RectI& rect, CubeFace face=CubeFace::PositiveX) const = 0;
+			virtual bool hasMipmap() const = 0;
 			virtual std::size_t getMipLevels() const = 0;
 	};
 }

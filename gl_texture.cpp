@@ -7,7 +7,7 @@ namespace rev {
 	{}
 	void GLTexture::dcmd_bind(draw::IQueue& q, const GLuint actId) const {
 		_src->dcmd_bind(q, actId);
-		_filter->dcmd_filter(q, _src->getTextureFlag());
+		_filter->dcmd_filter(q, _src->hasMipmap(), _src->getTextureFlag());
 	}
 	void GLTexture::dcmd_uniform(draw::IQueue& q, const GLint id, const int actId) const {
 		dcmd_bind(q, actId);
@@ -15,7 +15,7 @@ namespace rev {
 	}
 	void GLTexture::imm_bind(const GLuint actId) const {
 		_src->imm_bind(actId);
-		_filter->imm_filter(_src->getTextureFlag());
+		_filter->imm_filter(_src->hasMipmap(), _src->getTextureFlag());
 	}
 	bool GLTexture::isCubemap() const {
 		return _src->isCubemap();
@@ -52,6 +52,9 @@ namespace rev {
 	}
 	const HTexSrcC& GLTexture::texture() const noexcept {
 		return _src;
+	}
+	bool GLTexture::hasMipmap() const {
+		return _src->hasMipmap();
 	}
 	std::size_t GLTexture::getMipLevels() const {
 		return _src->getMipLevels();

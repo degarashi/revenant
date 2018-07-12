@@ -9,7 +9,7 @@ namespace rev {
 							_iLinearMin;
 			WrapState		_wrapS,
 							_wrapT;
-			MipState		_mipLevel;
+			bool			_mipLinear;
 			float			_coeff;
 
 		public:
@@ -18,17 +18,17 @@ namespace rev {
 				uint32_t	iLinearMin = 0,
 				WrapState	wrapS	= WrapState::Repeat,
 				WrapState	wrapT	= WrapState::Repeat,
-				MipState	mipLevel= MipState::NoMipmap,
+				bool		mipLinear = false,
 				float		coeff	= 0
 			);
 
 			static bool IsMipmap(MipState level);
-			bool isMipmap() const;
 			void setFilter(bool bLinearMag, bool bLinearMin);
 			void setMagMinFilter(bool bLinear);
 			void setAnisotropicCoeff(float coeff);
 			void setUVWrap(WrapState s, WrapState t);
 			void setWrap(WrapState st);
+			void setMipLinear(bool bLinear);
 	};
 	class TextureFilter :
 		public TextureFilter_In,
@@ -40,8 +40,8 @@ namespace rev {
 		public:
 			using TextureFilter_In::TextureFilter_In;
 
-			void dcmd_filter(draw::IQueue& q, GLenum texFlag) const;
-			void imm_filter(GLenum texFlag) const;
+			void dcmd_filter(draw::IQueue& q, bool hasmip, GLenum texFlag) const;
+			void imm_filter(bool hasmip, GLenum texFlag) const;
 
 			DEF_DEBUGGUI_NAME
 			DEF_DEBUGGUI_PROP

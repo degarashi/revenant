@@ -13,7 +13,7 @@ namespace rev {
 		field.entry("Aniso-Coeff", _coeff);
 		if(field.entry("Wrap-S", _wrapS) | field.entry("Wrap-T", _wrapT))
 			setUVWrap(_wrapS, _wrapT);
-		field.show("MipState", _mipLevel);
+		field.show("MipLinear", _mipLinear);
 		return field.modified();
 	}
 	const char* TextureFilter::getDebugName() const noexcept {

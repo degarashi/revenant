@@ -27,6 +27,7 @@ namespace rev {
 			void save(const PathBlock& path, CubeFace face=CubeFace::PositiveX) const override;
 			ByteBuff readData(GLInFmt internalFmt, GLTypeFmt elem, int level=0, CubeFace face=CubeFace::PositiveX) const override;
 			ByteBuff readRect(GLInFmt internalFmt, GLTypeFmt elem, const lubee::RectI& rect, CubeFace face=CubeFace::PositiveX) const override;
+			bool hasMipmap() const override;
 			std::size_t getMipLevels() const override;
 
 			const HTexSrcC& texture() const noexcept;

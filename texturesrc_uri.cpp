@@ -116,6 +116,9 @@ namespace rev {
 			_miplevel = res.miplevel;
 		}
 	}
+	bool TextureSrc_URI::hasMipmap() const {
+		return _mip;
+	}
 	std::size_t TextureSrc_URI::getMipLevels() const {
 		return _miplevel;
 	}
@@ -146,6 +149,9 @@ namespace rev {
 				}
 			}
 		}
+	}
+	bool TextureSrc_CubeURI::hasMipmap() const {
+		return _mip;
 	}
 	std::size_t TextureSrc_CubeURI::getMipLevels() const {
 		return _miplevel;
