@@ -106,9 +106,9 @@ namespace rev {
 			static void LuaExport(LuaState& lsc);
 			GLFBuffer();
 			~GLFBuffer();
-			void attachRBuffer(Att::e att, HRb hRb);
-			void attachTexture(Att::e att, HTex hTex);
-			void attachTextureFace(Att::e att, HTex hTex, CubeFace face);
+			void attachRBuffer(Att::e att, const HRb& hRb);
+			void attachTexture(Att::e att, const HTex& hTex);
+			void attachTextureFace(Att::e att, const HTex& hTex, CubeFace face);
 			void attachRawRBuffer(Att::e att, GLuint idRb);
 			void attachRawTexture(Att::e att, GLuint idTex);
 			void attachOther(Att::e attDst, Att::e attSrc, HFb hFb);

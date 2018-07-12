@@ -166,13 +166,13 @@ namespace rev {
 		} else
 			_attachment[att] = arg;
 	}
-	void GLFBuffer::attachRBuffer(const Att::e att, const HRb hRb) {
+	void GLFBuffer::attachRBuffer(const Att::e att, const HRb& hRb) {
 		_attachIt(att, HRb(hRb));
 	}
-	void GLFBuffer::attachTextureFace(const Att::e att, const HTex hTex, const CubeFace face) {
+	void GLFBuffer::attachTextureFace(const Att::e att, const HTex& hTex, const CubeFace face) {
 		_attachIt(att, TexRes(hTex, face));
 	}
-	void GLFBuffer::attachTexture(const Att::e att, HTex hTex) {
+	void GLFBuffer::attachTexture(const Att::e att, const HTex& hTex) {
 		attachTextureFace(att, hTex, CubeFace::PositiveX);
 	}
 	void GLFBuffer::attachRawRBuffer(const Att::e att, const GLuint idRb) {
