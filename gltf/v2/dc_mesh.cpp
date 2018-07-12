@@ -42,6 +42,8 @@ namespace rev::gltf::v2 {
 	HTex GLTFMesh::MakeData(Environment*) {
 		auto f = mgr_gl.createTexFilter();
 		f->setFilter(true, true);
+		f->setMipLinear(true);
+		f->setWrap(WrapState::ClampToEdge);
 		auto src = mgr_gl.loadCubeTexture(
 			MipState::MipmapLinear,
 			spi::none,
