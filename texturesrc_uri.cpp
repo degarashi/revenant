@@ -39,7 +39,7 @@ namespace rev {
 			int layer = 0;
 			const auto make = [tflag, &layer, &desc, &size](const void* data) {
 				GL.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-				GL.glTexImage2D(tflag, layer++, desc.format, size.width, size.height, 0, desc.baseType, desc.elementType, data);
+				GL.glTexImage2D(tflag, layer++, desc.format, size.width, size.height, 0, desc.baseFormat, desc.elementType, data);
 			};
 			std::function<void (const HSfc&)>	func;
 			// 2乗サイズ合わせではなくpitchが詰めてある場合は変換しなくていい
@@ -90,7 +90,7 @@ namespace rev {
 	TextureLoadResult LoadTextureFromBuffer(const TextureSource& tex, const GLenum tflag, const GLenum format, const lubee::SizeI& size, const ByteBuff& buff, const bool bP2, const bool bMip) {
 		// 簡単の為に一旦SDL_Surfaceに変換
 		const auto info = GLFormat::QueryInfo(format);
-		const int pixelsize = info->numElem* GLFormat::QuerySize(info->baseType);
+		const int pixelsize = info->numElem* GLFormat::QuerySize(info->baseFormat);
 		const HSfc sfc = Surface::Create(buff, pixelsize*size.width, size.width, size.height, info->sdlFormat);
 		tex.imm_bind(0);
 		return WritePixelData(tflag, sfc, spi::none, bP2, bMip);

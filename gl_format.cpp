@@ -211,7 +211,7 @@ namespace rev {
 		os << "format: " << GLFormat::QueryEnumString(format) << std::endl;
 		os << "elementType: " << GLFormat::QueryEnumString(elementType) << std::endl;
 		os << "numElem: " << numElem << std::endl;
-		os << "baseType: " << GLFormat::QueryEnumString(baseType) << std::endl;
+		os << "baseFormat: " << GLFormat::QueryEnumString(baseFormat) << std::endl;
 		os << "sdlFormat: " << Surface::GetFormatString(sdlFormat) << std::endl;
 		os << "sdlLossFormat: " << Surface::GetFormatString(sdlLossFormat) << "]";
 		return os;

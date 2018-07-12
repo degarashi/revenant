@@ -21,7 +21,7 @@ namespace rev {
 		if(getTextureId() != 0) {
 			if(!mgr_gl.isInDtor() && _bRestore) {
 				auto& info = _prepareBuffer();
-				_buff = readData(info.baseType, info.elementType, 0);
+				_buff = readData(info.baseFormat, info.elementType, 0);
 			}
 			TextureSource::onDeviceLost();
 		}
@@ -34,7 +34,7 @@ namespace rev {
 			GL.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 			if(_bRestore && _buff) {
 				// バッファの内容から復元
-				GLenum baseFormat = GLFormat::QueryInfo(format.get())->baseType;
+				GLenum baseFormat = GLFormat::QueryInfo(format.get())->baseFormat;
 				GLWarn(glTexImage2D, getFaceFlag(), 0, format.get(), size.width, size.height, 0, baseFormat, _typeFormat.get(), &_buff->operator [](0));
 				// DeviceがActiveな時はバッファを空にしておく
 				_buff = spi::none;
@@ -63,7 +63,7 @@ namespace rev {
 			imm_bind(0);
 			GL.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 			GL.glTexImage2D(getFaceFlag(face), 0, tfm.get(), sz.width, sz.height,
-							0, GLFormat::QueryInfo(*tfm)->baseType, srcFmt.get(), buff.getPtr());
+							0, GLFormat::QueryInfo(*tfm)->baseFormat, srcFmt.get(), buff.getPtr());
 			GLAssert0();
 		} else {
 			if(_bRestore) {
@@ -85,7 +85,7 @@ namespace rev {
 			const auto fmt = getFormat();
 			imm_bind(0);
 			// GLテクスチャに転送
-			const GLenum baseFormat = GLFormat::QueryInfo(fmt.get())->baseType;
+			const GLenum baseFormat = GLFormat::QueryInfo(fmt.get())->baseFormat;
 			GL.glTexSubImage2D(getFaceFlag(face), 0, rect.x0, rect.y0, rect.width(), rect.height(), baseFormat, srcFmt.get(), buff.getPtr());
 		} else {
 			// 内部バッファが存在すればそこに書き込んでおく
