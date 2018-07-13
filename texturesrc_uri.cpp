@@ -88,22 +88,20 @@ namespace rev {
 			};
 		}
 		//! texのfaceにhRWのピクセルデータを書き込む
-		TextureLoadResult LoadTextureFromFile(const TextureSource& tex, const HRW& hRW, const bool mip, const CubeFace face) {
+		TextureLoadResult LoadPixelsFromRW(const GLenum tflag, const HRW& hRW, const InCompressedFmt_OP format, const bool mip) {
 			const HSfc sfc = Surface::Load(hRW);
-			tex.imm_bind(0);
 			return WritePixelLayer0(
-				CnvSurface(sfc, tex.getFormat(), true),
-				tex.getFaceFlag(face),
+				CnvSurface(sfc, format, true),
+				tflag,
 				mip
 			);
 		}
 	}
-	TextureLoadResult LoadTextureFromBuffer(const TextureSource& tex, const GLenum tflag, const GLenum format, const lubee::SizeI& size, const ByteBuff& buff, const bool bP2, const bool bMip) {
+	TextureLoadResult LoadPixelsFromBuffer(const GLenum tflag, const GLenum format, const lubee::SizeI& size, const ByteBuff& buff, const bool bP2, const bool bMip) {
 		// 簡単の為に一旦SDL_Surfaceに変換
 		const auto info = GLFormat::QueryInfo(format);
 		const int pixelsize = info->numElem* GLFormat::QuerySize(info->baseFormat);
 		const HSfc sfc = Surface::Create(buff, pixelsize*size.width, size.width, size.height, info->sdlFormat);
-		tex.imm_bind(0);
 		return WritePixelLayer0(
 			CnvSurface(sfc, spi::none, bP2),
 			tflag,
@@ -120,11 +118,12 @@ namespace rev {
 	{}
 	void TextureSrc_URI::onDeviceReset() {
 		if(_onDeviceReset()) {
-			const auto res = LoadTextureFromFile(
-								*this,
+			imm_bind(0);
+			const auto res = LoadPixelsFromRW(
+								getFaceFlag(),
 								mgr_rw.fromURI(*_uri, Access::Read),
-								_mip,
-								CubeFace::PositiveX
+								getFormat(),
+								_mip
 							);
 			if(_mip)
 				GL.glGenerateMipmap(getTextureFlag());
@@ -152,12 +151,13 @@ namespace rev {
 	{}
 	void TextureSrc_CubeURI::onDeviceReset() {
 		if(_onDeviceReset()) {
+			imm_bind(0);
 			for(int i=0 ; i<6 ; i++) {
-				const auto res = LoadTextureFromFile(
-					*this,
+				const auto res = LoadPixelsFromRW(
+					getFaceFlag(static_cast<CubeFace::e>(i)),
 					mgr_rw.fromURI(*_uri[i], Access::Read),
-					_mip,
-					static_cast<CubeFace::e>(i)
+					(i==0) ? spi::none : _format,
+					_mip
 				);
 				if(i==0) {
 					_size = res.size;

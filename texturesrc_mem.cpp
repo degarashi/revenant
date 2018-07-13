@@ -52,7 +52,7 @@ namespace rev {
 		const auto mip = _mipFlag();
 		if(c) {
 			// バッファの内容から復元
-			LoadTextureFromBuffer(*this, flag, format, size, c->buff, false, mip);
+			LoadPixelsFromBuffer(flag, format, size, c->buff, false, mip);
 		} else {
 			// とりあえず領域だけ確保しておく
 			GL.glTexImage2D(

@@ -14,11 +14,11 @@ namespace rev {
 	}
 	void Texture_Debug::onDeviceReset() {
 		if(_onDeviceReset()) {
+			imm_bind(0);
 			const GLenum fmt = GLFormat::QuerySDLtoGL(this->_gen->getFormat())->format;
 			const auto size = getSize();
 			const auto loadTex = [this, fmt, size](const GLenum tflag, const ByteBuff& buff){
-				LoadTextureFromBuffer(
-					*this,
+				LoadPixelsFromBuffer(
 					tflag,
 					fmt,
 					size,
