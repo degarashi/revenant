@@ -70,7 +70,7 @@ namespace rev {
 			};
 		}
 		//! texのfaceにhRWのピクセルデータを書き込む
-		TextureLoadResult LoadTexture(const TextureSource& tex, const HRW& hRW, const bool mip, const CubeFace face) {
+		TextureLoadResult LoadTextureFromFile(const TextureSource& tex, const HRW& hRW, const bool mip, const CubeFace face) {
 			const HSfc sfc = Surface::Load(hRW);
 			const GLenum tflag = tex.getFaceFlag(face);
 			tex.imm_bind(0);
@@ -95,7 +95,7 @@ namespace rev {
 	{}
 	void TextureSrc_URI::onDeviceReset() {
 		if(_onDeviceReset()) {
-			const auto res = LoadTexture(
+			const auto res = LoadTextureFromFile(
 								*this,
 								mgr_rw.fromURI(*_uri, Access::Read),
 								_mip,
@@ -128,7 +128,7 @@ namespace rev {
 	void TextureSrc_CubeURI::onDeviceReset() {
 		if(_onDeviceReset()) {
 			for(int i=0 ; i<6 ; i++) {
-				const auto res = LoadTexture(
+				const auto res = LoadTextureFromFile(
 					*this,
 					mgr_rw.fromURI(*_uri[i], Access::Read),
 					_mip,
