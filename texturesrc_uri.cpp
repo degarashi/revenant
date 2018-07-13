@@ -30,51 +30,41 @@ namespace rev {
 			}
 			const auto sdlFmt = desc.sdlFormat!=SDL_PIXELFORMAT_UNKNOWN ? desc.sdlFormat : desc.sdlLossFormat;
 			tsfc = tsfc->convert(sdlFmt);
+
+			const auto make = [tflag, &desc](const auto size, const void* data) {
+				GL.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+				GL.glTexImage2D(
+					tflag,
+					0,
+					desc.format,
+					size.width, size.height,
+					0,
+					desc.baseFormat,
+					desc.elementType,
+					data
+				);
+			};
 			// テクスチャ用のサイズ調整
 			auto size = tsfc->getSize();
-			const lubee::PowSize n2size{size.width, size.height};
-			// ミップマップの場合はサイズを縮小しながらテクスチャを書き込む
-			const auto tsize = tsfc->getSize();
-			size = tsize;
-			int layer = 0;
-			const auto make = [tflag, &layer, &desc, &size](const void* data) {
-				GL.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-				GL.glTexImage2D(tflag, layer++, desc.format, size.width, size.height, 0, desc.baseFormat, desc.elementType, data);
-			};
-			std::function<void (const HSfc&)>	func;
-			// 2乗サイズ合わせではなくpitchが詰めてある場合は変換しなくていい
 			if(!bP2 && tsfc->isContinuous()) {
-				func = [&make](const HSfc& s) {
-					auto lk = s->lock();
-					make(lk.getBits());
-				};
+				// 2乗サイズ合わせではなくpitchが詰めてある場合は変換しなくていい
+				auto lk = tsfc->lock();
+				make(size, lk.getBits());
 			} else {
-				// 2乗サイズ合わせ
+				const lubee::PowSize n2size{size.width, size.height};
 				if(bP2 && size != n2size) {
+					// 2乗サイズ合わせ
 					tsfc = tsfc->resize(n2size);
 					size = n2size;
 				}
-				func = [sdlFmt, &make](const HSfc& s) {
-					auto buff = s->extractAsContinuous(sdlFmt);
-					make(&buff[0]);
-				};
+				const auto buff = tsfc->extractAsContinuous(sdlFmt);
+				make(size, &buff[0]);
 			}
-			std::size_t miplevel = 1;
-			if(!bMip)
-				func(tsfc);
-			else {
-				HSfc tsfc2 = tsfc;
-				for(;;) {
-					func(tsfc2);
-					if(size.width==1 && size.height==1)
-						break;
-					++miplevel;
-					size.shiftR_one(1);
-					tsfc2 = tsfc->resize(size);
-				}
-			}
+			const std::size_t miplevel = (!bMip) ?
+				1 :
+				lubee::bit::MSB(std::max(size.width,size.height))+1;
 			return {
-				.size = tsize,
+				.size = size,
 				.format = desc.format,
 				.miplevel = miplevel
 			};
@@ -111,6 +101,8 @@ namespace rev {
 								_mip,
 								CubeFace::PositiveX
 							);
+			if(_mip)
+				GL.glGenerateMipmap(getTextureFlag());
 			_size = res.size;
 			_format = res.format;
 			_miplevel = res.miplevel;
@@ -148,6 +140,8 @@ namespace rev {
 					_miplevel = res.miplevel;
 				}
 			}
+			if(_mip)
+				GL.glGenerateMipmap(getTextureFlag());
 		}
 	}
 	bool TextureSrc_CubeURI::isCubemap() const {
