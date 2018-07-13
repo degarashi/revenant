@@ -5,33 +5,58 @@
 
 namespace rev {
 	namespace {
+		struct CnvResult {
+			HSfc			surface;
+			GLFormatDesc	desc;
+			bool			continuous;
+		};
 		/*
-			\param[in]	tflag	GL_TEXTURE_2D or GL_TEXTURE_CUBE_MAP_(POSITIVE|NEGATIVE)_(X|Y|Z)
 			\param[in]	sfc		ピクセルデータが入ったサーフェスクラス
 			\param[in]	fmt		希望するフォーマット(none可)
 			\param[in]	bP2		trueなら2の乗数サイズへ変換
-			\param[in]	bMip	trueならミップマップ生成
 		*/
-		TextureLoadResult WritePixelData(const GLenum tflag, const HSfc& sfc, const InCompressedFmt_OP fmt, const bool bP2, const bool bMip) {
+		CnvResult CnvSurface(const HSfc& sfc, const InCompressedFmt_OP fmt, const bool bP2) {
+			CnvResult res;
 			// SDLフォーマットから適したOpenGLフォーマットへ変換
-			HSfc tsfc = sfc;
-			GLFormatDesc desc;
+			res.surface = sfc;
 			if(fmt) {
-				desc = *GLFormat::QueryInfo(*fmt);
+				res.desc = *GLFormat::QueryInfo(*fmt);
 			} else {
 				// 希望するフォーマットが無ければSurfaceから決定
-				auto info = GLFormat::QuerySDLtoGL(tsfc->getFormat().format);
+				auto info = GLFormat::QuerySDLtoGL(res.surface->getFormat().format);
 				if(!info) {
 					// INDEXEDなフォーマット等は該当が無いのでRGB24として扱う
 					info = GLFormat::QuerySDLtoGL(SDL_PIXELFORMAT_RGB24);
 					D_Assert0(info);
 				}
-				desc = *info;
+				res.desc = *info;
 			}
-			const auto sdlFmt = desc.sdlFormat!=SDL_PIXELFORMAT_UNKNOWN ? desc.sdlFormat : desc.sdlLossFormat;
-			tsfc = tsfc->convert(sdlFmt);
-
-			const auto make = [tflag, &desc](const auto size, const void* data) {
+			{
+				const auto sdlFmt = res.desc.sdlFormat!=SDL_PIXELFORMAT_UNKNOWN ? res.desc.sdlFormat : res.desc.sdlLossFormat;
+				res.surface = res.surface->convert(sdlFmt);
+			}
+			// テクスチャ用のサイズ調整
+			if(!bP2 && res.surface->isContinuous()) {
+				// 2乗サイズ合わせではなくpitchが詰めてある場合は変換しなくていい
+				res.continuous = true;
+			} else {
+				const auto size = res.surface->getSize();
+				const lubee::PowSize n2size{size.width, size.height};
+				if(bP2 && size != n2size) {
+					// 2乗サイズ合わせ
+					res.surface = res.surface->resize(n2size);
+				}
+				res.continuous = res.surface->isContinuous();
+			}
+			return res;
+		}
+		/*
+			Leyer0のみ書き込む
+			\param[in]	tflag	GL_TEXTURE_2D or GL_TEXTURE_CUBE_MAP_(POSITIVE|NEGATIVE)_(X|Y|Z)
+			\param[in]	bMip	trueならミップマップ生成
+		*/
+		TextureLoadResult WritePixelLayer0(const CnvResult& cnv, const GLenum tflag, const bool bMip) {
+			const auto make = [tflag, &desc=cnv.desc](const auto size, const void* data) {
 				GL.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 				GL.glTexImage2D(
 					tflag,
@@ -44,20 +69,13 @@ namespace rev {
 					data
 				);
 			};
-			// テクスチャ用のサイズ調整
-			auto size = tsfc->getSize();
-			if(!bP2 && tsfc->isContinuous()) {
+			const auto size = cnv.surface->getSize();
+			if(cnv.continuous) {
 				// 2乗サイズ合わせではなくpitchが詰めてある場合は変換しなくていい
-				auto lk = tsfc->lock();
+				auto lk = cnv.surface->lock();
 				make(size, lk.getBits());
 			} else {
-				const lubee::PowSize n2size{size.width, size.height};
-				if(bP2 && size != n2size) {
-					// 2乗サイズ合わせ
-					tsfc = tsfc->resize(n2size);
-					size = n2size;
-				}
-				const auto buff = tsfc->extractAsContinuous();
+				const auto buff = cnv.surface->extractAsContinuous();
 				make(size, &buff[0]);
 			}
 			const std::size_t miplevel = (!bMip) ?
@@ -65,16 +83,19 @@ namespace rev {
 				lubee::bit::MSB(std::max(size.width,size.height))+1;
 			return {
 				.size = size,
-				.format = desc.format,
+				.format = cnv.desc.format,
 				.miplevel = miplevel
 			};
 		}
 		//! texのfaceにhRWのピクセルデータを書き込む
 		TextureLoadResult LoadTextureFromFile(const TextureSource& tex, const HRW& hRW, const bool mip, const CubeFace face) {
 			const HSfc sfc = Surface::Load(hRW);
-			const GLenum tflag = tex.getFaceFlag(face);
 			tex.imm_bind(0);
-			return WritePixelData(tflag, sfc, tex.getFormat(), true, mip);
+			return WritePixelLayer0(
+				CnvSurface(sfc, tex.getFormat(), true),
+				tex.getFaceFlag(face),
+				mip
+			);
 		}
 	}
 	TextureLoadResult LoadTextureFromBuffer(const TextureSource& tex, const GLenum tflag, const GLenum format, const lubee::SizeI& size, const ByteBuff& buff, const bool bP2, const bool bMip) {
@@ -83,7 +104,11 @@ namespace rev {
 		const int pixelsize = info->numElem* GLFormat::QuerySize(info->baseFormat);
 		const HSfc sfc = Surface::Create(buff, pixelsize*size.width, size.width, size.height, info->sdlFormat);
 		tex.imm_bind(0);
-		return WritePixelData(tflag, sfc, spi::none, bP2, bMip);
+		return WritePixelLayer0(
+			CnvSurface(sfc, spi::none, bP2),
+			tflag,
+			bMip
+		);
 	}
 
 	// ------------------------- TextureSrc_URI -------------------------
