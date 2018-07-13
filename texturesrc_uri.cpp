@@ -57,7 +57,7 @@ namespace rev {
 					tsfc = tsfc->resize(n2size);
 					size = n2size;
 				}
-				const auto buff = tsfc->extractAsContinuous(sdlFmt);
+				const auto buff = tsfc->extractAsContinuous();
 				make(size, &buff[0]);
 			}
 			const std::size_t miplevel = (!bMip) ?
