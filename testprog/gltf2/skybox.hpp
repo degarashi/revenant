@@ -1,7 +1,6 @@
 #pragma once
 #include "../../handle/opengl.hpp"
 #include "../../singleton_data.hpp"
-#include "frea/vector.hpp"
 
 namespace rev::test {
 	namespace vertex {
