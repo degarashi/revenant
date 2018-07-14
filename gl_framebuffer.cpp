@@ -42,34 +42,16 @@ namespace rev {
 
 	// ------------------------- GLFBuffer -------------------------
 	namespace {
-		const auto fnReset = [](IGLResource* r) { r->onDeviceReset(); };
-		// const auto fnLost = [](IGLResource* r) { r->onDeviceLost(); };
-
-		template <class F>
-		struct HdlVisitor : boost::static_visitor<> {
-			F _f;
-			HdlVisitor(F f): _f(f) {}
-			void operator()(boost::blank) const {}
+		struct ResetTemporary : boost::static_visitor<> {
 			void operator()(GLFBufferCore::RawTex& t) const {
-				// 生のTextureIdは無効になる
 				t.invalidate();
 			}
 			void operator()(GLFBufferCore::RawRb& r) const {
-				// 生のRenderBufferIdは無効になる
 				r.invalidate();
 			}
-			void operator()(GLFBufferCore::TexRes& t) const {
-				(*this)(t.first);
-			}
-			template <class HDL>
-			void operator()(HDL& hdl) const {
-				_f(hdl.get());
-			}
+			template <class T>
+			void operator()(const T&) const {}
 		};
-		template <class F>
-		HdlVisitor<F> MakeVisitor(F f) {
-			return HdlVisitor<F>(f);
-		}
 	}
 	GLFBuffer::GLFBuffer():
 		GLFBufferCore(0)
@@ -82,10 +64,9 @@ namespace rev {
 			GL.glGenFramebuffers(1, &_idFbo);
 			GLAssert0();
 
-			auto v = MakeVisitor(fnReset);
 			for(auto& att : _attachment) {
-				// Attachmentの復元は今行う (各ハンドルでの処理はif文で弾かれる)
-				boost::apply_visitor(v, att);
+				// Idのみで指定したリソースはリセット
+				boost::apply_visitor(ResetTemporary(), att);
 			}
 		}
 	}
