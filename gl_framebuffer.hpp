@@ -29,12 +29,17 @@ namespace rev {
 			static FBInfo GetCurrentInfo(Att::e att);
 			static GLenum _AttIdtoGL(Att::e att);
 			void _attachRenderbuffer(Att::e aId, GLuint rb);
-			void _attachCubeTexture(Att::e aId, GLuint faceFlag, GLuint tb);
-			void _attachTexture(Att::e aId, GLuint tb);
-			using TexRes = std::pair<HTexSrc, CubeFace>;
+			void _attachCubeTexture(Att::e aId, GLuint faceFlag, GLuint tb, MipLevel level);
+			void _attachTexture(Att::e aId, GLuint tb, MipLevel level);
+			struct TexRes {
+				HTexSrc			tex;
+				CubeFace		face;
+				MipLevel		level;
+			};
 
 			struct RawTex {
-				GLuint	id;
+				GLuint			id;
+				MipLevel		level;
 
 				void invalidate() noexcept;
 				bool operator == (const RawTex& t) const noexcept;
@@ -81,10 +86,10 @@ namespace rev {
 			GLFBuffer();
 			~GLFBuffer();
 			void attachRBuffer(Att::e att, const HRb& hRb);
-			void attachTexture(Att::e att, const HTexSrc& hTex);
-			void attachTextureFace(Att::e att, const HTexSrc& hTex, CubeFace face);
+			void attachTexture(Att::e att, const HTexSrc& hTex, MipLevel level);
+			void attachTextureFace(Att::e att, const HTexSrc& hTex, CubeFace face, MipLevel level);
 			void attachRawRBuffer(Att::e att, GLuint idRb);
-			void attachRawTexture(Att::e att, GLuint idTex);
+			void attachRawTexture(Att::e att, GLuint idTex, MipLevel level);
 			void attachOtherAttachment(Att::e attDst, Att::e attSrc, const HFb& hFb);
 			void detach(Att::e att);
 

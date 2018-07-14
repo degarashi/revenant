@@ -26,17 +26,18 @@ namespace rev {
 				_dst.resId = t.id;
 			}
 			void operator()(const DCmd_Fb::TexRes& t) const {
-				auto* tr = t.first.get();
+				auto* tr = t.tex.get();
 				_dst.bTex = true;
-				_dst.faceFlag = tr->getFaceFlag(t.second);
-				_q.stockResource(t.first);
+				_dst.faceFlag = tr->getFaceFlag(t.face);
 				_dst.resId = tr->getTextureId();
+				_dst.level = t.level;
+				_q.stockResource(t.tex);
 			}
-			void operator()(const HRb& hlRb) const {
+			void operator()(const HRb& r) const {
 				_dst.bTex = false;
-				_q.stockResource(hlRb);
 				_dst.faceFlag = 0;
-				_dst.resId = hlRb->getBufferId();
+				_dst.resId = r->getBufferId();
+				_q.stockResource(r);
 			}
 			void operator()(boost::blank) const {
 				_dst.resId = 0;
@@ -66,7 +67,7 @@ namespace rev {
 			if(p.resId != 0) {
 				const auto flag = _AttIdtoGL(Att::e(i));
 				if(p.bTex)
-					GLAssert(glFramebufferTexture2D, GL_FRAMEBUFFER, flag, p.faceFlag, p.resId, 0);
+					GLAssert(glFramebufferTexture2D, GL_FRAMEBUFFER, flag, p.faceFlag, p.resId, p.level);
 				else
 					GLAssert(glFramebufferRenderbuffer, GL_FRAMEBUFFER, flag, GL_RENDERBUFFER, p.resId);
 			}

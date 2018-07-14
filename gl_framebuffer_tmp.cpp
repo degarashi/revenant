@@ -9,11 +9,11 @@ namespace rev {
 	void GLFBufferTmp::attachRBuffer(const Att::e att, const GLuint rb) {
 		_attachRenderbuffer(att, rb);
 	}
-	void GLFBufferTmp::attachTexture(const Att::e att, const GLuint id) {
-		_attachTexture(att, id);
+	void GLFBufferTmp::attachTexture(const Att::e att, const GLuint id, const MipLevel level) {
+		_attachTexture(att, id, level);
 	}
-	void GLFBufferTmp::attachCubeTexture(const Att::e att, const GLuint id, const GLuint face) {
-		_attachCubeTexture(att, face, id);
+	void GLFBufferTmp::attachCubeTexture(const Att::e att, const GLuint id, const GLuint face, const MipLevel level) {
+		_attachCubeTexture(att, face, id, level);
 	}
 	void GLFBufferTmp::dcmd_export(draw::IQueue& q) const {
 		DCmd_Fb::MakeCommand_ApplyOnly(q, getBufferId());

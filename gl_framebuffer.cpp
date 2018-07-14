@@ -29,11 +29,11 @@ namespace rev {
 	void GLFBufferCore::_attachRenderbuffer(const Att::e aId, const GLuint rb) {
 		GLAssert(glFramebufferRenderbuffer, GL_FRAMEBUFFER, _AttIdtoGL(aId), GL_RENDERBUFFER, rb);
 	}
-	void GLFBufferCore::_attachCubeTexture(const Att::e aId, const GLuint faceFlag, const GLuint tb) {
-		GL.glFramebufferTexture2D(GL_FRAMEBUFFER, _AttIdtoGL(aId), faceFlag, tb, 0);
+	void GLFBufferCore::_attachCubeTexture(const Att::e aId, const GLuint faceFlag, const GLuint tb, const MipLevel level) {
+		GL.glFramebufferTexture2D(GL_FRAMEBUFFER, _AttIdtoGL(aId), faceFlag, tb, level);
 	}
-	void GLFBufferCore::_attachTexture(const Att::e aId, const GLuint tb) {
-		_attachCubeTexture(aId, GL_TEXTURE_2D, tb);
+	void GLFBufferCore::_attachTexture(const Att::e aId, const GLuint tb, const MipLevel level) {
+		_attachCubeTexture(aId, GL_TEXTURE_2D, tb, level);
 	}
 	void GLFBufferCore::use_begin() const {
 		GL.glBindFramebuffer(GL_FRAMEBUFFER, _idFbo);
@@ -149,17 +149,30 @@ namespace rev {
 	void GLFBuffer::attachRBuffer(const Att::e att, const HRb& hRb) {
 		_attachIt(att, HRb(hRb));
 	}
-	void GLFBuffer::attachTextureFace(const Att::e att, const HTexSrc& hTex, const CubeFace face) {
-		_attachIt(att, TexRes(hTex, face));
+	void GLFBuffer::attachTextureFace(const Att::e att, const HTexSrc& hTex, const CubeFace face, const MipLevel level) {
+		_attachIt(
+			att,
+			TexRes{
+				.tex = hTex,
+				.face = face,
+				.level = level
+			}
+		);
 	}
-	void GLFBuffer::attachTexture(const Att::e att, const HTexSrc& hTex) {
-		attachTextureFace(att, hTex, CubeFace::PositiveX);
+	void GLFBuffer::attachTexture(const Att::e att, const HTexSrc& hTex, const MipLevel level) {
+		attachTextureFace(att, hTex, CubeFace::PositiveX, level);
 	}
 	void GLFBuffer::attachRawRBuffer(const Att::e att, const GLuint idRb) {
 		_attachIt(att, RawRb{idRb});
 	}
-	void GLFBuffer::attachRawTexture(const Att::e att, const GLuint idTex) {
-		_attachIt(att, RawTex{idTex});
+	void GLFBuffer::attachRawTexture(const Att::e att, const GLuint idTex, const MipLevel level) {
+		_attachIt(
+			att,
+			RawTex{
+				.id = idTex,
+				.level = level
+			}
+		);
 	}
 	void GLFBuffer::attachOtherAttachment(const Att::e attDst, const Att::e attSrc, const HFb& hFb) {
 		_attachment[attDst] = hFb->getAttachment(attSrc);
@@ -179,7 +192,7 @@ namespace rev {
 				return spi::none;
 			}
 			Size_OP operator()(const GLFBufferCore::TexRes& t) const {
-				return (*this)(t.first);
+				return (*this)(t.tex);
 			}
 			template <class T>
 			Size_OP operator()(const T& t) const {
@@ -207,7 +220,7 @@ namespace rev {
 		struct GetTex_Visitor : boost::static_visitor<HTexSrc> {
 			template <class T>
 			HTexSrc operator()(const T&) const { return HTexSrc(); }
-			HTexSrc operator()(const GLFBufferCore::TexRes& t) const { return t.first; }
+			HTexSrc operator()(const GLFBufferCore::TexRes& t) const { return t.tex; }
 		};
 		struct GetRb_Visitor : boost::static_visitor<HRb> {
 			template <class T>

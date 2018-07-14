@@ -5,9 +5,10 @@ namespace rev {
 	struct DCmd_Fb : GLFBufferCore {
 		// Pair::ResH
 		struct Pair {
-			bool	bTex;
-			GLuint	resId,		// 0番は無効
-					faceFlag;
+			bool			bTex;
+			GLuint			resId;		// 0番は無効
+			GLenum			faceFlag;
+			uint_fast8_t	level;		// Texture時のみ有効
 		};
 
 		Pair			ent[Att::NumAttachment];

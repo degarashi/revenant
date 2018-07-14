@@ -136,11 +136,11 @@ namespace rev {
 		ByteBuff buff(sz);
 		tmp.use_begin();
 		if(isCubemap())
-			tmp.attachCubeTexture(GLFBuffer::Att::Color0, getTextureId(), getFaceFlag(face));
+			tmp.attachCubeTexture(GLFBuffer::Att::Color0, getTextureId(), getFaceFlag(face), 0);
 		else
-			tmp.attachTexture(GLFBuffer::Att::Color0, getTextureId());
+			tmp.attachTexture(GLFBuffer::Att::Color0, getTextureId(), 0);
 		GL.glReadPixels(rect.x0, rect.y0, rect.width(), rect.height(), internalFmt, elem, buff.data());
-		tmp.attachTexture(GLFBuffer::Att::Color0, 0);
+		tmp.attachTexture(GLFBuffer::Att::Color0, 0, 0);
 
 		GL.glBindFramebuffer(flag, id);
 		return buff;
