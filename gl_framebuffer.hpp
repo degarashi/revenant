@@ -82,7 +82,7 @@ namespace rev {
 			void attachTextureFace(Att::e att, const HTexSrc& hTex, CubeFace face);
 			void attachRawRBuffer(Att::e att, GLuint idRb);
 			void attachRawTexture(Att::e att, GLuint idTex);
-			void attachOther(Att::e attDst, Att::e attSrc, HFb hFb);
+			void attachOtherAttachment(Att::e attDst, Att::e attSrc, const HFb& hFb);
 			void detach(Att::e att);
 
 			void onDeviceReset() override;

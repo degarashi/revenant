@@ -165,7 +165,7 @@ namespace rev {
 	void GLFBuffer::attachRawTexture(const Att::e att, const GLuint idTex) {
 		_attachIt(att, RawTex(idTex));
 	}
-	void GLFBuffer::attachOther(const Att::e attDst, const Att::e attSrc, const HFb hFb) {
+	void GLFBuffer::attachOtherAttachment(const Att::e attDst, const Att::e attSrc, const HFb& hFb) {
 		_attachment[attDst] = hFb->getAttachment(attSrc);
 	}
 	void GLFBuffer::detach(const Att::e att) {
