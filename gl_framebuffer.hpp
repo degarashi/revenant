@@ -8,9 +8,6 @@
 #include <boost/variant.hpp>
 
 namespace rev {
-	namespace draw {
-		class IQueue;
-	}
 	class GLFBufferCore {
 		public:
 			void use_begin() const;
@@ -58,6 +55,9 @@ namespace rev {
 			GLFBufferCore(GLuint id);
 			GLuint getBufferId() const;
 	};
+	namespace draw {
+		class IQueue;
+	}
 	using Size_OP = spi::Optional<lubee::SizeI>;
 	class LuaState;
 	//! OpenGL: FrameBufferObjectインタフェース
