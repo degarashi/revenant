@@ -1,4 +1,4 @@
-#include "gl_framebuffer.hpp"
+#include "gl_framebuffer_cmd.hpp"
 #include "drawcmd/queue_if.hpp"
 #include "systeminfo.hpp"
 #include "gl_texture.hpp"

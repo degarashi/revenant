@@ -1,4 +1,5 @@
 #include "gl_framebuffer.hpp"
+#include "gl_framebuffer_cmd.hpp"
 #include "gl_if.hpp"
 #include "gl_error.hpp"
 #include "gl_texture.hpp"

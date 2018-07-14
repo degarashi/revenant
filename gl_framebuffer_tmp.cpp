@@ -1,4 +1,5 @@
 #include "gl_framebuffer_tmp.hpp"
+#include "gl_framebuffer_cmd.hpp"
 
 namespace rev {
 	GLFBufferTmp::GLFBufferTmp(const GLuint idFb, const lubee::SizeI& s):

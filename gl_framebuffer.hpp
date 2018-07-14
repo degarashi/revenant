@@ -58,23 +58,6 @@ namespace rev {
 			GLFBufferCore(GLuint id);
 			GLuint getBufferId() const;
 	};
-	struct DCmd_Fb : GLFBufferCore {
-		// Pair::ResH
-		struct Pair {
-			bool	bTex;
-			GLuint	resId,		// 0番は無効
-					faceFlag;
-		};
-
-		Pair			ent[Att::NumAttachment];
-		lubee::SizeI	size;	//!< Colo0バッファのサイズ
-
-		using GLFBufferCore::GLFBufferCore;
-		DCmd_Fb() = default;
-		static void Add(draw::IQueue& q, const HFbC& fb, const Res (&att)[Att::NumAttachment]);
-		static void AddTmp(draw::IQueue& q, const GLuint id);
-		static void Command(const void* p);
-	};
 	using Size_OP = spi::Optional<lubee::SizeI>;
 	class LuaState;
 	//! OpenGL: FrameBufferObjectインタフェース
