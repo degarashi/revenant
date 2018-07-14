@@ -1,5 +1,5 @@
 #include "glx.hpp"
-#include "gl_framebuffer.hpp"
+#include "gl_framebuffer_tmp.hpp"
 #include "systeminfo.hpp"
 #include "gl_error.hpp"
 #include "gl_program.hpp"

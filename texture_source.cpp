@@ -4,7 +4,7 @@
 #include "drawcmd/queue_if.hpp"
 #include "sdl_surface.hpp"
 #include "sdl_rw.hpp"
-#include "gl_framebuffer.hpp"
+#include "gl_framebuffer_tmp.hpp"
 #include "gl_resource.hpp"
 #include "handler.hpp"
 
