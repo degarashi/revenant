@@ -16,6 +16,6 @@ namespace rev {
 		_attachCubeTexture(att, face, id);
 	}
 	void GLFBufferTmp::dcmd_export(draw::IQueue& q) const {
-		DCmd_Fb::AddTmp(q, getBufferId());
+		DCmd_Fb::MakeCommand_ApplyOnly(q, getBufferId());
 	}
 }

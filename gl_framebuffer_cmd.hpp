@@ -15,8 +15,8 @@ namespace rev {
 
 		using GLFBufferCore::GLFBufferCore;
 		DCmd_Fb() = default;
-		static void Add(draw::IQueue& q, const HFbC& fb, const Res (&att)[Att::NumAttachment]);
-		static void AddTmp(draw::IQueue& q, const GLuint id);
+		static void MakeCommand_SetAttachment(draw::IQueue& q, const HFbC& fb, const Res (&att)[Att::NumAttachment]);
+		static void MakeCommand_ApplyOnly(draw::IQueue& q, const GLuint fbId);
 		static void Command(const void* p);
 	};
 }

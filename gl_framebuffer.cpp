@@ -172,7 +172,7 @@ namespace rev {
 		_attachment[att] = boost::blank();
 	}
 	void GLFBuffer::dcmd_export(draw::IQueue& q) const {
-		DCmd_Fb::Add(q, shared_from_this(), _attachment);
+		DCmd_Fb::MakeCommand_SetAttachment(q, shared_from_this(), _attachment);
 	}
 	const GLFBuffer::Res& GLFBuffer::getAttachment(const Att::e att) const {
 		return _attachment[att];

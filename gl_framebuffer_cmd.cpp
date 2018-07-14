@@ -43,7 +43,7 @@ namespace rev {
 			}
 		};
 	}
-	void DCmd_Fb::Add(draw::IQueue& q, const HFbC& fb, const Res (&att)[Att::NumAttachment]) {
+	void DCmd_Fb::MakeCommand_SetAttachment(draw::IQueue& q, const HFbC& fb, const Res (&att)[Att::NumAttachment]) {
 		q.stockResource(fb);
 		DCmd_Fb fbc(fb->getBufferId());
 		fbc.size = *GLFBuffer::GetAttachmentSize(att, Att::Color0);
@@ -51,8 +51,8 @@ namespace rev {
 			boost::apply_visitor(Visitor(fbc.ent[i], q), att[i]);
 		q.add(fbc);
 	}
-	void DCmd_Fb::AddTmp(draw::IQueue& q, const GLuint id) {
-		DCmd_Fb fb(id);
+	void DCmd_Fb::MakeCommand_ApplyOnly(draw::IQueue& q, const GLuint fbId) {
+		DCmd_Fb fb(fbId);
 		fb.size = mgr_info.getScreenSize();
 		for(auto& e : fb.ent)
 			e.resId = 0;
