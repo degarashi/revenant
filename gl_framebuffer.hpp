@@ -1,7 +1,6 @@
 #pragma once
 #include "gl_types.hpp"
 #include "lubee/size.hpp"
-#include "lubee/wrapper.hpp"
 #include "sdl_tls.hpp"
 #include "handle/opengl.hpp"
 #include "lubee/rect.hpp"
@@ -34,13 +33,17 @@ namespace rev {
 			void _attachTexture(Att::e aId, GLuint tb);
 			using TexRes = std::pair<HTexSrc, CubeFace>;
 
-			struct RawTex : lubee::Wrapper<GLuint> {
-				using Wrapper::Wrapper;
-				using Wrapper::operator =;
+			struct RawTex {
+				GLuint	id;
+
+				void invalidate() noexcept;
+				bool operator == (const RawTex& t) const noexcept;
 			};
-			struct RawRb : lubee::Wrapper<GLuint> {
-				using Wrapper::Wrapper;
-				using Wrapper::operator =;
+			struct RawRb {
+				GLuint	id;
+
+				void invalidate() noexcept;
+				bool operator == (const RawRb& r) const noexcept;
 			};
 			// attachは受け付けるがハンドルを格納するだけであり、実際OpenGLにセットされるのはDrawThread
 		protected:

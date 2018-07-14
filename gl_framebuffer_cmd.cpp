@@ -18,12 +18,12 @@ namespace rev {
 
 			void operator()(const DCmd_Fb::RawRb& r) const {
 				_dst.bTex = false;
-				_dst.resId = r;
+				_dst.resId = r.id;
 			}
 			void operator()(const DCmd_Fb::RawTex& t) const {
 				_dst.bTex = true;
 				_dst.faceFlag = GL_TEXTURE_2D;
-				_dst.resId = t;
+				_dst.resId = t.id;
 			}
 			void operator()(const DCmd_Fb::TexRes& t) const {
 				auto* tr = t.first.get();

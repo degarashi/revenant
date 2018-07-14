@@ -7,6 +7,21 @@
 #include "handler.hpp"
 
 namespace rev {
+	// ------------------------- GLFBufferCore::RawTex -------------------------
+	bool GLFBufferCore::RawTex::operator == (const RawTex& t) const noexcept {
+		return id == t.id;
+	}
+	void GLFBufferCore::RawTex::invalidate() noexcept {
+		id = 0;
+	}
+	// ------------------------- GLFBufferCore::RawRb -------------------------
+	bool GLFBufferCore::RawRb::operator == (const RawRb& r) const noexcept {
+		return id == r.id;
+	}
+	void GLFBufferCore::RawRb::invalidate() noexcept {
+		id = 0;
+	}
+
 	// ------------------------- GLFBufferCore -------------------------
 	GLFBufferCore::GLFBufferCore(GLuint id):
 		_idFbo(id)
@@ -37,11 +52,11 @@ namespace rev {
 			void operator()(boost::blank) const {}
 			void operator()(GLFBufferCore::RawTex& t) const {
 				// 生のTextureIdは無効になる
-				t = 0;
+				t.invalidate();
 			}
 			void operator()(GLFBufferCore::RawRb& r) const {
 				// 生のRenderBufferIdは無効になる
-				r = 0;
+				r.invalidate();
 			}
 			void operator()(GLFBufferCore::TexRes& t) const {
 				(*this)(t.first);
@@ -160,10 +175,10 @@ namespace rev {
 		attachTextureFace(att, hTex, CubeFace::PositiveX);
 	}
 	void GLFBuffer::attachRawRBuffer(const Att::e att, const GLuint idRb) {
-		_attachIt(att, RawRb(idRb));
+		_attachIt(att, RawRb{idRb});
 	}
 	void GLFBuffer::attachRawTexture(const Att::e att, const GLuint idTex) {
-		_attachIt(att, RawTex(idTex));
+		_attachIt(att, RawTex{idTex});
 	}
 	void GLFBuffer::attachOtherAttachment(const Att::e attDst, const Att::e attSrc, const HFb& hFb) {
 		_attachment[attDst] = hFb->getAttachment(attSrc);
@@ -192,7 +207,7 @@ namespace rev {
 			Size_OP operator()(const GLFBufferCore::RawTex& t) const {
 				GLint id, w, h;
 				GL.glGetIntegerv(GL_TEXTURE_BINDING_2D, &id);
-				GL.glBindTexture(GL_TEXTURE_2D, t._value);
+				GL.glBindTexture(GL_TEXTURE_2D, t.id);
 				GL.glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_WIDTH, &w);
 				GL.glGetTexParameteriv(GL_TEXTURE_2D, GL_TEXTURE_HEIGHT, &h);
 				GL.glBindTexture(GL_TEXTURE_2D, id);
@@ -201,7 +216,7 @@ namespace rev {
 			Size_OP operator()(const GLFBufferCore::RawRb& t) const {
 				GLint id, w, h;
 				GL.glGetIntegerv(GL_RENDERBUFFER_BINDING, &id);
-				GL.glBindRenderbuffer(GL_RENDERBUFFER, t._value);
+				GL.glBindRenderbuffer(GL_RENDERBUFFER, t.id);
 				GL.glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &w);
 				GL.glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &h);
 				GL.glBindRenderbuffer(GL_RENDERBUFFER, id);
