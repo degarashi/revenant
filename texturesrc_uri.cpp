@@ -92,7 +92,7 @@ namespace rev {
 		//! texのfaceにhRWのピクセルデータを書き込む
 		TextureLoadResult LoadPixelsFromRW(const GLenum tflag, const HRW& hRW, const InCompressedFmt_OP format) {
 			return WritePixelLayer0(
-				LoadPixels(Surface::Load(hRW), format, true),
+				LoadPixels(Surface::Load(hRW), format, false),
 				tflag
 			);
 		}
