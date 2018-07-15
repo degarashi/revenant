@@ -35,8 +35,8 @@ namespace rev {
 	GLenum GLTexture::getFaceFlag(const CubeFace face) const {
 		return _src->getFaceFlag(face);
 	}
-	void GLTexture::save(const PathBlock& path, const CubeFace face) const {
-		_src->save(path, face);
+	void GLTexture::save(const PathBlock& path, const MipLevel level, const CubeFace face) const {
+		_src->save(path, level, face);
 	}
 	ByteBuff GLTexture::readData(const GLInFmt internalFmt, const GLTypeFmt elem, const int level, const CubeFace face) const {
 		return _src->readData(internalFmt, elem, level, face);

@@ -85,9 +85,13 @@ namespace rev {
 			return GL_TEXTURE_CUBE_MAP_POSITIVE_X + static_cast<int>(face) - static_cast<int>(CubeFace::PositiveX);
 		return GL_TEXTURE_2D;
 	}
-	void TextureSource::save(const PathBlock& path, const CubeFace face) const {
-		const auto buff = readData(GL_BGRA, GL_UNSIGNED_BYTE, 0, face);
-		const auto sfc = rev::Surface::Create(buff, sizeof(uint32_t)*_size.width, _size.width, _size.height, SDL_PIXELFORMAT_ARGB8888);
+	void TextureSource::save(const PathBlock& path, const MipLevel level, const CubeFace face) const {
+		const auto buff = readData(GL_BGRA, GL_UNSIGNED_BYTE, level, face);
+		auto size = getSize();
+		size.width >>= level;
+		size.height >>= level;
+		D_Assert0(buff.size()*sizeof(uint32_t)*size.width*size.height);
+		const auto sfc = rev::Surface::Create(buff, sizeof(uint32_t)*size.width, size.width, size.height, SDL_PIXELFORMAT_ARGB8888);
 		const auto hRW = mgr_rw.fromFile(path, Access::Write);
 		sfc->saveAsPNG(hRW);
 	}
