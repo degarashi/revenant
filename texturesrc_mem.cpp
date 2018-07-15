@@ -52,7 +52,7 @@ namespace rev {
 		const auto mip = _mipFlag();
 		if(c) {
 			// バッファの内容から復元
-			LoadPixelsFromBuffer(flag, format, size, c->buff, false, mip);
+			LoadPixelsFromBuffer(flag, format, size, c->buff, false);
 		} else {
 			// とりあえず領域だけ確保しておく
 			GL.glTexImage2D(
@@ -65,9 +65,9 @@ namespace rev {
 				GL_UNSIGNED_BYTE,
 				nullptr
 			);
-			if(mip)
-				GL.glGenerateMipmap(flag);
 		}
+		if(mip)
+			GL.glGenerateMipmap(flag);
 	}
 	// DeviceLostの時にこのメソッドを読んでも無意味
 	void TextureSrc_Mem2D::writeData(AB_Byte buff, const GLTypeFmt srcFmt) {

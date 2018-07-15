@@ -1,5 +1,6 @@
 #include "gl_texture_debug.hpp"
 #include "sdl_format.hpp"
+#include "gl_if.hpp"
 
 namespace rev {
 	// ------------------------- Texture_Debug -------------------------
@@ -17,14 +18,13 @@ namespace rev {
 			imm_bind(0);
 			const GLenum fmt = GLFormat::QuerySDLtoGL(this->_gen->getFormat())->format;
 			const auto size = getSize();
-			const auto loadTex = [this, fmt, size](const GLenum tflag, const ByteBuff& buff){
+			const auto loadTex = [fmt, size](const GLenum tflag, const ByteBuff& buff){
 				LoadPixelsFromBuffer(
 					tflag,
 					fmt,
 					size,
 					buff,
-					true,
-					_mip
+					true
 				);
 			};
 			if(isCubemap()) {
@@ -51,6 +51,8 @@ namespace rev {
 					_gen->generate(getSize(), CubeFace::PositiveX)
 				);
 			}
+			if(_mip)
+				GL.glGenerateMipmap(getTextureFlag());
 		}
 	}
 

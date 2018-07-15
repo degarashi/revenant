@@ -52,7 +52,6 @@ namespace rev {
 	struct TextureLoadResult {
 		lubee::SizeI		size;
 		GLInCompressedFmt	format;
-		std::size_t			miplevel;
 	};
-	TextureLoadResult LoadPixelsFromBuffer(GLenum tflag, GLenum format, const lubee::SizeI& size, const ByteBuff& buff, bool bP2, bool bMip);
+	TextureLoadResult LoadPixelsFromBuffer(GLenum tflag, GLenum format, const lubee::SizeI& size, const ByteBuff& buff, bool bP2);
 }
