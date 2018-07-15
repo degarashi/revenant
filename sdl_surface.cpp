@@ -189,8 +189,8 @@ namespace rev {
 					h = height();
 		auto lk = lock();
 		const auto upFmt = MakeUPFormat(dstFmt);
-		const size_t laneSize = upFmt->BytesPerPixel;
-		const size_t dstSize = w * h * laneSize;
+		const size_t laneSize = upFmt->BytesPerPixel * w;
+		const size_t dstSize = h * laneSize;
 		ByteBuff buff(dstSize);
 		auto* src = reinterpret_cast<const uint8_t*>(lk.getBits());
 		auto* dst = buff.data();
