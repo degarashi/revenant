@@ -43,6 +43,7 @@ namespace rev {
 		((QuadStrip)(GL_QUAD_STRIP))
 		((Polygon)(GL_POLYGON))
 	);
+	using MipLevel = uint_fast8_t;
 	DefineEnum(
 		MipState,
 		(NoMipmap)
