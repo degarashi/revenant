@@ -86,12 +86,10 @@ namespace rev {
 		return GL_TEXTURE_2D;
 	}
 	void TextureSource::save(const PathBlock& path, const CubeFace face) const {
-		auto buff = readData(GL_BGRA, GL_UNSIGNED_BYTE, 0, face);
-		auto sfc = rev::Surface::Create(buff, sizeof(uint32_t)*_size.width, _size.width, _size.height, SDL_PIXELFORMAT_ARGB8888);
-		// OpenGLテクスチャは左下が原点なので…
-		auto sfcVf = sfc->flipVertical();
-		auto hRW = mgr_rw.fromFile(path, Access::Write);
-		sfcVf->saveAsPNG(hRW);
+		const auto buff = readData(GL_BGRA, GL_UNSIGNED_BYTE, 0, face);
+		const auto sfc = rev::Surface::Create(buff, sizeof(uint32_t)*_size.width, _size.width, _size.height, SDL_PIXELFORMAT_ARGB8888);
+		const auto hRW = mgr_rw.fromFile(path, Access::Write);
+		sfc->saveAsPNG(hRW);
 	}
 	ByteBuff TextureSource::readData(const GLInFmt internalFmt, const GLTypeFmt elem, const int level, const CubeFace face) const {
 		auto size = getSize();
