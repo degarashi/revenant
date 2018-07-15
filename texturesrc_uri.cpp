@@ -39,8 +39,7 @@ namespace rev {
 				sfc = sfc->convert(sdlFmt);
 			}
 
-			const auto size = sfc->getSize();
-			res.size = size;
+			auto size = sfc->getSize();
 			// テクスチャ用のサイズ調整
 			bool continuous;
 			if(!bP2 && sfc->isContinuous()) {
@@ -51,6 +50,7 @@ namespace rev {
 				if(bP2 && size != n2size) {
 					// 2乗サイズ合わせ
 					sfc = sfc->resize(n2size);
+					size = sfc->getSize();
 				}
 				continuous = sfc->isContinuous();
 			}
@@ -64,6 +64,7 @@ namespace rev {
 			} else {
 				res.buff = sfc->extractAsContinuous();
 			}
+			res.size = size;
 			return res;
 		}
 		/*
