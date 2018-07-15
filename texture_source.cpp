@@ -95,8 +95,12 @@ namespace rev {
 	}
 	ByteBuff TextureSource::readData(const GLInFmt internalFmt, const GLTypeFmt elem, const int level, const CubeFace face) const {
 		auto size = getSize();
+		size.width >>= level;
+		size.height >>= level;
+
 		const size_t sz = size.width * size.height * GLFormat::QueryByteSize(internalFmt, elem);
 		ByteBuff buff(sz);
+		GL.glPixelStorei(GL_PACK_ALIGNMENT, 1);
 		#ifndef USE_OPENGLES2
 		{
 			imm_bind(0);
@@ -104,17 +108,18 @@ namespace rev {
 		}
 		#elif
 		{
-			//	OpenGL ES2ではglGetTexImageが実装されていないのでFramebufferにセットしてglReadPixelsで取得
+			// OpenGL ES2ではglGetTexImageが実装されていないのでFramebufferにセットしてglReadPixelsで取得
+			// ミップマップのレベル指定は無効になる
 			GLint id;
 			GL.glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &id);
 			GLFBufferTmp& tmp = mgr_gl.getTmpFramebuffer();
-			imm_bind(0);
+			tmp.use_begin();
 			if(isCubemap())
-				tmp.attachCubeTexture(GLFBuffer::Att::COLOR0, getTextureId(), getFaceFlag(face));
+				tmp.attachCubeTexture(GLFBuffer::Att::Color0, getTextureId(), getFaceFlag(face), level);
 			else
-				tmp.attachTexture(GLFBuffer::Att::COLOR0, getTextureId());
+				tmp.attachTexture(GLFBuffer::Att::Color0, getTextureId(), level);
 			GL.glReadPixels(0, 0, size.width, size.height, internalFmt, elem, buff.data());
-			tmp.attachTexture(GLFBuffer::Att::COLOR0, 0);
+			tmp.attachTexture(GLFBuffer::Att::Color0, 0, 0);
 			GL.glBindFramebuffer(GL_READ_FRAMEBUFFER_BINDING, id);
 		}
 		#endif
