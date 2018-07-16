@@ -54,4 +54,5 @@ namespace rev {
 		GLInCompressedFmt	format;
 	};
 	TextureLoadResult LoadPixelsFromBuffer(GLenum tflag, GLenum format, const lubee::SizeI& size, const ByteBuff& buff, bool bP2);
+	std::size_t CountMipLevel(const lubee::SizeI size);
 }

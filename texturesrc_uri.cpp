@@ -4,11 +4,10 @@
 #include "gl_if.hpp"
 
 namespace rev {
+	std::size_t CountMipLevel(const lubee::SizeI size) {
+		return lubee::bit::MSB(std::max(size.width,size.height))+1;
+	}
 	namespace {
-		std::size_t CountMipLevel(const lubee::SizeI size) {
-			return lubee::bit::MSB(std::max(size.width,size.height))+1;
-		}
-
 		struct PixelBuffer {
 			GLFormatDesc	desc;
 			lubee::SizeI	size;
