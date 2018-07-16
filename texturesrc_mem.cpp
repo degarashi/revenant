@@ -37,6 +37,11 @@ namespace rev {
 	bool TextureSrc_Mem::_mipFlag() const noexcept {
 		return _mip;
 	}
+	std::size_t TextureSrc_Mem::getMipLevels() const {
+		if(_mipFlag())
+			return CountMipLevel(getSize());
+		return 1;
+	}
 
 	// ---------------- TextureSrc_Mem2D ----------------
 	TextureSrc_Mem2D::Cache TextureSrc_Mem2D::_backupBuffer() const {
@@ -152,10 +157,5 @@ namespace rev {
 	}
 	bool TextureSrc_Mem2D::isCubemap() const {
 		return false;
-	}
-	std::size_t TextureSrc_Mem2D::getMipLevels() const {
-		if(_mipFlag())
-			return CountMipLevel(getSize());
-		return 1;
 	}
 }

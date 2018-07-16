@@ -27,6 +27,7 @@ namespace rev {
 			bool _mipFlag() const noexcept;
 		public:
 			TextureSrc_Mem(GLInSizedFmt fmt, const lubee::SizeI& sz, bool mip, bool bRestore);
+			std::size_t getMipLevels() const override;
 			// -- from IGLResource --
 			void onDeviceReset() override;
 			void onDeviceLost() override;
@@ -61,8 +62,6 @@ namespace rev {
 			void writeRect(AB_Byte buff, const lubee::RectI& rect, GLTypeFmt srcFmt);
 
 			bool isCubemap() const override;
-			std::size_t getMipLevels() const override;
-
 			DEF_DEBUGGUI_NAME
 	};
 	class TextureSrc_MemCube :
@@ -93,8 +92,6 @@ namespace rev {
 			void writeRect(AB_Byte buff, const lubee::RectI& rect, GLTypeFmt srcFmt, CubeFace face);
 
 			bool isCubemap() const override;
-			std::size_t getMipLevels() const override;
-
 			DEF_DEBUGGUI_NAME
 	};
 }
