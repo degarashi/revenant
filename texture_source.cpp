@@ -95,7 +95,7 @@ namespace rev {
 		const auto hRW = mgr_rw.fromFile(path, Access::Write);
 		sfc->saveAsPNG(hRW);
 	}
-	ByteBuff TextureSource::readData(const GLInFmt internalFmt, const GLTypeFmt elem, const int level, const CubeFace face) const {
+	ByteBuff TextureSource::readData(const GLInFmt internalFmt, const GLTypeFmt elem, const MipLevel level, const CubeFace face) const {
 		auto size = getSize();
 		size.width >>= level;
 		size.height >>= level;

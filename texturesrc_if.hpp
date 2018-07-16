@@ -25,7 +25,7 @@ namespace rev {
 			virtual GLenum getFaceFlag(CubeFace face=CubeFace::PositiveX) const = 0;
 			//! 内容をファイルに保存 (主にデバッグ用)
 			virtual void save(const PathBlock& path, MipLevel level=0, CubeFace face=CubeFace::PositiveX) const = 0;
-			virtual ByteBuff readData(GLInFmt internalFmt, GLTypeFmt elem, int level=0, CubeFace face=CubeFace::PositiveX) const = 0;
+			virtual ByteBuff readData(GLInFmt internalFmt, GLTypeFmt elem, MipLevel level=0, CubeFace face=CubeFace::PositiveX) const = 0;
 			virtual ByteBuff readRect(GLInFmt internalFmt, GLTypeFmt elem, const lubee::RectI& rect, CubeFace face=CubeFace::PositiveX) const = 0;
 			bool hasMipmap() const { return getMipLevels() > 1; }
 			virtual std::size_t getMipLevels() const = 0;

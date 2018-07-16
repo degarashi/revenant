@@ -38,7 +38,7 @@ namespace rev {
 	void GLTexture::save(const PathBlock& path, const MipLevel level, const CubeFace face) const {
 		_src->save(path, level, face);
 	}
-	ByteBuff GLTexture::readData(const GLInFmt internalFmt, const GLTypeFmt elem, const int level, const CubeFace face) const {
+	ByteBuff GLTexture::readData(const GLInFmt internalFmt, const GLTypeFmt elem, const MipLevel level, const CubeFace face) const {
 		return _src->readData(internalFmt, elem, level, face);
 	}
 	ByteBuff GLTexture::readRect(const GLInFmt internalFmt, const GLTypeFmt elem, const lubee::RectI& rect, const CubeFace face) const {
