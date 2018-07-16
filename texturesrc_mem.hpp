@@ -55,8 +55,7 @@ namespace rev {
 			//! 部分的に書き込み
 			/*!
 				現状ではMipmap有りでの書き込みには非対応
-				\param[in] ofsX 書き込み先オフセット X
-				\param[in] ofsY 書き込み先オフセット Y
+				\param[in] rect 書き込み先座標
 				\param[in] srcFmt 入力フォーマット(Type)
 			*/
 			void writeRect(AB_Byte buff, const lubee::RectI& rect, GLTypeFmt srcFmt);
@@ -87,8 +86,7 @@ namespace rev {
 			//! 部分的に書き込み
 			/*!
 				現状ではMipmap有りでの書き込みには非対応
-				\param[in] ofsX 書き込み先オフセット X
-				\param[in] ofsY 書き込み先オフセット Y
+				\param[in] rect 書き込み先座標
 				\param[in] srcFmt 入力フォーマット(Type)
 				\param[in] face Cubemapにおける面
 			*/
