@@ -154,6 +154,8 @@ namespace rev {
 		return false;
 	}
 	std::size_t TextureSrc_Mem2D::getMipLevels() const {
+		if(_mipFlag())
+			return CountMipLevel(getSize());
 		return 1;
 	}
 }

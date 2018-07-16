@@ -143,6 +143,8 @@ namespace rev {
 		return true;
 	}
 	std::size_t TextureSrc_MemCube::getMipLevels() const {
+		if(_mipFlag())
+			return CountMipLevel(getSize());
 		return 1;
 	}
 }
