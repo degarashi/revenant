@@ -36,7 +36,6 @@ namespace rev {
 		DeviceLost時の復元は任意
 		内部バッファはDeviceLost用であり、DeviceがActiveな時はnone
 		フォーマット変換は全てOpenGLにさせる
-		書き込み不可の時は最初の一度だけ書き込める
 	*/
 	class TextureSrc_Mem2D :
 		public TextureSrc_Mem
