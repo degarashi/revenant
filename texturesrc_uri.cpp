@@ -87,11 +87,11 @@ namespace rev {
 			\param[in]	tflag	GL_TEXTURE_2D or GL_TEXTURE_CUBE_MAP_(POSITIVE|NEGATIVE)_(X|Y|Z)
 			\param[in]	bMip	trueならミップマップ生成
 		*/
-		TextureLoadResult WritePixelLayer0(const PixelBuffer& pb, const GLenum tflag) {
+		TextureLoadResult WritePixelLayer(const PixelBuffer& pb, const GLenum tflag, const MipLevel level) {
 			GL.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 			GL.glTexImage2D(
 				tflag,
-				0,
+				level,
 				pb.desc.format,
 				pb.size.width, pb.size.height,
 				0,
@@ -106,9 +106,10 @@ namespace rev {
 		}
 		//! texのfaceにhRWのピクセルデータを書き込む
 		TextureLoadResult LoadPixelsFromRW(const GLenum tflag, const HRW& hRW, const InCompressedFmt_OP format) {
-			return WritePixelLayer0(
+			return WritePixelLayer(
 				LoadPixels(Surface::Load(hRW), format, false),
-				tflag
+				tflag,
+				0
 			);
 		}
 	}
@@ -117,9 +118,10 @@ namespace rev {
 		const auto info = GLFormat::QueryInfo(format);
 		const int pixelsize = info->numElem* GLFormat::QuerySize(info->baseFormat);
 		const HSfc sfc = Surface::Create(buff, pixelsize*size.width, size.width, size.height, info->sdlFormat);
-		return WritePixelLayer0(
+		return WritePixelLayer(
 			LoadPixels(sfc, spi::none, bP2),
-			tflag
+			tflag,
+			0
 		);
 	}
 
