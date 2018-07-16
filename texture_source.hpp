@@ -17,13 +17,15 @@ namespace rev {
 						actId;
 				static void Command(const void* p);
 			};
-			GLuint				_idTex;
 		protected:
-			lubee::SizeI		_size;
-			InCompressedFmt_OP	_format;	//!< 値が無効 = 不定
 			TextureSource(InCompressedFmt_OP fmt, const lubee::SizeI& sz);
 			bool _onDeviceReset();
+			void _setSizeAndFormat(lubee::SizeI size, InCompressedFmt_OP fmt);
 
+		private:
+			GLuint				_idTex;
+			lubee::SizeI		_size;
+			InCompressedFmt_OP	_format;	//!< 値が無効 = 不定
 		public:
 			TextureSource(TextureSource&& t);
 			virtual ~TextureSource();

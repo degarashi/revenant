@@ -44,6 +44,10 @@ namespace rev {
 	TextureSource::~TextureSource() {
 		onDeviceLost();
 	}
+	void TextureSource::_setSizeAndFormat(const lubee::SizeI size, const InCompressedFmt_OP fmt) {
+		_size = size;
+		_format = fmt;
+	}
 	void TextureSource::dcmd_bind(draw::IQueue& q, const GLuint actId) const {
 		q.add(
 			DCmd_Bind {

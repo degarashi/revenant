@@ -141,8 +141,7 @@ namespace rev {
 							);
 			if(_mip)
 				GL.glGenerateMipmap(getTextureFlag());
-			_size = res.size;
-			_format = res.format;
+			_setSizeAndFormat(res.size, res.format);
 		}
 	}
 	bool TextureSrc_URI::isCubemap() const {
@@ -170,11 +169,10 @@ namespace rev {
 				const auto res = LoadPixelsFromRW(
 					getFaceFlag(static_cast<CubeFace::e>(i)),
 					mgr_rw.fromURI(*_uri[i], Access::Read),
-					(i==0) ? spi::none : _format
+					(i==0) ? spi::none : getFormat()
 				);
 				if(i==0) {
-					_size = res.size;
-					_format = res.format;
+					_setSizeAndFormat(res.size, res.format);
 				}
 			}
 			if(_mip)
