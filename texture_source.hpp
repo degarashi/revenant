@@ -55,4 +55,6 @@ namespace rev {
 	};
 	TextureLoadResult LoadPixelsFromBuffer(GLenum tflag, GLenum format, const lubee::SizeI& size, const ByteBuff& buff, bool bP2);
 	std::size_t CountMipLevel(const lubee::SizeI size);
+	// もう次の層が無い場合はfalseを返す
+	bool NextMipLevel(lubee::SizeI& size);
 }
