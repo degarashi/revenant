@@ -30,4 +30,13 @@ namespace rev {
 			bool hasMipmap() const { return getMipLevels() > 1; }
 			virtual std::size_t getMipLevels() const = 0;
 	};
+
+	struct TextureLoadResult {
+		lubee::SizeI		size;
+		GLInCompressedFmt	format;
+	};
+	TextureLoadResult LoadPixelsFromBuffer(GLenum tflag, GLenum format, const lubee::SizeI& size, const ByteBuff& buff, bool bP2);
+	std::size_t CountMipLevel(const lubee::SizeI size);
+	// もう次の層が無い場合はfalseを返す
+	bool NextMipLevel(lubee::SizeI& size);
 }
