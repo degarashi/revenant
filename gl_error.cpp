@@ -5,11 +5,11 @@
 namespace rev {
 	// ------------------------- GLError -------------------------
 	const std::pair<GLenum, const char*> GLError::ErrorList[] = {
-		{GL_INVALID_VALUE, "Numeric argument out of range"},
-		{GL_INVALID_ENUM, "Enum argument out of range"},
-		{GL_INVALID_OPERATION, "Operation illegal in current state"},
-		{GL_INVALID_FRAMEBUFFER_OPERATION, "Framebuffer is incomplete"},
-		{GL_OUT_OF_MEMORY, "Not enough memory left to execute command"}
+		{GL_INVALID_VALUE, "Numeric argument out of range (GL_INVALID_VALUE)"},
+		{GL_INVALID_ENUM, "Enum argument out of range (GL_INVALID_ENUM)"},
+		{GL_INVALID_OPERATION, "Operation illegal in current state (GL_INVALID_OPERATION)"},
+		{GL_INVALID_FRAMEBUFFER_OPERATION, "Framebuffer is incomplete (GL_INVALID_FRAMEBUFFER_OPERATION)"},
+		{GL_OUT_OF_MEMORY, "Not enough memory left to execute command (GL_OUT_OF_MEMORY)"}
 	};
 	const char* GLError::errorDesc() {
 		GLenum err;
