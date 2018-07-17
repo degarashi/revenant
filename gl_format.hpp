@@ -169,7 +169,7 @@ namespace rev {
 			//! SDLフォーマットからOpenGLフォーマットへの変換
 			static Info_OP QuerySDLtoGL(uint32_t fmt);
 			//! GLTypeFmtのバイト数
-			static std::size_t QuerySize(GLenum typ);
+			static spi::Optional<std::size_t> QuerySize(GLenum typ);
 			//! fmtをtypで保存した場合の1画素のバイト数を計算
 			static std::size_t QueryByteSize(GLenum fmt, GLenum typ);
 			//! GLenum値を文字列に変換(デバッグ用)

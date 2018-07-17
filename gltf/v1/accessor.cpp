@@ -14,7 +14,7 @@ namespace rev::gltf::v1 {
 				byteStride = *str;
 		}
 		if(byteStride == 0)
-			byteStride = GLFormat::QuerySize(_componentType) * _nElem;
+			byteStride = *GLFormat::QuerySize(_componentType) * _nElem;
 	}
 	Accessor::Size_OP Accessor::_getByteStride() const noexcept {
 		return byteStride;

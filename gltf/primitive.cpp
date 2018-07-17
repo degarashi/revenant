@@ -203,7 +203,7 @@ namespace rev::gltf {
 			// make vertex buffer
 			VDecl::VDInfoV		vdinfo;
 			for(auto& v : vdata) {
-				vdinfo.emplace_back(0, v.offset, v.type, v.normalize, v.nElem, v.vsem, v.nElem*GLFormat::QuerySize(v.type));
+				vdinfo.emplace_back(0, v.offset, v.type, v.normalize, v.nElem, v.vsem, v.nElem * (*GLFormat::QuerySize(v.type)));
 			}
 			HVb vb[2];
 			vb[0] = mgr_gl.makeVBuffer(DrawType::Static);

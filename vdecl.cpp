@@ -63,7 +63,7 @@ namespace rev {
 				for(auto& t2 : t) {
 					if(tail > t2.offset)
 						throw GLE_Error("invalid vertex offset");
-					tail = t2.offset + GLFormat::QuerySize(t2.elemFlag) * t2.elemSize;
+					tail = t2.offset + (*GLFormat::QuerySize(t2.elemFlag)) * t2.elemSize;
 				}
 			}
 		}

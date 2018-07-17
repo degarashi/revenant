@@ -55,7 +55,7 @@ namespace rev::gltf::v2 {
 					ptr + data.length
 				);
 			} else {
-				const auto unitsize = GLFormat::QuerySize(_componentType);
+				const auto unitsize = *GLFormat::QuerySize(_componentType);
 				cached.resize(unitsize*_nElem*_count);
 			}
 			// Sparse反映

@@ -82,14 +82,14 @@ namespace rev {
 			return itr->second;
 		return spi::none;
 	}
-	std::size_t GLFormat::QuerySize(GLenum typ) {
+	spi::Optional<std::size_t> GLFormat::QuerySize(const GLenum typ) {
 		auto itr = s_idMap->find(FmtId(Query_TypeSize, typ));
 		if(itr != s_idMap->end())
 			return boost::get<Id_t>(itr->second);
-		return 0;
+		return spi::none;
 	}
-	std::size_t GLFormat::QueryByteSize(GLenum fmt, GLenum typ) {
-		return QueryInfo(fmt)->numElem * QuerySize(typ);
+	std::size_t GLFormat::QueryByteSize(const GLenum fmt, const GLenum typ) {
+		return QueryInfo(fmt)->numElem * (*QuerySize(typ));
 	}
 	const std::string& GLFormat::QueryEnumString(GLenum value) {
 		for(auto& p : *s_valueMap) {

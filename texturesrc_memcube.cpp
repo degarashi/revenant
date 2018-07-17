@@ -61,7 +61,7 @@ namespace rev {
 	}
 	void TextureSrc_MemCube::writeData(AB_Byte buff, const GLTypeFmt srcFmt, const CubeFace face) {
 		// バッファ容量がサイズ以上かチェック
-		const auto szInput = GLFormat::QuerySize(srcFmt);
+		const auto szInput = *GLFormat::QuerySize(srcFmt);
 		const auto size = getSize();
 		Assert0(buff.getLength() >= size.width * size.height * szInput);
 		// DeviceLost中でなければすぐにテクスチャを作成するが、そうでなければ内部バッファにコピーするのみ

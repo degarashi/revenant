@@ -77,7 +77,7 @@ namespace rev {
 	// DeviceLostの時にこのメソッドを読んでも無意味
 	void TextureSrc_Mem2D::writeData(AB_Byte buff, const GLTypeFmt srcFmt) {
 		// バッファ容量がサイズ以上かチェック
-		const auto szInput = GLFormat::QuerySize(srcFmt);
+		const auto szInput = *GLFormat::QuerySize(srcFmt);
 		const auto size = getSize();
 		Assert0(buff.getLength() >= size.width * size.height * szInput);
 		// DeviceLost中でなければすぐにテクスチャを作成するが、そうでなければ内部バッファにコピーするのみ

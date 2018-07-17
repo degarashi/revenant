@@ -55,7 +55,7 @@ namespace rev {
 				int texSize;
 				if(op) {
 					rb._buffFmt = op->elementType;
-					texSize = op->numElem * GLFormat::QuerySize(op->numElem);
+					texSize = op->numElem * (*GLFormat::QuerySize(op->numElem));
 				} else {
 					// BaseFormatな時は判別をかける
 					uint32_t dsc = GLFormat::QueryFormat(rb._fmt.get(), GLFormat::Query_DSC);
