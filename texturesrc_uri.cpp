@@ -116,7 +116,7 @@ namespace rev {
 	TextureLoadResult LoadPixelsFromBuffer(const GLenum tflag, const GLenum format, const lubee::SizeI& size, const ByteBuff& buff, const bool bP2) {
 		// 簡単の為に一旦SDL_Surfaceに変換
 		const auto info = GLFormat::QueryInfo(format);
-		const std::size_t pixelsize = info->numElem * (*GLFormat::QuerySize(info->baseFormat));
+		const std::size_t pixelsize = info->numElem * (*GLFormat::QuerySize(info->elementType));
 		const HSfc sfc = Surface::Create(buff, pixelsize*size.width, size.width, size.height, info->sdlFormat);
 		return WritePixelLayer(
 			LoadPixels(sfc, spi::none, bP2),
