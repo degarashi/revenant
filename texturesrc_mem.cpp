@@ -75,15 +75,15 @@ namespace rev {
 			GL.glGenerateMipmap(flag);
 	}
 	// DeviceLostの時にこのメソッドを読んでも無意味
-	void TextureSrc_Mem2D::writeData(AB_Byte buff, const GLTypeFmt srcFmt) {
+	void TextureSrc_Mem2D::writeData(AB_Byte buff, const GLTypeFmt elem) {
 		// バッファ容量がサイズ以上かチェック
-		const auto szInput = *GLFormat::QuerySize(srcFmt);
+		const auto szInput = *GLFormat::QuerySize(elem);
 		const auto size = getSize();
 		Assert0(buff.getLength() >= size.width * size.height * szInput);
+		const auto format = *getFormat();
 		// DeviceLost中でなければすぐにテクスチャを作成するが、そうでなければ内部バッファにコピーするのみ
 		if(getTextureId() != 0) {
 			// テクスチャに転送
-			const auto format = *getFormat();
 			const auto sz = getSize();
 			const auto flag = getFaceFlag();
 			imm_bind(0);
@@ -95,7 +95,7 @@ namespace rev {
 				sz.width, sz.height,
 				0,
 				GLFormat::QueryInfo(format)->baseFormat,
-				srcFmt.get(),
+				elem.get(),
 				buff.getPtr()
 			);
 			if(_mipFlag())
@@ -103,16 +103,16 @@ namespace rev {
 		} else {
 			if(_restoreFlag()) {
 				// 内部バッファへmove
-				_cache = Cache(srcFmt);
+				_cache = Cache(format.get());
 				_cache->buff = buff.moveTo();
 			}
 		}
 	}
-	void TextureSrc_Mem2D::writeRect(AB_Byte buff, const lubee::RectI& rect, const GLTypeFmt srcFmt) {
+	void TextureSrc_Mem2D::writeRect(AB_Byte buff, const lubee::RectI& rect, const GLTypeFmt elem) {
 		const auto size = getSize();
 		const auto format = getFormat();
 		#ifdef DEBUG
-			const size_t bs = *GLFormat::QueryByteSize(format.get(), srcFmt);
+			const size_t bs = *GLFormat::QueryByteSize(format.get(), elem);
 			const auto sz = buff.getLength();
 			D_Assert0(sz >= bs*rect.width()*rect.height());
 		#endif
@@ -128,7 +128,7 @@ namespace rev {
 				0,
 				rect.x0, rect.y0, rect.width(), rect.height(),
 				baseFormat,
-				srcFmt.get(),
+				elem.get(),
 				buff.getPtr()
 			);
 			// 効率悪いが、とりあえず
@@ -138,7 +138,7 @@ namespace rev {
 			// 内部バッファが存在すればそこに書き込んでおく
 			if(_cache) {
 				// でもフォーマットが違う時は警告だけ出して何もしない
-				if(_cache->format != srcFmt) {
+				if(_cache->format != elem) {
 					Expect(false, u8"テクスチャのフォーマットが違うので部分的に書き込めない");
 				} else {
 					auto& b = _cache->buff;

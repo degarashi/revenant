@@ -50,16 +50,16 @@ namespace rev {
 			//! テクスチャ全部書き換え = バッファも置き換え
 			/*
 				\param[in] fmt テクスチャのフォーマット
-				\param[in] srcFmt 入力フォーマット(Type)
+				\param[in] elem 入力フォーマット(Type)
 			*/
-			void writeData(AB_Byte buff, GLTypeFmt srcFmt);
+			void writeData(AB_Byte buff, GLTypeFmt elem);
 			//! 部分的に書き込み
 			/*!
 				現状ではMipmap有りでの書き込みには非対応
 				\param[in] rect 書き込み先座標
-				\param[in] srcFmt 入力フォーマット(Type)
+				\param[in] elem 入力フォーマット(Type)
 			*/
-			void writeRect(AB_Byte buff, const lubee::RectI& rect, GLTypeFmt srcFmt);
+			void writeRect(AB_Byte buff, const lubee::RectI& rect, GLTypeFmt elem);
 
 			bool isCubemap() const override;
 			DEF_DEBUGGUI_NAME
@@ -78,18 +78,18 @@ namespace rev {
 			//! テクスチャ全部書き換え = バッファも置き換え
 			/*!
 				\param[in] fmt テクスチャのフォーマット
-				\param[in] srcFmt 入力フォーマット(Type)
+				\param[in] elem 入力フォーマット(Type)
 				\param[in] face Cubemapにおける面
 			*/
-			void writeData(AB_Byte buff, GLTypeFmt srcFmt, CubeFace face);
+			void writeData(AB_Byte buff, GLTypeFmt elem, CubeFace face);
 			//! 部分的に書き込み
 			/*!
 				現状ではMipmap有りでの書き込みには非対応
 				\param[in] rect 書き込み先座標
-				\param[in] srcFmt 入力フォーマット(Type)
+				\param[in] elem 入力フォーマット(Type)
 				\param[in] face Cubemapにおける面
 			*/
-			void writeRect(AB_Byte buff, const lubee::RectI& rect, GLTypeFmt srcFmt, CubeFace face);
+			void writeRect(AB_Byte buff, const lubee::RectI& rect, GLTypeFmt elem, CubeFace face);
 
 			bool isCubemap() const override;
 			DEF_DEBUGGUI_NAME

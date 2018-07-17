@@ -59,9 +59,9 @@ namespace rev {
 		if(_mipFlag())
 			GL.glGenerateMipmap(getTextureFlag());
 	}
-	void TextureSrc_MemCube::writeData(AB_Byte buff, const GLTypeFmt srcFmt, const CubeFace face) {
+	void TextureSrc_MemCube::writeData(AB_Byte buff, const GLTypeFmt elem, const CubeFace face) {
 		// バッファ容量がサイズ以上かチェック
-		const auto szInput = *GLFormat::QuerySize(srcFmt);
+		const auto szInput = *GLFormat::QuerySize(elem);
 		const auto size = getSize();
 		Assert0(buff.getLength() >= size.width * size.height * szInput);
 		// DeviceLost中でなければすぐにテクスチャを作成するが、そうでなければ内部バッファにコピーするのみ
@@ -78,12 +78,12 @@ namespace rev {
 				size.width, size.height,
 				0,
 				GLFormat::QueryInfo(format)->baseFormat,
-				srcFmt.get(),
+				elem.get(),
 				buff.getPtr()
 			);
 		} else {
 			if(_restoreFlag()) {
-				_cache = Cache(srcFmt);
+				_cache = Cache(elem);
 				_cache->buff.resize(buff.getLength()*6);
 				auto& dst = _cache->buff;
 				// 内部バッファへcopy
@@ -95,11 +95,11 @@ namespace rev {
 			}
 		}
 	}
-	void TextureSrc_MemCube::writeRect(AB_Byte buff, const lubee::RectI& rect, const GLTypeFmt srcFmt, const CubeFace face) {
+	void TextureSrc_MemCube::writeRect(AB_Byte buff, const lubee::RectI& rect, const GLTypeFmt elem, const CubeFace face) {
 		const auto size = getSize();
 		const auto format = getFormat();
 		#ifdef DEBUG
-			const size_t bs = *GLFormat::QueryByteSize(format.get(), srcFmt);
+			const size_t bs = *GLFormat::QueryByteSize(format.get(), elem);
 			const auto sz = buff.getLength();
 			D_Assert0(sz >= bs*rect.width()*rect.height());
 		#endif
@@ -114,14 +114,14 @@ namespace rev {
 				0,
 				rect.x0, rect.y0, rect.width(), rect.height(),
 				baseFormat,
-				srcFmt.get(),
+				elem.get(),
 				buff.getPtr()
 			);
 		} else {
 			// 内部バッファが存在すればそこに書き込んでおく
 			if(_cache) {
 				// でもフォーマットが違う時は警告だけ出して何もしない
-				if(_cache->format != srcFmt) {
+				if(_cache->format != elem) {
 					Expect(false, u8"テクスチャのフォーマットが違うので部分的に書き込めない");
 				} else if(_cache->buff.size() != buff.getLength()*6) {
 					Expect(false, u8"テクスチャのサイズが違うので部分的に書き込めない");

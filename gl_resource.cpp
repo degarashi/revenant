@@ -131,11 +131,11 @@ namespace rev {
 		const GLInSizedFmt fmt,
 		const bool mip,
 		const bool bRestore,
-		const GLTypeFmt srcFmt,
+		const GLTypeFmt elem,
 		const AB_Byte data
 	) {
 		auto h = std::static_pointer_cast<TextureSrc_Mem2D>(createTexture(size, fmt, mip, bRestore));
-		h->writeData(data, srcFmt);
+		h->writeData(data, elem);
 		return h;
 	}
 	HSh GLRes::makeShader(const ShType type, const std::string& src) {

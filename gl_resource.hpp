@@ -72,7 +72,7 @@ namespace rev {
 			HTexMem2D createTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool mip, bool bRestore);
 
 			/*! 用意したデータで初期化 */
-			HTexMem2D createTextureInit(const lubee::SizeI& size, GLInSizedFmt fmt, bool mip, bool bRestore, GLTypeFmt srcFmt, AB_Byte data);
+			HTexMem2D createTextureInit(const lubee::SizeI& size, GLInSizedFmt fmt, bool mip, bool bRestore, GLTypeFmt elem, AB_Byte data);
 			//! 空のキューブテクスチャを作成
 			HTexMemCube createCubeTexture(const lubee::SizeI& size, GLInSizedFmt fmt, bool mip, bool bRestore);
 
