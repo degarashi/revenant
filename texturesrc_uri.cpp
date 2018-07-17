@@ -87,7 +87,7 @@ namespace rev {
 			\param[in]	tflag	GL_TEXTURE_2D or GL_TEXTURE_CUBE_MAP_(POSITIVE|NEGATIVE)_(X|Y|Z)
 			\param[in]	bMip	trueならミップマップ生成
 		*/
-		TextureLoadResult WritePixelLayer(const PixelBuffer& pb, const GLenum tflag, const MipLevel level) {
+		void WritePixelLayer(const PixelBuffer& pb, const GLenum tflag, const MipLevel level) {
 			GL.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 			GL.glTexImage2D(
 				tflag,
@@ -99,18 +99,15 @@ namespace rev {
 				pb.desc.elementType,
 				pb.buff.data()
 			);
+		}
+		//! texのfaceにhRWのピクセルデータを書き込む
+		TextureLoadResult LoadPixelsFromRW(const GLenum tflag, const HRW& hRW, const InCompressedFmt_OP format) {
+			const auto pb = LoadPixels(Surface::Load(hRW), format, false);
+			WritePixelLayer(pb, tflag, 0);
 			return {
 				.size = pb.size,
 				.format = pb.desc.format,
 			};
-		}
-		//! texのfaceにhRWのピクセルデータを書き込む
-		TextureLoadResult LoadPixelsFromRW(const GLenum tflag, const HRW& hRW, const InCompressedFmt_OP format) {
-			return WritePixelLayer(
-				LoadPixels(Surface::Load(hRW), format, false),
-				tflag,
-				0
-			);
 		}
 	}
 	TextureLoadResult LoadPixelsFromBuffer(const GLenum tflag, const GLenum format, const lubee::SizeI& size, const ByteBuff& buff, const bool bP2) {
@@ -118,11 +115,12 @@ namespace rev {
 		const auto info = GLFormat::QueryInfo(format);
 		const std::size_t pixelsize = info->numElem * (*GLFormat::QuerySize(info->elementType));
 		const HSfc sfc = Surface::Create(buff, pixelsize*size.width, size.width, size.height, info->sdlFormat);
-		return WritePixelLayer(
-			LoadPixels(sfc, spi::none, bP2),
-			tflag,
-			0
-		);
+		const auto pb = LoadPixels(sfc, spi::none, bP2);
+		WritePixelLayer(pb, tflag, 0);
+		return {
+			.size = pb.size,
+			.format = pb.desc.format,
+		};
 	}
 
 	// ------------------------- TextureSrc_URI -------------------------
