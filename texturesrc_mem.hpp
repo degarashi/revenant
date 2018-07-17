@@ -9,15 +9,18 @@ namespace rev {
 		protected:
 			virtual void _backupBuffer() const = 0;
 			virtual void _restoreBuffer() = 0;
+			bool _restoreFlag() const noexcept;
 
 		private:
 			bool			_restore,
-							_mip;
+							_mipEnable;
+			bool _mipEnabled() const noexcept;
 		protected:
-			bool _restoreFlag() const noexcept;
-			bool _mipFlag() const noexcept;
+			bool			_mipAuto;
+			bool _manualMip() const noexcept;
+			bool _autoMip() const noexcept;
 		public:
-			TextureSrc_Mem(GLInSizedFmt fmt, const lubee::SizeI& sz, bool mip, bool bRestore);
+			TextureSrc_Mem(GLInSizedFmt fmt, const lubee::SizeI& sz, bool mipEnable, bool bRestore);
 			std::size_t getMipLevels() const override;
 			// -- from IGLResource --
 			void onDeviceReset() override;
@@ -33,10 +36,12 @@ namespace rev {
 		public TextureSrc_Mem
 	{
 		private:
-			using Cache_Op = spi::Optional<TexBuffer>;
+			using Cache_Op = spi::Optional<MipBuffer>;
 			mutable Cache_Op	_cache;
 			void _backupBuffer() const override;
 			void _restoreBuffer() override;
+			void _writeData(AB_Byte buff, GLTypeFmt elem, MipLevel level, bool mipAuto);
+			void _writeRect(AB_Byte buff, const lubee::RectI& rect, GLTypeFmt elem, MipLevel level, bool mipAuto);
 
 		public:
 			using TextureSrc_Mem::TextureSrc_Mem;
@@ -46,6 +51,7 @@ namespace rev {
 				\param[in] elem 入力フォーマット(Type)
 			*/
 			void writeData(AB_Byte buff, GLTypeFmt elem);
+			void writeData(AB_Byte buff, GLTypeFmt elem, MipLevel level);
 			//! 部分的に書き込み
 			/*!
 				現状ではMipmap有りでの書き込みには非対応
@@ -53,6 +59,7 @@ namespace rev {
 				\param[in] elem 入力フォーマット(Type)
 			*/
 			void writeRect(AB_Byte buff, const lubee::RectI& rect, GLTypeFmt elem);
+			void writeRect(AB_Byte buff, const lubee::RectI& rect, GLTypeFmt elem, MipLevel level);
 
 			bool isCubemap() const override;
 			DEF_DEBUGGUI_NAME
@@ -77,6 +84,8 @@ namespace rev {
 
 			template <class CB>
 			void Iter(CB&& cb) const;
+			void _writeData(AB_Byte buff, GLTypeFmt elem, CubeFace face, MipLevel level, bool mipAuto);
+			void _writeRect(AB_Byte buff, const lubee::RectI& rect, GLTypeFmt elem, CubeFace face, MipLevel level, bool mipAuto);
 		public:
 			using TextureSrc_Mem::TextureSrc_Mem;
 			//! テクスチャ全部書き換え = バッファも置き換え
@@ -86,6 +95,7 @@ namespace rev {
 				\param[in] face Cubemapにおける面
 			*/
 			void writeData(AB_Byte buff, GLTypeFmt elem, CubeFace face);
+			void writeData(AB_Byte buff, GLTypeFmt elem, CubeFace face, MipLevel level);
 			//! 部分的に書き込み
 			/*!
 				現状ではMipmap有りでの書き込みには非対応
@@ -94,6 +104,7 @@ namespace rev {
 				\param[in] face Cubemapにおける面
 			*/
 			void writeRect(AB_Byte buff, const lubee::RectI& rect, GLTypeFmt elem, CubeFace face);
+			void writeRect(AB_Byte buff, const lubee::RectI& rect, GLTypeFmt elem, CubeFace face, MipLevel level);
 
 			bool isCubemap() const override;
 			DEF_DEBUGGUI_NAME
