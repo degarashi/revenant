@@ -4,7 +4,7 @@
 
 namespace rev {
 	template <class Ar>
-	void serialize(Ar& ar, URI_Data&) {}
+	void serialize(Ar&, URI_Data&) {}
 }
 CEREAL_REGISTER_TYPE(::rev::URI_Data);
 CEREAL_REGISTER_POLYMORPHIC_RELATION(::rev::URIHandler, ::rev::URI_Data);
