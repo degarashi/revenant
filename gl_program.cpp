@@ -140,6 +140,7 @@ namespace rev {
 			_umap.clear();
 			_amap.clear();
 			_texIndex.clear();
+			_sysUniform.clear();
 		}
 	}
 	void GLProgram::onDeviceReset() {
