@@ -22,10 +22,6 @@ namespace rev {
 						_mouse;
 			HTech		_tech;
 			HFx			_effect;
-			struct {
-				GLint	texture,
-						projMat;
-			} _unif;
 			FWVDecl		_vdecl;
 
 			lubee::Freelist<uintptr_t>	_idStack;

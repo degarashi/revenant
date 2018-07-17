@@ -262,9 +262,6 @@ namespace rev {
 	void ImGui_SDL2::_initTech() {
 		auto tp = mgr_tech.loadTechPass("imgui.glx");
 		_tech = tp->getTechnique("ImGui|Default");
-		auto& p = *_tech->getProgram();
-		_unif.texture = *p.getUniformId(SName("Texture"));
-		_unif.projMat = *p.getUniformId(SName("ProjMtx"));
 	}
 	void ImGui_SDL2::_renderDrawLists(ImDrawData* draw_data) {
 		ImGuiIO& io = ImGui::GetIO();
@@ -285,7 +282,15 @@ namespace rev {
 		e.setTechnique(_tech);
 		auto& u = e.refUniformEnt();
 		const auto prev_sci = e.setScissor({false, {0,1,0,1}});
-		u.setUniformById(_unif.projMat, ortho_projection);
+
+		GLint idProjMat,
+			  idTexture;
+		{
+			auto& p = *_tech->getProgram();
+			idProjMat = *p.getUniformId(SName("ProjMtx"));
+			idTexture = *p.getUniformId(SName("Texture"));
+		}
+		u.setUniformById(idProjMat, ortho_projection);
 		dynamic_cast<U_Matrix2D&>(e).setWorld(frea::Mat3::Identity());
 		for (int n=0; n < draw_data->CmdListsCount; n++) {
 			const ImDrawList* cmd_list = draw_data->CmdLists[n];
@@ -303,7 +308,7 @@ namespace rev {
 					pcmd->UserCallback(cmd_list, pcmd);
 				}
 				else {
-					u.setUniformById(_unif.texture, _getTexture(reinterpret_cast<uintptr_t>(pcmd->TextureId)));
+					u.setUniformById(idTexture, _getTexture(reinterpret_cast<uintptr_t>(pcmd->TextureId)));
 					e.setScissor({true, {
 						(int)pcmd->ClipRect.x,
 						(int)pcmd->ClipRect.z,
