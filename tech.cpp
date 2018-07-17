@@ -32,10 +32,15 @@ namespace rev {
 		q.append(_cmd.uniform);
 	}
 	void Tech::dcmd_setup(draw::IQueue& q) const {
-		q.append(_cmd.setup);
+		// q.append(_cmd.setup);
+		_program->dcmd_export(q);
+		for(auto& s : _setting)
+			s->dcmd_export(q);
 	}
 	void Tech::dcmd_resetState(draw::IQueue& q) const {
-		q.append(_cmd.reset);
+		// q.append(_cmd.reset);
+		for(auto& s : _setting)
+			s->dcmd_reset(q);
 	}
 }
 

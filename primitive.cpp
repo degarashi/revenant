@@ -85,6 +85,7 @@ namespace rev {
 		}
 	}
 	void Primitive::dcmd_export_diff(draw::IQueue& q, const Primitive& prev, const FWVMap& vmap) const {
+		cache.clear();
 		if(!vertexCmp(prev)) {
 			q.append(cache.getCache(vmap));
 		}
