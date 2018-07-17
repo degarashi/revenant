@@ -95,6 +95,7 @@ namespace rev {
 		_dcmd_export_common(q);
 	}
 	void Primitive::dcmd_export(draw::IQueue& q, const FWVMap& vmap) const {
+		cache.clear();
 		Assert(vdecl, "VDecl is not set");
 		q.append(cache.getCache(vmap));
 		if(ib)
