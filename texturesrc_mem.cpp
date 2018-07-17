@@ -112,7 +112,7 @@ namespace rev {
 		const auto size = getSize();
 		const auto format = getFormat();
 		#ifdef DEBUG
-			const size_t bs = GLFormat::QueryByteSize(format.get(), srcFmt);
+			const size_t bs = *GLFormat::QueryByteSize(format.get(), srcFmt);
 			const auto sz = buff.getLength();
 			D_Assert0(sz >= bs*rect.width()*rect.height());
 		#endif
@@ -145,7 +145,7 @@ namespace rev {
 					auto* dst = &b[size.width * rect.y0 + rect.x0];
 					auto* src = buff.getPtr();
 					// 1画素のバイト数
-					const size_t sz = GLFormat::QueryByteSize(format.get(), _cache->format);
+					const size_t sz = *GLFormat::QueryByteSize(format.get(), _cache->format);
 					for(int i=0 ; i<rect.height() ; i++) {
 						std::memcpy(dst, src, rect.width());
 						dst += size.width;

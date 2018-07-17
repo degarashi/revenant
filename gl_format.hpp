@@ -171,7 +171,7 @@ namespace rev {
 			//! GLTypeFmtのバイト数
 			static spi::Optional<std::size_t> QuerySize(GLenum typ);
 			//! fmtをtypで保存した場合の1画素のバイト数を計算
-			static std::size_t QueryByteSize(GLenum fmt, GLenum typ);
+			static spi::Optional<std::size_t> QueryByteSize(GLenum fmt, GLenum typ);
 			//! GLenum値を文字列に変換(デバッグ用)
 			static const std::string& QueryEnumString(GLenum value);
 

@@ -104,7 +104,7 @@ namespace rev {
 		size.width >>= level;
 		size.height >>= level;
 
-		const size_t sz = size.width * size.height * GLFormat::QueryByteSize(internalFmt, elem);
+		const size_t sz = size.width * size.height * (*GLFormat::QueryByteSize(internalFmt, elem));
 		ByteBuff buff(sz);
 		GL.glPixelStorei(GL_PACK_ALIGNMENT, 1);
 		#ifndef USE_OPENGLES2
@@ -132,7 +132,7 @@ namespace rev {
 		return buff;
 	}
 	ByteBuff TextureSource::readRect(const GLInFmt internalFmt, const GLTypeFmt elem, const MipLevel level, const lubee::RectI& rect, const CubeFace face) const {
-		const size_t sz = rect.width() * rect.height() * GLFormat::QueryByteSize(internalFmt, elem);
+		const size_t sz = rect.width() * rect.height() * (*GLFormat::QueryByteSize(internalFmt, elem));
 
 		GLint id;
 		GLenum flag;

@@ -88,8 +88,10 @@ namespace rev {
 			return boost::get<Id_t>(itr->second);
 		return spi::none;
 	}
-	std::size_t GLFormat::QueryByteSize(const GLenum fmt, const GLenum typ) {
-		return QueryInfo(fmt)->numElem * (*QuerySize(typ));
+	spi::Optional<std::size_t> GLFormat::QueryByteSize(const GLenum fmt, const GLenum typ) {
+		if(const auto size = QuerySize(typ))
+			return QueryInfo(fmt)->numElem * (*size);
+		return spi::none;
 	}
 	const std::string& GLFormat::QueryEnumString(GLenum value) {
 		for(auto& p : *s_valueMap) {
