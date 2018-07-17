@@ -47,7 +47,7 @@ namespace rev {
 	TextureSrc_Mem2D::Cache TextureSrc_Mem2D::_backupBuffer() const {
 		const auto& info = *GLFormat::QueryInfo(*getFormat());
 		Cache cache(info.elementType);
-		cache.buff = readData(info.baseFormat, info.elementType);
+		cache.buff = readData(info.baseFormat, info.elementType, 0);
 		return cache;
 	}
 	void TextureSrc_Mem2D::_restoreBuffer(const Cache_Op& c) {

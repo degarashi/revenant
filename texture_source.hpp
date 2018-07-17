@@ -40,7 +40,7 @@ namespace rev {
 			InCompressedFmt_OP getFormat() const override;
 			GLenum getFaceFlag(CubeFace face=CubeFace::PositiveX) const override;
 			void save(const PathBlock& path, MipLevel level=0, CubeFace face=CubeFace::PositiveX) const override;
-			ByteBuff readData(GLInFmt internalFmt, GLTypeFmt elem, MipLevel level=0, CubeFace face=CubeFace::PositiveX) const override;
+			ByteBuff readData(GLInFmt internalFmt, GLTypeFmt elem, MipLevel level, CubeFace face=CubeFace::PositiveX) const override;
 			ByteBuff readRect(GLInFmt internalFmt, GLTypeFmt elem, const lubee::RectI& rect, CubeFace face=CubeFace::PositiveX) const override;
 
 			// -- from IGLResource --
