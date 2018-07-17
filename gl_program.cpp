@@ -95,6 +95,7 @@ namespace rev {
 		D_GLAssert0();
 	}
 	void GLProgram::_initProgram() {
+		D_Assert0(_idProg == 0);
 		_idProg = GL.glCreateProgram();
 		for(std::size_t i=0 ; i<ShType::_Num ; i++) {
 			auto& sh = _shader[i];

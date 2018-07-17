@@ -75,7 +75,9 @@ namespace rev {
 
 		public:
 			template <class... Shader>
-			GLProgram(const Shader&... shader) {
+			GLProgram(const Shader&... shader):
+				_idProg(0)
+			{
 				_initShader(shader...);
 				_initProgram();
 			}
