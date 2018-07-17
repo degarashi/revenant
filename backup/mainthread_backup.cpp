@@ -3,6 +3,7 @@
 #include "sound.hpp"
 #include "serialization/sdl_rw.hpp"
 #include "serialization/uri_file.hpp"
+#include "serialization/uri_data.hpp"
 #include "serialization/sound.hpp"
 #include "serialization/uriwrap.hpp"
 
