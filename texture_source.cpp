@@ -131,7 +131,7 @@ namespace rev {
 		#endif
 		return buff;
 	}
-	ByteBuff TextureSource::readRect(const GLInFmt internalFmt, const GLTypeFmt elem, const lubee::RectI& rect, const CubeFace face) const {
+	ByteBuff TextureSource::readRect(const GLInFmt internalFmt, const GLTypeFmt elem, const MipLevel level, const lubee::RectI& rect, const CubeFace face) const {
 		const size_t sz = rect.width() * rect.height() * GLFormat::QueryByteSize(internalFmt, elem);
 
 		GLint id;
@@ -147,9 +147,9 @@ namespace rev {
 		ByteBuff buff(sz);
 		tmp.use_begin();
 		if(isCubemap())
-			tmp.attachCubeTexture(GLFBuffer::Att::Color0, getTextureId(), getFaceFlag(face), 0);
+			tmp.attachCubeTexture(GLFBuffer::Att::Color0, getTextureId(), getFaceFlag(face), level);
 		else
-			tmp.attachTexture(GLFBuffer::Att::Color0, getTextureId(), 0);
+			tmp.attachTexture(GLFBuffer::Att::Color0, getTextureId(), level);
 		GL.glReadPixels(rect.x0, rect.y0, rect.width(), rect.height(), internalFmt, elem, buff.data());
 		tmp.attachTexture(GLFBuffer::Att::Color0, 0, 0);
 

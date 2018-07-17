@@ -41,8 +41,8 @@ namespace rev {
 	ByteBuff GLTexture::readData(const GLInFmt internalFmt, const GLTypeFmt elem, const MipLevel level, const CubeFace face) const {
 		return _src->readData(internalFmt, elem, level, face);
 	}
-	ByteBuff GLTexture::readRect(const GLInFmt internalFmt, const GLTypeFmt elem, const lubee::RectI& rect, const CubeFace face) const {
-		return _src->readRect(internalFmt, elem, rect, face);
+	ByteBuff GLTexture::readRect(const GLInFmt internalFmt, const GLTypeFmt elem, const MipLevel level, const lubee::RectI& rect, const CubeFace face) const {
+		return _src->readRect(internalFmt, elem, level, rect, face);
 	}
 	HTexF& GLTexture::filter() noexcept {
 		return _filter;
