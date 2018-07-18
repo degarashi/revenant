@@ -41,7 +41,7 @@ namespace rev {
 		const auto& info = *GLFormat::QueryInfo(*getFormat());
 		auto& c = prepareCache(info.elementType);
 		Iter([&c, &info, this](const auto, const auto face){
-			const auto seg = readData(info.baseFormat, info.elementType, face);
+			const auto seg = readData(info.baseFormat, info.elementType, 0, face);
 			c.pixels[face] = std::move(seg.pixels);
 		});
 	}
