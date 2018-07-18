@@ -103,7 +103,7 @@ namespace rev {
 		} else {
 			if(_restoreFlag()) {
 				// 内部バッファへmove
-				_cache = Cache(format.get());
+				_cache = Cache(elem);
 				_cache->buff = buff.moveTo();
 			}
 		}
