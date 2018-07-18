@@ -56,6 +56,8 @@ namespace rev::gltf::v1 {
 
 			void operator()(const DRef_Texture&) const { Assert0(false); }
 			void operator()(const std::vector<DRef_Texture>&) const { Assert0(false); }
+			void operator()(const HTexC&) const { Assert0(false); }
+			void operator()(const std::vector<HTexC>&) const { Assert0(false); }
 
 			template <class V>
 			void operator()(const V& v) const {
@@ -80,6 +82,8 @@ namespace rev::gltf::v1 {
 			void operator()(const T&) const { Assert0(false); }
 			void operator()(const DRef_Texture&) const { Assert0(false); }
 			void operator()(const std::vector<DRef_Texture>&) const { Assert0(false); }
+			void operator()(const HTexC&) const { Assert0(false); }
+			void operator()(const std::vector<HTexC>&) const { Assert0(false); }
 
 			template <class T, std::size_t... Idx>
 			static V _MakeVec(const T* value, std::index_sequence<Idx...>) {
@@ -108,6 +112,8 @@ namespace rev::gltf::v1 {
 			void operator()(const V&) const { Assert0(false); }
 			void operator()(const DRef_Texture&) const { Assert0(false); }
 			void operator()(const std::vector<DRef_Texture>&) const { Assert0(false); }
+			void operator()(const HTexC&) const { Assert0(false); }
+			void operator()(const std::vector<HTexC>&) const { Assert0(false); }
 
 			template <class V, std::size_t... Idx>
 			static M _MakeMat(const V* value, std::index_sequence<Idx...>) {
@@ -133,9 +139,15 @@ namespace rev::gltf::v1 {
 
 			template <class T>
 			void operator()(const T&) const { D_Assert0(false); }
-
+			void operator()(const HTexC& t) const {
+				_u.setUniform(_uname, t);
+			}
+			void operator()(const std::vector<HTexC>& t) const {
+				_u.setUniform(_uname, t.begin(), t.end());
+			}
 			void operator()(const DRef_Texture& t) const {
-				_u.setUniform(_uname, t.data()->getGLResource());
+				HTexC tex = t.data()->getGLResource();
+				(*this)(tex);
 			}
 			void operator()(const std::vector<DRef_Texture>& t) const {
 				const auto s = std::min(_count, t.size());
@@ -143,7 +155,7 @@ namespace rev::gltf::v1 {
 				for(std::size_t i = 0 ; i<s ; i++) {
 					tex[i] = t[i].data()->getGLResource();
 				}
-				_u.setUniform(_uname, tex.begin(), tex.end());
+				(*this)(tex);
 			}
 		};
 	}

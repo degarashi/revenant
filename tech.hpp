@@ -4,6 +4,7 @@
 #include "drawcmd/cmd.hpp"
 
 namespace rev {
+	class UniformEnt;
 	class Tech : public ITech {
 		protected:
 			HProg			_program;
@@ -14,17 +15,12 @@ namespace rev {
 			UniIdSet		_noDefValue;
 			//! Attribute: 頂点セマンティクスに対する頂点Id
 			FWVMap			_vmap;
-
-			struct {
-				draw::CommandVec	setup,			//!< [Program + GLSetting + UniformDefault]
-									reset,			//!< [GLSetting(reset)]
-									uniform;		//!< Uniformデフォルト値設定DrawCommand
-			} _cmd;
-			void _makeCmd();
-
 			Name			_name;
 			// 必ず継承して使う
 			Tech() {}
+
+			virtual void _makeUniform(UniformEnt& u) const;
+
 		public:
 			const GLState_SPV& getSetting() const override;
 			const UniIdSet& getNoDefaultValue() const noexcept override;

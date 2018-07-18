@@ -4,6 +4,7 @@
 #include "gltf/v1/program.hpp"
 #include "../../vertex_map.hpp"
 #include "../../uniform_ent.hpp"
+#include "gltf/v1/texture.hpp"
 
 namespace rev::gltf::v1 {
 	using namespace loader;
@@ -24,6 +25,29 @@ namespace rev::gltf::v1 {
 	Resource::Type Material::getType() const noexcept {
 		return Type::Material;
 	}
+	void Material::GLTfTech::_makeUniform(UniformEnt& u) const {
+		_makeUniformF(u);
+	}
+	namespace {
+		struct TextureCnv {
+			template <class T>
+			UniformValue operator()(const T& t) const {
+				return t;
+			}
+			UniformValue operator()(const DRef_Texture& t) const {
+				return HTexC(t.data()->getGLResource());
+			}
+			UniformValue operator()(const std::vector<DRef_Texture>& t) const {
+				const auto len = t.size();
+				std::vector<HTexC> tex(len);
+				for(std::size_t i = 0 ; i<len ; i++) {
+					tex[i] = t[i].data()->getGLResource();
+				}
+				return std::move(tex);
+			}
+		};
+	}
+
 	Material::GLTfTech::GLTfTech(const Material& mtl) {
 		if(const auto& t = mtl.technique.data()) {
 			auto& tech = *t;
@@ -40,32 +64,72 @@ namespace rev::gltf::v1 {
 			// ---- Uniform変数の登録 ----
 			const auto& prog = tech.program.data()->makeProgram();
 			_program = prog;
-			UniformEnt ent(*prog, _cmd.uniform);
 
+			const auto findValue = [&ovr = mtl.uniformOvr](const Name& name) -> const UniformValue* {
+				const auto itr = std::find_if(ovr.begin(), ovr.end(),
+						[&name](const auto& t){
+							return t.first == name;
+						});
+				if(itr != ovr.end())
+					return &itr->second;
+				return nullptr;
+			};
+			struct Unif {
+				GLSLName		name;
+				GLenum			type;
+				std::size_t		count;
+				UniformValue	value;
+
+				void setUniform(UniformEnt& ent) const {
+					SetUniform(ent, name, value, type, count);
+				}
+			};
+			std::vector<Unif> uniforms;
 			// Uniformデフォルト変数
-			for(auto& u : tech.param.fixedUniform) {
-				auto& name = u.first;
-				auto& fixed = *u.second;
+			for(auto& p : tech.param.fixedUniform) {
+				auto& name = p.first;
+				auto& fixed = *p.second;
 
 				const UniformValue* value;
 				// Materialが同名の変数を持っていれば上書き
-				if(const auto* v = mtl.findValue(name))
+				if(auto* v = findValue(name))
 					value = v;
 				else
 					value = &fixed.value;
+				Assert0(value);
+
+				auto value2 = boost::apply_visitor(TextureCnv(), *value);
 				auto& glsl_name = tech.namecnv.uniform.at(name);
-				SetUniform(ent, glsl_name, *value, fixed.type, fixed.count);
+				uniforms.emplace_back(Unif{
+					.name = glsl_name,
+					.type = fixed.type,
+					.count = fixed.count,
+					.value = std::move(value2)
+				});
 			}
 			// Uniform必須変数
 			for(auto& u : tech.param.typedUniform) {
 				auto& name = u.first;
 				auto& typed = *u.second;
 
-				const auto* v = mtl.findValue(name);
-				Assert0(v);
+				auto* value = findValue(name);
+				Assert0(value);
+
+				auto value2 = boost::apply_visitor(TextureCnv(), *value);
 				auto& glsl_name = tech.namecnv.uniform.at(name);
-				SetUniform(ent, glsl_name, *v, typed.type, typed.count);
+				uniforms.emplace_back(Unif{
+					.name = glsl_name,
+					.type = typed.type,
+					.count = typed.count,
+					.value = std::move(value2)
+				});
 			}
+
+			_makeUniformF = [uniforms = std::move(uniforms)](UniformEnt& ent){
+				for(auto& u : uniforms) {
+					u.setUniform(ent);
+				}
+			};
 			// ---- 頂点アトリビュート ----
 			VSemAttrMap vm;
 			for(auto& a : tech.param.attribute) {
@@ -80,20 +144,10 @@ namespace rev::gltf::v1 {
 				}
 			}
 			_vmap = vm;
-			_makeCmd();
 		} else {
 			// デフォルトのマテリアル
 			D_Assert(false, "default material is not implemented yet");
 		}
-	}
-	const UniformValue* Material::findValue(const Name& name) const {
-		const auto itr = std::find_if(uniformOvr.begin(), uniformOvr.end(),
-				[&name](const auto& t){
-					return t.first == name;
-				});
-		if(itr != uniformOvr.end())
-			return &itr->second;
-		return nullptr;
 	}
 
 	const HTech& Material::getTech() const {

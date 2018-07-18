@@ -184,6 +184,12 @@ namespace rev {
 		};
 		// Tech | Pass の分だけ作成
 		class GLXTech : public Tech {
+			private:
+				using MakeUniformF = std::function<void (UniformEnt&)>;
+				MakeUniformF	_mu;
+				void _makeUniform(UniformEnt& u) const override {
+					_mu(u);
+				}
 			public:
 				//! エフェクトファイルのパース結果を読み取る
 				GLXTech(const parse::BlockSet& bs, const parse::TPStruct& tech, const parse::TPStruct& pass);
@@ -392,20 +398,26 @@ namespace rev {
 
 		std::sort(unifL.begin(), unifL.end());
 		unifL.erase(std::unique(unifL.begin(), unifL.end()), unifL.end());
-		_noDefValue.clear();
-		// Uniform変数にデフォルト値がセットしてある物をリストアップ
-		UniformEnt u(*_program, _cmd.uniform);
-		Visitor visitor(u);
-		for(const auto* p : unifL) {
-			if(visitor.setKey(p->name)) {
-				const auto& defVal = p->defaultValue;
-				if(defVal) {
-					// 変数名をIdに変換
-					boost::apply_visitor(visitor, *defVal);
-				} else if(visitor.id)
-					_noDefValue.insert(*visitor.id);
-			}
+
+		using UnifL_V = std::vector<parse::UnifEntry>;
+		UnifL_V unifV;
+		for(auto& u : unifL) {
+			unifV.emplace_back(*u);
 		}
-		_makeCmd();
+		// Uniform変数にデフォルト値がセットしてある物をリストアップ
+		_mu = [this, unifV=std::move(unifV)](UniformEnt& ent){
+			_noDefValue.clear();
+			Visitor visitor(ent);
+			for(const auto& p : unifV) {
+				if(visitor.setKey(p.name)) {
+					const auto& defVal = p.defaultValue;
+					if(defVal) {
+						// 変数名をIdに変換
+						boost::apply_visitor(visitor, *defVal);
+					} else if(visitor.id)
+						_noDefValue.insert(*visitor.id);
+				}
+			}
+		};
 	}
 }

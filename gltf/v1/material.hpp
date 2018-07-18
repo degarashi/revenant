@@ -15,15 +15,20 @@ namespace rev::gltf::v1 {
 		// Uniform変数の上書き分
 		UniformValueNVP		uniformOvr;
 
-		struct GLTfTech : Tech {
-			GLTfTech(const Material& mtl);
+		class GLTfTech : public Tech {
+			private:
+				using MakeUniformF = std::function<void (UniformEnt&)>;
+				MakeUniformF _makeUniformF;
+
+				void _makeUniform(UniformEnt& u) const override;
+			public:
+				GLTfTech(const Material& mtl);
 		};
 		mutable HTech			tech_cached;
 
 		Material(const JValue& v, const IDataQuery& q);
 		Type getType() const noexcept override;
 
-		const UniformValue* findValue(const Name& name) const;
 		const HTech& getTech() const;
 		RTUParams_SP getRT() const;
 	};

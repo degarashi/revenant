@@ -2,6 +2,7 @@
 #include "gl_state.hpp"
 #include "vertex.hpp"
 #include "gl_program.hpp"
+#include "uniform_ent.hpp"
 
 namespace rev {
 	const GLState_SPV& Tech::getSetting() const {
@@ -19,26 +20,18 @@ namespace rev {
 	const Name& Tech::getName() const noexcept {
 		return _name;
 	}
-	void Tech::_makeCmd() {
-		_program->dcmd_export(_cmd.setup);
-		_cmd.setup.append(_cmd.uniform);
-		for(auto& s : _setting)
-			s->dcmd_export(_cmd.setup);
-
-		for(auto& s : _setting)
-			s->dcmd_reset(_cmd.reset);
-	}
+	void Tech::_makeUniform(UniformEnt&) const {}
 	void Tech::dcmd_uniform(draw::IQueue& q) const {
-		q.append(_cmd.uniform);
+		UniformEnt u(*getProgram(), q);
+		_makeUniform(u);
 	}
 	void Tech::dcmd_setup(draw::IQueue& q) const {
-		// q.append(_cmd.setup);
 		_program->dcmd_export(q);
+		dcmd_uniform(q);
 		for(auto& s : _setting)
 			s->dcmd_export(q);
 	}
 	void Tech::dcmd_resetState(draw::IQueue& q) const {
-		// q.append(_cmd.reset);
 		for(auto& s : _setting)
 			s->dcmd_reset(q);
 	}
