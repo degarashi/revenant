@@ -91,26 +91,22 @@ namespace rev {
 	}
 	void TextureSource::save(const PathBlock& path, const MipLevel level, const CubeFace face) const {
 		const auto buff = readData(GL_BGRA, GL_UNSIGNED_BYTE, level, face);
-		auto size = getSize();
-		size.width >>= level;
-		size.height >>= level;
-		D_Assert0(buff.size()*sizeof(uint32_t)*size.width*size.height);
-		const auto sfc = rev::Surface::Create(buff, sizeof(uint32_t)*size.width, size.width, size.height, SDL_PIXELFORMAT_ARGB8888);
+		const auto sfc = rev::Surface::Create(buff.pixels, sizeof(uint32_t)*buff.size.width, buff.size.width, buff.size.height, SDL_PIXELFORMAT_ARGB8888);
 		const auto hRW = mgr_rw.fromFile(path, Access::Write);
 		sfc->saveAsPNG(hRW);
 	}
-	ByteBuff TextureSource::readData(const GLInFmt internalFmt, const GLTypeFmt elem, const MipLevel level, const CubeFace face) const {
+	TexBuffer TextureSource::readData(const GLInFmt baseFormat, const GLTypeFmt elem, const MipLevel level, const CubeFace face) const {
 		auto size = getSize();
-		size.width >>= level;
-		size.height >>= level;
+		size.width = std::max<int32_t>(1, size.width >> level);
+		size.height = std::max<int32_t>(1, size.height >> level);
 
-		const size_t sz = size.width * size.height * (*GLFormat::QueryByteSize(internalFmt, elem));
+		const size_t sz = size.width * size.height * (*GLFormat::QueryByteSize(baseFormat, elem));
 		ByteBuff buff(sz);
 		GL.glPixelStorei(GL_PACK_ALIGNMENT, 1);
 		#ifndef USE_OPENGLES2
 		{
 			imm_bind(0);
-			GL.glGetTexImage(getFaceFlag(face), level, internalFmt, elem, buff.data());
+			GL.glGetTexImage(getFaceFlag(face), level, baseFormat, elem, buff.data());
 		}
 		#elif
 		{
@@ -124,15 +120,18 @@ namespace rev {
 				tmp.attachCubeTexture(GLFBuffer::Att::Color0, getTextureId(), getFaceFlag(face), level);
 			else
 				tmp.attachTexture(GLFBuffer::Att::Color0, getTextureId(), level);
-			GL.glReadPixels(0, 0, size.width, size.height, internalFmt, elem, buff.data());
+			GL.glReadPixels(0, 0, size.width, size.height, baseFormat, elem, buff.data());
 			tmp.attachTexture(GLFBuffer::Att::Color0, 0, 0);
 			GL.glBindFramebuffer(GL_READ_FRAMEBUFFER_BINDING, id);
 		}
 		#endif
-		return buff;
+		TexBuffer ret(baseFormat, elem);
+		ret.pixels = std::move(buff);
+		ret.size = size;
+		return ret;
 	}
-	ByteBuff TextureSource::readRect(const GLInFmt internalFmt, const GLTypeFmt elem, const MipLevel level, const lubee::RectI& rect, const CubeFace face) const {
-		const size_t sz = rect.width() * rect.height() * (*GLFormat::QueryByteSize(internalFmt, elem));
+	TexBuffer TextureSource::readRect(const GLInFmt baseFormat, const GLTypeFmt elem, const MipLevel level, const lubee::RectI& rect, const CubeFace face) const {
+		const size_t sz = rect.width() * rect.height() * (*GLFormat::QueryByteSize(baseFormat, elem));
 
 		GLint id;
 		GLenum flag;
@@ -150,11 +149,14 @@ namespace rev {
 			tmp.attachCubeTexture(GLFBuffer::Att::Color0, getTextureId(), getFaceFlag(face), level);
 		else
 			tmp.attachTexture(GLFBuffer::Att::Color0, getTextureId(), level);
-		GL.glReadPixels(rect.x0, rect.y0, rect.width(), rect.height(), internalFmt, elem, buff.data());
+		GL.glReadPixels(rect.x0, rect.y0, rect.width(), rect.height(), baseFormat, elem, buff.data());
 		tmp.attachTexture(GLFBuffer::Att::Color0, 0, 0);
 
 		GL.glBindFramebuffer(flag, id);
-		return buff;
+		TexBuffer ret(baseFormat, elem);
+		ret.pixels = std::move(buff);
+		ret.size = {rect.width(), rect.height()};
+		return ret;
 	}
 	void TextureSource::onDeviceLost() {
 		if(_idTex != 0) {

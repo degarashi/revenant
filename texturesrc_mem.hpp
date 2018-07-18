@@ -7,17 +7,8 @@ namespace rev {
 		public TextureSource
 	{
 		protected:
-			struct Cache {
-				ByteBuff	buff;		//!< DeviceLost時用のバッファ
-				GLTypeFmt	format;		//!< _buffに格納されているデータの形式(Type)
-
-				Cache(GLTypeFmt fmt);
-			};
-			using Cache_Op = spi::Optional<Cache>;
-			Cache_Op		_cache;
-
-			virtual Cache _backupBuffer() const = 0;
-			virtual void _restoreBuffer(const Cache_Op& c) = 0;
+			virtual void _backupBuffer() const = 0;
+			virtual void _restoreBuffer() = 0;
 
 		private:
 			bool			_restore,
@@ -42,8 +33,10 @@ namespace rev {
 		public TextureSrc_Mem
 	{
 		private:
-			Cache _backupBuffer() const override;
-			void _restoreBuffer(const Cache_Op& c) override;
+			using Cache_Op = spi::Optional<TexBuffer>;
+			mutable Cache_Op	_cache;
+			void _backupBuffer() const override;
+			void _restoreBuffer() override;
 
 		public:
 			using TextureSrc_Mem::TextureSrc_Mem;
@@ -68,8 +61,19 @@ namespace rev {
 		public TextureSrc_Mem
 	{
 		private:
-			Cache _backupBuffer() const override;
-			void _restoreBuffer(const Cache_Op& c) override;
+			struct Cache {
+				GLInFmt			baseFormat;
+				GLTypeFmt		elemType;
+				ByteBuff		pixels[6];
+
+				Cache(GLInFmt baseFormat, GLTypeFmt elemType, lubee::SizeI size);
+			};
+			using Cache_Op = spi::Optional<Cache>;
+			mutable Cache_Op	_cache;
+			Cache& prepareCache(GLTypeFmt elem) const;
+
+			void _backupBuffer() const override;
+			void _restoreBuffer() override;
 
 			template <class CB>
 			void Iter(CB&& cb) const;

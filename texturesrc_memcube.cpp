@@ -4,6 +4,32 @@
 #include "gl_if.hpp"
 
 namespace rev {
+	// ---------------------- Cache ----------------------
+	TextureSrc_MemCube::Cache::Cache(
+		const GLInFmt baseFormat,
+		const GLTypeFmt elemType,
+		const lubee::SizeI size
+	):
+		baseFormat(baseFormat),
+		elemType(elemType)
+	{
+		const auto unit = *GLFormat::QueryByteSize(baseFormat, elemType);
+		for(std::size_t i=0 ; i<6 ; i++) {
+			pixels[i].resize(size.width * size.height * unit);
+		}
+	}
+
+	TextureSrc_MemCube::Cache& TextureSrc_MemCube::prepareCache(const GLTypeFmt elem) const {
+		if(!_cache) {
+			const auto format = *getFormat();
+			const auto desc = *GLFormat::QueryInfo(format);
+			const auto size = getSize();
+			_cache = spi::construct(desc.baseFormat, elem, size);
+		} else {
+			Assert0(_cache->elemType == elem);
+		}
+		return *_cache;
+	}
 	template <class CB>
 	void TextureSrc_MemCube::Iter(CB&& cb) const {
 		for(std::size_t i=0 ; i<=static_cast<std::size_t>(CubeFace::NegativeZ) ; i++) {
@@ -11,23 +37,20 @@ namespace rev {
 			cb(getFaceFlag(face), face);
 		}
 	}
-	TextureSrc_MemCube::Cache TextureSrc_MemCube::_backupBuffer() const {
+	void TextureSrc_MemCube::_backupBuffer() const {
 		const auto& info = *GLFormat::QueryInfo(*getFormat());
-		Cache cache(info.elementType);
-		Iter([&](const auto, const auto face){
+		auto& c = prepareCache(info.elementType);
+		Iter([&c, &info, this](const auto, const auto face){
 			const auto seg = readData(info.baseFormat, info.elementType, face);
-			std::copy(seg.begin(), seg.end(), std::back_inserter(cache.buff));
+			c.pixels[face] = std::move(seg.pixels);
 		});
-		return cache;
 	}
-	void TextureSrc_MemCube::_restoreBuffer(const Cache_Op& c) {
+	void TextureSrc_MemCube::_restoreBuffer() {
 		const auto format = *getFormat();
 		const auto size = getSize();
-		if(c) {
+		if(_cache) {
+			auto& c = *_cache;
 			// バッファの内容から復元
-			const GLenum baseFormat = GLFormat::QueryInfo(format)->baseFormat;
-			D_Assert0(c->buff.size() % 6 == 0);
-			const auto ofs = c->buff.size() / 6;
 			GL.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 			Iter([&](const auto flag, const auto face){
 				GL.glTexImage2D(
@@ -36,11 +59,12 @@ namespace rev {
 					format,
 					size.width, size.height,
 					0,
-					baseFormat,
-					c->format,
-					c->buff.data() + ofs*face
+					c.baseFormat,
+					c.elemType,
+					c.pixels[face].data()
 				);
 			});
+			_cache = spi::none;
 		} else {
 			// とりあえず領域だけ確保しておく
 			Iter([&](const auto flag, const auto){
@@ -61,13 +85,15 @@ namespace rev {
 	}
 	void TextureSrc_MemCube::writeData(AB_Byte buff, const GLTypeFmt elem, const CubeFace face) {
 		// バッファ容量がサイズ以上かチェック
-		const auto szInput = *GLFormat::QuerySize(elem);
+		const auto format = *getFormat();
+		const auto unit = *GLFormat::QueryByteSize(format, elem);
 		const auto size = getSize();
-		Assert0(buff.getLength() >= size.width * size.height * szInput);
+		const auto layersize = size.width * size.height * unit;
+		Assert0(buff.getLength() >= layersize);
 		// DeviceLost中でなければすぐにテクスチャを作成するが、そうでなければ内部バッファにコピーするのみ
+		const auto desc = *GLFormat::QueryInfo(format);
 		if(getTextureId() != 0) {
 			// テクスチャに転送
-			const auto format = *getFormat();
 			const auto size = getSize();
 			imm_bind(0);
 			GL.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -77,43 +103,38 @@ namespace rev {
 				format,
 				size.width, size.height,
 				0,
-				GLFormat::QueryInfo(format)->baseFormat,
+				desc.baseFormat,
 				elem.get(),
 				buff.getPtr()
 			);
 		} else {
 			if(_restoreFlag()) {
-				_cache = Cache(elem);
-				_cache->buff.resize(buff.getLength()*6);
-				auto& dst = _cache->buff;
+				auto& c = prepareCache(elem);
 				// 内部バッファへcopy
 				std::memcpy(
-					dst.data() + dst.size()/6 * static_cast<std::size_t>(face),
+					c.pixels[face].data(),
 					buff.getPtr(),
-					dst.size()/6
+					layersize
 				);
 			}
 		}
 	}
 	void TextureSrc_MemCube::writeRect(AB_Byte buff, const lubee::RectI& rect, const GLTypeFmt elem, const CubeFace face) {
 		const auto size = getSize();
-		const auto format = getFormat();
-		#ifdef DEBUG
-			const size_t bs = *GLFormat::QueryByteSize(format.get(), elem);
-			const auto sz = buff.getLength();
-			D_Assert0(sz >= bs*rect.width()*rect.height());
-		#endif
+		const auto format = *getFormat();
+		// 1画素のバイト数
+		const auto unit = *GLFormat::QueryByteSize(format, elem);
+		D_Assert0(buff.getLength() >= rect.width()*rect.height() * unit);
+		const auto desc = *GLFormat::QueryInfo(format);
 		if(getTextureId() != 0) {
-			const auto format = *getFormat();
 			imm_bind(0);
 			// GLテクスチャに転送
-			const GLenum baseFormat = GLFormat::QueryInfo(format)->baseFormat;
 			GL.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 			GL.glTexSubImage2D(
 				getFaceFlag(),
 				0,
 				rect.x0, rect.y0, rect.width(), rect.height(),
-				baseFormat,
+				desc.baseFormat,
 				elem.get(),
 				buff.getPtr()
 			);
@@ -121,19 +142,15 @@ namespace rev {
 			// 内部バッファが存在すればそこに書き込んでおく
 			if(_cache) {
 				// でもフォーマットが違う時は警告だけ出して何もしない
-				if(_cache->format != elem) {
+				if(_cache->elemType != elem) {
 					Expect(false, u8"テクスチャのフォーマットが違うので部分的に書き込めない");
-				} else if(_cache->buff.size() != buff.getLength()*6) {
-					Expect(false, u8"テクスチャのサイズが違うので部分的に書き込めない");
 				} else {
-					auto* dst = _cache->buff.data() + (_cache->buff.size()/6 * static_cast<std::size_t>(face)) + (size.width * rect.y0 + rect.x0);
+					auto* dst = _cache->pixels[face].data() + (size.width * rect.y0 + rect.x0);
 					auto* src = buff.getPtr();
-					// 1画素のバイト数
-					const size_t sz = *GLFormat::QueryByteSize(format.get(), _cache->format);
 					for(int i=0 ; i<rect.height() ; i++) {
 						std::memcpy(dst, src, rect.width());
 						dst += size.width;
-						src += sz;
+						src += rect.width() * unit;
 					}
 				}
 			}

@@ -38,11 +38,11 @@ namespace rev {
 	void GLTexture::save(const PathBlock& path, const MipLevel level, const CubeFace face) const {
 		_src->save(path, level, face);
 	}
-	ByteBuff GLTexture::readData(const GLInFmt internalFmt, const GLTypeFmt elem, const MipLevel level, const CubeFace face) const {
-		return _src->readData(internalFmt, elem, level, face);
+	TexBuffer GLTexture::readData(const GLInFmt baseFormat, const GLTypeFmt elem, const MipLevel level, const CubeFace face) const {
+		return _src->readData(baseFormat, elem, level, face);
 	}
-	ByteBuff GLTexture::readRect(const GLInFmt internalFmt, const GLTypeFmt elem, const MipLevel level, const lubee::RectI& rect, const CubeFace face) const {
-		return _src->readRect(internalFmt, elem, level, rect, face);
+	TexBuffer GLTexture::readRect(const GLInFmt baseFormat, const GLTypeFmt elem, const MipLevel level, const lubee::RectI& rect, const CubeFace face) const {
+		return _src->readRect(baseFormat, elem, level, rect, face);
 	}
 	HTexF& GLTexture::filter() noexcept {
 		return _filter;

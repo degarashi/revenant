@@ -4,11 +4,6 @@
 #include "gl_if.hpp"
 
 namespace rev {
-	// ---------------- TextureSrc_Mem::Cache ----------------
-	TextureSrc_Mem::Cache::Cache(const GLTypeFmt fmt):
-		format(fmt)
-	{}
-
 	// ---------------- TextureSrc_Mem ----------------
 	TextureSrc_Mem::TextureSrc_Mem(const GLInSizedFmt fmt, const lubee::SizeI& sz, const bool mip, const bool bRestore):
 		TextureSource(fmt, sz),
@@ -18,7 +13,7 @@ namespace rev {
 	void TextureSrc_Mem::onDeviceLost() {
 		if(getTextureId() != 0) {
 			if(!mgr_gl.isInDtor() && _restore) {
-				_cache = _backupBuffer();
+				_backupBuffer();
 			}
 			TextureSource::onDeviceLost();
 		}
@@ -26,9 +21,7 @@ namespace rev {
 	void TextureSrc_Mem::onDeviceReset() {
 		if(_onDeviceReset()) {
 			imm_bind(0);
-			_restoreBuffer(_cache);
-			// DeviceがActiveな時はバッファを空にしておく
-			_cache = spi::none;
+			_restoreBuffer();
 		}
 	}
 	bool TextureSrc_Mem::_restoreFlag() const noexcept {
@@ -44,20 +37,20 @@ namespace rev {
 	}
 
 	// ---------------- TextureSrc_Mem2D ----------------
-	TextureSrc_Mem2D::Cache TextureSrc_Mem2D::_backupBuffer() const {
+	void TextureSrc_Mem2D::_backupBuffer() const {
 		const auto& info = *GLFormat::QueryInfo(*getFormat());
-		Cache cache(info.elementType);
-		cache.buff = readData(info.baseFormat, info.elementType, 0);
-		return cache;
+		_cache = readData(info.baseFormat, info.elementType, 0);
 	}
-	void TextureSrc_Mem2D::_restoreBuffer(const Cache_Op& c) {
+	void TextureSrc_Mem2D::_restoreBuffer() {
 		const auto size = getSize();
 		const auto format = *getFormat();
 		const auto flag = getFaceFlag();
 		const auto mip = _mipFlag();
-		if(c) {
+		if(_cache) {
 			// バッファの内容から復元
-			LoadPixelsFromBuffer(flag, format, size, c->buff, false);
+			_cache->exportToBindingTexture(flag, format);
+			// DeviceがActiveな時はバッファを空にしておく
+			_cache = spi::none;
 		} else {
 			// とりあえず領域だけ確保しておく
 			GL.glTexImage2D(
@@ -103,8 +96,9 @@ namespace rev {
 		} else {
 			if(_restoreFlag()) {
 				// 内部バッファへmove
-				_cache = Cache(elem);
-				_cache->buff = buff.moveTo();
+				_cache = spi::construct(format.get(), elem);
+				_cache->pixels = buff.moveTo();
+				_cache->size = size;
 			}
 		}
 	}
@@ -138,14 +132,14 @@ namespace rev {
 			// 内部バッファが存在すればそこに書き込んでおく
 			if(_cache) {
 				// でもフォーマットが違う時は警告だけ出して何もしない
-				if(_cache->format != elem) {
+				if(_cache->elemType != elem) {
 					Expect(false, u8"テクスチャのフォーマットが違うので部分的に書き込めない");
 				} else {
-					auto& b = _cache->buff;
+					auto& b = _cache->pixels;
 					auto* dst = &b[size.width * rect.y0 + rect.x0];
 					auto* src = buff.getPtr();
 					// 1画素のバイト数
-					const size_t sz = *GLFormat::QueryByteSize(format.get(), _cache->format);
+					const size_t sz = *GLFormat::QueryByteSize(format.get(), _cache->elemType);
 					for(int i=0 ; i<rect.height() ; i++) {
 						std::memcpy(dst, src, rect.width());
 						dst += size.width;

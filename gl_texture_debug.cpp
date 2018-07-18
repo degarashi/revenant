@@ -19,12 +19,16 @@ namespace rev {
 			const GLenum fmt = GLFormat::QuerySDLtoGL(this->_gen->getFormat())->format;
 			const auto size = getSize();
 			const auto loadTex = [fmt, size](const GLenum tflag, const ByteBuff& buff){
-				LoadPixelsFromBuffer(
+				GL.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+				GL.glTexImage2D(
 					tflag,
+					0,
 					fmt,
-					size,
-					buff,
-					true
+					size.width, size.height,
+					0,
+					GL_RGBA,
+					GL_UNSIGNED_BYTE,
+					buff.data()
 				);
 			};
 			if(isCubemap()) {

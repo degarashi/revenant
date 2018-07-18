@@ -2,6 +2,7 @@
 #include "gl_types.hpp"
 #include "gl_format.hpp"
 #include "lubee/rect.hpp"
+#include "texbuffer.hpp"
 
 namespace rev {
 	namespace draw {
@@ -25,18 +26,15 @@ namespace rev {
 			virtual GLenum getFaceFlag(CubeFace face=CubeFace::PositiveX) const = 0;
 			//! 内容をファイルに保存 (主にデバッグ用)
 			virtual void save(const PathBlock& path, MipLevel level=0, CubeFace face=CubeFace::PositiveX) const = 0;
-			virtual ByteBuff readData(GLInFmt internalFmt, GLTypeFmt elem, MipLevel level, CubeFace face=CubeFace::PositiveX) const = 0;
-			virtual ByteBuff readRect(GLInFmt internalFmt, GLTypeFmt elem, MipLevel level, const lubee::RectI& rect, CubeFace face=CubeFace::PositiveX) const = 0;
-			bool hasMipmap() const { return getMipLevels() > 1; }
+			virtual TexBuffer readData(GLInFmt baseFormat, GLTypeFmt elem, MipLevel level, CubeFace face=CubeFace::PositiveX) const = 0;
+			virtual TexBuffer readRect(GLInFmt baseFormat, GLTypeFmt elem, MipLevel level, const lubee::RectI& rect, CubeFace face=CubeFace::PositiveX) const = 0;
+			MipBuffer readAllLayer(GLInFmt baseFormat, GLTypeFmt elem, CubeFace face=CubeFace::PositiveX) const;
+			bool hasMipmap() const;
 			virtual std::size_t getMipLevels() const = 0;
 	};
 
-	struct TextureLoadResult {
-		lubee::SizeI		size;
-		GLInCompressedFmt	format;
-	};
-	TextureLoadResult LoadPixelsFromBuffer(GLenum tflag, GLenum format, const lubee::SizeI& size, const ByteBuff& buff, bool bP2);
 	std::size_t CountMipLevel(const lubee::SizeI size);
 	// もう次の層が無い場合はfalseを返す
 	bool NextMipLevel(lubee::SizeI& size);
+	std::size_t CountMipPixels(lubee::SizeI size);
 }
