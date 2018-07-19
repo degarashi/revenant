@@ -46,4 +46,21 @@ namespace rev {
 			);
 		});
 	}
+
+	bool NextMipLevel(lubee::SizeI& size) {
+		uint_fast8_t count = 0;
+
+		size.width >>= 1;
+		if(size.width == 0) {
+			size.width = 1;
+			++count;
+		}
+		size.height >>= 1;
+		if(size.height == 0) {
+			size.height = 1;
+			++count;
+		}
+
+		return count < 2;
+	}
 }

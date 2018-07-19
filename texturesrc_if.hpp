@@ -34,7 +34,5 @@ namespace rev {
 	};
 
 	std::size_t CountMipLevel(const lubee::SizeI size);
-	// もう次の層が無い場合はfalseを返す
-	bool NextMipLevel(lubee::SizeI& size);
 	std::size_t CountMipPixels(lubee::SizeI size);
 }
