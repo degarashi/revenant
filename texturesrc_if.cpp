@@ -1,13 +1,6 @@
 #include "texturesrc_if.hpp"
 
 namespace rev {
-	std::size_t CountMipPixels(lubee::SizeI size) {
-		std::size_t ret = 0;
-		do {
-			ret += size.width * size.height;
-		} while(NextMipLevel(size));
-		return ret;
-	}
 	// ----------------------- ITextureSource -----------------------
 	MipBuffer ITextureSource::readAllLayer(const GLInFmt baseFormat, const GLTypeFmt elem, const CubeFace face) const {
 		auto size = getSize();

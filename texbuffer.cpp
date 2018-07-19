@@ -63,4 +63,14 @@ namespace rev {
 
 		return count < 2;
 	}
+	std::size_t CountMipLevel(const lubee::SizeI size) {
+		return lubee::bit::MSB(std::max(size.width,size.height))+1;
+	}
+	std::size_t CountMipPixels(lubee::SizeI size) {
+		std::size_t ret = 0;
+		do {
+			ret += size.width * size.height;
+		} while(NextMipLevel(size));
+		return ret;
+	}
 }

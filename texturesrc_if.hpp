@@ -32,7 +32,4 @@ namespace rev {
 			bool hasMipmap() const;
 			virtual std::size_t getMipLevels() const = 0;
 	};
-
-	std::size_t CountMipLevel(const lubee::SizeI size);
-	std::size_t CountMipPixels(lubee::SizeI size);
 }
