@@ -2,9 +2,16 @@ cmake_minimum_required(VERSION 2.8)
 project(revenant)
 include(aux.cmake)
 
+enable_language(CXX)
+# C++17を使用
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# コンパイラ依存の拡張をオフにする
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -ggdb3 -DDEBUG")
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_C_FLAGS_DEBUG} -O3")
-set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -std=c++17 -Wall -Wextra -ftemplate-depth=1024")
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -ftemplate-depth=1024")
 add_definitions(-DUNIX=${UNIX})
 add_definitions(-DSSE=${SSE})
 # デバッグビルドの際はGLibのデバッグモードをONにする
