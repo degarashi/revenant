@@ -232,7 +232,8 @@ namespace rev {
 	const lubee::SizeF& TextObj::getSize() const {
 		return _rectSize;
 	}
-	const SingletonDataLazy<ITech, TextObj> TextObj::s_defaultTech;
+	const TextObj::DefaultTech TextObj::s_defaultTech;
+	const TextObj::DefaultFilter TextObj::s_filter;
 	namespace {
 		const Name Tech_Id("Text|Default");
 	}

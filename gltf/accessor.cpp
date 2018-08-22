@@ -161,6 +161,7 @@ namespace rev::gltf {
 			{"MAT4", true, 4}
 		};
 	}
+	A::Temporary_t A::Temporary;
 	namespace L = gltf::loader;
 	A::Accessor(
 		Temporary_t,

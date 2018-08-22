@@ -2,6 +2,7 @@
 #include "../value_loader.hpp"
 
 namespace rev::gltf::v1 {
+	Resource::Identity_t Resource::Identity;
 	using namespace loader;
 	Resource::Resource(Identity_t) {}
 	Resource::Resource(const JValue& v):
