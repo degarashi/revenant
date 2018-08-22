@@ -2,23 +2,16 @@ cmake_minimum_required(VERSION 2.8)
 project(revenant)
 include(aux.cmake)
 
-enable_language(CXX)
-# C++17を使用
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-# コンパイラ依存の拡張をオフにする
-set(CMAKE_CXX_EXTENSIONS OFF)
+set(CXX_VERSION 17)
+include(lubee/cxx_options.cmake)
+string(CONCAT CMAKE_CXX_FLAGS " -Wno-c99-extensions")
+string(CONCAT CMAKE_CXX_FLAGS " -Wno-gnu-zero-variadic-macro-arguments")
+string(CONCAT CMAKE_CXX_FLAGS " -Wno-gnu-anonymous-struct")
+string(CONCAT CMAKE_CXX_FLAGS " -Wno-nested-anon-types")
 
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -ggdb3")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -ftemplate-depth=1024")
 add_definitions(-DUNIX=${UNIX})
 add_definitions(-DSSE=${SSE})
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-	# GLibのデバッグモードをONにする
-	add_definitions(-D_GLIBCXX_DEBUG)
-	add_definitions(-DDEBUG)
-endif()
+
 set(BKUP_UNITTEST ${without-unittest})
 set(without-unittest YES)
 add_subdirectory(beat)
