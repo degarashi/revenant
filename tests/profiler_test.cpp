@@ -32,7 +32,7 @@ namespace rev {
 			// ランダムな回数、ランダムなブロック名を入力
 			auto nIter = rd.getUniform<std::size_t>({1,64});
 			while(nIter-- > 0) {
-				const auto index = rd.getUniform<std::size_t>({-(nBlock/2+1),nBlock-1});
+				const auto index = rd.getUniform<int>({-(int(nBlock)/2+1),int(nBlock)-1});
 				if(index < 0) {
 					// 上の階層に上がる
 					if(!nameStack.empty()) {
