@@ -18,7 +18,7 @@ namespace rev {
 			auto& rd = this->mt();
 			const std::size_t nBlock = rd.getUniform<std::size_t>({4,32});
 			struct Block {
-				prof::Profiler::Name	name;
+				prof::Name				name;
 				uint32_t				nCalled;
 			};
 			std::vector<std::string>	nameV(nBlock);
@@ -28,7 +28,7 @@ namespace rev {
 				block[i].name = nameV[i].c_str();
 				block[i].nCalled = 0;
 			}
-			std::vector<prof::Profiler::Name> nameStack;
+			std::vector<prof::Name> nameStack;
 			// ランダムな回数、ランダムなブロック名を入力
 			auto nIter = rd.getUniform<std::size_t>({1,64});
 			while(nIter-- > 0) {
@@ -51,7 +51,7 @@ namespace rev {
 				nameStack.pop_back();
 			}
 
-			prof::Unit sum(0);
+			Duration sum(0);
 			const bool bf = profiler.checkIntervalSwitch();
 			if(!bf)
 				profiler.endBlock(prof::Profiler::DefaultRootName);
