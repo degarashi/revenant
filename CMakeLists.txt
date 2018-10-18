@@ -18,44 +18,44 @@ add_subdirectory(beat)
 set(without-unittest ${BKUP_UNITTEST})
 
 # windows依存ファイル
-set(DEPENDANT_SRC_WIN ./dir_depWin.cpp ./watch_depWin.cpp)
+set(DEPENDANT_SRC_WIN src/dir_depWin.cpp src/watch_depWin.cpp)
 # unix依存ファイル
-set(DEPENDANT_SRC_UNIX ./dir_depLinux.cpp ./watch_depLinux.cpp)
+set(DEPENDANT_SRC_UNIX src/dir_depLinux.cpp src/watch_depLinux.cpp)
 set(OS_DEPENDANT_SRC ${DEPENDANT_SRC_WIN} ${DEPENDANT_SRC_UNIX})
 
 # OpenSL依存ファイル
-set(DEPENDANT_OPENSL ./sound_depSL.cpp ./sound_depSL_error.cpp)
+set(DEPENDANT_OPENSL src/sound_depSL.cpp src/sound_depSL_error.cpp)
 # OpenAL依存ファイル
-set(DEPENDANT_OPENAL ./sound_depAL.cpp ./sound_depAL_error.cpp)
+set(DEPENDANT_OPENAL src/sound_depAL.cpp src/sound_depAL_error.cpp)
 set(SOUND_DEPENDANT_SRC ${DEPENDANT_OPENSL} ${DEPENDANT_OPENAL})
 
 if(${WITH_DEBUGGUI})
 	add_definitions(-DDEBUGGUI_ENABLED)
-	aux_source_directory(debug_gui LIBSRC_GUI)
-	aux_source_directory(debug_gui/types LIBSRC_GUI)
-	aux_source_directory(debug_gui/gltf/v1 LIBSRC_GLTF_V1)
-	aux_source_directory(debug_gui/gltf/v2 LIBSRC_GLTF_V2)
-	aux_source_directory(debug_gui/dc LIBSRC_DC)
+	aux_source_directory(src/debug_gui LIBSRC_GUI)
+	aux_source_directory(src/debug_gui/types LIBSRC_GUI)
+	aux_source_directory(src/debug_gui/gltf/v1 LIBSRC_GLTF_V1)
+	aux_source_directory(src/debug_gui/gltf/v2 LIBSRC_GLTF_V2)
+	aux_source_directory(src/debug_gui/dc LIBSRC_DC)
 endif()
 if(${WITH_PROFILER})
 	add_definitions(-DPROFILER_ENABLED)
 endif()
 # 依存ファイル以外のソースファイルを収集
-aux_source_directory(. LIBSRC_MAIN)
-aux_source_directory(drawcmd LIBSRC_MAIN)
-aux_source_directory(drawcmd/types LIBSRC_MAIN)
-aux_source_directory(util LIBSRC_MAIN)
-aux_source_directory(lua_define LIBSRC_LUADEF)
-aux_source_directory(lua LIBSRC_LUA)
-aux_source_directory(glwrapper LIBSRC_GLWRAPPER)
-aux_source_directory(parse LIBSRC_GLXPARSE)
-aux_source_directory(backup LIBSRC_BACKUP)
-aux_source_directory(imgui LIBSRC_MAIN)
-aux_source_directory(gltf LIBSRC_GLTF)
-aux_source_directory(external LIBSRC_GLTF)
-aux_source_directory(gltf/v1 LIBSRC_GLTF_V1)
-aux_source_directory(gltf/v2 LIBSRC_GLTF_V2)
-aux_source_directory(dc LIBSRC_DC)
+aux_source_directory(src LIBSRC_MAIN)
+aux_source_directory(src/drawcmd LIBSRC_MAIN)
+aux_source_directory(src/drawcmd/types LIBSRC_MAIN)
+aux_source_directory(src/util LIBSRC_MAIN)
+aux_source_directory(src/lua_define LIBSRC_LUADEF)
+aux_source_directory(src/lua LIBSRC_LUA)
+aux_source_directory(src/glwrapper LIBSRC_GLWRAPPER)
+aux_source_directory(src/parse LIBSRC_GLXPARSE)
+aux_source_directory(src/backup LIBSRC_BACKUP)
+aux_source_directory(src/imgui LIBSRC_MAIN)
+aux_source_directory(src/gltf LIBSRC_GLTF)
+aux_source_directory(src/external LIBSRC_GLTF)
+aux_source_directory(src/gltf/v1 LIBSRC_GLTF_V1)
+aux_source_directory(src/gltf/v2 LIBSRC_GLTF_V2)
+aux_source_directory(src/dc LIBSRC_DC)
 list(REMOVE_ITEM LIBSRC_MAIN ${OS_DEPENDANT_SRC} ${SOUND_DEPENDANT_SRC})
 
 # サウンド依存ファイルの設定
@@ -94,6 +94,7 @@ find_package(OggVorbis REQUIRED)
 find_package(Lua 5.3 REQUIRED)
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}/src
 	${SDL2_IMAGE_INCLUDE_DIRS}
 	${SDL2_INCLUDE_DIR}
 	${FREETYPE_INCLUDE_DIRS}
@@ -166,9 +167,9 @@ if(NOT without-unittest)
 	include_directories(
 		${GTEST_INCLUDE_DIRS}
 	)
-	aux_source_directory(tests/common COMMON)
+	aux_source_directory(src/tests/common COMMON)
 	# testsディレクトリ以下のソースが対象
-	aux_source_directory(tests TEST_SRC)
+	aux_source_directory(src/tests TEST_SRC)
 	foreach(SRC IN LISTS TEST_SRC)
 		list(FIND COMMON ${SRC} OUTPUT)
 		if(${OUTPUT} LESS 0)
@@ -179,8 +180,8 @@ if(NOT without-unittest)
 endif()
 
 if(NOT without-test)
-	add_subdirectory(testprog/sprite)
-	add_subdirectory(testprog/cube)
-	add_subdirectory(testprog/gltf1)
-	add_subdirectory(testprog/gltf2)
+	add_subdirectory(src/testprog/sprite)
+	add_subdirectory(src/testprog/cube)
+	add_subdirectory(src/testprog/gltf1)
+	add_subdirectory(src/testprog/gltf2)
 endif()

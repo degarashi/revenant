@@ -15,15 +15,16 @@ OPT_PROFILER			= -DWITH_PROFILER=$(WITH_PROFILER)
 
 ADDITIONAL_CMAKE_OPTION		= $(OPT_SSE) $(OPT_SOUNDAPI) $(OPT_WITHOUT_UNITTEST) $(OPT_DEBUGGUI) $(OPT_PROFILER)
 # リソースディレクトリへのシンボリックリンク
+RESOURCE_DIR		= $(PWD)/src/resource
 ADDITIONAL_CMD				= \
-							  ln -sf $(PWD)/resource $(WORK_DIR)/testprog/sprite; \
-							  ln -sf $(PWD)/resource $(WORK_DIR)/testprog/cube; \
-							  ln -sf $(PWD)/resource $(WORK_DIR)/testprog/gltf1; \
-							  ln -sf $(PWD)/resource $(WORK_DIR)/testprog/gltf2; \
-							  ln -sf $(PWD)/resource $(WORK_DIR);
+							  ln -sf $(RESOURCE_DIR) $(WORK_DIR)/src/testprog/sprite; \
+							  ln -sf $(RESOURCE_DIR) $(WORK_DIR)/src/testprog/cube; \
+							  ln -sf $(RESOURCE_DIR) $(WORK_DIR)/src/testprog/gltf1; \
+							  ln -sf $(RESOURCE_DIR) $(WORK_DIR)/src/testprog/gltf2; \
+							  ln -sf $(RESOURCE_DIR) $(WORK_DIR);
 include lubee/common.make
 
 # 動作テスト
 gameloop:
 	-pkill gltf2
-	$(WORK_DIR)/testprog/gltf2/gltf2
+	$(WORK_DIR)/src/testprog/gltf2/gltf2
