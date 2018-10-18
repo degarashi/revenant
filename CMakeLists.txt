@@ -93,7 +93,7 @@ find_package(SDL2_image REQUIRED)
 find_package(OggVorbis REQUIRED)
 find_package(Lua 5.3 REQUIRED)
 include_directories(
-	${CMAKE_SOURCE_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}
 	${SDL2_IMAGE_INCLUDE_DIRS}
 	${SDL2_INCLUDE_DIR}
 	${FREETYPE_INCLUDE_DIRS}
@@ -102,7 +102,6 @@ include_directories(
 	${OGG_INCLUDE_DIR}
 	${OPENAL_INCLUDE_DIRS}
 	${LUA_INCLUDE_DIR}
-	.
 )
 
 # Linux環境
