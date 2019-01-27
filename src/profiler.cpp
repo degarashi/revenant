@@ -1,4 +1,5 @@
 #include "profiler.hpp"
+#include "spinlock.hpp"
 
 namespace rev {
 	thread_local prof::Profiler profiler;
@@ -14,6 +15,9 @@ namespace rev {
 			return true;
 		}
 		SpinLock<Parameter> g_param;
+		void SetInterval(const Duration dur) {
+			g_param.lock()->setInterval(dur);
+		}
 
 		// -------------------- Block --------------------
 		Block::Block(const Name& name):

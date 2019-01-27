@@ -1,10 +1,9 @@
 //! リアルタイムプロファイラ
 #pragma once
-#include "spine/src/treenode.hpp"
 #include "dataswitch.hpp"
 #include "clock.hpp"
+#include "spine/src/treenode.hpp"
 #include "spine/src/rflag.hpp"
-#include "spinlock.hpp"
 
 #ifdef PROFILER_ENABLED
 	#define RevBeginProfile(name)	::rev::profiler.beginBlock(#name)
@@ -32,7 +31,7 @@ namespace rev {
 			Parameter();
 			#undef SEQ
 		};
-		extern SpinLock<Parameter>	g_param;
+		void SetInterval(Duration dur);
 
 		using Name = const char*;
 		struct History {
