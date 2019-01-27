@@ -1,5 +1,6 @@
 #pragma once
 #include "spinlock_detail.hpp"
+#include "sdl_tls.hpp"
 
 namespace rev {
 	//! 内包データに対する再帰対応のスピンロック
