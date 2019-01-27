@@ -1,18 +1,17 @@
 #pragma once
-#include <chrono>
-#include <iosfwd>
+#include "spine/src/prof_clock.hpp"
+#include <boost/preprocessor.hpp>
 
 namespace rev {
-	using Clock = std::chrono::steady_clock;
-	using Timepoint = typename Clock::time_point;
-	using Duration = typename Clock::duration;
-	using Hours = std::chrono::hours;
-	using Minutes = std::chrono::minutes;
-	using Seconds = std::chrono::seconds;
-	using Milliseconds = std::chrono::milliseconds;
-	using Microseconds = std::chrono::microseconds;
-	using Nanoseconds = std::chrono::nanoseconds;
-
-	std::ostream& operator << (std::ostream& os, const Timepoint& t);
-	std::ostream& operator << (std::ostream& os, const Duration& t);
+	#define DEF(name)	using name = spi::prof::name;
+	DEF(Clock)
+	DEF(Timepoint)
+	DEF(Duration)
+	DEF(Hours)
+	DEF(Minutes)
+	DEF(Seconds)
+	DEF(Milliseconds)
+	DEF(Microseconds)
+	DEF(Nanoseconds)
+	#undef DEF
 }

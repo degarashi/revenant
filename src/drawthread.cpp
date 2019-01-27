@@ -95,10 +95,10 @@ namespace rev {
 				while(auto m = getLooper()->wait()) {
 					if(msg::DrawReq* p = *m) {
 						// プロファイラのフレーム切り替え
-						if(profiler.checkIntervalSwitch()) {
+						if(spi::profiler.checkIntervalSwitch()) {
 							prof::PreserveThreadInfo();
 						}
-						RevProfile(Main);
+						SpiProfile(Main);
 						// VSyncフラグが変化していたらSDLのVSync関数を呼ぶ
 						checkVSync(false);
 						// -- 描画リクエスト --
@@ -114,7 +114,7 @@ namespace rev {
 							lk->prevTp = cur;
 							lk->fps.update(draw, diff);
 							if(draw) {
-								RevProfile(Swap);
+								SpiProfile(Swap);
 								lk->ctxDrawThread->swapWindow();
 							}
 						}

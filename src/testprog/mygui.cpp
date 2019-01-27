@@ -58,7 +58,7 @@ namespace rev::test {
 		_resview(std::make_shared<ResourceView>()),
 		_profiler(std::make_shared<debug::Profiler>())
 	{
-		prof::SetInterval(Seconds(0));
+		spi::prof::SetInterval(Seconds(0));
 		setStateNew<St>();
 	}
 	const char* MyGUI::getDebugName() const noexcept {

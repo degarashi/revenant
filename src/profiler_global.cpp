@@ -55,7 +55,7 @@ namespace rev::prof {
 			auto& iv = lk->getEntry();
 
 			const auto pushInfo = [&iv](){
-				iv.interval.emplace_back(profiler.getPrev());
+				iv.interval.emplace_back(spi::profiler.getPrev());
 			};
 			if(now < until) {
 				pushInfo();

@@ -28,7 +28,7 @@ namespace rev {
 		lk->accumUpd = lk->accumDraw = 0;
 	}
 	Timepoint MainThread::_WaitForNextInterval(const Timepoint prevtime, const Duration interval, const bool spinwait) {
-		RevProfile(Sleep);
+		SpiProfile(Sleep);
 		auto ntp = prevtime + interval;
 		const auto tp = Clock::now();
 		if(ntp <= tp)
@@ -146,7 +146,7 @@ namespace rev {
 					// ゲームの進行や更新タイミングを図って描画など
 					bool bLoop = true;
 					do {
-						RevBeginProfile(Aux);
+						SpiBeginProfile(Aux);
 						// 必要に応じてシェーダーファイルのリロード処理
 						_checkFxReload(ntf);
 
@@ -218,16 +218,16 @@ namespace rev {
 								} while(bLoop);
 							}
 						}
-						RevEndProfile(Aux);
+						SpiEndProfile(Aux);
 						const auto prev2 = prevtime;
 						// 次のフレーム開始時刻を待つ
 						const bool spinwait = getInfo()->spinwait;
 						prevtime = _WaitForNextInterval(prevtime, Microseconds(16666), spinwait);
 						// プロファイラのフレーム切り替え
-						if(profiler.checkIntervalSwitch()) {
+						if(spi::profiler.checkIntervalSwitch()) {
 							prof::PreserveThreadInfo();
 						}
-						RevProfile(Main);
+						SpiProfile(Main);
 						// 1フレーム分の処理を行う
 						if(_updateFrame(mp.get(), dth, drawHandler, Clock::now() - prev2))
 							break;

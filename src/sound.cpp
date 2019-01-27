@@ -1,6 +1,6 @@
 #include "sound.hpp"
 #include "sound_common.hpp"
-#include "profiler.hpp"
+#include "spine/src/profiler.hpp"
 
 namespace rev {
 	Duration CalcTimeLength(const int word_size, const int ch, const int hz, const std::size_t buffLen) noexcept {
@@ -749,7 +749,7 @@ namespace rev {
 		return _srcMgr.emplace();
 	}
 	void SoundMgr::update() {
-		RevProfile(SoundMgr_Update);
+		SpiProfile(SoundMgr_Update);
 		for(auto s : _srcMgr)
 			s->update();
 		for(auto sg : _sgMgr)

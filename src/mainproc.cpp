@@ -4,7 +4,7 @@
 #include "sharedata.hpp"
 #include "glx_if.hpp"
 #include "imgui_sdl2.hpp"
-#include "profiler.hpp"
+#include "spine/src/profiler.hpp"
 
 namespace rev {
 	// ---------------- MainProc ----------------
@@ -12,7 +12,7 @@ namespace rev {
 	bool MainProc::runU(const Duration delta) {
 		bool cont;
 		{
-			RevProfile(Scene_Update);
+			SpiProfile(Scene_Update);
 			cont = mgr_scene.onUpdate();
 		}
 		if(cont) {
@@ -21,11 +21,11 @@ namespace rev {
 				const auto w = lk->window.lock();
 				lk.unlock();
 
-				RevProfile(Draw);
+				SpiProfile(Draw);
 				fx->beginTask();
 				mgr_gui.newFrame(fx, *w, delta);
 				{
-					RevProfile(Scene_Draw);
+					SpiProfile(Scene_Draw);
 					mgr_scene.onDraw(*fx);
 				}
 				mgr_gui.endFrame();
