@@ -22,7 +22,7 @@ ADDITIONAL_CMD				= \
 							  ln -sf $(RESOURCE_DIR) $(WORK_DIR)/src/testprog/gltf1; \
 							  ln -sf $(RESOURCE_DIR) $(WORK_DIR)/src/testprog/gltf2; \
 							  ln -sf $(RESOURCE_DIR) $(WORK_DIR);
-include lubee/common.make
+include lubee/common_compile/common.make
 
 # 動作テスト
 gameloop:

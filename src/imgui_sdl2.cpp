@@ -239,7 +239,12 @@ namespace rev {
 		uint8_t* pixels;
 		lubee::SizeI size;
 		// Load as RGBA 32-bits for OpenGL3 demo because it is more likely to be compatible with user's existing shader.
-		io.Fonts->GetTexDataAsRGBA32(&pixels, &size.width, &size.height);
+		{
+			int w, h;
+			io.Fonts->GetTexDataAsRGBA32(&pixels, &w, &h);
+			size.width = static_cast<lubee::SizeI::value_t>(w);
+			size.height = static_cast<lubee::SizeI::value_t>(h);
+		}
 
 		// Upload texture to graphics system
 		{

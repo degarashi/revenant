@@ -1,6 +1,7 @@
 #pragma once
 #include "lubee/src/bitfield.hpp"
 #include "lubee/src/rect.hpp"
+#include "lubee/src/pow_value.hpp"
 #include "handle/opengl.hpp"
 #include <vector>
 

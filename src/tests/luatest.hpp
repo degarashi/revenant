@@ -254,10 +254,18 @@ namespace rev {
 		struct GenValue<lubee::Size<T>> {
 			lubee::Size<T> operator()(LuaTest& self) const {
 				const GenValue_t<T> gv;
-				return {
-					std::abs(gv(self)),
-					std::abs(gv(self))
-				};
+				if constexpr (std::is_integral_v<T>) {
+					using IT = std::make_signed_t<T>;
+					return {
+						std::abs(IT(gv(self))),
+						std::abs(IT(gv(self)))
+					};
+				} else {
+					return {
+						std::abs(T(gv(self))),
+						std::abs(T(gv(self)))
+					};
+				}
 			}
 		};
 		template <class T>

@@ -8,13 +8,8 @@
 #include "spine/src/enum_t.hpp"
 #include "spine/src/detect_type.hpp"
 #include <memory>
+#include "lubee/src/fwd.hpp"
 
-namespace lubee {
-	template <class T>
-	struct Size;
-	using SizeI = Size<int32_t>;
-	using SizeF = Size<float>;
-}
 namespace beat {
 	namespace g2 {
 		class Pose;

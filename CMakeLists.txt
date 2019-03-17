@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 2.8)
 project(revenant)
-include(aux.cmake)
 
+set(COMMON_COMPILE lubee/common_compile)
 set(CXX_VERSION 17)
-include(lubee/cxx_options.cmake)
+include(${COMMON_COMPILE}/cxx_options.cmake)
+include(${COMMON_COMPILE}/compile_commands.cmake)
+include(${COMMON_COMPILE}/aux.cmake)
 string(CONCAT CMAKE_CXX_FLAGS " -Wno-c99-extensions")
 string(CONCAT CMAKE_CXX_FLAGS " -Wno-gnu-zero-variadic-macro-arguments")
 string(CONCAT CMAKE_CXX_FLAGS " -Wno-gnu-anonymous-struct")
@@ -145,7 +147,7 @@ MakeLib(revenant_gltfv2 LIBSRC_GLTF_V2)
 MakeLib(revenant_dc LIBSRC_DC)
 
 # ------ テストコード生成 ------
-find_package(GTest REQUIRED)
+LoadGTestLibs(GTEST_LIBS)
 set(TESTEXE_LIB
 	revenant
 	revenant_gui
@@ -158,15 +160,11 @@ set(TESTEXE_LIB
 	revenant_gltfv1
 	revenant_gltf
 	revenant_dc
-	${GTEST_MAIN_LIBRARIES}
-	${GTEST_LIBRARIES}
+	${GTEST_LIBS}
 )
 # ユニットテストはシングルファイル、そうでないものはサブディレクトリを使う
 if(NOT without-unittest)
 	enable_testing()
-	include_directories(
-		${GTEST_INCLUDE_DIRS}
-	)
 	aux_source_directory(src/tests/common COMMON)
 	# testsディレクトリ以下のソースが対象
 	aux_source_directory(src/tests TEST_SRC)
@@ -174,9 +172,10 @@ if(NOT without-unittest)
 		list(FIND COMMON ${SRC} OUTPUT)
 		if(${OUTPUT} LESS 0)
 			GetFileName(${SRC}, SRCNAME)
-			AddTest(${SRCNAME} "${SRC};${COMMON}" "${TESTEXE_LIB}")
+			AddTest(${PROJECT_NAME} ${SRCNAME} "${SRC};${COMMON}" "${TESTEXE_LIB}")
 		endif()
 	endforeach()
+	DefineCompDB(TEST_SRC)
 endif()
 
 if(NOT without-test)

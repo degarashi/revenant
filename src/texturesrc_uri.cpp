@@ -2,6 +2,7 @@
 #include "sdl_surface.hpp"
 #include "sdl_rw.hpp"
 #include "gl_if.hpp"
+#include "lubee/src/pow_value.hpp"
 
 namespace rev {
 	namespace {
