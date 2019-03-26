@@ -1,5 +1,5 @@
 #pragma once
-#include "font_ft_dep.hpp"
+#include "ft_dep.hpp"
 #include "frea/src/vector.hpp"
 #include "spine/src/resmgr_named.hpp"
 #include "singleton_data_lazy.hpp"
@@ -39,15 +39,6 @@ namespace rev {
 		struct text {};
 	}
 	struct DrawTag;
-	namespace vertex {
-		//! 文字列描画用頂点
-		struct text {
-			frea::Vec2	pos;
-			frea::Vec3	uvt;
-
-			const static FWVDecl s_decl;
-		};
-	}
 }
 
 namespace rev {

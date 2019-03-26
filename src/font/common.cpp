@@ -1,4 +1,4 @@
-#include "font_common.hpp"
+#include "common.hpp"
 #include "gl_resource.hpp"
 
 namespace rev {

@@ -13,7 +13,7 @@
 #include "input_sdlvalue.hpp"
 #include "gl_resource.hpp"
 #include "glx.hpp"
-#include "font.hpp"
+#include "font/font.hpp"
 #include "scene_mgr.hpp"
 #include "techmgr.hpp"
 #include "imgui_sdl2.hpp"

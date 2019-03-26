@@ -1,5 +1,5 @@
 #include "text.hpp"
-#include "../font.hpp"
+#include "../font/font.hpp"
 #include "../glx_if.hpp"
 #include "uniform_ent.hpp"
 #include "../u_common.hpp"

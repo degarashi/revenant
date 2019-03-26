@@ -6,7 +6,7 @@
 #include "abstbuffer.hpp"
 #include "lubee/src/rect.hpp"
 #include "sdl_rw.hpp"
-#include "font_common.hpp"
+#include "common.hpp"
 
 namespace rev {
 	using ByteBuff = std::vector<uint8_t>;

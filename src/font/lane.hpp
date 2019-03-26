@@ -1,5 +1,5 @@
 #pragma once
-#include "font_common.hpp"
+#include "common.hpp"
 #include "lubee/src/error.hpp"
 #include "lubee/src/bit.hpp"
 
