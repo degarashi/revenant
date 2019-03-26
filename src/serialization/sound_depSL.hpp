@@ -1,5 +1,5 @@
 #pragma once
-#include "../sound_depSL.hpp"
+#include "../sound/depSL.hpp"
 #include <cereal/access.hpp>
 
 namespace rev {

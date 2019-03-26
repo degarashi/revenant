@@ -1,5 +1,5 @@
 #pragma once
-#include "../sound_common.hpp"
+#include "../sound/common.hpp"
 #include <cereal/types/base_class.hpp>
 
 namespace rev {

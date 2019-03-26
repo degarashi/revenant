@@ -1,6 +1,6 @@
 #include "mainthread.hpp"
 #include "sdl_rw.hpp"
-#include "sound.hpp"
+#include "../sound/sound.hpp"
 #include "serialization/sdl_rw.hpp"
 #include "serialization/uri_file.hpp"
 #include "serialization/uri_data.hpp"

@@ -1,5 +1,5 @@
 #pragma once
-#include "sound_common.hpp"
+#include "common.hpp"
 #include "spine/src/singleton.hpp"
 #include "frea/src/vector.hpp"
 #include <SLES/OpenSLES.h>

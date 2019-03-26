@@ -1,5 +1,5 @@
-#include "sound_depAL.hpp"
-#include "sound_depAL_error.hpp"
+#include "depAL.hpp"
+#include "depAL_error.hpp"
 
 namespace rev {
 	namespace {

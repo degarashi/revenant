@@ -1,5 +1,5 @@
 #include "../luaimpl.hpp"
-#include "../sound.hpp"
+#include "../sound/sound.hpp"
 
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	rev::ABuffer, ABuffer,

@@ -1,6 +1,6 @@
-#include "sound_common.hpp"
-#include "sdl_rw.hpp"
-#include "sound_error.hpp"
+#include "common.hpp"
+#include "../sdl_rw.hpp"
+#include "error.hpp"
 
 namespace rev {
 	std::size_t VorbisFile::ReadOGC(void* ptr, const std::size_t blocksize, const std::size_t nmblock, void* datasource) noexcept {

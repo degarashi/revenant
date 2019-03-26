@@ -1,5 +1,5 @@
 #include "sound.hpp"
-#include "sound_common.hpp"
+#include "common.hpp"
 #include "spine/src/profiler.hpp"
 
 namespace rev {

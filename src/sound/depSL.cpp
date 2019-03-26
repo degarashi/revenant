@@ -1,5 +1,5 @@
-#include "sound_depSL.hpp"
-#include "sound_depSL_error.hpp"
+#include "depSL.hpp"
+#include "depSL_error.hpp"
 
 namespace rev {
 	namespace {

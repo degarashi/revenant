@@ -6,7 +6,7 @@
 #include "uri_file.hpp"
 #include "uri_data.hpp"
 #include "apppath.hpp"
-#include "sound.hpp"
+#include "sound/sound.hpp"
 #include "camera2d.hpp"
 #include "camera3d.hpp"
 #include "input.hpp"

@@ -1,4 +1,4 @@
-#include "sound_error.hpp"
+#include "error.hpp"
 #include <vorbis/vorbisfile.h>
 
 namespace rev {

@@ -10,7 +10,7 @@
 #include "gl_if.hpp"
 #include "handler.hpp"
 #include "sys_message.hpp"
-#include "sound.hpp"
+#include "sound/sound.hpp"
 
 namespace rev {
 	bool MainThread::_updateFrame(MainProc* mp, DrawThread& dth, Handler& drawHandler, const Duration delta) {

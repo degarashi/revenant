@@ -26,9 +26,9 @@ set(DEPENDANT_SRC_UNIX src/dir_depLinux.cpp src/watch_depLinux.cpp)
 set(OS_DEPENDANT_SRC ${DEPENDANT_SRC_WIN} ${DEPENDANT_SRC_UNIX})
 
 # OpenSL依存ファイル
-set(DEPENDANT_OPENSL src/sound_depSL.cpp src/sound_depSL_error.cpp)
+set(DEPENDANT_OPENSL src/sound/depSL.cpp src/sound/depSL_error.cpp)
 # OpenAL依存ファイル
-set(DEPENDANT_OPENAL src/sound_depAL.cpp src/sound_depAL_error.cpp)
+set(DEPENDANT_OPENAL src/sound/depAL.cpp src/sound/depAL_error.cpp)
 set(SOUND_DEPENDANT_SRC ${DEPENDANT_OPENSL} ${DEPENDANT_OPENAL})
 
 if(${WITH_DEBUGGUI})
@@ -59,6 +59,7 @@ aux_source_directory(src/gltf/v1 LIBSRC_GLTF_V1)
 aux_source_directory(src/gltf/v2 LIBSRC_GLTF_V2)
 aux_source_directory(src/dc LIBSRC_DC)
 aux_source_directory(src/font LIBSRC_MAIN)
+aux_source_directory(src/sound LIBSRC_MAIN)
 list(REMOVE_ITEM LIBSRC_MAIN ${OS_DEPENDANT_SRC} ${SOUND_DEPENDANT_SRC})
 
 # サウンド依存ファイルの設定
@@ -66,11 +67,11 @@ if(SOUND_API STREQUAL "openal")
 	message(STATUS "using OpenAL...")
 	find_package(OpenAL REQUIRED)
 	set(DEPSRC_FILE ${DEPSRC_FILE} ${DEPENDANT_OPENAL})
-	add_definitions(-DSOUND_HEADER="sound_depAL.hpp")
+	add_definitions(-DSOUND_HEADER="src/sound/depAL.hpp")
 elseif(SOUND_API STREQUAL "opensl")
 	message(STATUS "using OpenSL ES...")
 	set(DEPSRC_FILE ${DEPSRC_FILE} ${DEPENDANT_OPENSL})
-	add_definitions(-DSOUND_HEADER="sound_depSL.hpp")
+	add_definitions(-DSOUND_HEADER="src/sound/depSL.hpp")
 else()
 	message(FATAL_ERROR "unknown sound API")
 endif()

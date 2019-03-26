@@ -10,7 +10,7 @@
 #include "systeminfo.hpp"
 #include "output.hpp"
 #include "sdl_window.hpp"
-#include "sound.hpp"
+#include "sound/sound.hpp"
 #include <SDL_timer.h>
 #include <SDL_events.h>
 #include "scene_mgr.hpp"
