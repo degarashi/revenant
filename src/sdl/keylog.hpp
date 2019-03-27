@@ -1,5 +1,5 @@
 #pragma once
-#include "input_keylog.hpp"
+#include "../input/keylog.hpp"
 #include <vector>
 
 namespace rev {

@@ -1,5 +1,5 @@
 #include "keylog.hpp"
-#include "input_sdlvalue.hpp"
+#include "../input/sdlvalue.hpp"
 
 namespace rev {
 	KeyLogV SDLKeyLog::s_keylog;

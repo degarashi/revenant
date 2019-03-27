@@ -4,8 +4,8 @@
 	#include <windows.h>
 #endif
 #include "spinlock.hpp"
-#include "input_sdl_const.hpp"
-#include "input_keylog.hpp"
+#include "sdl_const.hpp"
+#include "keylog.hpp"
 #include <vector>
 
 namespace rev {

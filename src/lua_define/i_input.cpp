@@ -1,5 +1,5 @@
 #include "../luaimpl.hpp"
-#include "../input.hpp"
+#include "../input/input.hpp"
 
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	rev::Input, Input,

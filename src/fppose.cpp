@@ -1,5 +1,5 @@
 #include "fppose.hpp"
-#include "input.hpp"
+#include "input/input.hpp"
 
 namespace rev {
 	FPPose::FPPose():

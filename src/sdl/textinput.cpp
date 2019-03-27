@@ -1,5 +1,5 @@
 #include "textinput.hpp"
-#include "input_sdlvalue.hpp"
+#include "../input/sdlvalue.hpp"
 
 namespace rev {
 	std::string SDLTextInput::s_text;

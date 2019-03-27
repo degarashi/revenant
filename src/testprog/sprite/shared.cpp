@@ -1,5 +1,5 @@
 #include "shared.hpp"
-#include "../../input.hpp"
+#include "../../input/input.hpp"
 
 namespace rev::test {
 	TLS<UserShare>	tls_shared;

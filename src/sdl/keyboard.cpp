@@ -1,5 +1,5 @@
 #include "keyboard.hpp"
-#include "input_sdlvalue.hpp"
+#include "../input/sdlvalue.hpp"
 #include <cstring>
 
 namespace rev {

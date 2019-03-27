@@ -2,7 +2,7 @@
 #include "imgui_sdl2.hpp"
 #include "sdl/window.hpp"
 #include "imgui/imgui.h"
-#include "input.hpp"
+#include "input/input.hpp"
 #include "gl_resource.hpp"
 #include "texturesrc_mem.hpp"
 #include "gl_shader.hpp"

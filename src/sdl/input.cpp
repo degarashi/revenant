@@ -1,4 +1,4 @@
-#include "input_sdlvalue.hpp"
+#include "../input/sdlvalue.hpp"
 #include <SDL_mouse.h>
 #include <algorithm>
 

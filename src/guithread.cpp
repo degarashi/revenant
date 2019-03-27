@@ -4,7 +4,7 @@
 #include "mainthread.hpp"
 #include "sdl/init.hpp"
 #include "sdl/window.hpp"
-#include "input.hpp"
+#include "input/input.hpp"
 #include "pooled_output.hpp"
 #include "output.hpp"
 #include "sharedata.hpp"
@@ -193,7 +193,7 @@ namespace rev {
 		{nullptr, &GUIThread::_onPause}
 	};
 }
-#include "input_sdlvalue.hpp"
+#include "input/sdlvalue.hpp"
 #include "lubee/src/meta/countof.hpp"
 namespace rev {
 	void GUIThread::_procMouseWheel(SDL_Event& e) {

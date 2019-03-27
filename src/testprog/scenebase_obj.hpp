@@ -3,7 +3,7 @@
 #include "mygui.hpp"
 #include "../scene.hpp"
 #include "../scene_mgr.hpp"
-#include "../input.hpp"
+#include "../input/input.hpp"
 
 namespace rev::test {
 	template <class Der>

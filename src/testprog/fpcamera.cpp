@@ -1,7 +1,7 @@
 #include "fpcamera.hpp"
 #include "../systeminfo.hpp"
 #include "../camera3d.hpp"
-#include "../input.hpp"
+#include "../input/input.hpp"
 #include "../imgui_sdl2.hpp"
 
 namespace rev::test {

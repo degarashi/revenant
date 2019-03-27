@@ -1,5 +1,5 @@
 #include "litrot.hpp"
-#include "../../input.hpp"
+#include "../../input/input.hpp"
 #include "../../imgui_sdl2.hpp"
 
 namespace rev::test {
