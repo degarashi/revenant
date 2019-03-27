@@ -1,5 +1,5 @@
 #pragma once
-#include "../gl_format.hpp"
+#include "../gl/format.hpp"
 #include "data_pair.hpp"
 #include "frea/src/matrix.hpp"
 #include "json_types.hpp"

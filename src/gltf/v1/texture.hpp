@@ -1,6 +1,6 @@
 #pragma once
 #include "gltf/v1/dataref.hpp"
-#include "../../gl_format.hpp"
+#include "../../gl/format.hpp"
 #include "../../handle/opengl.hpp"
 
 namespace rev::gltf::v1 {

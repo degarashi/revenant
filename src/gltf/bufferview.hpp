@@ -1,7 +1,7 @@
 #pragma once
 #include "../handle/opengl.hpp"
 #include "../handle/sdl.hpp"
-#include "../gl_types.hpp"
+#include "../gl/types.hpp"
 #include "json_types.hpp"
 #include "data_pair.hpp"
 

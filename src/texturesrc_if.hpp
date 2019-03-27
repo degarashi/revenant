@@ -1,6 +1,6 @@
 #pragma once
-#include "gl_types.hpp"
-#include "gl_format.hpp"
+#include "gl/types.hpp"
+#include "gl/format.hpp"
 #include "lubee/src/rect.hpp"
 #include "texbuffer.hpp"
 

@@ -3,8 +3,8 @@
 #include "gltf/v2/sampler.hpp"
 #include "gltf/v2/bufferview.hpp"
 #include "../value_loader.hpp"
-#include "../../gl_resource.hpp"
-#include "../../gl_texture.hpp"
+#include "../../gl/resource.hpp"
+#include "../../gl/texture.hpp"
 #include "../../texturesrc_mem.hpp"
 
 namespace rev::gltf::v2 {

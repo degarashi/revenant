@@ -1,5 +1,5 @@
-#include "../../gl_program.hpp"
-#include "../../gl_shader.hpp"
+#include "../../gl/program.hpp"
+#include "../../gl/shader.hpp"
 #include "../popup.hpp"
 #include "../entry_field.hpp"
 #include "../resource_window.hpp"

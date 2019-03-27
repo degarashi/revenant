@@ -1,6 +1,6 @@
 #pragma once
 #include "spine/src/enum.hpp"
-#include "../../gl_header.hpp"
+#include "../../gl/header.hpp"
 #include "spine/src/optional.hpp"
 
 namespace rev::gltf::v1 {

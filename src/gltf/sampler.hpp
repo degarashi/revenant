@@ -1,5 +1,5 @@
 #pragma once
-#include "../gl_types.hpp"
+#include "../gl/types.hpp"
 #include "json_types.hpp"
 
 namespace rev::gltf {

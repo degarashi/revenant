@@ -1,6 +1,6 @@
 #include "../resmgr_app.hpp"
 #include "font.hpp"
-#include "../gl_resource.hpp"
+#include "../gl/resource.hpp"
 #include "../primitive.hpp"
 #include "../drawtag.hpp"
 #include "../u_common.hpp"

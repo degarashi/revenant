@@ -1,7 +1,7 @@
 #include "u_matrix3d.hpp"
 #include "camera3d.hpp"
 #include "glx_if.hpp"
-#include "gl_program.hpp"
+#include "gl/program.hpp"
 #include "uniform_ent.hpp"
 #include "spine/src/flyweight_item.hpp"
 

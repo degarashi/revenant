@@ -1,7 +1,7 @@
 #pragma once
 #include "vertex.hpp"
 #include "spine/src/optional.hpp"
-#include "gl_buffer.hpp"
+#include "gl/buffer.hpp"
 #include "handle/opengl.hpp"
 
 namespace rev {

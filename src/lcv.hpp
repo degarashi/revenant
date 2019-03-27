@@ -1,5 +1,5 @@
 #pragma once
-#include "gl_format.hpp"
+#include "gl/format.hpp"
 #include "clock.hpp"
 #include "lubee/src/fwd.hpp"
 #include "luaimport_types.hpp"

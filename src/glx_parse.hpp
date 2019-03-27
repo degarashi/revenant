@@ -1,6 +1,6 @@
 #pragma once
 #include "glx_macro.hpp"
-#include "gl_types.hpp"
+#include "gl/types.hpp"
 #include "vertex.hpp"
 #include "frea/src/vector.hpp"
 #include <boost/spirit/home/x3.hpp>

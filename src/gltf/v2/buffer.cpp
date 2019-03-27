@@ -2,8 +2,8 @@
 #include "gltf/v2/dataquery_if.hpp"
 #include "gltf/value_loader.hpp"
 #include "gltf/rwref.hpp"
-#include "../../gl_resource.hpp"
-#include "../../gl_buffer.hpp"
+#include "../../gl/resource.hpp"
+#include "../../gl/buffer.hpp"
 
 namespace rev::gltf::v2 {
 	namespace L = ::rev::gltf::loader;

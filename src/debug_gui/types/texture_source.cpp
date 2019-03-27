@@ -1,7 +1,7 @@
 #include "../../texturesrc_uri.hpp"
 #include "../../texturesrc_mem.hpp"
 #include "../../texture_filter.hpp"
-#include "../../gl_resource.hpp"
+#include "../../gl/resource.hpp"
 #include "../../imgui/imgui.h"
 #include "../../imgui_sdl2.hpp"
 #include "../entry_field.hpp"

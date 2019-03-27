@@ -1,5 +1,5 @@
 #include "uniform_ent.hpp"
-#include "gl_program.hpp"
+#include "gl/program.hpp"
 
 namespace rev {
 	UniformEnt::UniformEnt(const GLProgram& p, draw::IQueue& q):

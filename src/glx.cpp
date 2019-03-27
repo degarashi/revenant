@@ -1,13 +1,13 @@
 #include "glx.hpp"
-#include "gl_framebuffer_tmp.hpp"
+#include "gl/framebuffer_tmp.hpp"
 #include "systeminfo.hpp"
-#include "gl_error.hpp"
-#include "gl_program.hpp"
+#include "gl/error.hpp"
+#include "gl/program.hpp"
 #include "unituple/operator.hpp"
 #include "tech_if.hpp"
 #include "primitive.hpp"
-#include "gl_state.hpp"
-#include "gl_buffer.hpp"
+#include "gl/state.hpp"
+#include "gl/buffer.hpp"
 
 namespace rev {
 	GLEffect::GLEffect():

@@ -2,9 +2,9 @@
 #include "font.hpp"
 #include "lane.hpp"
 #include "../emplace.hpp"
-#include "../gl_resource.hpp"
+#include "../gl/resource.hpp"
 #include "../texturesrc_mem.hpp"
-#include "../gl_texture.hpp"
+#include "../gl/texture.hpp"
 
 namespace rev {
 	namespace {

@@ -1,11 +1,11 @@
 #include "texture_source.hpp"
-#include "gl_error.hpp"
-#include "gl_if.hpp"
+#include "gl/error.hpp"
+#include "gl/if.hpp"
 #include "drawcmd/queue_if.hpp"
 #include "sdl/surface.hpp"
 #include "sdl/rw.hpp"
-#include "gl_framebuffer_tmp.hpp"
-#include "gl_resource.hpp"
+#include "gl/framebuffer_tmp.hpp"
+#include "gl/resource.hpp"
 #include "handler.hpp"
 
 namespace rev {

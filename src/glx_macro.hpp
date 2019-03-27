@@ -1,5 +1,5 @@
 #pragma once
-#include "gl_depend.hpp"
+#include "gl/depend.hpp"
 #include <boost/preprocessor.hpp>
 
 #define SEQ_GLTYPE (void)(bool)(int)(float)(vec2)(vec3)(vec4)(ivec2)(ivec3)(ivec4)(bvec2)(bvec3)(bvec4)(mat2)(mat3)(mat4)(sampler2D)(samplerCube)

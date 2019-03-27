@@ -1,5 +1,5 @@
 #include "aux.hpp"
-#include "../gl_if.hpp"
+#include "../gl/if.hpp"
 
 namespace rev::draw {
 	void FlipFace::Command(const void*) {

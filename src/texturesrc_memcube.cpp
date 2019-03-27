@@ -1,7 +1,7 @@
 #include "texturesrc_mem.hpp"
-#include "gl_error.hpp"
-#include "gl_resource.hpp"
-#include "gl_if.hpp"
+#include "gl/error.hpp"
+#include "gl/resource.hpp"
+#include "gl/if.hpp"
 
 namespace rev {
 	// ---------------------- Cache ----------------------

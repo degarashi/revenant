@@ -1,7 +1,7 @@
 #include "../../primitive.hpp"
 #include "../entry_field.hpp"
 #include "../group.hpp"
-#include "../../gl_buffer.hpp"
+#include "../../gl/buffer.hpp"
 #include "../print.hpp"
 #include "../../vdecl.hpp"
 #include "../tree.hpp"

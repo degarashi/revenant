@@ -3,7 +3,7 @@
 #include "glx_if.hpp"
 #include "primitive.hpp"
 #include "tech_if.hpp"
-#include "gl_program.hpp"
+#include "gl/program.hpp"
 #include "uniform_ent.hpp"
 
 namespace rev {

@@ -1,6 +1,6 @@
 #include "resource_view.hpp"
 #include "../imgui/imgui.h"
-#include "../gl_resource.hpp"
+#include "../gl/resource.hpp"
 #include "../debug_gui/types/resmgr_named.hpp"
 #include "../debug_gui/menu.hpp"
 #include "../debug_gui/window.hpp"

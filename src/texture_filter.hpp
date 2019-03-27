@@ -1,5 +1,5 @@
 #pragma once
-#include "gl_types.hpp"
+#include "gl/types.hpp"
 #include "drawcmd/queue_if.hpp"
 
 namespace rev {

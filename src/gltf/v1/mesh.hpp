@@ -3,7 +3,7 @@
 #include "gltf/v1/dataref.hpp"
 #include "gltf/v1/v_semantic.hpp"
 #include "gltf/primitive.hpp"
-#include "../../gl_format.hpp"
+#include "../../gl/format.hpp"
 
 namespace rev::gltf::v1 {
 	struct PrimitivePolicy {

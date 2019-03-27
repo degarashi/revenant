@@ -1,6 +1,6 @@
 #include "gltf/v1/program.hpp"
 #include "gltf/v1/shader.hpp"
-#include "../../gl_resource.hpp"
+#include "../../gl/resource.hpp"
 
 namespace rev::gltf::v1 {
 	using namespace loader;

@@ -1,10 +1,10 @@
 #include "gltf/v1/texture.hpp"
 #include "../value_loader.hpp"
 #include "../check.hpp"
-#include "../../gl_resource.hpp"
+#include "../../gl/resource.hpp"
 #include "gltf/v1/image.hpp"
 #include "gltf/v1/sampler.hpp"
-#include "../../gl_texture.hpp"
+#include "../../gl/texture.hpp"
 
 namespace rev::gltf::v1 {
 	namespace {

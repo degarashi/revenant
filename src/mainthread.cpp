@@ -1,7 +1,7 @@
 #include "mainthread.hpp"
 #include "sharedata.hpp"
 #include "gameloopparam.hpp"
-#include "gl_if.hpp"
+#include "gl/if.hpp"
 #include "drawthread.hpp"
 #include "sys_message.hpp"
 #include "handler.hpp"

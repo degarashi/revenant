@@ -1,5 +1,5 @@
-#include "../../gl_bstate.hpp"
-#include "../../gl_format.hpp"
+#include "../../gl/bstate.hpp"
+#include "../../gl/format.hpp"
 #include "../entry_field.hpp"
 #include "../spacing.hpp"
 #include "../print.hpp"

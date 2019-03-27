@@ -1,5 +1,5 @@
 #pragma once
-#include "gl_types.hpp"
+#include "gl/types.hpp"
 #include "uniform_setter.hpp"
 #include "handle/opengl.hpp"
 #include <unordered_map>

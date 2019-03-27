@@ -1,6 +1,6 @@
 #pragma once
 #include "frea/src/vector.hpp"
-#include "../../gl_header.hpp"
+#include "../../gl/header.hpp"
 
 namespace rev::draw {
 	void Unif_Vec_Exec(std::size_t idx, GLint id, const void* ptr, std::size_t n);

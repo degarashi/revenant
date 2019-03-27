@@ -2,8 +2,8 @@
 #include "../check.hpp"
 #include "../../primitive.hpp"
 #include "gltf/v1/accessor.hpp"
-#include "../../gl_resource.hpp"
-#include "../../gl_buffer.hpp"
+#include "../../gl/resource.hpp"
+#include "../../gl/buffer.hpp"
 #include "../../vdecl.hpp"
 #include "gltf/v1/buffer.hpp"
 

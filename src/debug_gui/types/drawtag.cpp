@@ -2,7 +2,7 @@
 #include "../entry_field.hpp"
 #include "../group.hpp"
 #include "../../tech_if.hpp"
-#include "../../gl_texture.hpp"
+#include "../../gl/texture.hpp"
 #include "../resource_window.hpp"
 #include "../header.hpp"
 

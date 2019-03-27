@@ -1,6 +1,6 @@
 #include "../../vdecl.hpp"
 #include "../entry_field.hpp"
-#include "../../gl_format.hpp"
+#include "../../gl/format.hpp"
 #include "../sstream.hpp"
 #include "../tree.hpp"
 

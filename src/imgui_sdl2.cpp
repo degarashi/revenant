@@ -3,10 +3,10 @@
 #include "sdl/window.hpp"
 #include "imgui/imgui.h"
 #include "input/input.hpp"
-#include "gl_resource.hpp"
+#include "gl/resource.hpp"
 #include "texturesrc_mem.hpp"
-#include "gl_shader.hpp"
-#include "gl_program.hpp"
+#include "gl/shader.hpp"
+#include "gl/program.hpp"
 #include "vdecl.hpp"
 #include <SDL_clipboard.h>
 #include "tech_pass.hpp"

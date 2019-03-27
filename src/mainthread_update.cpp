@@ -7,7 +7,7 @@
 #include "sharedata.hpp"
 #include "sdl/window.hpp"
 #include "output.hpp"
-#include "gl_if.hpp"
+#include "gl/if.hpp"
 #include "handler.hpp"
 #include "sys_message.hpp"
 #include "sound/sound.hpp"

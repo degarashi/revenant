@@ -1,7 +1,7 @@
 #include "tech.hpp"
-#include "gl_state.hpp"
+#include "gl/state.hpp"
 #include "vertex.hpp"
-#include "gl_program.hpp"
+#include "gl/program.hpp"
 #include "uniform_ent.hpp"
 
 namespace rev {

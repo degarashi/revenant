@@ -7,7 +7,7 @@
 #include "../debug_gui/print.hpp"
 #include "../debug_gui/resource_window.hpp"
 #include "../drawgroup.hpp"
-#include "../gl_resource.hpp"
+#include "../gl/resource.hpp"
 #include "../gpu.hpp"
 #include "../debug_gui/profiler.hpp"
 

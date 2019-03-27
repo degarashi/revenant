@@ -2,7 +2,7 @@
 #include "gltf/v1/dataquery_if.hpp"
 #include "../check.hpp"
 #include "../value_loader.hpp"
-#include "../../gl_resource.hpp"
+#include "../../gl/resource.hpp"
 #include "../../sdl/rw.hpp"
 #include <regex>
 

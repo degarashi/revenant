@@ -1,6 +1,6 @@
 #include "u_common.hpp"
 #include "spine/src/flyweight_item.hpp"
-#include "gl_program.hpp"
+#include "gl/program.hpp"
 #include "uniform_ent.hpp"
 
 namespace rev {

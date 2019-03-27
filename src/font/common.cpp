@@ -1,5 +1,5 @@
 #include "common.hpp"
-#include "gl_resource.hpp"
+#include "gl/resource.hpp"
 
 namespace rev {
 	// ------------------- CCoreID -------------------

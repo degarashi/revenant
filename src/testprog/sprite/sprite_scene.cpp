@@ -6,7 +6,7 @@
 #include "../../camera2d.hpp"
 #include "../../systeminfo.hpp"
 #include "../../tls_data.hpp"
-#include "../../gl_resource.hpp"
+#include "../../gl/resource.hpp"
 #include "../../texture_filter.hpp"
 #include "frea/src/random/vector.hpp"
 #include <boost/format.hpp>

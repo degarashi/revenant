@@ -1,6 +1,6 @@
 #pragma once
 #include "../vertex.hpp"
-#include "../gl_types.hpp"
+#include "../gl/types.hpp"
 #include "../vdecl.hpp"
 #include "handle/opengl.hpp"
 #include "json_types.hpp"

@@ -1,8 +1,8 @@
 #include "gltf/bufferview.hpp"
 #include "gltf/value_loader.hpp"
 #include "gltf/check.hpp"
-#include "../gl_resource.hpp"
-#include "../gl_buffer.hpp"
+#include "../gl/resource.hpp"
+#include "../gl/buffer.hpp"
 #include "../sdl/rw.hpp"
 
 namespace rev::gltf {

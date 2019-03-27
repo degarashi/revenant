@@ -1,8 +1,8 @@
 #include "../luaimpl.hpp"
-#include "../gl_resource.hpp"
-#include "../gl_texture.hpp"
-#include "../gl_renderbuffer.hpp"
-#include "../gl_framebuffer.hpp"
+#include "../gl/resource.hpp"
+#include "../gl/texture.hpp"
+#include "../gl/renderbuffer.hpp"
+#include "../gl/framebuffer.hpp"
 
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	rev::GLRBuffer, GLRBuffer,

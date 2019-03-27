@@ -1,5 +1,5 @@
 #include "u_pbr_mr.hpp"
-#include "gl_program.hpp"
+#include "gl/program.hpp"
 #include "uniform_ent.hpp"
 #include "vdecl.hpp"
 
@@ -117,7 +117,7 @@ namespace rev {
 	}
 }
 
-#include "gl_resource.hpp"
+#include "gl/resource.hpp"
 #include "texturesrc_mem.hpp"
 namespace rev {
 	namespace {

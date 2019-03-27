@@ -136,8 +136,8 @@ namespace rev {
 		return vdecl;
 	}
 }
-#include "gl_if.hpp"
-#include "gl_error.hpp"
+#include "gl/if.hpp"
+#include "gl/error.hpp"
 namespace rev {
 	void Primitive::DCmd_Draw::Command(const void* p) {
 		auto& self = *static_cast<const DCmd_Draw*>(p);

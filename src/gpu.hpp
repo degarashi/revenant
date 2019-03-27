@@ -1,5 +1,5 @@
 #pragma once
-#include "gl_types.hpp"
+#include "gl/types.hpp"
 #include "debuggui_if.hpp"
 #include <unordered_set>
 

@@ -1,6 +1,6 @@
 #include "sprite2d.hpp"
-#include "../../gl_resource.hpp"
-#include "../../gl_buffer.hpp"
+#include "../../gl/resource.hpp"
+#include "../../gl/buffer.hpp"
 #include "lubee/src/meta/countof.hpp"
 #include "../../glx_if.hpp"
 #include "../../uniform_ent.hpp"

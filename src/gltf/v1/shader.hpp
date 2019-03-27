@@ -1,9 +1,9 @@
 #pragma once
 #include "gltf/v1/resource.hpp"
 #include "gltf/rwref.hpp"
-#include "../../gl_types.hpp"
+#include "../../gl/types.hpp"
 #include "../../handle/opengl.hpp"
-#include "../../gl_header.hpp"
+#include "../../gl/header.hpp"
 
 namespace rev::gltf::v1 {
 	struct IDataQuery;

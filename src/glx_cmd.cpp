@@ -1,6 +1,6 @@
 #include "glx.hpp"
-#include "gl_framebuffer.hpp"
-#include "gl_if.hpp"
+#include "gl/framebuffer.hpp"
+#include "gl/if.hpp"
 #include "fbrect.hpp"
 
 namespace rev {

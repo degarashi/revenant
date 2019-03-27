@@ -1,7 +1,7 @@
 #include "gltf/primitive.hpp"
 #include "value_loader.hpp"
 #include "gltf/check.hpp"
-#include "../gl_resource.hpp"
+#include "../gl/resource.hpp"
 #include "../primitive.hpp"
 
 #include "gltf/v1/buffer.hpp"

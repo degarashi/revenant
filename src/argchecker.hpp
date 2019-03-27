@@ -1,6 +1,6 @@
 #pragma once
 #include "glx_parse.hpp"
-#include "gl_error.hpp"
+#include "gl/error.hpp"
 
 namespace rev {
 	//! 引数の型チェック

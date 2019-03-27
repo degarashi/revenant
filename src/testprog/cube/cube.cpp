@@ -1,6 +1,6 @@
 #include "cube.hpp"
 #include "../../vdecl.hpp"
-#include "../../gl_resource.hpp"
+#include "../../gl/resource.hpp"
 #include "../../techmgr.hpp"
 #include "../../glx.hpp"
 #include "../../u_matrix3d.hpp"

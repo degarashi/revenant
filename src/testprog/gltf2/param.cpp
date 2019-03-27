@@ -1,7 +1,7 @@
 #include "resmgr_app.hpp"
 #include "param.hpp"
 #include "gltf2_scene.hpp"
-#include "../../gl_resource.hpp"
+#include "../../gl/resource.hpp"
 #include "../../util/gle_nest.hpp"
 #include "../../sys_uniform.hpp"
 #include "../../u_matrix2d.hpp"

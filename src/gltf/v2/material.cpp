@@ -2,8 +2,8 @@
 #include "gltf/v2/texture.hpp"
 #include "gltf/value_loader.hpp"
 #include "gltf/check.hpp"
-#include "../../gl_resource.hpp"
-#include "../../gl_texture.hpp"
+#include "../../gl/resource.hpp"
+#include "../../gl/texture.hpp"
 #include "../../texturesrc_mem.hpp"
 
 namespace rev::gltf::v2 {

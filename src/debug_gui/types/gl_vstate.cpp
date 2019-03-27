@@ -1,5 +1,5 @@
-#include "../../gl_vstate.hpp"
-#include "../../gl_format.hpp"
+#include "../../gl/vstate.hpp"
+#include "../../gl/format.hpp"
 #include "../indent.hpp"
 #include "../../imgui/imgui.h"
 #include "../sstream.hpp"

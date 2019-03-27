@@ -3,8 +3,8 @@
 #include "../entry_field.hpp"
 #include "../popup.hpp"
 #include "../resource_window.hpp"
-#include "../../gl_texture.hpp"
-#include "../../gl_resource.hpp"
+#include "../../gl/texture.hpp"
+#include "../../gl/resource.hpp"
 
 namespace rev {
 	const char* PBRMetallicRoughness::getDebugName() const noexcept {

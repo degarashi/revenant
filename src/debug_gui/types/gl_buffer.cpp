@@ -1,4 +1,4 @@
-#include "../../gl_buffer.hpp"
+#include "../../gl/buffer.hpp"
 #include "../../imgui/imgui.h"
 #include "../entry_field.hpp"
 #include "../child.hpp"

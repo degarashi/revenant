@@ -1,6 +1,6 @@
 #include "skybox.hpp"
 #include "../../vdecl.hpp"
-#include "../../gl_resource.hpp"
+#include "../../gl/resource.hpp"
 #include "../../primitive.hpp"
 #include "../../techmgr.hpp"
 #include "../../u_matrix3d.hpp"

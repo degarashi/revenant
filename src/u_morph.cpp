@@ -1,5 +1,5 @@
 #include "u_morph.hpp"
-#include "gl_program.hpp"
+#include "gl/program.hpp"
 #include "uniform_ent.hpp"
 
 namespace rev {

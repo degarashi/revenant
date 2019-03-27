@@ -11,7 +11,7 @@
 #include "camera3d.hpp"
 #include "input/input.hpp"
 #include "input/sdlvalue.hpp"
-#include "gl_resource.hpp"
+#include "gl/resource.hpp"
 #include "glx.hpp"
 #include "font/font.hpp"
 #include "scene_mgr.hpp"

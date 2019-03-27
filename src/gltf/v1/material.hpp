@@ -1,7 +1,7 @@
 #pragma once
 #include "resource.hpp"
 #include "gltf/v1/dataref.hpp"
-#include "../../gl_format.hpp"
+#include "../../gl/format.hpp"
 #include "../../tech.hpp"
 #include "gltf/v1/dc_common.hpp"
 #include "gltf/v1/uniform_value.hpp"

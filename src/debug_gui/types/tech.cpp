@@ -1,10 +1,10 @@
 #include "../../tech.hpp"
 #include "../entry_field.hpp"
-#include "../../gl_state.hpp"
+#include "../../gl/state.hpp"
 #include "../indent.hpp"
 #include "../header.hpp"
 #include "../../vertex_map.hpp"
-#include "../../gl_program.hpp"
+#include "../../gl/program.hpp"
 
 namespace rev {
 	bool Tech::property(const bool edit) {

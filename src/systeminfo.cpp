@@ -1,5 +1,5 @@
 #include "systeminfo.hpp"
-#include "gl_if.hpp"
+#include "gl/if.hpp"
 
 namespace rev {
 	SystemInfo::SystemInfo() noexcept:

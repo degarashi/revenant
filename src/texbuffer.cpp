@@ -1,5 +1,5 @@
 #include "texbuffer.hpp"
-#include "gl_if.hpp"
+#include "gl/if.hpp"
 
 namespace rev {
 	// ------------------- TexBuffer -------------------
