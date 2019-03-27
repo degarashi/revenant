@@ -3,7 +3,7 @@
 #include "gltf/check.hpp"
 #include "../gl_resource.hpp"
 #include "../gl_buffer.hpp"
-#include "../sdl_rw.hpp"
+#include "../sdl/rw.hpp"
 
 namespace rev::gltf {
 	namespace {

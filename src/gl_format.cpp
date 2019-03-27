@@ -1,7 +1,7 @@
 #include "gl_format.hpp"
-#include "sdl_format.hpp"
+#include "sdl/format.hpp"
 #include "lubee/src/error.hpp"
-#include "sdl_surface.hpp"
+#include "sdl/surface.hpp"
 #include "compiler_macro.hpp"
 
 namespace rev {

@@ -2,7 +2,7 @@
 #include "dataquery_if_base.hpp"
 #include "value_loader.hpp"
 #include "../uri.hpp"
-#include "../sdl_rw.hpp"
+#include "../sdl/rw.hpp"
 
 namespace rev::gltf {
 	RWRef::RWRef(const JValue& v, const IDataQueryBase& q):

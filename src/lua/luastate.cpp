@@ -1,6 +1,6 @@
 #include "lcv.hpp"
 #include "lvalue.hpp"
-#include "sdl_rw.hpp"
+#include "../sdl/rw.hpp"
 #include "apppath.hpp"
 #include "lubee/src/freelist.hpp"
 #include "rewindtop.hpp"

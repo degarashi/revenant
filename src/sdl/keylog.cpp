@@ -1,4 +1,4 @@
-#include "sdl_keylog.hpp"
+#include "keylog.hpp"
 #include "input_sdlvalue.hpp"
 
 namespace rev {

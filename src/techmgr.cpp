@@ -1,5 +1,5 @@
 #include "techmgr.hpp"
-#include "sdl_rw.hpp"
+#include "sdl/rw.hpp"
 #include "tech_pass.hpp"
 #include "blockset.hpp"
 #include "tech.hpp"

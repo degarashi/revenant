@@ -1,5 +1,5 @@
 #include "apppath.hpp"
-#include "sdl_rw.hpp"
+#include "sdl/rw.hpp"
 #include <boost/format.hpp>
 
 namespace rev {

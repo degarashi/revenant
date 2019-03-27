@@ -5,11 +5,11 @@
 #include "drawthread.hpp"
 #include "sys_message.hpp"
 #include "handler.hpp"
-#include "sdl_glctx.hpp"
+#include "sdl/glctx.hpp"
 #include "mainproc.hpp"
 #include "systeminfo.hpp"
 #include "output.hpp"
-#include "sdl_window.hpp"
+#include "sdl/window.hpp"
 #include "sound/sound.hpp"
 #include <SDL_timer.h>
 #include <SDL_events.h>

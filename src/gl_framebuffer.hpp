@@ -1,7 +1,7 @@
 #pragma once
 #include "gl_types.hpp"
 #include "lubee/src/size.hpp"
-#include "sdl_tls.hpp"
+#include "sdl/tls.hpp"
 #include "handle/opengl.hpp"
 #include "lubee/src/rect.hpp"
 #include <boost/variant.hpp>

@@ -60,6 +60,7 @@ aux_source_directory(src/gltf/v2 LIBSRC_GLTF_V2)
 aux_source_directory(src/dc LIBSRC_DC)
 aux_source_directory(src/font LIBSRC_MAIN)
 aux_source_directory(src/sound LIBSRC_MAIN)
+aux_source_directory(src/sdl LIBSRC_MAIN)
 list(REMOVE_ITEM LIBSRC_MAIN ${OS_DEPENDANT_SRC} ${SOUND_DEPENDANT_SRC})
 
 # サウンド依存ファイルの設定

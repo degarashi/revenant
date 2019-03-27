@@ -1,6 +1,6 @@
 #include "gltf/v1/gltf.hpp"
 #include "gltf/json_parse.hpp"
-#include "../../sdl_rw.hpp"
+#include "../../sdl/rw.hpp"
 
 namespace rev::gltf::v1 {
 	using ::rev::gltf::loader::Required;

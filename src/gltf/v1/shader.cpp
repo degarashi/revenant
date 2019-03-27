@@ -3,7 +3,7 @@
 #include "../check.hpp"
 #include "../value_loader.hpp"
 #include "../../gl_resource.hpp"
-#include "../../sdl_rw.hpp"
+#include "../../sdl/rw.hpp"
 #include <regex>
 
 namespace rev::gltf::v1 {

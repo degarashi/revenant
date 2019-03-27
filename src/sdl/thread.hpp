@@ -1,6 +1,6 @@
 #pragma once
 #include <SDL_thread.h>
-#include "sdl_mutex.hpp"
+#include "mutex.hpp"
 #include "spine/src/optional.hpp"
 #include "spine/src/argholder.hpp"
 #include "spine/src/enum.hpp"

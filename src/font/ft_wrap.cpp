@@ -1,6 +1,6 @@
 #include "ft_wrap.hpp"
 #include "ft_error.hpp"
-#include "sdl_rw.hpp"
+#include "../sdl/rw.hpp"
 
 namespace rev {
 	// ---------------------- FTLibrary ----------------------

@@ -1,5 +1,5 @@
 #include "luatest.hpp"
-#include "../sdl_rw.hpp"
+#include "../sdl/rw.hpp"
 
 namespace rev {
 	namespace test {

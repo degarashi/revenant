@@ -1,5 +1,5 @@
 #include "lcv.hpp"
-#include "sdl_rw.hpp"
+#include "../sdl/rw.hpp"
 #include "apppath.hpp"
 #include <boost/format.hpp>
 #include <fstream>

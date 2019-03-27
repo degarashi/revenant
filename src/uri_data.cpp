@@ -1,6 +1,6 @@
 #include "uri_data.hpp"
 #include "uri.hpp"
-#include "sdl_rw.hpp"
+#include "sdl/rw.hpp"
 
 namespace rev {
 	HRW URI_Data::openURI(const URI& uri, const int access) const {

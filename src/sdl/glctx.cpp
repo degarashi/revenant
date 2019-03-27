@@ -1,6 +1,6 @@
-#include "sdl_glctx.hpp"
-#include "sdl_window.hpp"
-#include "sdl_error.hpp"
+#include "glctx.hpp"
+#include "window.hpp"
+#include "error.hpp"
 
 namespace rev {
 	GLContext::GLContext(const HWin& w) {

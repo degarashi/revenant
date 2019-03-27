@@ -1,5 +1,5 @@
 #include "mainthread.hpp"
-#include "sdl_rw.hpp"
+#include "../sdl/rw.hpp"
 #include "../sound/sound.hpp"
 #include "serialization/sdl_rw.hpp"
 #include "serialization/uri_file.hpp"

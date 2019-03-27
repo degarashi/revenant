@@ -5,7 +5,7 @@
 #include "output.hpp"
 #include "sharedata.hpp"
 #include "gameloopparam.hpp"
-#include "sdl_glctx.hpp"
+#include "sdl/glctx.hpp"
 #include "handler.hpp"
 #include "profiler_global.hpp"
 

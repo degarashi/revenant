@@ -1,6 +1,6 @@
 #pragma once
 #include "spinlock_detail.hpp"
-#include "src/sdl_mutex.hpp"
+#include "sdl/mutex.hpp"
 #include <array>
 
 namespace rev {

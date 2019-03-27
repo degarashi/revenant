@@ -1,5 +1,5 @@
-#include "sdl_window.hpp"
-#include "sdl_error.hpp"
+#include "window.hpp"
+#include "error.hpp"
 #include "lubee/src/meta/countof.hpp"
 
 namespace rev {

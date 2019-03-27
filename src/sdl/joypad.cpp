@@ -1,4 +1,4 @@
-#include "sdl_joypad.hpp"
+#include "joypad.hpp"
 #include "input_common.hpp"
 #include "input_constant.hpp"
 #include <SDL.h>

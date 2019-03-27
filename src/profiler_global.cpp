@@ -1,5 +1,5 @@
 #include "profiler_global.hpp"
-#include "sdl_mutex.hpp"
+#include "sdl/mutex.hpp"
 #include "spinlock.hpp"
 
 namespace rev::prof {

@@ -1,5 +1,5 @@
 #pragma once
-#include "sdl_mutex.hpp"
+#include "sdl/mutex.hpp"
 
 namespace rev {
 	namespace log {

@@ -1,6 +1,6 @@
 #pragma once
 #include "looper.hpp"
-#include "sdl_thread.hpp"
+#include "sdl/thread.hpp"
 
 namespace rev {
 	//! Looper付きスレッド

@@ -1,6 +1,6 @@
 #include "texturesrc_uri.hpp"
-#include "sdl_surface.hpp"
-#include "sdl_rw.hpp"
+#include "sdl/surface.hpp"
+#include "sdl/rw.hpp"
 #include "gl_if.hpp"
 #include "lubee/src/pow_value.hpp"
 

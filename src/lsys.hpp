@@ -1,6 +1,6 @@
 #pragma once
 #include "spine/src/singleton.hpp"
-#include "sdl_thread.hpp"
+#include "sdl/thread.hpp"
 #include "lvalue.hpp"
 #include "handle/uri.hpp"
 #include <lua.hpp>

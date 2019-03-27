@@ -1,4 +1,4 @@
-#include "sdl_textinput.hpp"
+#include "textinput.hpp"
 #include "input_sdlvalue.hpp"
 
 namespace rev {

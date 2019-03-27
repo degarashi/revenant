@@ -1,7 +1,7 @@
-#include "sdl_surface.hpp"
-#include "sdl_format.hpp"
-#include "sdl_color.hpp"
-#include "sdl_rw.hpp"
+#include "surface.hpp"
+#include "format.hpp"
+#include "color.hpp"
+#include "rw.hpp"
 #include <SDL_image.h>
 
 namespace rev {

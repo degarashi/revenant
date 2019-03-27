@@ -1,5 +1,5 @@
-#include "sdl_mutex.hpp"
-#include "sdl_error.hpp"
+#include "mutex.hpp"
+#include "error.hpp"
 
 namespace rev {
 	// ----- Mutex -----

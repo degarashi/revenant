@@ -1,4 +1,4 @@
-#include "sdl_color.hpp"
+#include "color.hpp"
 #include "lubee/src/error.hpp"
 
 namespace rev {

@@ -1,4 +1,4 @@
-#include "sdl_touchpad.hpp"
+#include "touchpad.hpp"
 #include "input_common.hpp"
 
 namespace rev {

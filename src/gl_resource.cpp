@@ -8,8 +8,8 @@
 #include "texturesrc_mem.hpp"
 #include "gl_shader.hpp"
 #include "glx.hpp"
-#include "sdl_surface.hpp"
-#include "sdl_rw.hpp"
+#include "sdl/surface.hpp"
+#include "sdl/rw.hpp"
 #include "systeminfo.hpp"
 
 namespace rev {

@@ -1,5 +1,5 @@
 #include "gl_texture_debug.hpp"
-#include "sdl_format.hpp"
+#include "sdl/format.hpp"
 #include "gl_if.hpp"
 
 namespace rev {

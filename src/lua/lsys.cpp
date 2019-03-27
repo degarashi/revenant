@@ -132,7 +132,7 @@ namespace rev {
 	}
 }
 #include "apppath.hpp"
-#include "sdl_rw.hpp"
+#include "../sdl/rw.hpp"
 namespace rev {
 	void LSysFunc::loadClass(const std::string& name, const Lua_SP& ls) {
 		std::string fileName(name);

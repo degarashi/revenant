@@ -2,7 +2,7 @@
 #include "lsys.hpp"
 #include "gameloopparam.hpp"
 #include "systeminfo.hpp"
-#include "sdl_rw.hpp"
+#include "sdl/rw.hpp"
 #include "uri_file.hpp"
 #include "uri_data.hpp"
 #include "apppath.hpp"

@@ -3,8 +3,8 @@
 #include "clock.hpp"
 #include "frea/src/vector.hpp"
 #include "spine/src/singleton.hpp"
-#include "sdl_tls.hpp"
-#include "sdl_mutex.hpp"
+#include "../sdl/tls.hpp"
+#include "../sdl/mutex.hpp"
 #include <AL/al.h>
 #include <AL/alc.h>
 

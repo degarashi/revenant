@@ -1,5 +1,5 @@
 #include "gltf/v2/gltf.hpp"
-#include "../../sdl_rw.hpp"
+#include "../../sdl/rw.hpp"
 #include "../json_parse.hpp"
 
 namespace rev::gltf::v2 {

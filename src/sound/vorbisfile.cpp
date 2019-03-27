@@ -1,5 +1,5 @@
 #include "common.hpp"
-#include "../sdl_rw.hpp"
+#include "../sdl/rw.hpp"
 #include "error.hpp"
 
 namespace rev {

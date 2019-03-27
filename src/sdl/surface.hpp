@@ -1,6 +1,6 @@
 #pragma once
 #include "handle/sdl.hpp"
-#include "sdl_mutex.hpp"
+#include "mutex.hpp"
 #include "abstbuffer.hpp"
 #include "lubee/src/rect.hpp"
 #include "handle/sdl.hpp"

@@ -1,5 +1,5 @@
 #include "uri_file.hpp"
-#include "sdl_rw.hpp"
+#include "sdl/rw.hpp"
 #include "apppath.hpp"
 
 namespace rev {

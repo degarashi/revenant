@@ -5,7 +5,7 @@
 #include "apppath.hpp"
 #include "resmgr_app.hpp"
 #include "spine/src/resmgr.hpp"
-#include "sdl_rw.hpp"
+#include "../sdl/rw.hpp"
 
 namespace cereal {
 	class access;

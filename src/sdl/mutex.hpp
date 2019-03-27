@@ -1,5 +1,5 @@
 #pragma once
-#include "sdl_tls.hpp"
+#include "tls.hpp"
 #include "spine/src/optional.hpp"
 
 namespace rev {

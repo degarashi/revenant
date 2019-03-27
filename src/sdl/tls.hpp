@@ -1,5 +1,5 @@
 #pragma once
-#include "sdl_error.hpp"
+#include "error.hpp"
 #include <SDL_thread.h>
 #include <string>
 

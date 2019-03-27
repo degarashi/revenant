@@ -2,8 +2,8 @@
 #include "clock.hpp"
 #include "lubee/src/meta/enable_if.hpp"
 #include "spine/src/pqueue.hpp"
-#include "sdl_tls.hpp"
-#include "sdl_mutex.hpp"
+#include "sdl/tls.hpp"
+#include "sdl/mutex.hpp"
 #include <functional>
 #include <cstring>
 #include <memory>

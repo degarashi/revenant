@@ -9,7 +9,7 @@
 #include <SDL_rwops.h>
 #include <stdexcept>
 #include <vector>
-#include "sdl_error.hpp"
+#include "error.hpp"
 
 namespace cereal {
 	class access;

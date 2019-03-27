@@ -5,7 +5,7 @@
 #include "input_sdlvalue.hpp"
 #include "systeminfo.hpp"
 #include "sharedata.hpp"
-#include "sdl_window.hpp"
+#include "sdl/window.hpp"
 #include "output.hpp"
 #include "gl_if.hpp"
 #include "handler.hpp"
