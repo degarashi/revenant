@@ -1,6 +1,6 @@
 #include "uri.hpp"
 #include "lubee/src/meta/assume.hpp"
-#include "../text.hpp"
+#include "../char_code.hpp"
 
 namespace {
 	template <class T, class F>

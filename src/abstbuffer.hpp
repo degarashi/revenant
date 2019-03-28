@@ -1,5 +1,5 @@
 #pragma once
-#include "text.hpp"
+#include "char_code.hpp"
 #include <vector>
 #include <cstdint>
 
