@@ -1,9 +1,9 @@
 #include "../lua/impl.hpp"
 #include "../object_mgr.hpp"
 
-#include "../util/fbclear.hpp"
+#include "../drawutil/fbclear.hpp"
 DEF_LUAIMPLEMENT_SPTR(
-	rev::ObjMgr, rev::util::FBClear, FBClear,
+	rev::ObjMgr, rev::drawutil::FBClear, FBClear,
 	LUAIMPLEMENT_BASE,
 	NOTHING,
 	NOTHING,
@@ -11,19 +11,19 @@ DEF_LUAIMPLEMENT_SPTR(
 	(rev::Priority)(const rev::ClearParam&)
 )
 
-#include "../util/fbswitch.hpp"
+#include "../drawutil/fbswitch.hpp"
 DEF_LUAIMPLEMENT_SPTR(
-	rev::ObjMgr, rev::util::FBSwitch, FBSwitch,
+	rev::ObjMgr, rev::drawutil::FBSwitch, FBSwitch,
 	LUAIMPLEMENT_BASE,
 	NOTHING,
 	NOTHING,
 	(setClearParam),
-	(rev::Priority)(const HFb&)(const rev::util::ClearParam_OP&)
+	(rev::Priority)(const HFb&)(const rev::drawutil::ClearParam_OP&)
 )
 
 namespace rev {
 	void LuaImport::RegisterUtilsClass(LuaState& lsc) {
-		RegisterClass<util::FBSwitch>(lsc);
-		RegisterClass<util::FBClear>(lsc);
+		RegisterClass<drawutil::FBSwitch>(lsc);
+		RegisterClass<drawutil::FBClear>(lsc);
 	}
 }

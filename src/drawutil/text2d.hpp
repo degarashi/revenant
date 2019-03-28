@@ -3,7 +3,7 @@
 #include "beat/src/pose2d.hpp"
 
 namespace rev {
-	namespace util {
+	namespace drawutil {
 		// 1行の縦をY=1としたサイズに内部変換
 		// H,V {Negative, Positive, Middle}
 		//! テキスト描画クラス (for 2D)

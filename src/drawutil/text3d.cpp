@@ -4,7 +4,7 @@
 #include "../u_matrix3d.hpp"
 
 namespace rev {
-	namespace util {
+	namespace drawutil {
 		// ---------------------- Text3D ----------------------
 		Text3D::Text3D(const float lh, const bool bBillboard):
 			_lineHeight(lh),

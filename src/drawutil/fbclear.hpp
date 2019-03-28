@@ -3,7 +3,7 @@
 #include "../clear.hpp"
 
 namespace rev {
-	namespace util {
+	namespace drawutil {
 		class FBClear : public DrawableObjT<FBClear> {
 			private:
 				using base_t = DrawableObjT<FBClear>;
@@ -15,4 +15,4 @@ namespace rev {
 		};
 	}
 }
-DEF_LUAIMPORT(rev::util::FBClear)
+DEF_LUAIMPORT(rev::drawutil::FBClear)

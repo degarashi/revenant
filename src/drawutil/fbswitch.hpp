@@ -3,7 +3,7 @@
 #include "../clear.hpp"
 
 namespace rev {
-	namespace util {
+	namespace drawutil {
 		using ClearParam_OP = spi::Optional<ClearParam>;
 		class FBSwitch : public DrawableObjT<FBSwitch> {
 			private:
@@ -17,4 +17,4 @@ namespace rev {
 		};
 	}
 }
-DEF_LUAIMPORT(rev::util::FBSwitch)
+DEF_LUAIMPORT(rev::drawutil::FBSwitch)

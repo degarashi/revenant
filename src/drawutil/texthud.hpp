@@ -6,7 +6,7 @@
 
 namespace rev {
 	using SName = spi::FlyweightItem<std::string>;
-	namespace util {
+	namespace drawutil {
 		//! テキスト描画クラス (for HUD)
 		class TextHUD : public Text {
 			private:

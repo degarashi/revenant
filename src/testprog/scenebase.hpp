@@ -1,7 +1,7 @@
 #pragma once
 #include "../handle/input.hpp"
 #include "../handle/object.hpp"
-#include "../util/texthud.hpp"
+#include "../drawutil/texthud.hpp"
 
 namespace rev::test {
 	class TestScene {
@@ -10,7 +10,7 @@ namespace rev::test {
 				(Quit)
 				(Pause)
 			);
-			mutable util::TextHUD	_fps;
+			mutable drawutil::TextHUD	_fps;
 			HAct					_act[Act::_Num];
 			HTech					_textTech;
 

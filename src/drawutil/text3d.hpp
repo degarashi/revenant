@@ -3,7 +3,7 @@
 #include "beat/src/pose3d.hpp"
 
 namespace rev {
-	namespace util {
+	namespace drawutil {
 		//! テキスト描画クラス (for 3D sprite)
 		class Text3D : public beat::g3::Pose, public Text {
 			private:

@@ -2,7 +2,7 @@
 #include "../glx_if.hpp"
 
 namespace rev {
-	namespace util {
+	namespace drawutil {
 		// --------------------- FBClear ---------------------
 		FBClear::FBClear(const Priority dprio,
 						const ClearParam& p):

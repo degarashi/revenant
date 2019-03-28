@@ -4,7 +4,7 @@
 #include "../fbrect.hpp"
 
 namespace rev {
-	namespace util {
+	namespace drawutil {
 		// --------------------- FBSwitch ---------------------
 		FBSwitch::FBSwitch(const Priority dprio, const HFb& hFb, const ClearParam_OP& cp):
 			base_t(dprio),

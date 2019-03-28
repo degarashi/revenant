@@ -6,7 +6,7 @@
 #include "../u_common.hpp"
 
 namespace rev {
-	namespace util {
+	namespace drawutil {
 		// ---------------------- TextHUD ----------------------
 		const SName	TextHUD::U_Text("mText");
 		TextHUD::TextHUD():

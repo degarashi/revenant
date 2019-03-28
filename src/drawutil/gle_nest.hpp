@@ -2,7 +2,7 @@
 #include "../glx.hpp"
 #include "../uniform_setter.hpp"
 
-namespace rev::util {
+namespace rev::drawutil {
 	template <class... Base>
 	class GLE_Nest :
 		public Base...

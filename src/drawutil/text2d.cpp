@@ -7,7 +7,7 @@
 #include "../u_common.hpp"
 
 namespace rev {
-	namespace util {
+	namespace drawutil {
 		// ---------------------- Text2D ----------------------
 		Text2D::Text2D(const float lh):
 			_lineHeight(lh),

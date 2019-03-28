@@ -5,7 +5,7 @@
 #include "../u_common.hpp"
 
 namespace rev {
-	namespace util {
+	namespace drawutil {
 		// ---------------------- Text ----------------------
 		CCoreID_OP Text::cs_defaultCid;
 		CCoreID Text::_GetDefaultCID() {
