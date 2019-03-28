@@ -2,7 +2,7 @@
 #include "gltf/v1/dc_common.hpp"
 #include "gltf/v1/dataref.hpp"
 #include "lubee/src/fwd.hpp"
-#include "../../debuggui_if.hpp"
+#include "../../debug_gui/if.hpp"
 
 namespace rev::gltf::v1 {
 	struct IQueryMatrix_USem;

@@ -1,6 +1,6 @@
 #pragma once
 #include "gl/types.hpp"
-#include "debuggui_if.hpp"
+#include "debug_gui/if.hpp"
 #include "handle/opengl.hpp"
 #include "cache.hpp"
 #include "drawcmd/cmd.hpp"

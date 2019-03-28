@@ -4,7 +4,7 @@
 #include "sstream.hpp"
 #include "../imgui/imgui.h"
 #include <iomanip>
-#include "../debuggui_if.hpp"
+#include "if.hpp"
 
 namespace rev {
 	namespace debug {

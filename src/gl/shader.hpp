@@ -1,6 +1,6 @@
 #pragma once
 #include "types.hpp"
-#include "debuggui_if.hpp"
+#include "debug_gui/if.hpp"
 
 namespace rev {
 	//! GLシェーダークラス

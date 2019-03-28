@@ -1,7 +1,7 @@
 #pragma once
 #include "header.hpp"
 #include "../resource.hpp"
-#include "../debuggui_if.hpp"
+#include "../debug_gui/if.hpp"
 #include "spine/src/optional.hpp"
 #include "spine/src/enum.hpp"
 

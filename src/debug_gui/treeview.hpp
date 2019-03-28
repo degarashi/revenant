@@ -1,6 +1,6 @@
 #pragma once
+#include "if.hpp"
 #include "../handle/gui.hpp"
-#include "../debuggui_if.hpp"
 #include "../imgui/imgui.h"
 #include "child.hpp"
 #include "column.hpp"

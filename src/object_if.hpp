@@ -4,7 +4,7 @@
 #include "spine/src/optional.hpp"
 #include "handle/object.hpp"
 #include "handle/opengl.hpp"
-#include "debuggui_if.hpp"
+#include "debug_gui/if.hpp"
 #include "resource.hpp"
 
 namespace rev {

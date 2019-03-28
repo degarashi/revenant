@@ -2,7 +2,7 @@
 #include "handle/opengl.hpp"
 #include "frea/src/vector.hpp"
 #include "spine/src/enum.hpp"
-#include "debuggui_if.hpp"
+#include "debug_gui/if.hpp"
 #include "color.hpp"
 
 namespace rev {

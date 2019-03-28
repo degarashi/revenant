@@ -1,7 +1,7 @@
 #pragma once
 #include "handle/opengl.hpp"
 #include "gl/header.hpp"
-#include "debuggui_if.hpp"
+#include "debug_gui/if.hpp"
 #include <vector>
 #include <unordered_set>
 

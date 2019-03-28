@@ -7,7 +7,7 @@
 #include "spine/src/resmgr.hpp"
 #include "spine/src/singleton.hpp"
 #include "resource.hpp"
-#include "debuggui_if.hpp"
+#include "debug_gui/if.hpp"
 
 namespace rev {
 	/*! 姿勢の保持はPoseクラスが行い，カメラ固有の変数だけを持つ */

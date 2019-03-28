@@ -5,7 +5,7 @@
 #include "handle/camera.hpp"
 #include "spine/src/resmgr.hpp"
 #include "spine/src/singleton.hpp"
-#include "debuggui_if.hpp"
+#include "debug_gui/if.hpp"
 #include "resource.hpp"
 
 namespace rev {

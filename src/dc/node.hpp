@@ -3,7 +3,7 @@
 #include "spine/src/treenode.hpp"
 #include "../handle/model.hpp"
 #include "qm_if.hpp"
-#include "../debuggui_if.hpp"
+#include "../debug_gui/if.hpp"
 #include "jointquery_if.hpp"
 
 namespace rev::dc {

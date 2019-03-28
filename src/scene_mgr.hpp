@@ -1,7 +1,7 @@
 #pragma once
 #include "spine/src/singleton.hpp"
 #include "lua/lcvalue.hpp"
-#include "debuggui_if.hpp"
+#include "debug_gui/if.hpp"
 #include "handle/object.hpp"
 #include <vector>
 

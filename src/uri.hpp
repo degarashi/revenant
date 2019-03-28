@@ -2,7 +2,7 @@
 #include "path.hpp"
 #include "lubee/src/operators.hpp"
 #include "spine/src/enum.hpp"
-#include "debuggui_if.hpp"
+#include "debug_gui/if.hpp"
 #include "resource.hpp"
 #include "handle/uri.hpp"
 #include <regex>

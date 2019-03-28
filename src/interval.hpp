@@ -1,5 +1,5 @@
 #pragma once
-#include "debuggui_if.hpp"
+#include "debug_gui/if.hpp"
 #ifdef DEBUGGUI_ENABLED
 	#include "debug_gui/child.hpp"
 	#include "lubee/src/arithmetic.hpp"

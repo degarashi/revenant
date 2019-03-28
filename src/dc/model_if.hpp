@@ -1,6 +1,6 @@
 #pragma once
 #include "../handle/model.hpp"
-#include "../debuggui_if.hpp"
+#include "../debug_gui/if.hpp"
 #include "bbox.hpp"
 #include <vector>
 

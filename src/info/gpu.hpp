@@ -1,6 +1,6 @@
 #pragma once
 #include "../gl/types.hpp"
-#include "../debuggui_if.hpp"
+#include "../debug_gui/if.hpp"
 #include <unordered_set>
 
 namespace rev::info {

@@ -2,7 +2,7 @@
 #include "column.hpp"
 #include "../imgui/imgui.h"
 #include "state_storage.hpp"
-#include "../debuggui_if.hpp"
+#include "if.hpp"
 #include "id.hpp"
 #include "spine/src/enum.hpp"
 #include "textfilter.hpp"

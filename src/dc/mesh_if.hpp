@@ -1,6 +1,6 @@
 #pragma once
 #include "../handle/opengl.hpp"
-#include "../debuggui_if.hpp"
+#include "../debug_gui/if.hpp"
 
 namespace rev {
 	class IEffect;

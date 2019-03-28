@@ -1,4 +1,4 @@
-#include "../../debuggui_if.hpp"
+#include "../if.hpp"
 
 namespace rev {
 	namespace debug {

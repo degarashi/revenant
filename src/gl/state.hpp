@@ -1,6 +1,6 @@
 #pragma once
 #include <cstddef>
-#include "debuggui_if.hpp"
+#include "debug_gui/if.hpp"
 #include "spine/src/enum.hpp"
 
 namespace rev {
