@@ -2,7 +2,7 @@
 #include "spine/src/singleton.hpp"
 #include "spine/src/enum.hpp"
 
-namespace rev {
+namespace rev::info {
 	//! 実行環境に関する情報を取得
 	class Spec : public spi::Singleton<Spec> {
 		public:

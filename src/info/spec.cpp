@@ -3,7 +3,7 @@
 #include <SDL_cpuinfo.h>
 #include <SDL_power.h>
 
-namespace rev {
+namespace rev::info {
 	namespace {
 		using FeatFunc = SDL_bool (*)();
 		const FeatFunc cs_ff[] = {
