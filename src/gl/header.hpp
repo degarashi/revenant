@@ -7,7 +7,7 @@
 	#include <GLES2/gl2ext.h>
 #else
 	#include <GL/gl.h>
-	#include "../glext.h"
+	#include "../external/glext.h"
 #endif
 
 #if defined(WIN32)
