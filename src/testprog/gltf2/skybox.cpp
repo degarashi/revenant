@@ -6,7 +6,7 @@
 #include "../../u_matrix3d.hpp"
 #include "../../u_common.hpp"
 #include "../../glx_if.hpp"
-#include "../../texture_filter.hpp"
+#include "../../gl/texture/filter.hpp"
 #include "../../camera3d.hpp"
 
 namespace rev::test {

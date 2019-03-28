@@ -5,7 +5,7 @@
 #include "../value_loader.hpp"
 #include "../../gl/resource.hpp"
 #include "../../gl/texture.hpp"
-#include "../../texturesrc_mem.hpp"
+#include "../../gl/texture/mem.hpp"
 
 namespace rev::gltf::v2 {
 	namespace L = gltf::loader;

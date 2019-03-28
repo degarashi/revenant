@@ -1,6 +1,6 @@
-#include "texture_debug.hpp"
-#include "../sdl/format.hpp"
-#include "if.hpp"
+#include "debug.hpp"
+#include "../if.hpp"
+#include "../../sdl/format.hpp"
 
 namespace rev {
 	// ------------------------- Texture_Debug -------------------------

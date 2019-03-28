@@ -7,7 +7,7 @@
 #include "../../systeminfo.hpp"
 #include "../../tls_data.hpp"
 #include "../../gl/resource.hpp"
-#include "../../texture_filter.hpp"
+#include "../../gl/texture/filter.hpp"
 #include "frea/src/random/vector.hpp"
 #include <boost/format.hpp>
 

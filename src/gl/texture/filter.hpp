@@ -1,6 +1,6 @@
 #pragma once
-#include "gl/types.hpp"
-#include "drawcmd/queue_if.hpp"
+#include "../types.hpp"
+#include "../../drawcmd/queue_if.hpp"
 
 namespace rev {
 	class TextureFilter_In {

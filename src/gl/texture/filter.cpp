@@ -1,5 +1,5 @@
-#include "texture_filter.hpp"
-#include "gl/if.hpp"
+#include "filter.hpp"
+#include "../if.hpp"
 
 namespace rev {
 	namespace {

@@ -1,4 +1,4 @@
-#include "texturesrc_if.hpp"
+#include "if.hpp"
 
 namespace rev {
 	// ----------------------- ITextureSource -----------------------

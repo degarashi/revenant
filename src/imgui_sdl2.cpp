@@ -4,7 +4,7 @@
 #include "imgui/imgui.h"
 #include "input/input.hpp"
 #include "gl/resource.hpp"
-#include "texturesrc_mem.hpp"
+#include "gl/texture/mem.hpp"
 #include "gl/shader.hpp"
 #include "gl/program.hpp"
 #include "vdecl.hpp"

@@ -1,8 +1,8 @@
 #pragma once
-#include "gl/types.hpp"
-#include "gl/format.hpp"
+#include "../types.hpp"
+#include "../format.hpp"
+#include "buffer.hpp"
 #include "lubee/src/rect.hpp"
-#include "texbuffer.hpp"
 
 namespace rev {
 	namespace draw {

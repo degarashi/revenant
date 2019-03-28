@@ -1,7 +1,7 @@
-#include "texturesrc_uri.hpp"
-#include "sdl/surface.hpp"
-#include "sdl/rw.hpp"
-#include "gl/if.hpp"
+#include "uri.hpp"
+#include "../../sdl/surface.hpp"
+#include "../../sdl/rw.hpp"
+#include "../if.hpp"
 #include "lubee/src/pow_value.hpp"
 
 namespace rev {

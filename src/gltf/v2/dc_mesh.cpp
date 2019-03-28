@@ -2,7 +2,7 @@
 #include "gltf/v2/dc_mesh_module.hpp"
 #include "../../techmgr.hpp"
 #include "../../gl/resource.hpp"
-#include "../../texture_filter.hpp"
+#include "../../gl/texture/filter.hpp"
 #include "../../glx_if.hpp"
 #include "../../u_pbr_mr.hpp"
 #include "../../gl/bstate.hpp"

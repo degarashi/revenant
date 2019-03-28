@@ -3,7 +3,7 @@
 #include "lane.hpp"
 #include "../emplace.hpp"
 #include "../gl/resource.hpp"
-#include "../texturesrc_mem.hpp"
+#include "../gl/texture/mem.hpp"
 #include "../gl/texture.hpp"
 
 namespace rev {

@@ -1,6 +1,6 @@
 #pragma once
-#include "../texture_source.hpp"
-#include "../texture_filter.hpp"
+#include "../gl/texture/if.hpp"
+#include "../gl/texture/filter.hpp"
 #include "../handle/opengl.hpp"
 
 namespace rev {

@@ -4,6 +4,7 @@
 #include "drawcmd/types/matrix.hpp"
 #include "gl/program.hpp"
 #include "gl/texture.hpp"
+#include "gl/texture/source.hpp"
 #include "handle/opengl.hpp"
 #include "frea/src/detect_type.hpp"
 #include "lubee/src/compare.hpp"

@@ -1,12 +1,12 @@
-#include "texture_source.hpp"
-#include "gl/error.hpp"
-#include "gl/if.hpp"
-#include "drawcmd/queue_if.hpp"
-#include "sdl/surface.hpp"
-#include "sdl/rw.hpp"
-#include "gl/framebuffer_tmp.hpp"
-#include "gl/resource.hpp"
-#include "msg/handler.hpp"
+#include "source.hpp"
+#include "../error.hpp"
+#include "../if.hpp"
+#include "../framebuffer_tmp.hpp"
+#include "../resource.hpp"
+#include "../../drawcmd/queue_if.hpp"
+#include "../../sdl/surface.hpp"
+#include "../../sdl/rw.hpp"
+#include "../../msg/handler.hpp"
 
 namespace rev {
 	// --------------- TextureSource::DCmd_Bind ---------------

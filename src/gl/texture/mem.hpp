@@ -1,6 +1,6 @@
 #pragma once
-#include "texture_source.hpp"
-#include "abstbuffer.hpp"
+#include "source.hpp"
+#include "../../abstbuffer.hpp"
 
 namespace rev {
 	class TextureSrc_Mem :

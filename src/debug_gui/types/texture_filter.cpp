@@ -1,4 +1,4 @@
-#include "../../texture_filter.hpp"
+#include "../../gl/texture/filter.hpp"
 #include "../entry_field.hpp"
 
 namespace rev {

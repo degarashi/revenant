@@ -118,7 +118,7 @@ namespace rev {
 }
 
 #include "gl/resource.hpp"
-#include "texturesrc_mem.hpp"
+#include "gl/texture/mem.hpp"
 namespace rev {
 	namespace {
 		const auto c_filter = std::make_shared<TextureFilter>();

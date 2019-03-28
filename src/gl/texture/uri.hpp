@@ -1,6 +1,6 @@
 #pragma once
-#include "texture_source.hpp"
-#include "handle/uri.hpp"
+#include "source.hpp"
+#include "../../handle/uri.hpp"
 
 namespace rev {
 	//! URIから2Dテクスチャを読む

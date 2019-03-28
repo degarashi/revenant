@@ -1,5 +1,6 @@
 #pragma once
-#include "texture.hpp"
+#include "../texture.hpp"
+#include "source.hpp"
 #include "frea/src/vector.hpp"
 
 namespace rev {
