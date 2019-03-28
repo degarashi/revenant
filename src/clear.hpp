@@ -9,5 +9,5 @@ namespace rev {
 		spi::Optional<uint32_t>		stencil;
 	};
 }
-#include "luaimport.hpp"
+#include "lua/import.hpp"
 DEF_LUAIMPORT(rev::ClearParam)

@@ -290,7 +290,7 @@ namespace rev {
 		}
 	};
 }
-#include "luaimport.hpp"
+#include "../lua/import.hpp"
 DEF_LUAIMPORT(rev::Input)
 DEF_LUAIMPORT(rev::Action)
 DEF_LUAIMPORT(rev::Keyboard)

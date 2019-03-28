@@ -1,5 +1,5 @@
 #include "lcvtest.hpp"
-#include "../luaimpl.hpp"
+#include "../lua/impl.hpp"
 #include <boost/lexical_cast.hpp>
 
 namespace rev {

@@ -1,8 +1,8 @@
 #pragma once
+#include "lcv.hpp"
 #include "lubee/src/meta/check_macro.hpp"
 #include "lubee/src/meta/enable_if.hpp"
 #include "lubee/src/error.hpp"
-#include "lcv.hpp"
 #include <boost/preprocessor.hpp>
 
 namespace rev {

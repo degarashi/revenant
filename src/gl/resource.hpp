@@ -111,5 +111,5 @@ namespace rev {
 			const FBInfo_OP& getDefaultColor() const;
 	};
 }
-#include "../luaimport.hpp"
+#include "../lua/import.hpp"
 DEF_LUAIMPORT(rev::GLRes)

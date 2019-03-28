@@ -65,5 +65,5 @@ namespace rev {
 			DEF_RESOURCE_EQUAL
 	};
 }
-#include "luaimport.hpp"
+#include "lua/import.hpp"
 DEF_LUAIMPORT(rev::Camera2D)

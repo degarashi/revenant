@@ -1,4 +1,4 @@
-#include "../luaimpl.hpp"
+#include "../lua/impl.hpp"
 #include "frea/src/vector.hpp"
 
 DEF_LUAIMPLEMENT_PTR(

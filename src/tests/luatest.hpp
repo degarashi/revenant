@@ -3,8 +3,8 @@
 #include "lubee/src/random/string.hpp"
 #include "frea/src/random/angle.hpp"
 #include "frea/src/random/quaternion.hpp"
-#include "../lcv.hpp"
-#include "../lctable.hpp"
+#include "../lua/lcv.hpp"
+#include "../lua/lctable.hpp"
 
 namespace rev {
 	namespace test {

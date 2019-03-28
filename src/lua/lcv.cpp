@@ -1,7 +1,7 @@
-#include "lubee/src/rect.hpp"
-#include "emplace.hpp"
 #include "lvalue.hpp"
-#include "rewindtop.hpp"
+#include "../emplace.hpp"
+#include "../rewindtop.hpp"
+#include "lubee/src/rect.hpp"
 
 namespace rev {
 	DEF_LCV_OSTREAM(void)

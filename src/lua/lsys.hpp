@@ -1,8 +1,8 @@
 #pragma once
-#include "spine/src/singleton.hpp"
-#include "sdl/thread.hpp"
 #include "lvalue.hpp"
-#include "handle/uri.hpp"
+#include "../sdl/thread.hpp"
+#include "../handle/uri.hpp"
+#include "spine/src/singleton.hpp"
 #include <lua.hpp>
 
 namespace rev {

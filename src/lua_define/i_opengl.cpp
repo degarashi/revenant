@@ -1,4 +1,4 @@
-#include "../luaimpl.hpp"
+#include "../lua/impl.hpp"
 #include "../gl/resource.hpp"
 #include "../gl/texture.hpp"
 #include "../gl/renderbuffer.hpp"

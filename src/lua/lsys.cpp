@@ -1,7 +1,7 @@
 #include "lsys.hpp"
-#include "uri.hpp"
-#include "emplace.hpp"
-#include "resmgr_base.hpp"
+#include "../uri.hpp"
+#include "../emplace.hpp"
+#include "../resmgr_base.hpp"
 #include <SDL_timer.h>
 
 namespace rev {

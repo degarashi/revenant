@@ -2,7 +2,7 @@
 #include "gl/format.hpp"
 #include "clock.hpp"
 #include "lubee/src/fwd.hpp"
-#include "luaimport_types.hpp"
+#include "import_types.hpp"
 #include "rewindtop.hpp"
 #include "lcvalue.hpp"
 #include "handle/sdl.hpp"
@@ -738,9 +738,9 @@ namespace rev {
 		lsc.setMetatable(-2);
 	}
 }
-#include "luaimport.hpp"
+#include "import.hpp"
+#include "../remove_const_noexcept.hpp"
 #include <map>
-#include "remove_const_noexcept.hpp"
 namespace rev {
 	//! Luaから引数を変換取得して関数を呼ぶ
 	template <class... Ts0>

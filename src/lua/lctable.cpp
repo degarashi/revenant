@@ -1,4 +1,4 @@
-#include "../lc_visitor.hpp"
+#include "lc_visitor.hpp"
 
 namespace rev {
 	bool LCTable::preciseCompare(const LCTable& tbl) const {

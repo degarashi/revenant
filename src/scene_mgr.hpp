@@ -1,6 +1,6 @@
 #pragma once
 #include "spine/src/singleton.hpp"
-#include "lcvalue.hpp"
+#include "lua/lcvalue.hpp"
 #include "debuggui_if.hpp"
 #include "handle/object.hpp"
 #include <vector>
@@ -52,5 +52,5 @@ namespace rev {
 			DEF_DEBUGGUI_PROP
 	};
 }
-#include "luaimport.hpp"
+#include "lua/import.hpp"
 DEF_LUAIMPORT(rev::SceneMgr)

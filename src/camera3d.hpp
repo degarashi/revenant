@@ -78,5 +78,5 @@ namespace rev {
 			DEF_DEBUGGUI_PROP
 	};
 }
-#include "luaimport.hpp"
+#include "lua/import.hpp"
 DEF_LUAIMPORT(rev::Camera3D)

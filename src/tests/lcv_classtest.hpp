@@ -1,6 +1,6 @@
 #pragma once
 #include "lcvtest.hpp"
-#include "../luaimpl.hpp"
+#include "../lua/impl.hpp"
 #include "lubee/src/meta/countof.hpp"
 
 namespace rev {

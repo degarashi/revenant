@@ -419,7 +419,7 @@ namespace rev {
 			void invalidate();
 	};
 }
-#include "luaimport.hpp"
+#include "../lua/import.hpp"
 DEF_LUAIMPORT(rev::ABuffer)
 DEF_LUAIMPORT(rev::AGroup)
 DEF_LUAIMPORT(rev::ASource)

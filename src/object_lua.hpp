@@ -1,7 +1,7 @@
 #pragma once
 #include "object.hpp"
 #include "object_mgr.hpp"
-#include "lvalue.hpp"
+#include "lua/lvalue.hpp"
 
 namespace rev {
 	namespace detail {

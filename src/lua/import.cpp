@@ -1,6 +1,6 @@
 #include "lcv.hpp"
 #include "../sdl/rw.hpp"
-#include "apppath.hpp"
+#include "../apppath.hpp"
 #include <boost/format.hpp>
 #include <fstream>
 extern "C" {

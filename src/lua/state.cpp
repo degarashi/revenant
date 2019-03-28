@@ -1,9 +1,9 @@
 #include "lcv.hpp"
 #include "lvalue.hpp"
 #include "../sdl/rw.hpp"
-#include "apppath.hpp"
+#include "../apppath.hpp"
+#include "../rewindtop.hpp"
 #include "lubee/src/freelist.hpp"
-#include "rewindtop.hpp"
 extern "C" {
 	#include <lauxlib.h>
 	#include <lualib.h>

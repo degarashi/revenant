@@ -1,5 +1,5 @@
 #include "luatest.hpp"
-#include "../lvalue.hpp"
+#include "../lua/lvalue.hpp"
 #include <unordered_set>
 #include <boost/optional.hpp>
 #include "lubee/src/logical.hpp"

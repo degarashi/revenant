@@ -1,4 +1,4 @@
-#include "../luaimpl.hpp"
+#include "../lua/impl.hpp"
 #include "lubee/src/random.hpp"
 
 DEF_LUAIMPLEMENT_PTR_NOCTOR(

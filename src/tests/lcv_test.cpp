@@ -1,5 +1,5 @@
 #include "lcvtest.hpp"
-#include "../lvalue.hpp"
+#include "../lua/lvalue.hpp"
 
 namespace rev {
 	namespace test {

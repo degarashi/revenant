@@ -1,4 +1,4 @@
-#include "../luaimpl.hpp"
+#include "../lua/impl.hpp"
 
 #include "../updgroup.hpp"
 #include "../object_mgr.hpp"

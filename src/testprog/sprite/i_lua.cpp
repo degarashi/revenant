@@ -1,4 +1,4 @@
-#include "../../luaimpl.hpp"
+#include "../../lua/impl.hpp"
 #include "sprite2d.hpp"
 
 DEF_LUAIMPLEMENT_PTR(

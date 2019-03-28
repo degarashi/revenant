@@ -1,11 +1,11 @@
 #pragma once
+#include "lv_common.hpp"
+#include "../upobj.hpp"
+#include "../handle/resource.hpp"
 #include "frea/src/matrix.hpp"
 #include "frea/src/quaternion.hpp"
 #include "frea/src/expquat.hpp"
 #include "lubee/src/meta/typelist.hpp"
-#include "upobj.hpp"
-#include "handle/resource.hpp"
-#include "lv_common.hpp"
 #include <boost/variant.hpp>
 
 namespace rev {

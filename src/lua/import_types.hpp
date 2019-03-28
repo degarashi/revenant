@@ -1,5 +1,5 @@
 #pragma once
-#include "luaimport.hpp"
+#include "import.hpp"
 #include "frea/src/matrix.hpp"
 #include "frea/src/expquat.hpp"
 #include "frea/src/fwd.hpp"

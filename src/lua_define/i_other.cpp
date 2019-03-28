@@ -1,4 +1,4 @@
-#include "../luaimpl.hpp"
+#include "../lua/impl.hpp"
 
 #include "../lua/lsys.hpp"
 DEF_LUAIMPLEMENT_PTR_NOCTOR(

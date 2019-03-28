@@ -1,6 +1,6 @@
 #include "resource.hpp"
-#include "lcv.hpp"
-#include "lctable.hpp"
+#include "../lua/lcv.hpp"
+#include "../lua/lctable.hpp"
 #include "compiler_macro.hpp"
 
 namespace rev {
