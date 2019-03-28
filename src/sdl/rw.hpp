@@ -3,8 +3,8 @@
 #include "lubee/src/meta/enable_if.hpp"
 #include "lubee/src/none.hpp"
 #include "spine/src/resmgr.hpp"
-#include "urihandler.hpp"
-#include "uri.hpp"
+#include "../uri/handler.hpp"
+#include "../uri/uri.hpp"
 #include "spine/src/singleton.hpp"
 #include <SDL_rwops.h>
 #include <stdexcept>

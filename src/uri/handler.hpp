@@ -1,6 +1,6 @@
 #pragma once
-#include "handle/sdl.hpp"
-#include "handle/uri.hpp"
+#include "../handle/sdl.hpp"
+#include "../handle/uri.hpp"
 #include <algorithm>
 #include <vector>
 

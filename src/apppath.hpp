@@ -2,7 +2,7 @@
 #include "fs/dir.hpp"
 #include "spine/src/singleton.hpp"
 #include "handle/sdl.hpp"
-#include "uri.hpp"
+#include "uri/uri.hpp"
 #include <unordered_map>
 
 namespace cereal {

@@ -1,5 +1,5 @@
 #pragma once
-#include "../urihandler.hpp"
+#include "../uri/handler.hpp"
 #include <cereal/types/vector.hpp>
 #include <cereal/types/utility.hpp>
 

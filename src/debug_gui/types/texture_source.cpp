@@ -6,7 +6,7 @@
 #include "../../imgui_sdl2.hpp"
 #include "../entry_field.hpp"
 #include "../child.hpp"
-#include "../../uri.hpp"
+#include "../../uri/uri.hpp"
 
 namespace rev {
 	bool TextureSource::property(const bool edit) {

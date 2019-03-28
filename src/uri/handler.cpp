@@ -1,6 +1,6 @@
-#include "urihandler.hpp"
+#include "handler.hpp"
 #include "lubee/src/error.hpp"
-#include "handle/uri.hpp"
+#include "../handle/uri.hpp"
 
 namespace rev {
 	auto UriHandlerV::_findHandler(const HURIHandler& h) const {

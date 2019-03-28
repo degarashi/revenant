@@ -1,5 +1,5 @@
 #include "mgr.hpp"
-#include "../../uri.hpp"
+#include "../../uri/uri.hpp"
 
 namespace rev::gltf::v1 {
 	const std::string GLTFMgr::cs_rtname[] = {

@@ -1,6 +1,6 @@
 #include "gltf1_scene.hpp"
 #include "../../fs/dir.hpp"
-#include "../../uri.hpp"
+#include "../../uri/uri.hpp"
 #include "../../gltf/v1/mgr.hpp"
 #include "../../gltf/v1/dc_model.hpp"
 #include "../../debug_gui/resource_window.hpp"

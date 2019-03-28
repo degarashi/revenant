@@ -1,7 +1,7 @@
 #include "rwref.hpp"
 #include "dataquery_if_base.hpp"
 #include "value_loader.hpp"
-#include "../uri.hpp"
+#include "../uri/uri.hpp"
 #include "../sdl/rw.hpp"
 
 namespace rev::gltf {

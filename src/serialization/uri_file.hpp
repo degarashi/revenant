@@ -1,6 +1,6 @@
 #pragma once
 #include "serialization/urihandler.hpp"
-#include "../uri_file.hpp"
+#include "../uri/file.hpp"
 
 namespace rev {
 	template <class Ar>

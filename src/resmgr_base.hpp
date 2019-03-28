@@ -1,5 +1,5 @@
 #pragma once
-#include "urihandler.hpp"
+#include "uri/handler.hpp"
 #include "handle/resource.hpp"
 
 namespace rev {

@@ -1,7 +1,7 @@
 #include "parambase.hpp"
 #include "../mainproc.hpp"
 #include "../drawproc.hpp"
-#include "../uri.hpp"
+#include "../uri/uri.hpp"
 
 namespace rev::test {
 	lubee::SizeI ParamBase::getScreenSize() const {

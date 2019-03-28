@@ -1,10 +1,10 @@
 #pragma once
-#include "fs/path.hpp"
+#include "../fs/path.hpp"
+#include "../debug_gui/if.hpp"
+#include "../resource.hpp"
+#include "../handle/uri.hpp"
 #include "lubee/src/operators.hpp"
 #include "spine/src/enum.hpp"
-#include "debug_gui/if.hpp"
-#include "resource.hpp"
-#include "handle/uri.hpp"
 #include <regex>
 
 namespace cereal {

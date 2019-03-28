@@ -1,5 +1,5 @@
 #include "../print.hpp"
-#include "../../uri.hpp"
+#include "../../uri/uri.hpp"
 #include "../../imgui/imgui.h"
 #include "../entry.hpp"
 #include "../style.hpp"

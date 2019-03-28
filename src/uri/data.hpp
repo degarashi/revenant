@@ -1,6 +1,6 @@
 #pragma once
-#include "urihandler.hpp"
-#include "abstbuffer.hpp"
+#include "handler.hpp"
+#include "../abstbuffer.hpp"
 
 namespace rev {
 	//! Base64によるデータURI

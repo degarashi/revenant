@@ -1,6 +1,6 @@
-#include "uri_file.hpp"
-#include "sdl/rw.hpp"
-#include "apppath.hpp"
+#include "file.hpp"
+#include "../sdl/rw.hpp"
+#include "../apppath.hpp"
 
 namespace rev {
 	// ---------------------------- URI_File ----------------------------
