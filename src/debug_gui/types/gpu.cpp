@@ -1,4 +1,4 @@
-#include "../../gpu.hpp"
+#include "../../info/gpu.hpp"
 #include "../entry_field.hpp"
 #include "../textfilter.hpp"
 #include "../child.hpp"

@@ -8,7 +8,7 @@
 #include "../debug_gui/resource_window.hpp"
 #include "../drawgroup.hpp"
 #include "../gl/resource.hpp"
-#include "../gpu.hpp"
+#include "../info/gpu.hpp"
 #include "../debug_gui/profiler.hpp"
 
 namespace rev::test {

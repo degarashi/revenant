@@ -1,5 +1,5 @@
 #include "gpu.hpp"
-#include "gl/if.hpp"
+#include "../gl/if.hpp"
 #include "lubee/src/meta/countof.hpp"
 #include <regex>
 #include <boost/lexical_cast.hpp>
