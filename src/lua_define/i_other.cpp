@@ -1,6 +1,6 @@
 #include "../luaimpl.hpp"
 
-#include "../lsys.hpp"
+#include "../lua/lsys.hpp"
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	rev::LSysFunc, LSysFunc,
 	LUAIMPLEMENT_BASE,

@@ -1,5 +1,5 @@
 #include "mainthread.hpp"
-#include "lsys.hpp"
+#include "lua/lsys.hpp"
 #include "gameloopparam.hpp"
 #include "systeminfo.hpp"
 #include "sdl/rw.hpp"
