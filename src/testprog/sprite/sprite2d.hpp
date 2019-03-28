@@ -1,10 +1,9 @@
 #pragma once
 #include "beat/src/pose2d.hpp"
-#include "../../handle/opengl.hpp"
-#include "../../glx_id.hpp"
 #include "../../drawable.hpp"
-#include "../../singleton_data.hpp"
+#include "../../effect/id.hpp"
 #include "../../handle/opengl.hpp"
+#include "../../singleton_data.hpp"
 
 namespace rev::test {
 	namespace vertex {

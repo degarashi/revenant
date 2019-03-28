@@ -1,6 +1,6 @@
 #pragma once
 #include "../drawable.hpp"
-#include "../clear.hpp"
+#include "../effect/clear.hpp"
 
 namespace rev {
 	namespace drawutil {

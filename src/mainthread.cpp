@@ -1,23 +1,24 @@
 #include "mainthread.hpp"
 #include "sharedata.hpp"
 #include "gameloopparam.hpp"
-#include "gl/if.hpp"
+#include "tls_data.hpp"
 #include "drawthread.hpp"
-#include "msg/system.hpp"
-#include "msg/handler.hpp"
-#include "sdl/glctx.hpp"
 #include "mainproc.hpp"
 #include "systeminfo.hpp"
 #include "output.hpp"
-#include "sdl/window.hpp"
+#include "scene_mgr.hpp"
+
+#include "msg/system.hpp"
+#include "msg/handler.hpp"
 #include "sound/sound.hpp"
+#include "sdl/glctx.hpp"
+#include "sdl/window.hpp"
+#include "fs/watch.hpp"
+#include "profiler_global.hpp"
+#include "effect/if.hpp"
+#include "gl/if.hpp"
 #include <SDL_timer.h>
 #include <SDL_events.h>
-#include "scene_mgr.hpp"
-#include "fs/watch.hpp"
-#include "tls_data.hpp"
-#include "profiler_global.hpp"
-#include "glx_if.hpp"
 
 namespace rev {
 	// ---------------- MainThread ----------------

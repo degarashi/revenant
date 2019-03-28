@@ -1,5 +1,5 @@
 #pragma once
-#include "../../vertex.hpp"
+#include "../../effect/vertex.hpp"
 #include "../json_types.hpp"
 #include "spine/src/optional.hpp"
 

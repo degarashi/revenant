@@ -1,7 +1,7 @@
 #include "qm_usemcached.hpp"
-#include "../../camera3d.hpp"
-#include "../../uniform_ent.hpp"
 #include "semantic_if.hpp"
+#include "../../camera3d.hpp"
+#include "../../effect/uniform_ent.hpp"
 #include "lubee/src/hash_combine.hpp"
 
 namespace rev::gltf::v1 {

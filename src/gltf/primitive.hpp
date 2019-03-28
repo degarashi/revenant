@@ -1,9 +1,9 @@
 #pragma once
-#include "../vertex.hpp"
-#include "../gl/types.hpp"
-#include "../vdecl.hpp"
-#include "handle/opengl.hpp"
 #include "json_types.hpp"
+#include "../effect/vertex.hpp"
+#include "../gl/types.hpp"
+#include "../effect/vdecl.hpp"
+#include "../handle/opengl.hpp"
 #include "../dc/bbox.hpp"
 
 namespace rev::gltf {

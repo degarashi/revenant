@@ -1,12 +1,12 @@
 #include "../resmgr_app.hpp"
 #include "font.hpp"
-#include "../gl/resource.hpp"
-#include "../primitive.hpp"
-#include "../drawtag.hpp"
-#include "../u_common.hpp"
-#include "../glx_if.hpp"
-#include "../techmgr.hpp"
 #include "vdecl.hpp"
+#include "../gl/resource.hpp"
+#include "../effect/primitive.hpp"
+#include "../effect/drawtag.hpp"
+#include "../effect/u_common.hpp"
+#include "../effect/if.hpp"
+#include "../effect/techmgr.hpp"
 
 namespace rev {
 	TextObj::TextObj(Face& face, CCoreID coreID, std::u32string&& s): _text(std::move(s)), _coreID(coreID), _faceName(face.faceName) {

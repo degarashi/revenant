@@ -3,10 +3,10 @@
 #include "cube_scene.hpp"
 #include "../../gl/resource.hpp"
 #include "../../drawutil/gle_nest.hpp"
-#include "../../sys_uniform.hpp"
-#include "../../u_matrix2d.hpp"
-#include "../../u_matrix3d.hpp"
-#include "../../u_common.hpp"
+#include "../../effect/sys_uniform.hpp"
+#include "../../effect/u_matrix2d.hpp"
+#include "../../effect/u_matrix3d.hpp"
+#include "../../effect/u_common.hpp"
 #include "shared.hpp"
 
 namespace rev::test {

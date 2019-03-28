@@ -1,10 +1,10 @@
 #pragma once
 #include "resource.hpp"
 #include "gltf/v1/dataref.hpp"
-#include "../../gl/format.hpp"
-#include "../../tech.hpp"
 #include "gltf/v1/dc_common.hpp"
 #include "gltf/v1/uniform_value.hpp"
+#include "../../gl/format.hpp"
+#include "../../effect/tech.hpp"
 
 namespace rev::gltf::v1 {
 	struct Material :

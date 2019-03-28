@@ -1,5 +1,5 @@
 #include "fbclear.hpp"
-#include "../glx_if.hpp"
+#include "../effect/if.hpp"
 
 namespace rev {
 	namespace drawutil {

@@ -1,7 +1,7 @@
 #pragma once
-#include "frea/src/vector.hpp"
-#include "uniform_setter.hpp"
 #include "gltf/v2/morph.hpp"
+#include "effect/uniform_setter.hpp"
+#include "frea/src/vector.hpp"
 
 namespace rev {
 	class U_Morph :

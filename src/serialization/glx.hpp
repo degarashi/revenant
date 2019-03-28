@@ -1,4 +1,4 @@
-#include "../glx.hpp"
+#include "../effect/effect.hpp"
 
 namespace rev {
 	template <class Ar>

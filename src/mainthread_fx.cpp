@@ -20,8 +20,8 @@ namespace rev {
 	}
 }
 
-#include "glx.hpp"
-#include "techmgr.hpp"
+#include "effect/effect.hpp"
+#include "effect/techmgr.hpp"
 namespace rev {
 	void MainThread::_checkFxReload(FNotify& ntf) {
 		using PathSet = std::unordered_set<Dir>;

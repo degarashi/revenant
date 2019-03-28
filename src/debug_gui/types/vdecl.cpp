@@ -1,4 +1,4 @@
-#include "../../vdecl.hpp"
+#include "../../effect/vdecl.hpp"
 #include "../entry_field.hpp"
 #include "../../gl/format.hpp"
 #include "../sstream.hpp"

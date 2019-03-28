@@ -1,11 +1,11 @@
-#include "../../../gltf/v2/dc_mesh.hpp"
-#include "../../../primitive.hpp"
-#include "../../../tech_if.hpp"
-#include "../../../pbr_mr.hpp"
-#include "../../sstream.hpp"
+#include "../../column.hpp"
 #include "../../entry_field.hpp"
 #include "../../header.hpp"
-#include "../../column.hpp"
+#include "../../sstream.hpp"
+#include "../../../pbr_mr.hpp"
+#include "../../../effect/primitive.hpp"
+#include "../../../effect/tech_if.hpp"
+#include "../../../gltf/v2/dc_mesh.hpp"
 #include "../../../gltf/v2/dc_mesh_module.hpp"
 
 namespace rev::gltf::v2 {

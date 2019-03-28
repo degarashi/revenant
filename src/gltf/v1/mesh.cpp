@@ -1,11 +1,11 @@
 #include "gltf/v1/mesh.hpp"
 #include "../check.hpp"
-#include "../../primitive.hpp"
 #include "gltf/v1/accessor.hpp"
+#include "gltf/v1/buffer.hpp"
+#include "../../effect/primitive.hpp"
+#include "../../effect/vdecl.hpp"
 #include "../../gl/resource.hpp"
 #include "../../gl/buffer.hpp"
-#include "../../vdecl.hpp"
-#include "gltf/v1/buffer.hpp"
 
 namespace rev::gltf::v1 {
 	namespace L = gltf::loader;

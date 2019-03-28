@@ -1,13 +1,13 @@
 #include "resmgr_app.hpp"
 #include "sprite_scene.hpp"
 #include "bsprite.hpp"
-#include "../../u_matrix2d.hpp"
-#include "../../glx_if.hpp"
 #include "../../camera2d.hpp"
-#include "../../systeminfo.hpp"
-#include "../../tls_data.hpp"
+#include "../../effect/if.hpp"
+#include "../../effect/u_matrix2d.hpp"
 #include "../../gl/resource.hpp"
 #include "../../gl/texture/filter.hpp"
+#include "../../systeminfo.hpp"
+#include "../../tls_data.hpp"
 #include "frea/src/random/vector.hpp"
 #include <boost/format.hpp>
 

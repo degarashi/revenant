@@ -1,8 +1,8 @@
 #include "text.hpp"
 #include "../font/font.hpp"
-#include "../glx_if.hpp"
-#include "uniform_ent.hpp"
-#include "../u_common.hpp"
+#include "../effect/if.hpp"
+#include "../effect/uniform_ent.hpp"
+#include "../effect/u_common.hpp"
 
 namespace rev {
 	namespace drawutil {

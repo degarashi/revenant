@@ -2,7 +2,7 @@
 #include "value_loader.hpp"
 #include "gltf/check.hpp"
 #include "../gl/resource.hpp"
-#include "../primitive.hpp"
+#include "../effect/primitive.hpp"
 
 #include "gltf/v1/buffer.hpp"
 #include "gltf/v1/accessor.hpp"

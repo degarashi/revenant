@@ -1,9 +1,9 @@
 #include "cube.hpp"
-#include "../../vdecl.hpp"
+#include "../../effect/vdecl.hpp"
+#include "../../effect/techmgr.hpp"
+#include "../../effect/effect.hpp"
+#include "../../effect/u_matrix3d.hpp"
 #include "../../gl/resource.hpp"
-#include "../../techmgr.hpp"
-#include "../../glx.hpp"
-#include "../../u_matrix3d.hpp"
 #include "lubee/src/meta/countof.hpp"
 
 namespace rev::test {

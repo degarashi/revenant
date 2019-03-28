@@ -1,6 +1,6 @@
 #include "drawproc.hpp"
 #include "sharedata.hpp"
-#include "glx.hpp"
+#include "effect/effect.hpp"
 #include <cmath>
 
 namespace rev {

@@ -1,10 +1,10 @@
 #include "gltf/v1/material.hpp"
-#include "../../ovr_functor.hpp"
 #include "gltf/v1/technique.hpp"
 #include "gltf/v1/program.hpp"
-#include "../../vertex_map.hpp"
-#include "../../uniform_ent.hpp"
 #include "gltf/v1/texture.hpp"
+#include "../../ovr_functor.hpp"
+#include "../../effect/vertex_map.hpp"
+#include "../../effect/uniform_ent.hpp"
 
 namespace rev::gltf::v1 {
 	using namespace loader;

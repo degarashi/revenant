@@ -1,7 +1,7 @@
 #include "fbswitch.hpp"
-#include "lubee/src/rect.hpp"
-#include "../glx_if.hpp"
+#include "../effect/if.hpp"
 #include "../fbrect.hpp"
+#include "lubee/src/rect.hpp"
 
 namespace rev {
 	namespace drawutil {

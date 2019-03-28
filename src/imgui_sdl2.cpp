@@ -1,5 +1,6 @@
 #include "resmgr_app.hpp"
 #include "imgui_sdl2.hpp"
+#include "fbrect.hpp"
 #include "sdl/window.hpp"
 #include "imgui/imgui.h"
 #include "input/input.hpp"
@@ -7,16 +8,15 @@
 #include "gl/texture/mem.hpp"
 #include "gl/shader.hpp"
 #include "gl/program.hpp"
-#include "vdecl.hpp"
+#include "effect/vdecl.hpp"
+#include "effect/tech_pass.hpp"
+#include "effect/tech_if.hpp"
+#include "effect/if.hpp"
+#include "effect/uniform_ent.hpp"
+#include "effect/u_matrix2d.hpp"
+#include "effect/primitive.hpp"
+#include "effect/techmgr.hpp"
 #include <SDL_clipboard.h>
-#include "tech_pass.hpp"
-#include "tech_if.hpp"
-#include "glx_if.hpp"
-#include "uniform_ent.hpp"
-#include "u_matrix2d.hpp"
-#include "fbrect.hpp"
-#include "primitive.hpp"
-#include "techmgr.hpp"
 #include <SDL_version.h>
 
 namespace {

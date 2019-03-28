@@ -1,9 +1,9 @@
 #include "scenebase.hpp"
 #include "../font/font.hpp"
 #include "../input/input.hpp"
-#include "../glx_if.hpp"
+#include "../effect/if.hpp"
 #include "../systeminfo.hpp"
-#include "../clear.hpp"
+#include "../effect/clear.hpp"
 #include <boost/format.hpp>
 
 namespace rev::test {

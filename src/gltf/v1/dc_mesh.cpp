@@ -1,11 +1,11 @@
 #include "gltf/v1/dc_mesh.hpp"
 #include "gltf/v1/rt_uniform.hpp"
-#include "glx_if.hpp"
-#include "uniform_ent.hpp"
-#include "../../dc/node.hpp"
 #include "gltf/v1/qm_usemcached.hpp"
 #include "semantic_if.hpp"
-#include "../../tech_if.hpp"
+#include "../../effect/if.hpp"
+#include "../../effect/uniform_ent.hpp"
+#include "../../effect/tech_if.hpp"
+#include "../../dc/node.hpp"
 #include "../../drawcmd/aux.hpp"
 
 namespace rev::gltf::v1 {

@@ -1,9 +1,9 @@
 #include "texthud.hpp"
-#include "../glx_if.hpp"
 #include "../systeminfo.hpp"
+#include "../effect/if.hpp"
+#include "../effect/uniform_ent.hpp"
+#include "../effect/u_common.hpp"
 #include "lubee/src/compare.hpp"
-#include "../uniform_ent.hpp"
-#include "../u_common.hpp"
 
 namespace rev {
 	namespace drawutil {

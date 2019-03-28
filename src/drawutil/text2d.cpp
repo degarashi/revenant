@@ -1,10 +1,10 @@
 #include "text2d.hpp"
-#include "../glx_if.hpp"
+#include "gle_nest.hpp"
+#include "../effect/if.hpp"
+#include "../effect/u_matrix2d.hpp"
+#include "../effect/u_common.hpp"
 #include "frea/src/matrix.hpp"
 #include "lubee/src/compare.hpp"
-#include "gle_nest.hpp"
-#include "../u_matrix2d.hpp"
-#include "../u_common.hpp"
 
 namespace rev {
 	namespace drawutil {

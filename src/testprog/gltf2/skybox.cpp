@@ -1,13 +1,13 @@
 #include "skybox.hpp"
-#include "../../vdecl.hpp"
-#include "../../gl/resource.hpp"
-#include "../../primitive.hpp"
-#include "../../techmgr.hpp"
-#include "../../u_matrix3d.hpp"
-#include "../../u_common.hpp"
-#include "../../glx_if.hpp"
-#include "../../gl/texture/filter.hpp"
+#include "../../effect/if.hpp"
 #include "../../camera3d.hpp"
+#include "../../effect/primitive.hpp"
+#include "../../effect/techmgr.hpp"
+#include "../../effect/u_matrix3d.hpp"
+#include "../../effect/u_common.hpp"
+#include "../../effect/vdecl.hpp"
+#include "../../gl/resource.hpp"
+#include "../../gl/texture/filter.hpp"
 
 namespace rev::test {
 	namespace vertex {

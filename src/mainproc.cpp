@@ -2,7 +2,7 @@
 #include "scene_mgr.hpp"
 #include "output.hpp"
 #include "sharedata.hpp"
-#include "glx_if.hpp"
+#include "effect/if.hpp"
 #include "imgui_sdl2.hpp"
 #include "spine/src/profiler.hpp"
 

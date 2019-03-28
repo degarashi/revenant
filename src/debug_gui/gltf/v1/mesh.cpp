@@ -5,8 +5,8 @@
 #include "../../print.hpp"
 #include "../../header.hpp"
 #include "../../entry_field.hpp"
-#include "../../../primitive.hpp"
-#include "../../../tech_if.hpp"
+#include "../../../effect/primitive.hpp"
+#include "../../../effect/tech_if.hpp"
 
 namespace rev::gltf::v1 {
 	std::string GLTFMesh::summary_str() const {

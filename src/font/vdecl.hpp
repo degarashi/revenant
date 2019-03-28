@@ -1,5 +1,5 @@
 #pragma once
-#include "../vdecl.hpp"
+#include "../effect/vdecl.hpp"
 #include "frea/src/vector.hpp"
 
 namespace rev::vertex {

@@ -1,7 +1,7 @@
 #include "resource.hpp"
 #include "texture.hpp"
-#include "techmgr.hpp"
-#include "tech_pass.hpp"
+#include "../effect/tech_pass.hpp"
+#include "../effect/techmgr.hpp"
 
 namespace rev {
 	HRes GLRes::loadResource(const URI& uri) {

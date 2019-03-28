@@ -1,14 +1,14 @@
 #include "gltf/v2/dc_mesh.hpp"
 #include "gltf/v2/dc_mesh_module.hpp"
-#include "../../techmgr.hpp"
+#include "../../effect/u_pbr_mr.hpp"
+#include "../../effect/if.hpp"
+#include "../../effect/primitive.hpp"
+#include "../../effect/techmgr.hpp"
+#include "../../effect/u_matrix3d.hpp"
+#include "../../drawcmd/aux.hpp"
+#include "../../gl/bstate.hpp"
 #include "../../gl/resource.hpp"
 #include "../../gl/texture/filter.hpp"
-#include "../../glx_if.hpp"
-#include "../../u_pbr_mr.hpp"
-#include "../../gl/bstate.hpp"
-#include "../../drawcmd/aux.hpp"
-#include "../../primitive.hpp"
-#include "../../u_matrix3d.hpp"
 
 namespace rev::gltf::v2 {
 	GLTFMesh::GLTFMesh(

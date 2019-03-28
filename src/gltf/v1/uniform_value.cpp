@@ -1,6 +1,6 @@
 #include "gltf/v1/uniform_value.hpp"
 #include "gltf/v1/texture.hpp"
-#include "../../uniform_ent.hpp"
+#include "../../effect/uniform_ent.hpp"
 
 namespace rev::gltf::v1 {
 	UniformValue LoadUniformValue(const JValue& v, const IDataQuery& q) {

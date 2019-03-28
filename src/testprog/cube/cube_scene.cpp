@@ -1,8 +1,8 @@
 #include "cube_scene.hpp"
 #include "cube.hpp"
-#include "../../u_matrix3d.hpp"
-#include "../../glx_if.hpp"
 #include "shared.hpp"
+#include "../../effect/u_matrix3d.hpp"
+#include "../../effect/if.hpp"
 
 namespace rev::test {
 	struct CubeScene::St_Default : StateT<CubeScene, St_Base> {

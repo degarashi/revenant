@@ -1,6 +1,6 @@
 #pragma once
-#include "../glx.hpp"
-#include "../uniform_setter.hpp"
+#include "../effect/effect.hpp"
+#include "../effect/uniform_setter.hpp"
 
 namespace rev::drawutil {
 	template <class... Base>

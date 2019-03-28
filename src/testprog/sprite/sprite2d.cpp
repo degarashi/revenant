@@ -1,11 +1,11 @@
 #include "sprite2d.hpp"
-#include "../../gl/resource.hpp"
+#include "../../effect/if.hpp"
+#include "../../effect/techmgr.hpp"
+#include "../../effect/uniform_ent.hpp"
+#include "../../effect/vdecl.hpp"
 #include "../../gl/buffer.hpp"
+#include "../../gl/resource.hpp"
 #include "lubee/src/meta/countof.hpp"
-#include "../../glx_if.hpp"
-#include "../../uniform_ent.hpp"
-#include "../../vdecl.hpp"
-#include "../../techmgr.hpp"
 
 namespace rev::test {
 	// ----------------------- Sprite -----------------------
@@ -55,9 +55,9 @@ namespace rev::test {
 }
 
 #include "../../output.hpp"
-#include "../../tech_pass.hpp"
-#include "../../u_matrix2d.hpp"
-#include "../../u_common.hpp"
+#include "../../effect/tech_pass.hpp"
+#include "../../effect/u_matrix2d.hpp"
+#include "../../effect/u_common.hpp"
 namespace rev::test {
 	void Sprite2D::draw(IEffect& e) const {
 		e.setTechnique(_tech);

@@ -1,16 +1,16 @@
 #include "resource.hpp"
+#include "buffer.hpp"
 #include "framebuffer_tmp.hpp"
 #include "if.hpp"
-#include "renderbuffer.hpp"
 #include "program.hpp"
-#include "buffer.hpp"
-#include "texture/uri.hpp"
-#include "texture/mem.hpp"
+#include "renderbuffer.hpp"
 #include "shader.hpp"
-#include "glx.hpp"
-#include "../sdl/surface.hpp"
-#include "../sdl/rw.hpp"
 #include "systeminfo.hpp"
+#include "texture/mem.hpp"
+#include "texture/uri.hpp"
+#include "../effect/effect.hpp"
+#include "../sdl/rw.hpp"
+#include "../sdl/surface.hpp"
 
 namespace rev {
 	const char* IGLResource::getResourceName() const noexcept {

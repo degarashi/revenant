@@ -1,6 +1,6 @@
 #include "u_morph.hpp"
 #include "gl/program.hpp"
-#include "uniform_ent.hpp"
+#include "effect/uniform_ent.hpp"
 
 namespace rev {
 	void U_Morph::Coeff::Ar_Union::fillZero() {

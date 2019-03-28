@@ -59,7 +59,7 @@ DEF_LUAIMPLEMENT_SPOBJ(
 	NOTHING
 )
 
-#include "../clear.hpp"
+#include "../effect/clear.hpp"
 DEF_LUAIMPLEMENT_PTR(
 	rev::ClearParam, ClearParam,
 	LUAIMPLEMENT_BASE,

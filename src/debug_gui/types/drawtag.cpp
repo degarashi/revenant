@@ -1,10 +1,10 @@
-#include "../../drawtag.hpp"
 #include "../entry_field.hpp"
 #include "../group.hpp"
-#include "../../tech_if.hpp"
-#include "../../gl/texture.hpp"
-#include "../resource_window.hpp"
 #include "../header.hpp"
+#include "../resource_window.hpp"
+#include "../../effect/drawtag.hpp"
+#include "../../effect/tech_if.hpp"
+#include "../../gl/texture.hpp"
 
 namespace rev {
 	const char* DrawTag::getDebugName() const noexcept {

@@ -1,13 +1,13 @@
-#include "resmgr_app.hpp"
 #include "param.hpp"
 #include "gltf1_scene.hpp"
-#include "../../gl/resource.hpp"
-#include "../../drawutil/gle_nest.hpp"
-#include "../../sys_uniform.hpp"
-#include "../../u_matrix2d.hpp"
-#include "../../u_matrix3d.hpp"
-#include "../../u_common.hpp"
+#include "resmgr_app.hpp"
 #include "shared.hpp"
+#include "../../drawutil/gle_nest.hpp"
+#include "../../effect/u_common.hpp"
+#include "../../effect/u_matrix2d.hpp"
+#include "../../effect/u_matrix3d.hpp"
+#include "../../effect/sys_uniform.hpp"
+#include "../../gl/resource.hpp"
 
 namespace rev::test {
 	HFx Param::makeEffect() const {
