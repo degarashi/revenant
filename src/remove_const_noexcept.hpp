@@ -1,6 +1,6 @@
 #pragma once
 #if __cplusplus >= 201700L
-#include "detect.hpp"
+#include "detect_method.hpp"
 #include "lubee/src/meta/enable_if.hpp"
 
 namespace rev {
