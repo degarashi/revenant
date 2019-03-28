@@ -8,7 +8,7 @@
 #include "argchecker.hpp"
 #include "lubee/src/meta/countof.hpp"
 #include "glx_if.hpp"
-#include "comment.hpp"
+#include "../debug.hpp"
 #include "tech_pair.hpp"
 #include "vertex_map.hpp"
 #include "uniform_ent.hpp"

@@ -1,6 +1,6 @@
 #include "glx_parse.hpp"
 #include "tuple_seq.hpp"
-#include "comment.hpp"
+#include "../debug.hpp"
 #include <boost/format.hpp>
 
 namespace rev {

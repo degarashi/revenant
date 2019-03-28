@@ -1,6 +1,7 @@
 #include "debug.hpp"
 #include <boost/format.hpp>
 #include <sstream>
+#include <iostream>
 
 namespace rev {
 	std::string AddLineNumber(const std::string& src, const int numOffset, const int viewNum, const bool bPrevLR, const bool bPostLR) {
@@ -27,5 +28,9 @@ namespace rev {
 		if(bPostLR)
 			ss << std::endl;
 		return ss.str();
+	}
+	void OutputCommentBlock(std::ostream& os, const std::string& msg) {
+		const char* c_separate = "-------------";
+		os << "// " << c_separate << ' ' << msg << ' ' << c_separate << std::endl;
 	}
 }
