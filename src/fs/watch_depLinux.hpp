@@ -1,5 +1,5 @@
 #pragma once
-#include "sdl/thread.hpp"
+#include "../sdl/thread.hpp"
 #include "watch_common.hpp"
 #include <vector>
 

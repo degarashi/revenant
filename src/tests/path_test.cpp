@@ -9,7 +9,7 @@
 	}
 #endif
 #include "test.hpp"
-#include "../path.hpp"
+#include "../fs/path.hpp"
 #include "../random/path.hpp"
 #include "lubee/src/random/string.hpp"
 #include "../serialization/path.hpp"

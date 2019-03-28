@@ -1,7 +1,7 @@
 #pragma once
 #include "luatest.hpp"
 #include "../sdl/rw.hpp"
-#include "../dir.hpp"
+#include "../fs/dir.hpp"
 #include "lubee/src/logical.hpp"
 
 namespace std {

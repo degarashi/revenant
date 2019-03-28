@@ -1,5 +1,5 @@
 #include "rw.hpp"
-#include "dir.hpp"
+#include "../fs/dir.hpp"
 #include "lubee/src/random.hpp"
 #include <SDL_filesystem.h>
 

@@ -13,7 +13,7 @@
 #include "gltf/v2/skin.hpp"
 #include "gltf/v2/node.hpp"
 #include "gltf/v2/texture.hpp"
-#include "../../dir.hpp"
+#include "../../fs/dir.hpp"
 
 namespace rev {
 	class FileURI;

@@ -20,9 +20,9 @@ add_subdirectory(beat)
 set(without-unittest ${BKUP_UNITTEST})
 
 # windows依存ファイル
-set(DEPENDANT_SRC_WIN src/dir_depWin.cpp src/watch_depWin.cpp)
+set(DEPENDANT_SRC_WIN src/fs/dir_depWin.cpp src/fs/watch_depWin.cpp)
 # unix依存ファイル
-set(DEPENDANT_SRC_UNIX src/dir_depLinux.cpp src/watch_depLinux.cpp)
+set(DEPENDANT_SRC_UNIX src/fs/dir_depLinux.cpp src/fs/watch_depLinux.cpp)
 set(OS_DEPENDANT_SRC ${DEPENDANT_SRC_WIN} ${DEPENDANT_SRC_UNIX})
 
 # OpenSL依存ファイル
@@ -64,6 +64,7 @@ aux_source_directory(src/sdl LIBSRC_MAIN)
 aux_source_directory(src/input LIBSRC_MAIN)
 aux_source_directory(src/gl LIBSRC_MAIN)
 aux_source_directory(src/info LIBSRC_MAIN)
+aux_source_directory(src/fs LIBSRC_MAIN)
 list(REMOVE_ITEM LIBSRC_MAIN ${OS_DEPENDANT_SRC} ${SOUND_DEPENDANT_SRC})
 
 # サウンド依存ファイルの設定
@@ -83,12 +84,12 @@ endif()
 # OS依存ファイルの設定
 if(${WIN32})
 	set(DEPSRC_FILE ${DEPSRC_FILE} ${DEPENDANT_SRC_WIN})
-	add_definitions(-DDIR_HEADER="dir_depWin.hpp")
-	add_definitions(-DWATCH_HEADER="watch_depWin.hpp")
+	add_definitions(-DDIR_HEADER="fs/dir_depWin.hpp")
+	add_definitions(-DWATCH_HEADER="fs/watch_depWin.hpp")
 elseif(${UNIX})
 	set(DEPSRC_FILE ${DEPSRC_FILE} ${DEPENDANT_SRC_UNIX})
-	add_definitions(-DDIR_HEADER="dir_depLinux.hpp")
-	add_definitions(-DWATCH_HEADER="watch_depLinux.hpp")
+	add_definitions(-DDIR_HEADER="fs/dir_depLinux.hpp")
+	add_definitions(-DWATCH_HEADER="fs/watch_depLinux.hpp")
 else()
 	message(FATAL_ERROR "couldn't detect OS type")
 endif()

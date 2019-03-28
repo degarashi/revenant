@@ -1,5 +1,5 @@
 #include "mainthread.hpp"
-#include "watch.hpp"
+#include "fs/watch.hpp"
 #include "apppath.hpp"
 
 namespace rev {

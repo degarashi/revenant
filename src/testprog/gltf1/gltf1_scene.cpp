@@ -1,5 +1,5 @@
 #include "gltf1_scene.hpp"
-#include "../../dir.hpp"
+#include "../../fs/dir.hpp"
 #include "../../uri.hpp"
 #include "../../gltf/v1/mgr.hpp"
 #include "../../gltf/v1/dc_model.hpp"

@@ -16,7 +16,7 @@
 #include "gltf/v1/skin.hpp"
 #include "gltf/v1/technique.hpp"
 #include "gltf/v1/texture.hpp"
-#include "../../dir.hpp"
+#include "../../fs/dir.hpp"
 
 namespace rev {
 	class FileURI;

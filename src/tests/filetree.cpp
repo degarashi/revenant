@@ -1,8 +1,8 @@
 #include "test.hpp"
 #include "filetreetest.hpp"
-#include "../dir.hpp"
-#include "../filetree.hpp"
-#include "../watch.hpp"
+#include "../fs/dir.hpp"
+#include "../fs/filetree.hpp"
+#include "../fs/watch.hpp"
 #include "lubee/src/error.hpp"
 #include <thread>
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "lubee/src/random/string.hpp"
 #include "lubee/src/range.hpp"
-#include "../path.hpp"
+#include "../fs/path.hpp"
 
 namespace rev {
 	namespace random {

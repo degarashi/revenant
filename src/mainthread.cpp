@@ -14,7 +14,7 @@
 #include <SDL_timer.h>
 #include <SDL_events.h>
 #include "scene_mgr.hpp"
-#include "watch.hpp"
+#include "fs/watch.hpp"
 #include "tls_data.hpp"
 #include "profiler_global.hpp"
 #include "glx_if.hpp"

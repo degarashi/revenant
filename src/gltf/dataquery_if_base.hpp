@@ -1,6 +1,6 @@
 #pragma once
 #include "gltf/exceptions.hpp"
-#include "../path.hpp"
+#include "../fs/path.hpp"
 
 namespace rev::gltf {
 	using std::literals::operator""s;

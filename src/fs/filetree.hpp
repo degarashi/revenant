@@ -1,7 +1,7 @@
 //! ファイルツリー構造を保持するクラス
 #pragma once
 #include "spine/src/enum.hpp"
-#include "abstbuffer.hpp"
+#include "../abstbuffer.hpp"
 #include "time.hpp"
 #include <unordered_map>
 

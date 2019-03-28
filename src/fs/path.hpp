@@ -1,6 +1,6 @@
 #pragma once
 #include "spine/src/optional.hpp"
-#include "abstbuffer.hpp"
+#include "../abstbuffer.hpp"
 #include <deque>
 #include <functional>
 

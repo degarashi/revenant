@@ -1,5 +1,5 @@
 #include "dir.hpp"
-#include "ovr_functor.hpp"
+#include "../ovr_functor.hpp"
 
 namespace rev {
 	// ----------------- Dir::PathReset -----------------

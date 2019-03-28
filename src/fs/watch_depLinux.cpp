@@ -1,7 +1,7 @@
 #include "watch_depLinux.hpp"
 #include <unistd.h>
 #include <sys/inotify.h>
-#include "output.hpp"
+#include "../output.hpp"
 
 namespace rev {
 	// ---------------- FNotify_depLinux ----------------

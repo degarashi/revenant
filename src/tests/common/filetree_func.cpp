@@ -1,7 +1,7 @@
 #include "../filetreetest.hpp"
-#include "../../filetree.hpp"
-#include "../../watch.hpp"
-#include "../../dir.hpp"
+#include "../../fs/filetree.hpp"
+#include "../../fs/watch.hpp"
+#include "../../fs/dir.hpp"
 #include "lubee/src/range.hpp"
 #include "lubee/src/random.hpp"
 #include <fstream>
