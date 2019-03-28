@@ -1,6 +1,6 @@
 #pragma once
 #include "spine/src/singleton.hpp"
-#include "looper_thread.hpp"
+#include "msg/looper_thread.hpp"
 #include "mainproc.hpp"
 #include "fs/dir.hpp"
 #include "spinlock.hpp"

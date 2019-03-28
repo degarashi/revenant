@@ -6,7 +6,7 @@
 #include "sdl/rw.hpp"
 #include "gl/framebuffer_tmp.hpp"
 #include "gl/resource.hpp"
-#include "handler.hpp"
+#include "msg/handler.hpp"
 
 namespace rev {
 	// --------------- TextureSource::DCmd_Bind ---------------

@@ -8,8 +8,8 @@
 #include "sdl/window.hpp"
 #include "output.hpp"
 #include "gl/if.hpp"
-#include "handler.hpp"
-#include "sys_message.hpp"
+#include "msg/handler.hpp"
+#include "msg/system.hpp"
 #include "sound/sound.hpp"
 
 namespace rev {

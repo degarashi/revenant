@@ -1,5 +1,5 @@
-#include "sys_message.hpp"
-#include "output.hpp"
+#include "system.hpp"
+#include "../output.hpp"
 #include <SDL_events.h>
 
 namespace rev {

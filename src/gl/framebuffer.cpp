@@ -4,7 +4,7 @@
 #include "error.hpp"
 #include "texture.hpp"
 #include "renderbuffer.hpp"
-#include "../handler.hpp"
+#include "../msg/handler.hpp"
 
 namespace rev {
 	// ------------------------- GLFBufferCore::RawTex -------------------------

@@ -1,7 +1,7 @@
 #pragma once
 #include "spine/src/singleton.hpp"
 #include "spine/src/enum.hpp"
-#include "looper_thread.hpp"
+#include "msg/looper_thread.hpp"
 #include "fpscounter.hpp"
 #include "drawproc.hpp"
 #include "spinlock.hpp"

@@ -1,6 +1,6 @@
 #include "guithread.hpp"
 #include "gameloopparam.hpp"
-#include "sys_message.hpp"
+#include "msg/system.hpp"
 #include "mainthread.hpp"
 #include "sdl/init.hpp"
 #include "sdl/window.hpp"

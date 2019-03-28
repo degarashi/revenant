@@ -1,6 +1,6 @@
 #include "../gl/if.hpp"
 #include "../gl/error.hpp"
-#include "../handler.hpp"
+#include "../msg/handler.hpp"
 
 namespace rev {
 	TLS<IGL*>	tls_GL;

@@ -2,7 +2,7 @@
 #include "shader.hpp"
 #include "error.hpp"
 #include "resource.hpp"
-#include "../handler.hpp"
+#include "../msg/handler.hpp"
 #include "lubee/src/meta/countof.hpp"
 #include "../drawcmd/queue_if.hpp"
 

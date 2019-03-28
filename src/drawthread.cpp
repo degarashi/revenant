@@ -1,12 +1,12 @@
 #include "drawthread.hpp"
-#include "sys_message.hpp"
+#include "msg/system.hpp"
 #include "gl/resource.hpp"
 #include "gl/if.hpp"
 #include "output.hpp"
 #include "sharedata.hpp"
 #include "gameloopparam.hpp"
 #include "sdl/glctx.hpp"
-#include "handler.hpp"
+#include "msg/handler.hpp"
 #include "profiler_global.hpp"
 
 namespace rev {

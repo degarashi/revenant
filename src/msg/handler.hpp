@@ -1,7 +1,7 @@
 #pragma once
+#include "../clock.hpp"
 #include <functional>
 #include <memory>
-#include "clock.hpp"
 
 namespace rev {
 	struct Message;

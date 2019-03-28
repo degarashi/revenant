@@ -3,7 +3,7 @@
 #include "resource.hpp"
 #include "error.hpp"
 #include "framebuffer_tmp.hpp"
-#include "../handler.hpp"
+#include "../msg/handler.hpp"
 
 namespace rev {
 	// ------------------------- GLRBuffer -------------------------

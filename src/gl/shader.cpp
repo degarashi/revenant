@@ -1,7 +1,7 @@
 #include "shader.hpp"
 #include "if.hpp"
 #include "error.hpp"
-#include "../handler.hpp"
+#include "../msg/handler.hpp"
 
 namespace rev {
 	// ---------------------- GLShader ----------------------
