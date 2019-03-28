@@ -2,7 +2,7 @@
 #include "lvalue.hpp"
 #include "../sdl/rw.hpp"
 #include "../apppath.hpp"
-#include "../rewindtop.hpp"
+#include "rewindtop.hpp"
 #include "lubee/src/freelist.hpp"
 extern "C" {
 	#include <lauxlib.h>
