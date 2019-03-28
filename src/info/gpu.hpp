@@ -3,7 +3,7 @@
 #include "../debuggui_if.hpp"
 #include <unordered_set>
 
-namespace rev {
+namespace rev::info {
 	// OpenGLES2では同期オブジェクトが無いのでGPUTimeは無効
 	#ifndef USE_OPENGLES2
 		//! フレームレート表示
@@ -26,7 +26,7 @@ namespace rev {
 		};
 	#endif
 	//! GPUの情報表示
-	class GPUInfo :
+	class GPU :
 		public IGLResource
 	{
 		private:
@@ -43,7 +43,7 @@ namespace rev {
 				template <class M>
 				void loadFromRegex(const M& m);
 			};
-			friend std::ostream& operator << (std::ostream& os, const GPUInfo::Version& ver);
+			friend std::ostream& operator << (std::ostream& os, const info::GPU::Version& ver);
 			enum class Profile {
 				Core,
 				Compatibility,
@@ -70,8 +70,8 @@ namespace rev {
 
 			void onDeviceLost() override;
 			void onDeviceReset() override;
-			friend std::ostream& operator << (std::ostream& os, const GPUInfo& info);
+			friend std::ostream& operator << (std::ostream& os, const info::GPU& info);
 	};
-	std::ostream& operator << (std::ostream& os, const GPUInfo::Version& ver);
-	std::ostream& operator << (std::ostream& os, const GPUInfo& info);
+	std::ostream& operator << (std::ostream& os, const info::GPU::Version& ver);
+	std::ostream& operator << (std::ostream& os, const info::GPU& info);
 }

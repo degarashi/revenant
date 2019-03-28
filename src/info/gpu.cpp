@@ -4,7 +4,7 @@
 #include <regex>
 #include <boost/lexical_cast.hpp>
 
-namespace rev {
+namespace rev::info {
 	namespace {
 		//! Regex: OpenGL version
 		/*!	major, minor, revision */
@@ -23,20 +23,20 @@ namespace rev {
 				ar[cur] = boost::lexical_cast<int>(itr0->str());
 		}
 	}
-	// ---------------------- GPUInfo::Version ----------------------
-	void GPUInfo::Version::clear() {
+	// ---------------------- GPU::Version ----------------------
+	void GPU::Version::clear() {
 		for(auto& a : ar)
 			a = 0;
 	}
 	template <class M>
-	void GPUInfo::Version::loadFromRegex(const M& m) {
+	void GPU::Version::loadFromRegex(const M& m) {
 		LoadFromRegex(m.cbegin()+1, m.cend(), ar);
 	}
-	std::ostream& operator << (std::ostream& os, const GPUInfo::Version& ver) {
+	std::ostream& operator << (std::ostream& os, const GPU::Version& ver) {
 		return os << ver.major << '.' << ver.minor << '-' << ver.revision;
 	}
-	// ---------------------- GPUInfo ----------------------
-	void GPUInfo::onDeviceReset() {
+	// ---------------------- GPU ----------------------
+	void GPU::onDeviceReset() {
 		_strVendor = reinterpret_cast<const char*>(GL.glGetString(GL_VENDOR));
 		_strRenderer = reinterpret_cast<const char*>(GL.glGetString(GL_RENDERER));
 
@@ -74,27 +74,27 @@ namespace rev {
 			cp = cm.suffix().first;
 		}
 	}
-	void GPUInfo::onDeviceLost() {}
+	void GPU::onDeviceLost() {}
 
-	const GPUInfo::Version& GPUInfo::glslVersion() const {
+	const GPU::Version& GPU::glslVersion() const {
 		return _verSL;
 	}
-	const GPUInfo::Version& GPUInfo::version() const {
+	const GPU::Version& GPU::version() const {
 		return _verGL;
 	}
-	const GPUInfo::Version& GPUInfo::driverVersion() const {
+	const GPU::Version& GPU::driverVersion() const {
 		return _verDriver;
 	}
-	const std::string& GPUInfo::vendor() const {
+	const std::string& GPU::vendor() const {
 		return _strVendor;
 	}
-	const std::string& GPUInfo::renderer() const {
+	const std::string& GPU::renderer() const {
 		return _strRenderer;
 	}
-	const GPUInfo::CapSet& GPUInfo::refCapabilitySet() const {
+	const GPU::CapSet& GPU::refCapabilitySet() const {
 		return _capSet;
 	}
-	std::ostream& operator << (std::ostream& os, const GPUInfo& info) {
+	std::ostream& operator << (std::ostream& os, const GPU& info) {
 		using std::endl;
 		os << "OpenGL Version: " << info.version() << endl
 				<< "OpenGL Vendor: " << info.vendor() << endl

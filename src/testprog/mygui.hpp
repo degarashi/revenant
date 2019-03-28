@@ -3,7 +3,9 @@
 #include "../drawable.hpp"
 
 namespace rev {
-	class GPUInfo;
+	namespace info {
+		class GPU;
+	}
 	class ResourceView;
 	namespace debug {
 		class Profiler;
@@ -18,7 +20,7 @@ namespace rev {
 				using SP = std::shared_ptr<T>;
 				HDGroup						_dg;
 				Logger						_logger;
-				SP<GPUInfo>					_gpu;
+				SP<info::GPU>				_gpu;
 				SP<ResourceView>		_resview;
 				SP<debug::Profiler>		_profiler;
 				mutable struct {

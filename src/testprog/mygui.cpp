@@ -54,7 +54,7 @@ namespace rev::test {
 	};
 	MyGUI::MyGUI(const HDGroup& dg):
 		_dg(dg),
-		_gpu(mgr_gl.makeResource<GPUInfo>()),
+		_gpu(mgr_gl.makeResource<info::GPU>()),
 		_resview(std::make_shared<ResourceView>()),
 		_profiler(std::make_shared<debug::Profiler>())
 	{

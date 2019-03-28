@@ -5,11 +5,11 @@
 #include "../spacing.hpp"
 #include <boost/format.hpp>
 
-namespace rev {
-	const char* GPUInfo::getDebugName() const noexcept {
+namespace rev::info {
+	const char* GPU::getDebugName() const noexcept {
 		return "GPUInfo";
 	}
-	bool GPUInfo::property(const bool edit) {
+	bool GPU::property(const bool edit) {
 		auto field = debug::EntryField("GPUInfo", edit);
 		const auto showVersion = [&field](const char* name, const auto& ver){
 			const auto fmt = boost::format("%1%.%2%.%3%") % ver.major % ver.minor % ver.revision;
