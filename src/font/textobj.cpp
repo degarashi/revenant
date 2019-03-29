@@ -9,10 +9,14 @@
 #include "../effect/techmgr.hpp"
 
 namespace rev::detail {
-	TextObj::TextObj(Face& face, CCoreID coreID, std::u32string&& s): _text(std::move(s)), _coreID(coreID), _faceName(face.faceName) {
-		_init(face);
+	TextObj::TextObj(Face &face, const CCoreID coreID, std::u32string &&s):
+		_text(std::move(s)),
+		_coreID(coreID),
+		_faceName(face.faceName)
+	{
+		_prepareTextureAndVertex(face);
 	}
-	void TextObj::_init(Face& face) {
+	void TextObj::_prepareTextureAndVertex(Face &face) {
 		// CharPosリストの作成
 		// 1文字につき4頂点 + インデックス6個
 		struct CPair {
@@ -120,7 +124,7 @@ namespace rev::detail {
 	}
 	void TextObj::onCacheReset(Face& face) {
 		// 再度テキストデータ(CharPosポインタ配列)を作成
-		_init(face);
+		_prepareTextureAndVertex(face);
 	}
 	CCoreID& TextObj::refCoreID() {
 		return _coreID;

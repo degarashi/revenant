@@ -62,8 +62,7 @@ namespace rev {
 				FontName_S		_faceName;
 				lubee::SizeF	_rectSize;
 
-				//! フォントテクスチャと描画用頂点を用意
-				void _init(Face &face);
+				void _prepareTextureAndVertex(Face &face);
 				// デフォルト描画シェーダー
 				using DefaultTech = SingletonDataLazy<ITech, TextObj>;
 				const static DefaultTech	s_defaultTech;
