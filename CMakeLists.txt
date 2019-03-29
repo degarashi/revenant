@@ -43,36 +43,42 @@ if(${WITH_PROFILER})
 	add_definitions(-DPROFILER_ENABLED)
 endif()
 # 依存ファイル以外のソースファイルを収集
-aux_source_directory(src LIBSRC_MAIN)
-aux_source_directory(src/drawcmd LIBSRC_MAIN)
-aux_source_directory(src/drawcmd/types LIBSRC_MAIN)
-aux_source_directory(src/drawutil LIBSRC_MAIN)
 aux_source_directory(src/lua_define LIBSRC_LUADEF)
 aux_source_directory(src/lua LIBSRC_LUA)
 aux_source_directory(src/glwrapper LIBSRC_GLWRAPPER)
 aux_source_directory(src/effect/parse LIBSRC_GLXPARSE)
 aux_source_directory(src/backup LIBSRC_BACKUP)
-aux_source_directory(src/imgui LIBSRC_MAIN)
 aux_source_directory(src/gltf LIBSRC_GLTF)
 aux_source_directory(src/external LIBSRC_GLTF)
 aux_source_directory(src/gltf/v1 LIBSRC_GLTF_V1)
 aux_source_directory(src/gltf/v2 LIBSRC_GLTF_V2)
 aux_source_directory(src/dc LIBSRC_DC)
-aux_source_directory(src/font LIBSRC_MAIN)
-aux_source_directory(src/sound LIBSRC_MAIN)
-aux_source_directory(src/sdl LIBSRC_MAIN)
-aux_source_directory(src/input LIBSRC_MAIN)
-aux_source_directory(src/gl LIBSRC_MAIN)
-aux_source_directory(src/gl/texture LIBSRC_MAIN)
-aux_source_directory(src/info LIBSRC_MAIN)
-aux_source_directory(src/fs LIBSRC_MAIN)
-aux_source_directory(src/uri LIBSRC_MAIN)
-aux_source_directory(src/msg LIBSRC_MAIN)
-aux_source_directory(src/effect LIBSRC_MAIN)
-aux_source_directory(src/log LIBSRC_MAIN)
-aux_source_directory(src/object LIBSRC_MAIN)
-aux_source_directory(src/object/scene LIBSRC_MAIN)
-aux_source_directory(src/effect/uniform LIBSRC_MAIN)
+
+set(MAIN_SOURCEDIR
+	src
+	src/drawcmd
+	src/drawcmd/types
+	src/drawutil
+	src/imgui
+	src/font
+	src/sound
+	src/sdl
+	src/input
+	src/gl
+	src/gl/texture
+	src/info
+	src/fs
+	src/uri
+	src/msg
+	src/effect
+	src/log
+	src/object
+	src/object/scene
+	src/effect/uniform
+)
+foreach(SOURCEDIR IN LISTS MAIN_SOURCEDIR)
+	aux_source_directory(${SOURCEDIR} LIBSRC_MAIN)
+endforeach()
 list(REMOVE_ITEM LIBSRC_MAIN ${OS_DEPENDANT_SRC} ${SOUND_DEPENDANT_SRC})
 
 # サウンド依存ファイルの設定
