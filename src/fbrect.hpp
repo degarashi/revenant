@@ -1,6 +1,5 @@
 #pragma once
 #include "lubee/src/rect.hpp"
-#include "lubee/src/size.hpp"
 
 namespace rev {
 	class FBRect {
