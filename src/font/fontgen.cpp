@@ -15,7 +15,7 @@ namespace rev {
 	template <class S>
 	CCoreID FontGen::_makeCoreID(const S& name, CCoreID cid) {
 		// cid = フォントファミリを無視した値
-		auto itr = std::find(_faceL.begin(), _faceL.end(), ToStdString(name));
+		const auto itr = std::find(_faceL.begin(), _faceL.end(), ToStdString(name));
 		if(itr == _faceL.end()) {
 			// 新しくFaceを作成
 			cid.at<CCoreID::FaceID>() = static_cast<int>(_faceL.size());
@@ -26,15 +26,15 @@ namespace rev {
 		return cid;
 	}
 
-	CCoreID FontGen::makeCoreID(const std::string& name, CCoreID cid) {
+	CCoreID FontGen::makeCoreID(const std::string& name, const CCoreID cid) {
 		return _makeCoreID(name, cid);
 	}
-	CCoreID FontGen::makeCoreID(const FontName_S& name, CCoreID cid) {
+	CCoreID FontGen::makeCoreID(const FontName_S& name, const CCoreID cid) {
 		return _makeCoreID(name, cid);
 	}
-	detail::Face& FontGen::_getArray(CCoreID cid) {
+	detail::Face& FontGen::_getArray(const CCoreID cid) {
 		// FaceList線形探索
-		auto itr = std::find_if(_faceL.begin(), _faceL.end(), [cid](const detail::Face& fc){
+		const auto itr = std::find_if(_faceL.begin(), _faceL.end(), [cid](const detail::Face& fc){
 			return fc.coreID.at<CCoreID::FaceID>() == cid.at<CCoreID::FaceID>();
 		});
 		D_Assert0(itr != _faceL.end());
