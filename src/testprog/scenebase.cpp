@@ -11,9 +11,9 @@ namespace rev::test {
 		_textTech = rev::detail::TextObj::GetDefaultTech();
 		{
 			// フォント初期化
-			FontId cid(16, 0, FontId::CharFlag_AA, false, 100, FontId::SizeType_Pixel);
-			cid = mgr_text.makeFontId("IPAGothic", cid);
-			_fps.setFontId(cid);
+			FontId fid(16, 0, FontId::CharFlag_AA, false, 100, FontId::SizeType_Pixel);
+			fid = mgr_text.makeFontId("IPAGothic", fid);
+			_fps.setFontId(fid);
 			_fps.setDepth(0);
 			_fps.setWindowOffset({10,30});
 		}

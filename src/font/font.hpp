@@ -16,7 +16,7 @@ namespace rev {
 				FontArray_Dep		dep;
 				CharPlane			cplane;
 
-				DepPair(const FontName_S& name, const lubee::PowSize& sfcSize, FontId cid);
+				DepPair(const FontName_S& name, const lubee::PowSize& sfcSize, FontId fid);
 				DepPair(DepPair&&) = default;
 			};
 			using DepMap = std::unordered_map<FontId, DepPair>;
@@ -27,11 +27,11 @@ namespace rev {
 			FontChMap&				fontMap;
 
 			Face(Face&& f) = default;
-			Face(const FontName_S& name, const lubee::PowSize& size, FontId cid, FontChMap& m);
+			Face(const FontName_S& name, const lubee::PowSize& size, FontId fid, FontChMap& m);
 			bool operator == (const std::string& name) const;
 			bool operator != (const std::string& name) const;
-			bool operator == (FontId cid) const;
-			bool operator != (FontId cid) const;
+			bool operator == (FontId fid) const;
+			bool operator != (FontId fid) const;
 			const CharPos* getCharPos(CharId cid);
 			DepPair& getDepPair(FontId fontId);
 		};
@@ -118,35 +118,35 @@ namespace rev {
 			lubee::PowSize	_sfcSize;
 
 			/*! 既にFaceはmakeFontIdで作成されてる筈 */
-			detail::Face& _getArray(FontId cid);
+			detail::Face& _getArray(FontId fid);
 			//! 文字列先頭にFontIdの文字列を付加したものを返す
 			/*! ハッシュキーはUTF32文字列に統一 */
-			static std::u32string _MakeTextTag(FontId cid, const std::u32string& s);
+			static std::u32string _MakeTextTag(FontId fid, const std::u32string& s);
 
 			template <class S>
-			FontId _makeFontId(const S& name, FontId cid);
+			FontId _makeFontId(const S& name, FontId fid);
 
 		public:
 			/*! sfcSizeは強制的に2の累乗サイズに合わせられる
 				\param[in] sfcSize	フォントを蓄えるOpenGLサーフェスのサイズ */
 			FontGen(const lubee::PowSize& sfcSize);
 			//! フォントの設定から一意のIDを作る
-			/*! \param[in] cid フォントの見た目情報。FaceIdは無視される
+			/*! \param[in] fid フォントの見た目情報。FaceIdは無視される
 				\param[in] name フォントファミリの名前
-				\return FaceIdを更新したcid */
-			FontId makeFontId(const std::string& name, FontId cid);
+				\return FaceIdを更新したfid */
+			FontId makeFontId(const std::string& name, FontId fid);
 			// 上記のnameがdetail::FontName_Sバージョン
 			/*! 動作は同じだが、もしFace名が無ければそのポインタを受け継いでFaceListに加える */
-			FontId makeFontId(const detail::FontName_S& name, FontId cid);
+			FontId makeFontId(const detail::FontName_S& name, FontId fid);
 			//! キャッシュを全て破棄
 			/*! 文字列ハンドルは有効
 				\param[in] bRestore trueならキャッシュを再確保する */
 			void clearCache(bool bRestore);
 
 			// 同じFaceの同じ文字列には同一のハンドルが返されるようにする
-			/*! \param[in] cid makeFontIdで作成したFaceId設定済みID
+			/*! \param[in] fid makeFontIdで作成したFaceId設定済みID
 				\param[in] s 表示したい文字列 */
-			HText createText(FontId cid, To32Str str);
+			HText createText(FontId fid, To32Str str);
 
 			// デバイスロストで処理が必要なのはテクスチャハンドルだけなので、
 			// onDeviceLostやonDeviceResetは特に必要ない

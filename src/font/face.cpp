@@ -12,14 +12,14 @@ namespace rev::detail {
 		using LAlloc = LaneAlloc<6,4,2>;
 	}
 	// --------------------------- Face::DepPair ---------------------------
-	Face::DepPair::DepPair(const FontName_S& name, const lubee::PowSize& sfcSize, const FontId cid):
-		dep(*name, cid), cplane(sfcSize, dep.height(), LaneAlloc_UP(new LAlloc()))
+	Face::DepPair::DepPair(const FontName_S& name, const lubee::PowSize& sfcSize, const FontId fid):
+		dep(*name, fid), cplane(sfcSize, dep.height(), LaneAlloc_UP(new LAlloc()))
 	{}
 	// --------------------------- Face ---------------------------
 	// フォントのHeightとラインのHeightは違う！
-	Face::Face(const FontName_S& name, const lubee::PowSize& size, const FontId cid, FontChMap& m):
+	Face::Face(const FontName_S& name, const lubee::PowSize& size, const FontId fid, FontChMap& m):
 		faceName(name),
-		fontId(cid),
+		fontId(fid),
 		sfcSize(size),
 		fontMap(m)
 	{}
@@ -29,11 +29,11 @@ namespace rev::detail {
 	bool Face::operator ==(const std::string& name) const {
 		return *faceName == name;
 	}
-	bool Face::operator != (const FontId cid) const {
-		return !(this->operator == (cid));
+	bool Face::operator != (const FontId fid) const {
+		return !(this->operator == (fid));
 	}
-	bool Face::operator == (const FontId cid) const {
-		return fontId == cid;
+	bool Face::operator == (const FontId fid) const {
+		return fontId == fid;
 	}
 	Face::DepPair& Face::getDepPair(const FontId fontId) {
 		return TryEmplace(depMap, fontId, faceName, sfcSize, fontId).first->second;

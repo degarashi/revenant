@@ -65,13 +65,13 @@ namespace rev {
 			lubee::RectI _boundingRect(char32_t code) const;
 		public:
 			Font_FTDep(Font_FTDep&&) = default;
-			Font_FTDep(const std::string& name, FontId cid);
-			Font_FTDep(FontId cid);
+			Font_FTDep(const std::string& name, FontId fid);
+			Font_FTDep(FontId fid);
 			Font_FTDep& operator = (Font_FTDep&& dep) = default;
 
 			//! 結果的にFontIdが同じになるパラメータの値を統一
 			/*! (依存クラスによってはサイズが縦しか指定できなかったりする為) */
-			FontId adjustParams(FontId cid);
+			FontId adjustParams(FontId fid);
 
 			//! 使用テクスチャとUV範囲、カーソル移動距離など取得
 			/*! \return first=フォントピクセルデータ(各ピクセル8bit)

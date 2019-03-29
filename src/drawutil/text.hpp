@@ -21,7 +21,7 @@ namespace rev {
 			private:
 				static FontId_O		cs_defaultFid;
 				std::u32string		_text;
-				FontId				_charId;
+				FontId				_fontId;
 				RGBAColor			_color;
 				mutable bool		_bRefl;
 				mutable HText		_hText;
@@ -30,7 +30,7 @@ namespace rev {
 				using CBPreDraw = std::function<void (IEffect&)>;
 			public:
 				Text();
-				void setFontId(FontId cid) noexcept;
+				void setFontId(FontId fid) noexcept;
 				const HText& getText() const;
 				FontId getFontId() const noexcept;
 				void setText(To32Str str);

@@ -81,17 +81,17 @@ namespace rev {
 		}
 	}
 	// TODO: 縁取り対応
-	Font_FTDep::Font_FTDep(const std::string& name, const FontId cid):
-		_fontId(cid)
+	Font_FTDep::Font_FTDep(const std::string& name, const FontId fid):
+		_fontId(fid)
 	{
 		_hFT = mgr_font.fontFromFamilyName(name);
 		Assert0(_hFT);
 		SetFTSize(*_hFT, _fontId);
 	}
-	Font_FTDep::Font_FTDep(const FontId cid):
-		_fontId(cid)
+	Font_FTDep::Font_FTDep(const FontId fid):
+		_fontId(fid)
 	{
-		_hFT = mgr_font.fontFromID(cid);
+		_hFT = mgr_font.fontFromID(fid);
 		Assert0(_hFT);
 		SetFTSize(*_hFT, _fontId);
 	}
@@ -108,8 +108,8 @@ namespace rev {
 	int Font_FTDep::maxWidth() const {
 		return _hFT->getFaceInfo().maxWidth;
 	}
-	FontId Font_FTDep::adjustParams(const FontId cid) {
-		return cid;
+	FontId Font_FTDep::adjustParams(const FontId fid) {
+		return fid;
 	}
 	std::pair<ByteBuff, lubee::RectI> Font_FTDep::getChara(const char32_t c) {
 		auto& ft = *_hFT;

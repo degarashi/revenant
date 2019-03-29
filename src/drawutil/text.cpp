@@ -29,10 +29,10 @@ namespace rev {
 			_color(1),
 			_bRefl(true)
 		{
-			_charId = _GetDefaultFId();
+			_fontId = _GetDefaultFId();
 		}
-		void Text::setFontId(const FontId cid) noexcept {
-			_charId = cid;
+		void Text::setFontId(const FontId fid) noexcept {
+			_fontId = fid;
 		}
 		void Text::setText(To32Str str) {
 			_text = str.moveTo();
@@ -49,12 +49,12 @@ namespace rev {
 			_color = c;
 		}
 		FontId Text::getFontId() const noexcept {
-			return _charId;
+			return _fontId;
 		}
 		const HText& Text::getText() const {
 			if(_bRefl) {
 				_bRefl = false;
-				_hText = mgr_text.createText(_charId, _text);
+				_hText = mgr_text.createText(_fontId, _text);
 			}
 			return _hText;
 		}

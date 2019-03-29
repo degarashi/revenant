@@ -75,8 +75,8 @@ namespace std {
 	};
 	template <>
 	struct hash<::rev::FontId> {
-		uint32_t operator()(const ::rev::FontId& cid)	const {
-			return cid.cleanedValue();
+		uint32_t operator()(const ::rev::FontId& fid)	const {
+			return fid.cleanedValue();
 		}
 	};
 }

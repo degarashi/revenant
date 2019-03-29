@@ -20,11 +20,11 @@ namespace rev {
 			_depth = d;
 		}
 		int Text2D::draw(IEffect& e) const {
-			const auto cid = getFontId();
+			const auto fid = getFontId();
 			auto& c = dynamic_cast<U_Common&>(e);
 			// Zが0.0未満や1.0以上だと描画されないので、それより少し狭い範囲でクリップする
 			c.depth = lubee::Saturate(_depth, 0.f, 1.f-1e-4f);
-			const float s = float(_lineHeight) / cid.at<FontId::Height>();
+			const float s = float(_lineHeight) / fid.at<FontId::Height>();
 			auto m = frea::Mat3::Scaling({s, s, 1});
 			m *= getToWorld().convert<3,3>();
 			return Text::draw(
