@@ -10,7 +10,7 @@
 #include "header.hpp"
 #include "child.hpp"
 #include "spacing.hpp"
-#include "../rev_time.hpp"
+#include "../log/time.hpp"
 #include "../drawthread.hpp"
 #include "../mainthread.hpp"
 #include <iomanip>

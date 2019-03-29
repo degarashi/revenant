@@ -5,10 +5,10 @@
 #include "sdl/init.hpp"
 #include "sdl/window.hpp"
 #include "input/input.hpp"
-#include "pooled_output.hpp"
+#include "log/pooled_output.hpp"
 #include "output.hpp"
 #include "sharedata.hpp"
-#include "rev_time.hpp"
+#include "log/time.hpp"
 #include "handle/sdl.hpp"
 #include <SDL.h>
 #include <SDL_image.h>

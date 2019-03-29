@@ -2,7 +2,7 @@
 #include "../imgui/imgui.h"
 #include "window.hpp"
 #include "child.hpp"
-#include "pooled_output.hpp"
+#include "../log/pooled_output.hpp"
 #include "lubee/src/meta/countof.hpp"
 #include "style.hpp"
 #include "id.hpp"

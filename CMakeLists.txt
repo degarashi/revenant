@@ -69,6 +69,7 @@ aux_source_directory(src/fs LIBSRC_MAIN)
 aux_source_directory(src/uri LIBSRC_MAIN)
 aux_source_directory(src/msg LIBSRC_MAIN)
 aux_source_directory(src/effect LIBSRC_MAIN)
+aux_source_directory(src/log LIBSRC_MAIN)
 list(REMOVE_ITEM LIBSRC_MAIN ${OS_DEPENDANT_SRC} ${SOUND_DEPENDANT_SRC})
 
 # サウンド依存ファイルの設定

@@ -1,5 +1,5 @@
 #pragma once
-#include "../rev_logentry.hpp"
+#include "../log/logentry.hpp"
 #include <memory>
 #include <vector>
 

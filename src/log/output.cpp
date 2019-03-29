@@ -1,6 +1,6 @@
-#include "rev_output.hpp"
-#include "sdl/tls.hpp"
-#include "rev_time.hpp"
+#include "output.hpp"
+#include "time.hpp"
+#include "../sdl/tls.hpp"
 #include <boost/format.hpp>
 
 namespace rev {

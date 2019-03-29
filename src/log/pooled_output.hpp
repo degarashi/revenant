@@ -1,6 +1,6 @@
 #pragma once
-#include "rev_output.hpp"
-#include "rev_logentry.hpp"
+#include "output.hpp"
+#include "logentry.hpp"
 #include <deque>
 #include <vector>
 

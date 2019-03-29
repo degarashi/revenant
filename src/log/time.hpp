@@ -1,5 +1,5 @@
 #pragma once
-#include "clock.hpp"
+#include "../clock.hpp"
 
 namespace rev {
 	void RecordApplicationBeginTime();
