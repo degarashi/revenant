@@ -3,6 +3,7 @@
 #include <boost/lexical_cast.hpp>
 
 namespace rev {
+	using String_SP = detail::String_SP;
 	namespace {
 		String_SP ToSp(const std::string& s) { return String_SP(new FontName(s)); }
 		String_SP ToSp(const String_SP& s) { return s; }
@@ -31,9 +32,9 @@ namespace rev {
 	CCoreID FontGen::makeCoreID(const String_SP& name, CCoreID cid) {
 		return _makeCoreID(name, cid);
 	}
-	Face& FontGen::_getArray(CCoreID cid) {
+	detail::Face& FontGen::_getArray(CCoreID cid) {
 		// FaceList線形探索
-		auto itr = std::find_if(_faceL.begin(), _faceL.end(), [cid](const Face& fc){
+		auto itr = std::find_if(_faceL.begin(), _faceL.end(), [cid](const detail::Face& fc){
 			return fc.coreID.at<CCoreID::FaceID>() == cid.at<CCoreID::FaceID>();
 		});
 		D_Assert0(itr != _faceL.end());
@@ -69,7 +70,7 @@ namespace rev {
 		auto& ar = _getArray(cid);
 		const auto tag = _MakeTextTag(cid, str32);
 		return
-			acquireWithMake<TextObj>(
+			acquireWithMake<detail::TextObj>(
 				tag,
 				[&](const auto&, auto& ctor){
 					ctor(ar, cid, std::move(str32));

@@ -8,7 +8,7 @@
 
 namespace rev::test {
 	TestScene::TestScene() {
-		_textTech = rev::TextObj::GetDefaultTech();
+		_textTech = rev::detail::TextObj::GetDefaultTech();
 		{
 			// フォント初期化
 			CCoreID cid(16, 0, CCoreID::CharFlag_AA, false, 100, CCoreID::SizeType_Pixel);

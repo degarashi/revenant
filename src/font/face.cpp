@@ -6,7 +6,7 @@
 #include "../gl/texture/mem.hpp"
 #include "../gl/texture.hpp"
 
-namespace rev {
+namespace rev::detail {
 	namespace {
 		// 最低サイズ2bits, Layer1=4bits, Layer0=6bits = 12bits(4096)
 		using LAlloc = LaneAlloc<6,4,2>;

@@ -4,6 +4,8 @@
 namespace rev {
 	class FTFace;
 	DEF_HANDLE(FTFace, FT)
-	class TextObj;
-	DEF_HANDLE(TextObj, Text)
+	namespace detail {
+		class TextObj;
+	}
+	DEF_HANDLE(detail::TextObj, Text)
 }

@@ -8,7 +8,7 @@
 #include "../effect/if.hpp"
 #include "../effect/techmgr.hpp"
 
-namespace rev {
+namespace rev::detail {
 	TextObj::TextObj(Face& face, CCoreID coreID, std::u32string&& s): _text(std::move(s)), _coreID(coreID), _faceName(face.faceName) {
 		_init(face);
 	}
