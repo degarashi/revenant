@@ -9,7 +9,7 @@
 #include "../../effect/u_pbr_mr.hpp"
 #include "../../gl/resource.hpp"
 #include "../../effect/sys_uniform.hpp"
-#include "../../u_morph.hpp"
+#include "../../effect/u_morph.hpp"
 
 namespace rev::test {
 	HFx Param::makeEffect() const {
