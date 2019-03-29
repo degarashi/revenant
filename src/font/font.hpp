@@ -33,15 +33,8 @@ namespace rev {
 		const CharPos* getCharPos(CharID cid);
 		DepPair& getDepPair(CCoreID coreID);
 	};
-
-	namespace drawtag {
-		//! フォント描画用セッティング Tag
-		struct text {};
-	}
 	struct DrawTag;
-}
 
-namespace rev {
 	//! 文章の描画に必要なフォントや頂点を用意
 	/*!
 		TriangleList形式。とりあえず改行だけ対応
