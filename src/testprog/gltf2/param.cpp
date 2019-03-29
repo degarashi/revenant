@@ -3,13 +3,13 @@
 #include "resmgr_app.hpp"
 #include "shared.hpp"
 #include "../../drawutil/gle_nest.hpp"
-#include "../../effect/u_common.hpp"
-#include "../../effect/u_matrix2d.hpp"
-#include "../../effect/u_matrix3d.hpp"
-#include "../../effect/u_pbr_mr.hpp"
+#include "../../effect/uniform/common.hpp"
+#include "../../effect/uniform/matrix2d.hpp"
+#include "../../effect/uniform/matrix3d.hpp"
+#include "../../effect/uniform/pbr_mr.hpp"
 #include "../../gl/resource.hpp"
 #include "../../effect/sys_uniform.hpp"
-#include "../../effect/u_morph.hpp"
+#include "../../effect/uniform/morph.hpp"
 
 namespace rev::test {
 	HFx Param::makeEffect() const {

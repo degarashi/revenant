@@ -56,8 +56,8 @@ namespace rev::test {
 
 #include "../../output.hpp"
 #include "../../effect/tech_pass.hpp"
-#include "../../effect/u_matrix2d.hpp"
-#include "../../effect/u_common.hpp"
+#include "../../effect/uniform/matrix2d.hpp"
+#include "../../effect/uniform/common.hpp"
 namespace rev::test {
 	void Sprite2D::draw(IEffect& e) const {
 		e.setTechnique(_tech);

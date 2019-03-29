@@ -1,8 +1,8 @@
-#include "u_matrix2d.hpp"
-#include "if.hpp"
-#include "camera2d.hpp"
-#include "uniform_ent.hpp"
-#include "../gl/program.hpp"
+#include "matrix2d.hpp"
+#include "../if.hpp"
+#include "../../camera2d.hpp"
+#include "../uniform_ent.hpp"
+#include "../../gl/program.hpp"
 #include "spine/src/flyweight_item.hpp"
 
 namespace rev {

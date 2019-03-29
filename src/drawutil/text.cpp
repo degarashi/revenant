@@ -2,7 +2,7 @@
 #include "../font/font.hpp"
 #include "../effect/if.hpp"
 #include "../effect/uniform_ent.hpp"
-#include "../effect/u_common.hpp"
+#include "../effect/uniform/common.hpp"
 
 namespace rev {
 	namespace drawutil {

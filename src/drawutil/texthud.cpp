@@ -2,7 +2,7 @@
 #include "../systeminfo.hpp"
 #include "../effect/if.hpp"
 #include "../effect/uniform_ent.hpp"
-#include "../effect/u_common.hpp"
+#include "../effect/uniform/common.hpp"
 #include "lubee/src/compare.hpp"
 
 namespace rev {

@@ -6,7 +6,7 @@
 #include "../../debug_gui/resource_window.hpp"
 #include "../../debug_gui/window.hpp"
 #include "../../effect/if.hpp"
-#include "../../effect/u_matrix3d.hpp"
+#include "../../effect/uniform/matrix3d.hpp"
 #include "../../fs/dir.hpp"
 #include "../../gltf/v1/dc_model.hpp"
 #include "../../gltf/v1/mgr.hpp"

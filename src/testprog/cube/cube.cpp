@@ -2,7 +2,7 @@
 #include "../../effect/vdecl.hpp"
 #include "../../effect/techmgr.hpp"
 #include "../../effect/effect.hpp"
-#include "../../effect/u_matrix3d.hpp"
+#include "../../effect/uniform/matrix3d.hpp"
 #include "../../gl/resource.hpp"
 #include "lubee/src/meta/countof.hpp"
 

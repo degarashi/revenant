@@ -4,7 +4,7 @@
 #include "../gl/resource.hpp"
 #include "../effect/primitive.hpp"
 #include "../effect/drawtag.hpp"
-#include "../effect/u_common.hpp"
+#include "../effect/uniform/common.hpp"
 #include "../effect/if.hpp"
 #include "../effect/techmgr.hpp"
 

@@ -5,7 +5,7 @@
 #include "gltf/v1/visitor_model.hpp"
 #include "../../dc/node.hpp"
 #include "../../effect/if.hpp"
-#include "../../effect/u_matrix3d.hpp"
+#include "../../effect/uniform/matrix3d.hpp"
 #include "../../fbrect.hpp"
 #include "../../systeminfo.hpp"
 #include "frea/src/vector.hpp"

@@ -8,8 +8,8 @@
 #include "../../debug_gui/resource_window.hpp"
 #include "../../debug_gui/window.hpp"
 #include "../../effect/if.hpp"
-#include "../../effect/u_matrix3d.hpp"
-#include "../../effect/u_pbr_mr.hpp"
+#include "../../effect/uniform/matrix3d.hpp"
+#include "../../effect/uniform/pbr_mr.hpp"
 #include "../../imgui/imgui.h"
 #include "../../imgui_sdl2.hpp"
 

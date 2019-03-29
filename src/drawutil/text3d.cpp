@@ -1,7 +1,7 @@
 #include "text3d.hpp"
 #include "gle_nest.hpp"
 #include "../camera3d.hpp"
-#include "../effect/u_matrix3d.hpp"
+#include "../effect/uniform/matrix3d.hpp"
 
 namespace rev {
 	namespace drawutil {

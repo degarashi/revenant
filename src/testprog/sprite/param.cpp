@@ -4,8 +4,8 @@
 #include "../../gl/resource.hpp"
 #include "../../drawutil/gle_nest.hpp"
 #include "../../effect/sys_uniform.hpp"
-#include "../../effect/u_matrix2d.hpp"
-#include "../../effect/u_common.hpp"
+#include "../../effect/uniform/matrix2d.hpp"
+#include "../../effect/uniform/common.hpp"
 
 namespace rev::test {
 	HFx Param::makeEffect() const {

@@ -1,7 +1,7 @@
 #include "gltf/v2/dc_mesh_module.hpp"
 #include "../../dc/qm_if.hpp"
-#include "../../effect/u_morph.hpp"
-#include "../../effect/u_matrix3d.hpp"
+#include "../../effect/uniform/morph.hpp"
+#include "../../effect/uniform/matrix3d.hpp"
 #include "../../effect/if.hpp"
 
 namespace rev::gltf::v2 {

@@ -1,7 +1,7 @@
 #include "cube_scene.hpp"
 #include "cube.hpp"
 #include "shared.hpp"
-#include "../../effect/u_matrix3d.hpp"
+#include "../../effect/uniform/matrix3d.hpp"
 #include "../../effect/if.hpp"
 
 namespace rev::test {

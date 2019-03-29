@@ -72,6 +72,7 @@ aux_source_directory(src/effect LIBSRC_MAIN)
 aux_source_directory(src/log LIBSRC_MAIN)
 aux_source_directory(src/object LIBSRC_MAIN)
 aux_source_directory(src/object/scene LIBSRC_MAIN)
+aux_source_directory(src/effect/uniform LIBSRC_MAIN)
 list(REMOVE_ITEM LIBSRC_MAIN ${OS_DEPENDANT_SRC} ${SOUND_DEPENDANT_SRC})
 
 # サウンド依存ファイルの設定

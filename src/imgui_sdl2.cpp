@@ -13,7 +13,7 @@
 #include "effect/tech_if.hpp"
 #include "effect/if.hpp"
 #include "effect/uniform_ent.hpp"
-#include "effect/u_matrix2d.hpp"
+#include "effect/uniform/matrix2d.hpp"
 #include "effect/primitive.hpp"
 #include "effect/techmgr.hpp"
 #include <SDL_clipboard.h>

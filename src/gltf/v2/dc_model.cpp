@@ -3,7 +3,7 @@
 #include "gltf/v2/scene.hpp"
 #include "gltf/v2/dc_mesh.hpp"
 #include "../../dc/node.hpp"
-#include "../../effect/u_matrix3d.hpp"
+#include "../../effect/uniform/matrix3d.hpp"
 #include "../../effect/if.hpp"
 #include "../../fbrect.hpp"
 #include "../../systeminfo.hpp"

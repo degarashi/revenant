@@ -1,8 +1,8 @@
 #include "text2d.hpp"
 #include "gle_nest.hpp"
 #include "../effect/if.hpp"
-#include "../effect/u_matrix2d.hpp"
-#include "../effect/u_common.hpp"
+#include "../effect/uniform/matrix2d.hpp"
+#include "../effect/uniform/common.hpp"
 #include "frea/src/matrix.hpp"
 #include "lubee/src/compare.hpp"
 

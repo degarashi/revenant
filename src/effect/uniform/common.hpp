@@ -1,6 +1,6 @@
 #pragma once
-#include "uniform_setter.hpp"
-#include "../handle/opengl.hpp"
+#include "../uniform_setter.hpp"
+#include "../../handle/opengl.hpp"
 #include "frea/src/vector.hpp"
 
 namespace rev {

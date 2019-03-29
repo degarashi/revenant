@@ -1,6 +1,6 @@
 #pragma once
-#include "../gltf/v2/morph.hpp"
-#include "uniform_setter.hpp"
+#include "../../gltf/v2/morph.hpp"
+#include "../uniform_setter.hpp"
 #include "frea/src/vector.hpp"
 
 namespace rev {

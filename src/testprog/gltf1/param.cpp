@@ -3,9 +3,9 @@
 #include "resmgr_app.hpp"
 #include "shared.hpp"
 #include "../../drawutil/gle_nest.hpp"
-#include "../../effect/u_common.hpp"
-#include "../../effect/u_matrix2d.hpp"
-#include "../../effect/u_matrix3d.hpp"
+#include "../../effect/uniform/common.hpp"
+#include "../../effect/uniform/matrix2d.hpp"
+#include "../../effect/uniform/matrix3d.hpp"
 #include "../../effect/sys_uniform.hpp"
 #include "../../gl/resource.hpp"
 

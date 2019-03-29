@@ -1,7 +1,7 @@
-#include "u_pbr_mr.hpp"
-#include "uniform_ent.hpp"
-#include "vdecl.hpp"
-#include "../gl/program.hpp"
+#include "pbr_mr.hpp"
+#include "../uniform_ent.hpp"
+#include "../vdecl.hpp"
+#include "../../gl/program.hpp"
 
 namespace rev {
 	namespace {
@@ -117,8 +117,8 @@ namespace rev {
 	}
 }
 
-#include "../gl/resource.hpp"
-#include "../gl/texture/mem.hpp"
+#include "../../gl/resource.hpp"
+#include "../../gl/texture/mem.hpp"
 namespace rev {
 	namespace {
 		const auto c_filter = std::make_shared<TextureFilter>();

@@ -1,7 +1,7 @@
 #pragma once
-#include "pbr_mr.hpp"
-#include "uniform_setter.hpp"
-#include "../singleton_data.hpp"
+#include "../../pbr_mr.hpp"
+#include "../uniform_setter.hpp"
+#include "../../singleton_data.hpp"
 
 namespace rev {
 	class U_PBRMetallicRoughness :

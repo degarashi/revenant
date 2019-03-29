@@ -1,6 +1,6 @@
 #pragma once
-#include "uniform_setter.hpp"
-#include "../handle/camera.hpp"
+#include "../uniform_setter.hpp"
+#include "../../handle/camera.hpp"
 #include "spine/src/rflag.hpp"
 #include "frea/src/matrix.hpp"
 

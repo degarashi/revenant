@@ -3,7 +3,7 @@
 #include "bsprite.hpp"
 #include "../../camera2d.hpp"
 #include "../../effect/if.hpp"
-#include "../../effect/u_matrix2d.hpp"
+#include "../../effect/uniform/matrix2d.hpp"
 #include "../../gl/resource.hpp"
 #include "../../gl/texture/filter.hpp"
 #include "../../systeminfo.hpp"
