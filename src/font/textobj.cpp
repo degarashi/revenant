@@ -125,7 +125,7 @@ namespace rev::detail {
 	CCoreID& TextObj::refCoreID() {
 		return _coreID;
 	}
-	const String_SP& TextObj::getFaceName() const {
+	const FontName_S& TextObj::getFaceName() const {
 		return _faceName;
 	}
 	void TextObj::draw(IEffect& e) const {

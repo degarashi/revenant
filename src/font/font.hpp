@@ -10,24 +10,24 @@ namespace rev {
 		//! CharCodeとフォントテクスチャ対応付け (全Face共通)
 		using FontChMap = std::unordered_map<CharID, CharPos>;
 		// (FaceNameを複数箇所で共有する都合上)
-		using String_SP = std::shared_ptr<FontName>;
+		using FontName_S = std::shared_ptr<FontName>;
 		struct Face {
 			struct DepPair {
 				FontArray_Dep		dep;
 				CharPlane			cplane;
 
-				DepPair(const String_SP& name, const lubee::PowSize& sfcSize, CCoreID cid);
+				DepPair(const FontName_S& name, const lubee::PowSize& sfcSize, CCoreID cid);
 				DepPair(DepPair&&) = default;
 			};
 			using DepMap = std::unordered_map<CCoreID, DepPair>;
 			DepMap					depMap;
-			String_SP				faceName;
+			FontName_S				faceName;
 			CCoreID					coreID;		// family=0としたCoreID
 			const lubee::PowSize&	sfcSize;
 			FontChMap&				fontMap;
 
 			Face(Face&& f) = default;
-			Face(const String_SP& name, const lubee::PowSize& size, CCoreID cid, FontChMap& m);
+			Face(const FontName_S& name, const lubee::PowSize& size, CCoreID cid, FontChMap& m);
 			bool operator == (const std::string& name) const;
 			bool operator != (const std::string& name) const;
 			bool operator == (CCoreID cid) const;
@@ -59,7 +59,7 @@ namespace rev {
 				std::u32string	_text;
 				DrawSetL		_drawSet;
 				CCoreID			_coreID;
-				String_SP		_faceName;
+				FontName_S		_faceName;
 				lubee::SizeF	_rectSize;
 
 				//! フォントテクスチャと描画用頂点を用意
@@ -87,7 +87,7 @@ namespace rev {
 				// ------- clearCache(bRestore=true)時 -------
 				// FontGenから呼び出してFaceIDを再設定する用
 				CCoreID& refCoreID();
-				const String_SP& getFaceName() const;
+				const FontName_S& getFaceName() const;
 				/*!
 					上位クラスで位置調整など行列をセットしてからメソッドを呼ぶ
 					\param[in]	customDraw false=デフォルトのシェーダーでテキスト描画
@@ -136,9 +136,9 @@ namespace rev {
 				\param[in] name フォントファミリの名前
 				\return FaceIDを更新したcid */
 			CCoreID makeCoreID(const std::string& name, CCoreID cid);
-			// 上記のnameがdetail::String_SPバージョン
+			// 上記のnameがdetail::FontName_Sバージョン
 			/*! 動作は同じだが、もしFace名が無ければそのポインタを受け継いでFaceListに加える */
-			CCoreID makeCoreID(const detail::String_SP& name, CCoreID cid);
+			CCoreID makeCoreID(const detail::FontName_S& name, CCoreID cid);
 			//! キャッシュを全て破棄
 			/*! 文字列ハンドルは有効
 				\param[in] bRestore trueならキャッシュを再確保する */

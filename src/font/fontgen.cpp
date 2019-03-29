@@ -3,12 +3,12 @@
 #include <boost/lexical_cast.hpp>
 
 namespace rev {
-	using String_SP = detail::String_SP;
+	using FontName_S = detail::FontName_S;
 	namespace {
-		String_SP ToSp(const std::string& s) { return String_SP(new FontName(s)); }
-		String_SP ToSp(const String_SP& s) { return s; }
+		FontName_S ToSp(const std::string& s) { return FontName_S(new FontName(s)); }
+		FontName_S ToSp(const FontName_S& s) { return s; }
 		const std::string& ToCp(const std::string& s) { return s; }
-		const std::string& ToCp(const String_SP& s) { return *s; }
+		const std::string& ToCp(const FontName_S& s) { return *s; }
 	}
 	FontGen::FontGen(const lubee::PowSize& sfcSize): _sfcSize(sfcSize) {}
 
@@ -29,7 +29,7 @@ namespace rev {
 	CCoreID FontGen::makeCoreID(const std::string& name, CCoreID cid) {
 		return _makeCoreID(name, cid);
 	}
-	CCoreID FontGen::makeCoreID(const String_SP& name, CCoreID cid) {
+	CCoreID FontGen::makeCoreID(const FontName_S& name, CCoreID cid) {
 		return _makeCoreID(name, cid);
 	}
 	detail::Face& FontGen::_getArray(CCoreID cid) {

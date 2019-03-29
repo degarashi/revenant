@@ -12,12 +12,12 @@ namespace rev::detail {
 		using LAlloc = LaneAlloc<6,4,2>;
 	}
 	// --------------------------- Face::DepPair ---------------------------
-	Face::DepPair::DepPair(const String_SP& name, const lubee::PowSize& sfcSize, const CCoreID cid):
+	Face::DepPair::DepPair(const FontName_S& name, const lubee::PowSize& sfcSize, const CCoreID cid):
 		dep(*name, cid), cplane(sfcSize, dep.height(), LaneAlloc_UP(new LAlloc()))
 	{}
 	// --------------------------- Face ---------------------------
 	// フォントのHeightとラインのHeightは違う！
-	Face::Face(const String_SP& name, const lubee::PowSize& size, const CCoreID cid, FontChMap& m):
+	Face::Face(const FontName_S& name, const lubee::PowSize& size, const CCoreID cid, FontChMap& m):
 		faceName(name),
 		coreID(cid),
 		sfcSize(size),
