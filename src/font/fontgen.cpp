@@ -5,21 +5,21 @@
 namespace rev {
 	using FontName_S = detail::FontName_S;
 	namespace {
-		FontName_S ToSp(const std::string& s) { return FontName_S(new FontName(s)); }
-		FontName_S ToSp(const FontName_S& s) { return s; }
-		const std::string& ToCp(const std::string& s) { return s; }
-		const std::string& ToCp(const FontName_S& s) { return *s; }
+		FontName_S ToFontName(const std::string& s) { return FontName_S(new FontName(s)); }
+		FontName_S ToFontName(const FontName_S& s) { return s; }
+		const std::string& ToStdString(const std::string& s) { return s; }
+		const std::string& ToStdString(const FontName_S& s) { return *s; }
 	}
 	FontGen::FontGen(const lubee::PowSize& sfcSize): _sfcSize(sfcSize) {}
 
 	template <class S>
 	CCoreID FontGen::_makeCoreID(const S& name, CCoreID cid) {
 		// cid = フォントファミリを無視した値
-		auto itr = std::find(_faceL.begin(), _faceL.end(), ToCp(name));
+		auto itr = std::find(_faceL.begin(), _faceL.end(), ToStdString(name));
 		if(itr == _faceL.end()) {
 			// 新しくFaceを作成
 			cid.at<CCoreID::FaceID>() = static_cast<int>(_faceL.size());
-			_faceL.emplace_back(ToSp(name), _sfcSize, cid, _fontMap);
+			_faceL.emplace_back(ToFontName(name), _sfcSize, cid, _fontMap);
 		} else {
 			cid.at<CCoreID::FaceID>() = itr - _faceL.begin();
 		}
