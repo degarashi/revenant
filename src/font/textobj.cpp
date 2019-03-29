@@ -9,9 +9,9 @@
 #include "../effect/techmgr.hpp"
 
 namespace rev::detail {
-	TextObj::TextObj(Face &face, const CCoreID coreID, std::u32string &&s):
+	TextObj::TextObj(Face &face, const FontId fontId, std::u32string &&s):
 		_text(std::move(s)),
-		_coreID(coreID),
+		_fontId(fontId),
 		_faceName(face.faceName)
 	{
 		_prepareTextureAndVertex(face);
@@ -34,14 +34,14 @@ namespace rev::detail {
 		// テクスチャが複数枚に渡る時はフォント頂点(座標)を使いまわし、UV-tだけを差し替え
 		std::unordered_map<HTexSrcC, std::vector<CPair>>	tpM;
 		{
-			const auto& dp = face.getDepPair(_coreID);
+			const auto& dp = face.getDepPair(_fontId);
 			const int height = dp.dep.height();
 			int ofsx = 0,
 				ofsy = -height;
 			const float dt = 1.f / _text.length();
 			float t = 0;
 			for(auto& c : _text) {
-				auto* p = face.getCharPos(CharID(c, _coreID));
+				auto* p = face.getCharPos(CharID(c, _fontId));
 				// 幾つのテクスチャが要るのかカウントしつつ、フォントを配置
 				if(c == U'\n') {
 					ofsy -= height;
@@ -126,8 +126,8 @@ namespace rev::detail {
 		// 再度テキストデータ(CharPosポインタ配列)を作成
 		_prepareTextureAndVertex(face);
 	}
-	CCoreID& TextObj::refCoreID() {
-		return _coreID;
+	FontId& TextObj::refFontId() {
+		return _fontId;
 	}
 	const FontName_S& TextObj::getFaceName() const {
 		return _faceName;

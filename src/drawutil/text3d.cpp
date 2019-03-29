@@ -18,8 +18,8 @@ namespace rev {
 		}
 		int Text3D::draw(IEffect& e) const {
 			auto& su3d = dynamic_cast<U_Matrix3D&>(e);
-			const auto cid = getCCoreId();
-			const float s = float(_lineHeight) / cid.at<CCoreID::Height>();
+			const auto cid = getFontId();
+			const float s = float(_lineHeight) / cid.at<FontId::Height>();
 			auto mScale = frea::AMat4::Scaling({s, s, s, 1});
 			mScale *= getToWorld().convert<4,4>();
 			return Text::draw(

@@ -47,25 +47,25 @@ namespace rev {
 		AssertF("not implemented yet");
 		return HFT();
 	}
-	HFT FontFamily::fontFromID(CCoreID /*id*/) const {
+	HFT FontFamily::fontFromID(FontId /*id*/) const {
 		AssertF("not implemented yet");
 		return HFT();
 	}
 
 	// ---------------------- Font_FTDep ----------------------
 	namespace {
-		void SetFTSize(FTFace& ft, const CCoreID coreID) {
+		void SetFTSize(FTFace& ft, const FontId fontId) {
 			// TODO: この値は埋め込むのではなくてディスプレイから取得するべき
 			constexpr int DPI_W = 300,
 						DPI_H = 300;
-			int w = coreID.at<CCoreID::Width>(),
-				h = coreID.at<CCoreID::Height>();
-			switch(coreID.at<CCoreID::SizeType>()) {
-				case CCoreID::SizeType_Pixel:
+			int w = fontId.at<FontId::Width>(),
+				h = fontId.at<FontId::Height>();
+			switch(fontId.at<FontId::SizeType>()) {
+				case FontId::SizeType_Pixel:
 					ft.setPixelSizes(w, h); break;
-				case CCoreID::SizeType_Point:
+				case FontId::SizeType_Point:
 					ft.setCharSize(w, h, DPI_W, DPI_H); break;
-				case CCoreID::SizeType_LineHeight:
+				case FontId::SizeType_LineHeight:
 					ft.setSizeFromLine(h); break;
 				default:
 					D_Assert(false, "invalid sizetype number");
@@ -74,26 +74,26 @@ namespace rev {
 		void PrepareGlyph(FTFace& ft, const CharID cid) {
 			ft.prepareGlyph(
 				cid.code,
-				(cid.at<CCoreID::CharFlag>() & CCoreID::CharFlag_AA) ? FTFace::RenderMode::Normal : FTFace::RenderMode::Mono,
-				cid.at<CCoreID::Weight>()>0,
-				cid.at<CCoreID::Italic>()
+				(cid.at<FontId::CharFlag>() & FontId::CharFlag_AA) ? FTFace::RenderMode::Normal : FTFace::RenderMode::Mono,
+				cid.at<FontId::Weight>()>0,
+				cid.at<FontId::Italic>()
 			);
 		}
 	}
 	// TODO: 縁取り対応
-	Font_FTDep::Font_FTDep(const std::string& name, const CCoreID cid):
-		_coreID(cid)
+	Font_FTDep::Font_FTDep(const std::string& name, const FontId cid):
+		_fontId(cid)
 	{
 		_hFT = mgr_font.fontFromFamilyName(name);
 		Assert0(_hFT);
-		SetFTSize(*_hFT, _coreID);
+		SetFTSize(*_hFT, _fontId);
 	}
-	Font_FTDep::Font_FTDep(const CCoreID cid):
-		_coreID(cid)
+	Font_FTDep::Font_FTDep(const FontId cid):
+		_fontId(cid)
 	{
 		_hFT = mgr_font.fontFromID(cid);
 		Assert0(_hFT);
-		SetFTSize(*_hFT, _coreID);
+		SetFTSize(*_hFT, _fontId);
 	}
 
 	int Font_FTDep::height() const {
@@ -101,20 +101,20 @@ namespace rev {
 	}
 	int Font_FTDep::width(const char32_t c) {
 		auto& ft = *_hFT;
-		SetFTSize(ft, _coreID);
-		PrepareGlyph(ft, CharID(c, _coreID));
+		SetFTSize(ft, _fontId);
+		PrepareGlyph(ft, CharID(c, _fontId));
 		return ft.getGlyphInfo().advanceX;
 	}
 	int Font_FTDep::maxWidth() const {
 		return _hFT->getFaceInfo().maxWidth;
 	}
-	CCoreID Font_FTDep::adjustParams(const CCoreID cid) {
+	FontId Font_FTDep::adjustParams(const FontId cid) {
 		return cid;
 	}
 	std::pair<ByteBuff, lubee::RectI> Font_FTDep::getChara(const char32_t c) {
 		auto& ft = *_hFT;
-		SetFTSize(ft, _coreID);
-		PrepareGlyph(ft, CharID(c, _coreID));
+		SetFTSize(ft, _fontId);
+		PrepareGlyph(ft, CharID(c, _fontId));
 		const auto& gi = ft.getGlyphInfo();
 		ByteBuff buff;
 		lubee::RectI rect(gi.horiBearingX, gi.horiBearingX + gi.width,

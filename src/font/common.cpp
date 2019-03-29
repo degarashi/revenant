@@ -2,8 +2,8 @@
 #include "gl/resource.hpp"
 
 namespace rev {
-	// ------------------- CCoreID -------------------
-	CCoreID::CCoreID(const int w, const int h, const uint32_t charFlag, const bool bItalic, const int weightID,
+	// ------------------- FontId -------------------
+	FontId::FontId(const int w, const int h, const uint32_t charFlag, const bool bItalic, const int weightID,
 			const CharIDDef::SizeTypeT sizeType, const int faceID)
 	{
 		at<Width>() = w;
@@ -11,17 +11,17 @@ namespace rev {
 		at<CharFlag>() = charFlag;
 		at<Italic>() = static_cast<int>(bItalic);
 		at<Weight>() = weightID;
-		at<FaceID>() = faceID;
+		at<FaceId>() = faceID;
 		at<SizeType>() = sizeType;
 	}
 	// ------------------- CharID -------------------
-	CharID::CharID(const char32_t ccode, const CCoreID coreID):
-		CCoreID(coreID),
+	CharID::CharID(const char32_t ccode, const FontId fontId):
+		FontId(fontId),
 		code(ccode)
 	{}
 	CharID::CharID(const char32_t ccode, const int w, const int h, const int faceID,
 			const CharIDDef::CharFlagT flag, const bool bItalic, const int weightID, const CharIDDef::SizeTypeT sizeType):
-		CCoreID(w, h, flag, bItalic, weightID, sizeType, faceID),
+		FontId(w, h, flag, bItalic, weightID, sizeType, faceID),
 		code(ccode)
 	{}
 	uint64_t CharID::get64Bit() const {

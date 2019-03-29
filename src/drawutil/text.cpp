@@ -7,31 +7,31 @@
 namespace rev {
 	namespace drawutil {
 		// ---------------------- Text ----------------------
-		CCoreID_OP Text::cs_defaultCid;
-		CCoreID Text::_GetDefaultCID() {
-			if(!cs_defaultCid) {
-				cs_defaultCid =
-					mgr_text.makeCoreID(
+		FontId_O Text::cs_defaultFid;
+		FontId Text::_GetDefaultFId() {
+			if(!cs_defaultFid) {
+				cs_defaultFid =
+					mgr_text.makeFontId(
 						"IPAGothic",
-						CCoreID(
+						FontId(
 							0,
 							20,
-							CCoreID::CharFlag_AA,
+							FontId::CharFlag_AA,
 							false,
 							0,
-							CCoreID::SizeType_Pixel
+							FontId::SizeType_Pixel
 						)
 					);
 			}
-			return *cs_defaultCid;
+			return *cs_defaultFid;
 		}
 		Text::Text():
 			_color(1),
 			_bRefl(true)
 		{
-			_charId = _GetDefaultCID();
+			_charId = _GetDefaultFId();
 		}
-		void Text::setCCoreId(const CCoreID cid) noexcept {
+		void Text::setFontId(const FontId cid) noexcept {
 			_charId = cid;
 		}
 		void Text::setText(To32Str str) {
@@ -48,7 +48,7 @@ namespace rev {
 		void Text::setColor(const RGBAColor& c) noexcept {
 			_color = c;
 		}
-		CCoreID Text::getCCoreId() const noexcept {
+		FontId Text::getFontId() const noexcept {
 			return _charId;
 		}
 		const HText& Text::getText() const {

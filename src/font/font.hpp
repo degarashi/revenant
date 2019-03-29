@@ -16,24 +16,24 @@ namespace rev {
 				FontArray_Dep		dep;
 				CharPlane			cplane;
 
-				DepPair(const FontName_S& name, const lubee::PowSize& sfcSize, CCoreID cid);
+				DepPair(const FontName_S& name, const lubee::PowSize& sfcSize, FontId cid);
 				DepPair(DepPair&&) = default;
 			};
-			using DepMap = std::unordered_map<CCoreID, DepPair>;
+			using DepMap = std::unordered_map<FontId, DepPair>;
 			DepMap					depMap;
 			FontName_S				faceName;
-			CCoreID					coreID;		// family=0としたCoreID
+			FontId					fontId;		// family=0としたFontId
 			const lubee::PowSize&	sfcSize;
 			FontChMap&				fontMap;
 
 			Face(Face&& f) = default;
-			Face(const FontName_S& name, const lubee::PowSize& size, CCoreID cid, FontChMap& m);
+			Face(const FontName_S& name, const lubee::PowSize& size, FontId cid, FontChMap& m);
 			bool operator == (const std::string& name) const;
 			bool operator != (const std::string& name) const;
-			bool operator == (CCoreID cid) const;
-			bool operator != (CCoreID cid) const;
+			bool operator == (FontId cid) const;
+			bool operator != (FontId cid) const;
 			const CharPos* getCharPos(CharID cid);
-			DepPair& getDepPair(CCoreID coreID);
+			DepPair& getDepPair(FontId fontId);
 		};
 		//! 文章の描画に必要なフォントや頂点を用意
 		/*!
@@ -58,7 +58,7 @@ namespace rev {
 					このクラス自体はテクスチャを持たないのでIGLResourceは継承しない */
 				std::u32string	_text;
 				DrawSetL		_drawSet;
-				CCoreID			_coreID;
+				FontId			_fontId;
 				FontName_S		_faceName;
 				lubee::SizeF	_rectSize;
 
@@ -79,13 +79,13 @@ namespace rev {
 				TextObj(TextObj&& t) = default;
 				/*! \param[in] dep フォントデータを生成するための環境依存クラス
 					\param[in] s 生成する文字列 */
-				TextObj(Face& face, CCoreID coreID, std::u32string&& s);
+				TextObj(Face& face, FontId fontId, std::u32string&& s);
 				// FontGenから呼び出す
 				void onCacheLost();
 				void onCacheReset(Face& face);
 				// ------- clearCache(bRestore=true)時 -------
-				// FontGenから呼び出してFaceIDを再設定する用
-				CCoreID& refCoreID();
+				// FontGenから呼び出してFaceIdを再設定する用
+				FontId& refFontId();
 				const FontName_S& getFaceName() const;
 				/*!
 					上位クラスで位置調整など行列をセットしてからメソッドを呼ぶ
@@ -112,41 +112,41 @@ namespace rev {
 			using FaceList = std::vector<detail::Face>;
 			//! フォント名リスト (通し番号)
 			FaceList			_faceL;
-			//! [CCoreID + CharCode]と[GLTexture + UV + etc..]を関連付け
+			//! [FontId + CharCode]と[GLTexture + UV + etc..]を関連付け
 			detail::FontChMap	_fontMap;
 			// OpenGLサーフェスのサイズは2の累乗サイズにする (余った領域は使わない)
 			lubee::PowSize	_sfcSize;
 
-			/*! 既にFaceはmakeCoreIDで作成されてる筈 */
-			detail::Face& _getArray(CCoreID cid);
-			//! 文字列先頭にCCoreIDの文字列を付加したものを返す
+			/*! 既にFaceはmakeFontIdで作成されてる筈 */
+			detail::Face& _getArray(FontId cid);
+			//! 文字列先頭にFontIdの文字列を付加したものを返す
 			/*! ハッシュキーはUTF32文字列に統一 */
-			static std::u32string _MakeTextTag(CCoreID cid, const std::u32string& s);
+			static std::u32string _MakeTextTag(FontId cid, const std::u32string& s);
 
 			template <class S>
-			CCoreID _makeCoreID(const S& name, CCoreID cid);
+			FontId _makeFontId(const S& name, FontId cid);
 
 		public:
 			/*! sfcSizeは強制的に2の累乗サイズに合わせられる
 				\param[in] sfcSize	フォントを蓄えるOpenGLサーフェスのサイズ */
 			FontGen(const lubee::PowSize& sfcSize);
 			//! フォントの設定から一意のIDを作る
-			/*! \param[in] cid フォントの見た目情報。FaceIDは無視される
+			/*! \param[in] cid フォントの見た目情報。FaceIdは無視される
 				\param[in] name フォントファミリの名前
-				\return FaceIDを更新したcid */
-			CCoreID makeCoreID(const std::string& name, CCoreID cid);
+				\return FaceIdを更新したcid */
+			FontId makeFontId(const std::string& name, FontId cid);
 			// 上記のnameがdetail::FontName_Sバージョン
 			/*! 動作は同じだが、もしFace名が無ければそのポインタを受け継いでFaceListに加える */
-			CCoreID makeCoreID(const detail::FontName_S& name, CCoreID cid);
+			FontId makeFontId(const detail::FontName_S& name, FontId cid);
 			//! キャッシュを全て破棄
 			/*! 文字列ハンドルは有効
 				\param[in] bRestore trueならキャッシュを再確保する */
 			void clearCache(bool bRestore);
 
 			// 同じFaceの同じ文字列には同一のハンドルが返されるようにする
-			/*! \param[in] cid makeCoreIDで作成したFaceID設定済みID
+			/*! \param[in] cid makeFontIdで作成したFaceId設定済みID
 				\param[in] s 表示したい文字列 */
-			HText createText(CCoreID cid, To32Str str);
+			HText createText(FontId cid, To32Str str);
 
 			// デバイスロストで処理が必要なのはテクスチャハンドルだけなので、
 			// onDeviceLostやonDeviceResetは特に必要ない

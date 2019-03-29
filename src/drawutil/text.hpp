@@ -16,23 +16,23 @@ namespace rev {
 			Middle
 		};
 		using Size_OP = spi::Optional<lubee::SizeI>;
-		using CCoreID_OP = spi::Optional<CCoreID>;
+		using FontId_O = spi::Optional<FontId>;
 		class Text {
 			private:
-				static CCoreID_OP	cs_defaultCid;
+				static FontId_O		cs_defaultFid;
 				std::u32string		_text;
-				CCoreID				_charId;
+				FontId				_charId;
 				RGBAColor			_color;
 				mutable bool		_bRefl;
 				mutable HText		_hText;
 
-				static CCoreID _GetDefaultCID();
+				static FontId _GetDefaultFId();
 				using CBPreDraw = std::function<void (IEffect&)>;
 			public:
 				Text();
-				void setCCoreId(CCoreID cid) noexcept;
+				void setFontId(FontId cid) noexcept;
 				const HText& getText() const;
-				CCoreID getCCoreId() const noexcept;
+				FontId getFontId() const noexcept;
 				void setText(To32Str str);
 				void setText(const HText& h) noexcept;
 				void setColor(const RGBAColor& c) noexcept;

@@ -12,14 +12,14 @@ namespace rev::detail {
 		using LAlloc = LaneAlloc<6,4,2>;
 	}
 	// --------------------------- Face::DepPair ---------------------------
-	Face::DepPair::DepPair(const FontName_S& name, const lubee::PowSize& sfcSize, const CCoreID cid):
+	Face::DepPair::DepPair(const FontName_S& name, const lubee::PowSize& sfcSize, const FontId cid):
 		dep(*name, cid), cplane(sfcSize, dep.height(), LaneAlloc_UP(new LAlloc()))
 	{}
 	// --------------------------- Face ---------------------------
 	// フォントのHeightとラインのHeightは違う！
-	Face::Face(const FontName_S& name, const lubee::PowSize& size, const CCoreID cid, FontChMap& m):
+	Face::Face(const FontName_S& name, const lubee::PowSize& size, const FontId cid, FontChMap& m):
 		faceName(name),
-		coreID(cid),
+		fontId(cid),
 		sfcSize(size),
 		fontMap(m)
 	{}
@@ -29,14 +29,14 @@ namespace rev::detail {
 	bool Face::operator ==(const std::string& name) const {
 		return *faceName == name;
 	}
-	bool Face::operator != (const CCoreID cid) const {
+	bool Face::operator != (const FontId cid) const {
 		return !(this->operator == (cid));
 	}
-	bool Face::operator == (const CCoreID cid) const {
-		return coreID == cid;
+	bool Face::operator == (const FontId cid) const {
+		return fontId == cid;
 	}
-	Face::DepPair& Face::getDepPair(const CCoreID coreID) {
-		return TryEmplace(depMap, coreID, faceName, sfcSize, coreID).first->second;
+	Face::DepPair& Face::getDepPair(const FontId fontId) {
+		return TryEmplace(depMap, fontId, faceName, sfcSize, fontId).first->second;
 	}
 	const CharPos* Face::getCharPos(const CharID chID) {
 		// キャッシュが既にあればそれを使う

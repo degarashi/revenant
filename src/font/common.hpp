@@ -12,14 +12,14 @@ namespace rev {
 			uint32_t,
 			lubee::BitF<0,8>, // Width
 			lubee::BitF<8,8>, // Height
-			lubee::BitF<16,8>, // FaceID
+			lubee::BitF<16,8>, // FaceId
 			lubee::BitF<24,2>, // Flag
 			lubee::BitF<26,1>, // Italic
 			lubee::BitF<27,3>, // Weight
 			lubee::BitF<30,2> // SizeType
 		>
 	{
-		enum { Width, Height, FaceID, CharFlag, Italic, Weight, SizeType };
+		enum { Width, Height, FaceId, CharFlag, Italic, Weight, SizeType };
 		enum CharFlagT {
 			CharFlag_AA = 0x01,
 			CharFlag_Hemming = 0x02
@@ -32,18 +32,18 @@ namespace rev {
 		};
 	};
 	//! フォントのサイズやAAの有無を示す値
-	struct CCoreID : lubee::BitField<CharIDDef> {
-		CCoreID() = default;
-		CCoreID(const CCoreID& id) = default;
-		CCoreID(int w, int h, uint32_t charFlag, bool bItalic, int weightID, CharIDDef::SizeTypeT sizeType, int faceID=-1);
+	struct FontId : lubee::BitField<CharIDDef> {
+		FontId() = default;
+		FontId(const FontId& id) = default;
+		FontId(int w, int h, uint32_t charFlag, bool bItalic, int weightID, CharIDDef::SizeTypeT sizeType, int faceID=-1);
 	};
-	//! CCoreID + 文字コード(UCS4)
-	struct CharID : CCoreID {
+	//! FontId + 文字コード(UCS4)
+	struct CharID : FontId {
 		char32_t	code;
 
 		CharID() = default;
 		CharID(const CharID& id) = default;
-		CharID(char32_t ccode, CCoreID coreID);
+		CharID(char32_t ccode, FontId fontId);
 		CharID(char32_t ccode, int w, int h, int faceID, CharIDDef::CharFlagT flag, bool bItalic, int weightID, CharIDDef::SizeTypeT sizeType);
 
 		uint64_t get64Bit() const;
@@ -74,8 +74,8 @@ namespace std {
 		}
 	};
 	template <>
-	struct hash<::rev::CCoreID> {
-		uint32_t operator()(const ::rev::CCoreID& cid)	const {
+	struct hash<::rev::FontId> {
+		uint32_t operator()(const ::rev::FontId& cid)	const {
 			return cid.cleanedValue();
 		}
 	};

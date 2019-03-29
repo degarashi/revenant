@@ -13,29 +13,29 @@ namespace rev {
 	FontGen::FontGen(const lubee::PowSize& sfcSize): _sfcSize(sfcSize) {}
 
 	template <class S>
-	CCoreID FontGen::_makeCoreID(const S& name, CCoreID cid) {
+	FontId FontGen::_makeFontId(const S& name, FontId cid) {
 		// cid = フォントファミリを無視した値
 		const auto itr = std::find(_faceL.begin(), _faceL.end(), ToStdString(name));
 		if(itr == _faceL.end()) {
 			// 新しくFaceを作成
-			cid.at<CCoreID::FaceID>() = static_cast<int>(_faceL.size());
+			cid.at<FontId::FaceId>() = static_cast<int>(_faceL.size());
 			_faceL.emplace_back(ToFontName(name), _sfcSize, cid, _fontMap);
 		} else {
-			cid.at<CCoreID::FaceID>() = itr - _faceL.begin();
+			cid.at<FontId::FaceId>() = itr - _faceL.begin();
 		}
 		return cid;
 	}
 
-	CCoreID FontGen::makeCoreID(const std::string& name, const CCoreID cid) {
-		return _makeCoreID(name, cid);
+	FontId FontGen::makeFontId(const std::string& name, const FontId cid) {
+		return _makeFontId(name, cid);
 	}
-	CCoreID FontGen::makeCoreID(const FontName_S& name, const CCoreID cid) {
-		return _makeCoreID(name, cid);
+	FontId FontGen::makeFontId(const FontName_S& name, const FontId cid) {
+		return _makeFontId(name, cid);
 	}
-	detail::Face& FontGen::_getArray(const CCoreID cid) {
+	detail::Face& FontGen::_getArray(const FontId cid) {
 		// FaceList線形探索
 		const auto itr = std::find_if(_faceL.begin(), _faceL.end(), [cid](const detail::Face& fc){
-			return fc.coreID.at<CCoreID::FaceID>() == cid.at<CCoreID::FaceID>();
+			return fc.fontId.at<FontId::FaceId>() == cid.at<FontId::FaceId>();
 		});
 		D_Assert0(itr != _faceL.end());
 		return *itr;
@@ -50,23 +50,23 @@ namespace rev {
 
 		if(bRestore) {
 			for(auto text: *this) {
-				// FaceIDは使わず再度Face参照する
-				auto& c = text->refCoreID();
-				// TextからSPの名前を取り出してFaceIDを更新
-				c = makeCoreID(text->getFaceName(), c);
+				// FaceIdは使わず再度Face参照する
+				auto& c = text->refFontId();
+				// TextからSPの名前を取り出してFaceIdを更新
+				c = makeFontId(text->getFaceName(), c);
 				text->onCacheReset(_getArray(c));
 			}
 		}
 	}
-	std::u32string FontGen::_MakeTextTag(const CCoreID cid, const std::u32string& s) {
-		// ハンドルキー = CCoreIDの64bit数値 + _ + 文字列
+	std::u32string FontGen::_MakeTextTag(const FontId cid, const std::u32string& s) {
+		// ハンドルキー = FontIdの64bit数値 + _ + 文字列
 		std::basic_stringstream<char32_t>	ss;
 		ss << boost::lexical_cast<std::u32string>(cid.value()) << U'_' << s;
 		return ss.str();
 	}
-	HText FontGen::createText(const CCoreID cid, To32Str str) {
+	HText FontGen::createText(const FontId cid, To32Str str) {
 		std::u32string str32(str.moveTo());
-		// CCoreIDを付加した文字列をキーにする
+		// FontIdを付加した文字列をキーにする
 		auto& ar = _getArray(cid);
 		const auto tag = _MakeTextTag(cid, str32);
 		return
