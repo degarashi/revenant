@@ -4,7 +4,7 @@
 namespace rev {
 	// ------------------- FontId -------------------
 	FontId::FontId(const int w, const int h, const uint32_t charFlag, const bool bItalic, const int weightID,
-			const CharIDDef::SizeTypeT sizeType, const int faceID)
+			const CharIdDef::SizeTypeT sizeType, const int faceID)
 	{
 		at<Width>() = w;
 		at<Height>() = h;
@@ -14,29 +14,29 @@ namespace rev {
 		at<FaceId>() = faceID;
 		at<SizeType>() = sizeType;
 	}
-	// ------------------- CharID -------------------
-	CharID::CharID(const char32_t ccode, const FontId fontId):
+	// ------------------- CharId -------------------
+	CharId::CharId(const char32_t ccode, const FontId fontId):
 		FontId(fontId),
 		code(ccode)
 	{}
-	CharID::CharID(const char32_t ccode, const int w, const int h, const int faceID,
-			const CharIDDef::CharFlagT flag, const bool bItalic, const int weightID, const CharIDDef::SizeTypeT sizeType):
+	CharId::CharId(const char32_t ccode, const int w, const int h, const int faceID,
+			const CharIdDef::CharFlagT flag, const bool bItalic, const int weightID, const CharIdDef::SizeTypeT sizeType):
 		FontId(w, h, flag, bItalic, weightID, sizeType, faceID),
 		code(ccode)
 	{}
-	uint64_t CharID::get64Bit() const {
+	uint64_t CharId::get64Bit() const {
 		uint64_t val = code;
 		val <<= 32;
 		val |= cleanedValue();
 		return val;
 	}
-	bool CharID::operator == (const CharID& cid) const {
+	bool CharId::operator == (const CharId& cid) const {
 		return get64Bit() == cid.get64Bit();
 	}
-	bool CharID::operator != (const CharID& cid) const {
+	bool CharId::operator != (const CharId& cid) const {
 		return !(this->operator==(cid));
 	}
-	bool CharID::operator < (const CharID& cid) const {
+	bool CharId::operator < (const CharId& cid) const {
 		return get64Bit() < cid.get64Bit();
 	}
 	// ------------------- CharPlane -------------------

@@ -71,7 +71,7 @@ namespace rev {
 					D_Assert(false, "invalid sizetype number");
 			}
 		}
-		void PrepareGlyph(FTFace& ft, const CharID cid) {
+		void PrepareGlyph(FTFace& ft, const CharId cid) {
 			ft.prepareGlyph(
 				cid.code,
 				(cid.at<FontId::CharFlag>() & FontId::CharFlag_AA) ? FTFace::RenderMode::Normal : FTFace::RenderMode::Mono,
@@ -102,7 +102,7 @@ namespace rev {
 	int Font_FTDep::width(const char32_t c) {
 		auto& ft = *_hFT;
 		SetFTSize(ft, _fontId);
-		PrepareGlyph(ft, CharID(c, _fontId));
+		PrepareGlyph(ft, CharId(c, _fontId));
 		return ft.getGlyphInfo().advanceX;
 	}
 	int Font_FTDep::maxWidth() const {
@@ -114,7 +114,7 @@ namespace rev {
 	std::pair<ByteBuff, lubee::RectI> Font_FTDep::getChara(const char32_t c) {
 		auto& ft = *_hFT;
 		SetFTSize(ft, _fontId);
-		PrepareGlyph(ft, CharID(c, _fontId));
+		PrepareGlyph(ft, CharId(c, _fontId));
 		const auto& gi = ft.getGlyphInfo();
 		ByteBuff buff;
 		lubee::RectI rect(gi.horiBearingX, gi.horiBearingX + gi.width,

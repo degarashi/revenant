@@ -38,7 +38,7 @@ namespace rev::detail {
 	Face::DepPair& Face::getDepPair(const FontId fontId) {
 		return TryEmplace(depMap, fontId, faceName, sfcSize, fontId).first->second;
 	}
-	const CharPos* Face::getCharPos(const CharID chID) {
+	const CharPos* Face::getCharPos(const CharId chID) {
 		// キャッシュが既にあればそれを使う
 		auto itr = fontMap.find(chID);
 		if(itr != fontMap.end())

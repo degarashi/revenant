@@ -7,7 +7,7 @@
 
 namespace rev {
 	//! キャラクタの属性値を32bitで表す
-	struct CharIDDef :
+	struct CharIdDef :
 		lubee::BitDef<
 			uint32_t,
 			lubee::BitF<0,8>, // Width
@@ -32,24 +32,24 @@ namespace rev {
 		};
 	};
 	//! フォントのサイズやAAの有無を示す値
-	struct FontId : lubee::BitField<CharIDDef> {
+	struct FontId : lubee::BitField<CharIdDef> {
 		FontId() = default;
 		FontId(const FontId& id) = default;
-		FontId(int w, int h, uint32_t charFlag, bool bItalic, int weightID, CharIDDef::SizeTypeT sizeType, int faceID=-1);
+		FontId(int w, int h, uint32_t charFlag, bool bItalic, int weightID, CharIdDef::SizeTypeT sizeType, int faceID=-1);
 	};
 	//! FontId + 文字コード(UCS4)
-	struct CharID : FontId {
+	struct CharId : FontId {
 		char32_t	code;
 
-		CharID() = default;
-		CharID(const CharID& id) = default;
-		CharID(char32_t ccode, FontId fontId);
-		CharID(char32_t ccode, int w, int h, int faceID, CharIDDef::CharFlagT flag, bool bItalic, int weightID, CharIDDef::SizeTypeT sizeType);
+		CharId() = default;
+		CharId(const CharId& id) = default;
+		CharId(char32_t ccode, FontId fontId);
+		CharId(char32_t ccode, int w, int h, int faceID, CharIdDef::CharFlagT flag, bool bItalic, int weightID, CharIdDef::SizeTypeT sizeType);
 
 		uint64_t get64Bit() const;
-		bool operator == (const CharID& cid) const;
-		bool operator != (const CharID& cid) const;
-		bool operator < (const CharID& cid) const;
+		bool operator == (const CharId& cid) const;
+		bool operator != (const CharId& cid) const;
+		bool operator < (const CharId& cid) const;
 	};
 	struct FontName : std::string {
 		using std::string::string;
@@ -59,8 +59,8 @@ namespace rev {
 }
 namespace std {
 	template <>
-	struct hash<::rev::CharID> {
-		uint32_t operator()(const ::rev::CharID& cid) const {
+	struct hash<::rev::CharId> {
+		uint32_t operator()(const ::rev::CharId& cid) const {
 			// MSBを必ず0にする
 			const uint32_t tmp = cid.code ^ 0x1234abcd;
 			return ((cid.cleanedValue() * cid.code) ^ tmp) & 0x7fffffff;

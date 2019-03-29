@@ -41,7 +41,7 @@ namespace rev::detail {
 			const float dt = 1.f / _text.length();
 			float t = 0;
 			for(auto& c : _text) {
-				auto* p = face.getCharPos(CharID(c, _fontId));
+				auto* p = face.getCharPos(CharId(c, _fontId));
 				// 幾つのテクスチャが要るのかカウントしつつ、フォントを配置
 				if(c == U'\n') {
 					ofsy -= height;

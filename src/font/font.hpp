@@ -8,7 +8,7 @@ namespace rev {
 	struct DrawTag;
 	namespace detail {
 		//! CharCodeとフォントテクスチャ対応付け (全Face共通)
-		using FontChMap = std::unordered_map<CharID, CharPos>;
+		using FontChMap = std::unordered_map<CharId, CharPos>;
 		// (FaceNameを複数箇所で共有する都合上)
 		using FontName_S = std::shared_ptr<FontName>;
 		struct Face {
@@ -32,7 +32,7 @@ namespace rev {
 			bool operator != (const std::string& name) const;
 			bool operator == (FontId cid) const;
 			bool operator != (FontId cid) const;
-			const CharPos* getCharPos(CharID cid);
+			const CharPos* getCharPos(CharId cid);
 			DepPair& getDepPair(FontId fontId);
 		};
 		//! 文章の描画に必要なフォントや頂点を用意
