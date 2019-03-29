@@ -1,7 +1,7 @@
 #pragma once
 #include "drawable.hpp"
-#include "effect/drawsort.hpp"
 #include "updgroup.hpp"
+#include "../effect/drawsort.hpp"
 
 namespace rev {
 	class DrawGroup : public DrawableObj {

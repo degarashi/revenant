@@ -258,7 +258,7 @@ namespace rev {
 		RegisterUtilsClass(lsc);
 	}
 }
-#include "object_if.hpp"
+#include "../object/if.hpp"
 namespace rev {
 	int LuaImport::RecvMsgCpp(lua_State* ls) {
 		auto* obj = LI_GetPtr<IObject>()(ls, -3);

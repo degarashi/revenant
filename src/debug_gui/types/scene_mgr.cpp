@@ -1,5 +1,5 @@
-#include "../../scene_mgr.hpp"
-#include "../../scene_if.hpp"
+#include "../../object/scene/mgr.hpp"
+#include "../../object/scene/if.hpp"
 #include "../id.hpp"
 #include "../child.hpp"
 #include "../column.hpp"

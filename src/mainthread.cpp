@@ -6,7 +6,7 @@
 #include "mainproc.hpp"
 #include "systeminfo.hpp"
 #include "output.hpp"
-#include "scene_mgr.hpp"
+#include "object/scene/mgr.hpp"
 
 #include "msg/system.hpp"
 #include "msg/handler.hpp"

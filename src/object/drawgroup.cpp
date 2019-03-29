@@ -1,5 +1,5 @@
 #include "drawgroup.hpp"
-#include "effect/drawsort.hpp"
+#include "../effect/drawsort.hpp"
 
 namespace rev {
 	namespace {

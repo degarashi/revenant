@@ -1,4 +1,4 @@
-#include "scene_if.hpp"
+#include "if.hpp"
 
 namespace rev {
 	HGroup IScene::getUpdGroup() const {

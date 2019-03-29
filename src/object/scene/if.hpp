@@ -1,5 +1,5 @@
 #pragma once
-#include "object.hpp"
+#include "../object.hpp"
 
 namespace rev {
 	class IScene : public IObject {

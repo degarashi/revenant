@@ -1,8 +1,8 @@
 #pragma once
-#include "handle/object.hpp"
+#include "../handle/object.hpp"
 #include "spine/src/resmgr.hpp"
-#include "lubee/src/alignedalloc.hpp"
 #include "spine/src/singleton.hpp"
+#include "lubee/src/alignedalloc.hpp"
 
 namespace rev {
 	class LuaState;

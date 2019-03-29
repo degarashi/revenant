@@ -1,11 +1,11 @@
 #pragma once
-#include <limits>
-#include <cstdint>
-#include "spine/src/optional.hpp"
-#include "handle/object.hpp"
-#include "handle/opengl.hpp"
+#include "../handle/object.hpp"
+#include "../handle/opengl.hpp"
+#include "../resource.hpp"
 #include "debug_gui/if.hpp"
-#include "resource.hpp"
+#include "spine/src/optional.hpp"
+#include <cstdint>
+#include <limits>
 
 namespace rev {
 	using Priority = uint32_t;

@@ -6,7 +6,7 @@
 #include "../debug_gui/menu.hpp"
 #include "../debug_gui/print.hpp"
 #include "../debug_gui/resource_window.hpp"
-#include "../drawgroup.hpp"
+#include "../object/drawgroup.hpp"
 #include "../gl/resource.hpp"
 #include "../info/gpu.hpp"
 #include "../debug_gui/profiler.hpp"

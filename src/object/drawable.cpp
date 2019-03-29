@@ -1,5 +1,5 @@
 #include "drawable.hpp"
-#include "effect/drawsort.hpp"
+#include "../effect/drawsort.hpp"
 
 namespace rev {
 	DrawableObj::DrawableObj(const Priority prio) {

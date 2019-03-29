@@ -1,8 +1,8 @@
 #pragma once
 #include "scenebase.hpp"
 #include "mygui.hpp"
-#include "../scene.hpp"
-#include "../scene_mgr.hpp"
+#include "../object/scene/scene.hpp"
+#include "../object/scene/mgr.hpp"
 #include "../input/input.hpp"
 
 namespace rev::test {

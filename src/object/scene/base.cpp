@@ -1,5 +1,5 @@
-#include "scene_base.hpp"
-#include "object_mgr.hpp"
+#include "base.hpp"
+#include "../mgr.hpp"
 
 namespace rev {
 	SceneBase::SceneBase(const HGroup& hUpd, const HDGroup& hDraw) {

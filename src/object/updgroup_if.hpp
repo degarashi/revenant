@@ -1,6 +1,6 @@
 #pragma once
-#include "object_if.hpp"
-#include "interval.hpp"
+#include "if.hpp"
+#include "../interval.hpp"
 #include <vector>
 
 namespace rev {

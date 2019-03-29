@@ -1,6 +1,6 @@
 #pragma once
 #include "updgroup_if.hpp"
-#include "sdl/tls.hpp"
+#include "../sdl/tls.hpp"
 
 namespace rev {
 	//! Objectのグループ管理

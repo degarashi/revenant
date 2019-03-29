@@ -1,6 +1,6 @@
 #pragma once
 #include "beat/src/pose3d.hpp"
-#include "drawable.hpp"
+#include "object/drawable.hpp"
 #include "handle/input.hpp"
 
 namespace rev {

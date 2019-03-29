@@ -1,5 +1,5 @@
 #include "../lua/impl.hpp"
-#include "../object_mgr.hpp"
+#include "../object/mgr.hpp"
 
 #include "../drawutil/fbclear.hpp"
 DEF_LUAIMPLEMENT_SPTR(

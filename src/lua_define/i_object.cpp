@@ -1,7 +1,7 @@
 #include "../lua/impl.hpp"
 
-#include "../updgroup.hpp"
-#include "../object_mgr.hpp"
+#include "../object/updgroup.hpp"
+#include "../object/mgr.hpp"
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	rev::IObject, Object,
 	LUAIMPLEMENT_BASE,
@@ -9,7 +9,7 @@ DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	NOTHING,
 	(destroy)(getResourceName)
 )
-#include "../u_object.hpp"
+#include "../object/user.hpp"
 DEF_LUAIMPLEMENT_SPTR(
 	rev::ObjMgr, rev::U_Object, U_Object,
 	luaNS::FSMachine,
@@ -28,7 +28,7 @@ DEF_LUAIMPLEMENT_SPTR(
 	NOTHING
 )
 
-#include "../object_lua.hpp"
+#include "../object/lua.hpp"
 DEF_LUAIMPLEMENT_SPTR(
 	rev::ObjMgr, rev::U_ObjectUpd, U_ObjectUpd,
 	luaNS::FSMachine,
@@ -38,7 +38,7 @@ DEF_LUAIMPLEMENT_SPTR(
 	NOTHING
 )
 
-#include "../drawable.hpp"
+#include "../object/drawable.hpp"
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	rev::DrawableObj, DrawableObj,
 	LUAIMPLEMENT_BASE,
@@ -46,7 +46,7 @@ DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	NOTHING,
 	(setDrawPriority)
 )
-#include "../drawgroup.hpp"
+#include "../object/drawgroup.hpp"
 DEF_LUAIMPLEMENT_SPTR(
 	rev::ObjMgr, rev::DrawGroup, DrawGroup,
 	"DrawableObj",
@@ -57,7 +57,7 @@ DEF_LUAIMPLEMENT_SPTR(
 	(clear),
 	(const SortAlgList&)(bool)
 )
-#include "../drawgroup_proxy.hpp"
+#include "../object/drawgroup_proxy.hpp"
 DEF_LUAIMPLEMENT_SPTR(
 	rev::ObjMgr, rev::DrawGroupProxy, DrawGroupProxy,
 	"DrawableObj",
@@ -67,7 +67,7 @@ DEF_LUAIMPLEMENT_SPTR(
 	(rev::HDGroup)
 )
 
-#include "../u_scene.hpp"
+#include "../object/scene/user.hpp"
 DEF_LUAIMPLEMENT_SPTR(
 	rev::ObjMgr, rev::U_Scene, U_Scene,
 	luaNS::FSMachine,
@@ -76,7 +76,7 @@ DEF_LUAIMPLEMENT_SPTR(
 	(getUpdGroup)(getDrawGroup),
 	NOTHING
 )
-#include "../scene_mgr.hpp"
+#include "../object/scene/mgr.hpp"
 DEF_LUAIMPLEMENT_PTR_NOCTOR(
 	rev::SceneMgr, SceneMgr,
 	LUAIMPLEMENT_BASE,

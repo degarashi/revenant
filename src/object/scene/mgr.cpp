@@ -1,6 +1,6 @@
-#include "scene_mgr.hpp"
-#include "scene_if.hpp"
-#include "updgroup.hpp"
+#include "mgr.hpp"
+#include "if.hpp"
+#include "../updgroup.hpp"
 
 namespace rev {
 	bool SceneMgr::isEmpty() const noexcept {

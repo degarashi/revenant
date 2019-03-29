@@ -1,8 +1,8 @@
 #pragma once
+#include "../../lua/lcvalue.hpp"
+#include "../../debug_gui/if.hpp"
+#include "../../handle/object.hpp"
 #include "spine/src/singleton.hpp"
-#include "lua/lcvalue.hpp"
-#include "debug_gui/if.hpp"
-#include "handle/object.hpp"
 #include <vector>
 
 namespace rev {

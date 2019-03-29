@@ -1,7 +1,7 @@
 #pragma once
-#include "object_lua.hpp"
-#include "scene_base.hpp"
-#include "scene_if.hpp"
+#include "../lua.hpp"
+#include "base.hpp"
+#include "if.hpp"
 
 namespace rev {
 	//! 1シーンにつきUpdateTreeとDrawTreeを1つずつ用意

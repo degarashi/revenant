@@ -1,6 +1,6 @@
 #pragma once
 #include "beat/src/pose2d.hpp"
-#include "../../drawable.hpp"
+#include "../../object/drawable.hpp"
 #include "../../effect/id.hpp"
 #include "../../handle/opengl.hpp"
 #include "../../singleton_data.hpp"

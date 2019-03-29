@@ -1,6 +1,6 @@
 #pragma once
-#include "object_if.hpp"
-#include "object_id.hpp"
+#include "if.hpp"
+#include "id.hpp"
 
 namespace rev {
 	class U_Object : public IObject {

@@ -4,7 +4,7 @@
 #include "../debug_gui/types/resmgr_named.hpp"
 #include "../debug_gui/menu.hpp"
 #include "../debug_gui/window.hpp"
-#include "../scene_mgr.hpp"
+#include "../object/scene/mgr.hpp"
 
 namespace rev {
 	ResourceView::ResourceView():

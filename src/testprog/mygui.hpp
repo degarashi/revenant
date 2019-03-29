@@ -1,6 +1,6 @@
 #pragma once
 #include "../debug_gui/logger.hpp"
-#include "../drawable.hpp"
+#include "../object/drawable.hpp"
 
 namespace rev {
 	namespace info {

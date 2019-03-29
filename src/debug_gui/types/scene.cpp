@@ -1,8 +1,8 @@
-#include "../../scene_if.hpp"
+#include "../../object/scene/if.hpp"
 #include "../../imgui/imgui.h"
 #include "../print.hpp"
 #include "../child.hpp"
-#include "../../drawgroup.hpp"
+#include "../../object/drawgroup.hpp"
 
 namespace rev {
 	const char* IScene::getDebugName() const noexcept {

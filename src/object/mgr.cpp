@@ -1,5 +1,5 @@
-#include "object_mgr.hpp"
-#include "object_if.hpp"
+#include "mgr.hpp"
+#include "if.hpp"
 
 namespace rev {
 	ObjMgr::~ObjMgr() {
@@ -24,7 +24,7 @@ namespace rev {
 		return _lua;
 	}
 }
-#include "object_lua.hpp"
+#include "lua.hpp"
 namespace rev {
 	// -------------------- ObjectT_LuaBase --------------------
 	bool detail::ObjectT_LuaBase::CallRecvMsg(const Lua_SP& ls, const HObj& hObj, LCValue& dst, const GMessageStr& msg, const LCValue& arg) {

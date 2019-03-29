@@ -1,5 +1,5 @@
 #include "bsprite.hpp"
-#include "../../drawgroup.hpp"
+#include "../../object/drawgroup.hpp"
 
 namespace rev::test {
 	// ----------------------- BoundingSprite -----------------------

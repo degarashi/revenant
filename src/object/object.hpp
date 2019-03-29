@@ -1,7 +1,7 @@
 #pragma once
-#include "object_if.hpp"
-#include "object_id.hpp"
-#include "flagptr.hpp"
+#include "if.hpp"
+#include "id.hpp"
+#include "../flagptr.hpp"
 
 namespace rev {
 	namespace detail {
