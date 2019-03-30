@@ -1,6 +1,7 @@
 //! FontCache - FreeTypeを使った実装
 #pragma once
 #include "wrap.hpp"
+#include "../chardata.hpp"
 #include "../id.hpp"
 #include "../../abstbuffer.hpp"
 #include "../../sdl/rw.hpp"
@@ -49,12 +50,6 @@ namespace rev {
 			HFT fontFromFile(const std::string& path);
 			//! サイズや形式からフォントを探す
 			HFT fontFromID(FontId id) const;
-	};
-	struct CharData {
-		//! フォントピクセルデータ(各ピクセル8bit)
-		ByteBuff		pixel;
-		//! フォント原点に対する描画オフセット
-		lubee::RectI	rect;
 	};
 	//! フォント作成クラス: 環境依存
 	/*! フォント設定(=FontId)毎に用意する */
