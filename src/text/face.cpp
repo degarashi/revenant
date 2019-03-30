@@ -50,30 +50,30 @@ namespace rev::detail {
 		auto& dp = getDepPair(chID);
 		auto res = dp.dep.getChara(chID.code);
 		// この時点では1ピクセル8bitなので、32bitRGBAに展開
-		if(!res.first.empty())
-			res.first = Convert8Bit_Packed32Bit(&res.first[0], res.second.width(), res.second.width(), res.second.height());
-		cp.box = res.second;
+		if(!res.pixel.empty())
+			res.pixel = Convert8Bit_Packed32Bit(&res.pixel[0], res.rect.width(), res.rect.width(), res.rect.height());
+		cp.box = res.rect;
 		cp.space = dp.dep.width(chID.code);
-		if(res.second.width() <= 0) {
+		if(res.rect.width() <= 0) {
 			cp.uv *= 0;
 			cp.hTex = mgr_gl.getEmptyTexture()->texture();
 		} else {
 			LaneRaw lraw;
-			dp.cplane.rectAlloc(lraw, res.second.width());
+			dp.cplane.rectAlloc(lraw, res.rect.width());
 			cp.hTex = lraw.hTex;
 
 			// ビットデータをglTexSubImage2Dで書き込む
 			auto* u = lraw.hTex.get();
-			lraw.rect.x1 = lraw.rect.x0 + res.second.width();
-			lraw.rect.y1 = lraw.rect.y0 + res.second.height();
-			u->writeRect(AB_Byte(std::move(res.first)), lraw.rect, GL_UNSIGNED_BYTE);
+			lraw.rect.x1 = lraw.rect.x0 + res.rect.width();
+			lraw.rect.y1 = lraw.rect.y0 + res.rect.height();
+			u->writeRect(AB_Byte(std::move(res.pixel)), lraw.rect, GL_UNSIGNED_BYTE);
 
 			// UVオフセットを計算
 			const auto& sz = dp.cplane.getSurfaceSize();
 			float invW = 1.f / (static_cast<float>(sz.width)),
 				invH = 1.f / (static_cast<float>(sz.height));
 
-			float h = res.second.height();
+			float h = res.rect.height();
 			const auto& uvr = lraw.rect;
 			cp.uv = lubee::RectF(
 						uvr.x0 * invW,

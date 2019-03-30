@@ -50,8 +50,14 @@ namespace rev {
 			//! サイズや形式からフォントを探す
 			HFT fontFromID(FontId id) const;
 	};
+	struct CharData {
+		//! フォントピクセルデータ(各ピクセル8bit)
+		ByteBuff		pixel;
+		//! フォント原点に対する描画オフセット
+		lubee::RectI	rect;
+	};
 	//! フォント作成クラス: 環境依存
-	/*! フォント設定毎に用意する */
+	/*! フォント設定(=FontId)毎に用意する */
 	class Font_FTDep {
 		private:
 			// FTFaceとFontIdの対応
@@ -73,13 +79,10 @@ namespace rev {
 			/*! (依存クラスによってはサイズが縦しか指定できなかったりする為) */
 			FontId adjustParams(FontId fid);
 
-			//! 使用テクスチャとUV範囲、カーソル移動距離など取得
-			/*! \return first=フォントピクセルデータ(各ピクセル8bit)
-						second=フォント原点に対する描画オフセット */
-			std::pair<ByteBuff, lubee::RectI> getChara(char32_t c);
-			int maxWidth() const;
-			int height() const;
-			int width(char32_t c);
+			CharData getChara(char32_t c);
+			unsigned int maxWidth() const;
+			unsigned int height() const;
+			unsigned int width(char32_t c);
 	};
 	using FontArray_Dep = Font_FTDep;
 }

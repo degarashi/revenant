@@ -56,17 +56,19 @@ namespace rev {
 	namespace {
 		void SetFTSize(FTFace& ft, const FontId fontId) {
 			// TODO: この値は埋め込むのではなくてディスプレイから取得するべき
-			constexpr int DPI_W = 300,
-						DPI_H = 300;
-			int w = fontId.at<FontId::Width>(),
-				h = fontId.at<FontId::Height>();
+			const lubee::SizeI
+					dpi{300, 300},
+					size{
+						fontId.at<FontId::Width>(),
+						fontId.at<FontId::Height>()
+					};
 			switch(fontId.at<FontId::SizeType>()) {
 				case FontId::SizeType_Pixel:
-					ft.setPixelSizes(w, h); break;
+					ft.setPixelSizes(size); break;
 				case FontId::SizeType_Point:
-					ft.setCharSize(w, h, DPI_W, DPI_H); break;
+					ft.setCharSize(size, dpi); break;
 				case FontId::SizeType_LineHeight:
-					ft.setSizeFromLine(h); break;
+					ft.setSizeFromLine(size.height); break;
 				default:
 					D_Assert(false, "invalid sizetype number");
 			}
@@ -96,22 +98,22 @@ namespace rev {
 		SetFTSize(*_hFT, _fontId);
 	}
 
-	int Font_FTDep::height() const {
+	unsigned int Font_FTDep::height() const {
 		return _hFT->getFaceInfo().height;
 	}
-	int Font_FTDep::width(const char32_t c) {
+	unsigned int Font_FTDep::width(const char32_t c) {
 		auto& ft = *_hFT;
 		SetFTSize(ft, _fontId);
 		PrepareGlyph(ft, CharId(c, _fontId));
 		return ft.getGlyphInfo().advanceX;
 	}
-	int Font_FTDep::maxWidth() const {
+	unsigned int Font_FTDep::maxWidth() const {
 		return _hFT->getFaceInfo().maxWidth;
 	}
 	FontId Font_FTDep::adjustParams(const FontId fid) {
 		return fid;
 	}
-	std::pair<ByteBuff, lubee::RectI> Font_FTDep::getChara(const char32_t c) {
+	CharData Font_FTDep::getChara(const char32_t c) {
 		auto& ft = *_hFT;
 		SetFTSize(ft, _fontId);
 		PrepareGlyph(ft, CharId(c, _fontId));
@@ -140,7 +142,10 @@ namespace rev {
 				}
 			}
 		}
-		return std::make_pair(std::move(buff), rect);
+		return CharData{
+			.pixel = std::move(buff),
+			.rect = rect
+		};
 	}
 	ByteBuff Convert1Bit_8Bit(const void* src, const int width, const int pitch, const int nrow) {
 		auto* pSrc = reinterpret_cast<const uint8_t*>(src);

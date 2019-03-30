@@ -7,6 +7,7 @@
 #include "spine/src/singleton.hpp"
 #include "../../handle/sdl.hpp"
 #include "../../handle/text.hpp"
+#include "lubee/src/size.hpp"
 #include <vector>
 
 namespace rev {
@@ -19,45 +20,50 @@ namespace rev {
 				((LCD)(FT_RENDER_MODE_LCD))
 			);
 		private:
-			FT_Face		_face;
-			HRW			_hRW;
-			struct FInfo {
+			struct FaceInfo {
 				int	baseline,
 					height,
 					maxWidth;		// フォントの最大横幅
 			};
-			FInfo		_finfo;
-			struct Info {
+			struct GlyphInfo {
 				const uint8_t* data;
 				int advanceX;		// 原点を進める幅
-				int nlevel;
-				int width,			// bitmapの横
+				unsigned int
+					nlevel,
+					width,			// bitmapの横
 					height,			// bitmapの縦
 					pitch;			// bitmapのピッチ(バイト)
 				int horiBearingX,	// originから右にずらしたサイズ
 					horiBearingY;	// baseLineから上に出るサイズ
 			};
-			Info		_info;
+
+			FT_Face		_face;
+			HRW			_hRW;
+			FaceInfo	_faceInfo;
+			GlyphInfo	_glyphInfo;
 			void _updateFaceInfo();
 
 		public:
 			FTFace(FT_Face face, const HRW& hRW=HRW());
 			FTFace(FTFace&& f);
 			~FTFace();
-			void setPixelSizes(int w, int h);
-			void setCharSize(int w, int h, int dpW, int dpH);
-			void setSizeFromLine(int lineHeight);
+			void setPixelSizes(lubee::SizeI s);
+			void setCharSize(lubee::SizeI s, lubee::SizeI dpi);
+			void setSizeFromLine(unsigned int lineHeight);
 			//! 文字のビットマップを準備
 			void prepareGlyph(char32_t code, RenderMode::e mode, bool bBold, bool bItalic);
-			const Info& getGlyphInfo() const;
-			const FInfo& getFaceInfo() const;
+			const GlyphInfo& getGlyphInfo() const;
+			const FaceInfo& getFaceInfo() const;
 			const char* getFamilyName() const;
 			const char* getStyleName() const;
-			int getNFace() const;
+			size_t getNFace() const;
 			int getFaceIndex() const;
 	};
 	#define mgr_ft (::rev::FTLibrary::ref())
-	class FTLibrary : public spi::ResMgr<FTFace>, public spi::Singleton<FTLibrary> {
+	class FTLibrary :
+		public spi::ResMgr<FTFace>,
+		public spi::Singleton<FTLibrary>
+	{
 		private:
 			FT_Library	_lib;
 		public:
