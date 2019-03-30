@@ -38,7 +38,7 @@ namespace rev::detail {
 		std::unordered_map<HTexSrcC, std::vector<CPair>>	tpM;
 		{
 			const auto& dp = face.getDepPair(_fontId);
-			const int height = dp.dep.height();
+			const int height = dp.renderer.height();
 			int ofsx = 0,
 				ofsy = -height;
 			const float dt = 1.f / _text.length();

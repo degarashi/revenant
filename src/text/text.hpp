@@ -7,9 +7,9 @@
 #include "spine/src/resmgr_named.hpp"
 
 /*
-	ライブラリ依存クラス: FontArray_Dep
+	ライブラリ依存クラス: FontRenderer
 	要件
-		FontArray_Dep(const FontName &name, FontId fid);
+		FontRenderer(const FontName &name, FontId fid);
 		//! 依存ライブラリによっては意味をなさないFontIdのパラメータを統一
 		//! (ライブラリによってはサイズが縦しか指定できなかったりする為)
 		FontId adjustParams(FontId fid);
@@ -31,7 +31,7 @@ namespace rev {
 		using FontName_S = std::shared_ptr<FontName>;
 		struct Face {
 			struct DepPair {
-				FontArray_Dep		dep;
+				FontRenderer		renderer;
 				CharPlane			cplane;
 
 				DepPair(const FontName_S &name, const lubee::PowSize &sfcSize, FontId fid);

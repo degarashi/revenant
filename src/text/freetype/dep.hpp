@@ -75,7 +75,7 @@ namespace rev {
 			unsigned int height() const;
 			unsigned int width(char32_t c);
 	};
-	using FontArray_Dep = Font_FTDep;
+	using FontRenderer = Font_FTDep;
 }
 namespace std {
 	template <>

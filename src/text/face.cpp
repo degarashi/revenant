@@ -13,7 +13,8 @@ namespace rev::detail {
 	}
 	// --------------------------- Face::DepPair ---------------------------
 	Face::DepPair::DepPair(const FontName_S& name, const lubee::PowSize& sfcSize, const FontId fid):
-		dep(*name, fid), cplane(sfcSize, dep.height(), std::make_unique<LAlloc>())
+		renderer(*name, fid),
+		cplane(sfcSize, renderer.height(), std::make_unique<LAlloc>())
 	{}
 	// --------------------------- Face ---------------------------
 	// フォントのHeightとラインのHeightは違う！
@@ -48,12 +49,12 @@ namespace rev::detail {
 		CharPos& cp = fontMap[chID];
 		// Dependクラスから文字のビットデータを取得
 		auto& dp = getDepPair(chID);
-		auto res = dp.dep.getChara(chID.code);
+		auto res = dp.renderer.getChara(chID.code);
 		// この時点では1ピクセル8bitなので、32bitRGBAに展開
 		if(!res.pixel.empty())
 			res.pixel = Convert8Bit_Packed32Bit(&res.pixel[0], res.rect.width(), res.rect.width(), res.rect.height());
 		cp.box = res.rect;
-		cp.space = dp.dep.width(chID.code);
+		cp.space = dp.renderer.width(chID.code);
 		if(res.rect.width() <= 0) {
 			cp.uv *= 0;
 			cp.hTex = mgr_gl.getEmptyTexture()->texture();

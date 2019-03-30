@@ -32,7 +32,7 @@ namespace rev {
 			CharPlane(const lubee::PowSize& size, size_t fh, LaneAlloc_U a);
 			CharPlane(CharPlane&& cp) = default;
 			//! 新しいChar登録領域を確保
-			/*! まだどこにも登録されてないcodeである事はFontArray_Depが保証する
+			/*! まだどこにも登録されてないcodeである事はFontRendererが保証する
 				\param[out] dst uv, hTexを書き込む */
 			void rectAlloc(LaneRaw& dst, size_t width);
 			const lubee::PowSize& getSurfaceSize() const;
