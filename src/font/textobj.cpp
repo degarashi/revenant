@@ -121,16 +121,16 @@ namespace rev::detail {
 				d.idTex[curTex++] = ds.hTex;
 		}
 	}
-	void TextObj::onCacheLost() {
+	void TextObj::onCacheLost(TextObjPrivate) {
 		// フォントキャッシュを消去
 		_cache.drawSet.clear();
 		_cache.rectSize = {0,0};
 	}
-	void TextObj::onCacheReset(Face &face) {
+	void TextObj::onCacheReset(TextObjPrivate, Face &face) {
 		// 再度テキストデータ(CharPosポインタ配列)を作成
 		_prepareTextureAndVertex(face);
 	}
-	FontId& TextObj::refFontId() {
+	FontId& TextObj::refFontId(TextObjPrivate) {
 		return _fontId;
 	}
 	const FontName_S& TextObj::getFaceName() const {

@@ -46,17 +46,18 @@ namespace rev {
 		// あくまでもキャッシュのクリアなので文字列データ等は削除しない
 		_fontMap.clear();
 		_faceL.clear();
+		const detail::TextObjPrivate priv;
 		// 文字列クラスのキャッシュも破棄
 		for(auto text : *this)
-			text->onCacheLost();
+			text->onCacheLost(priv);
 
 		if(bRestore) {
 			for(auto text: *this) {
 				// FaceIdは使わず再度Face参照する
-				auto& c = text->refFontId();
+				auto& c = text->refFontId(priv);
 				// TextからSPの名前を取り出してFaceIdを更新
 				c = makeFontId(text->getFaceName(), c);
-				text->onCacheReset(_getArray(c));
+				text->onCacheReset(priv, _getFace(c));
 			}
 		}
 	}

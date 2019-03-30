@@ -35,6 +35,7 @@ namespace rev {
 			const CharPos* getCharPos(CharId cid);
 			DepPair& getDepPair(FontId fontId);
 		};
+		struct TextObjPrivate {};
 		//! 文章の描画に必要なフォントや頂点を用意
 		/*!
 			TriangleList形式。とりあえず改行だけ対応
@@ -84,11 +85,11 @@ namespace rev {
 					\param[in] s 生成する文字列 */
 				TextObj(Face &face, FontId fontId, std::u32string &&s);
 				// FontGenから呼び出す
-				void onCacheLost();
-				void onCacheReset(Face &face);
+				void onCacheLost(TextObjPrivate);
+				void onCacheReset(TextObjPrivate, Face &face);
 				// ------- clearCache(bRestore=true)時 -------
 				// FontGenから呼び出してFaceIdを再設定する用
-				FontId& refFontId();
+				FontId& refFontId(TextObjPrivate);
 				const FontName_S& getFaceName() const;
 				/*!
 					上位クラスで位置調整など行列をセットしてからメソッドを呼ぶ
