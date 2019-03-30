@@ -144,7 +144,7 @@ namespace rev::detail {
 			e.draw();
 		}
 	}
-	const lubee::SizeF& TextObj::getSize() const {
+	const lubee::SizeF& TextObj::getDrawSize() const {
 		return _cache.rectSize;
 	}
 	const TextObj::DefaultTech TextObj::s_defaultTech;

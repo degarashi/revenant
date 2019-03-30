@@ -65,7 +65,7 @@ namespace rev {
 			auto& c = dynamic_cast<U_Common&>(e);
 			c.color = _color.asVec4();
 			_hText->draw(e);
-			return _hText->getSize().width;
+			return _hText->getDrawSize().width;
 		}
 		void Text::exportDrawTag(DrawTag& d) const {
 			getText()->exportDrawTag(d);

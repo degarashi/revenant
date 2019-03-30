@@ -96,7 +96,7 @@ namespace rev {
 					\param[in]	customDraw false=デフォルトのシェーダーでテキスト描画
 				*/
 				void draw(IEffect &gle) const;
-				const lubee::SizeF& getSize() const;
+				const lubee::SizeF& getDrawSize() const;
 				void exportDrawTag(DrawTag &d) const;
 
 				static HTech GetDefaultTech();
