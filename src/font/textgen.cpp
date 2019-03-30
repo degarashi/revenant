@@ -10,12 +10,12 @@ namespace rev {
 		const std::string& ToStdString(const std::string& s) { return s; }
 		const std::string& ToStdString(const FontName_S& s) { return *s; }
 	}
-	FontGen::FontGen(const lubee::PowSize sfcSize):
+	TextGen::TextGen(const lubee::PowSize sfcSize):
 		_sfcSize(sfcSize)
 	{}
 
 	template <class S>
-	FontId FontGen::_makeFontId(const S &name, FontId fid) {
+	FontId TextGen::_makeFontId(const S &name, FontId fid) {
 		// fid = フォントファミリを無視した値
 		const auto itr = std::find(_faceL.begin(), _faceL.end(), ToStdString(name));
 		if(itr == _faceL.end()) {
@@ -28,13 +28,13 @@ namespace rev {
 		return fid;
 	}
 
-	FontId FontGen::makeFontId(const FontName &name, const FontId fid) {
+	FontId TextGen::makeFontId(const FontName &name, const FontId fid) {
 		return _makeFontId(name, fid);
 	}
-	FontId FontGen::makeFontId(const FontName_S &name, const FontId fid) {
+	FontId TextGen::makeFontId(const FontName_S &name, const FontId fid) {
 		return _makeFontId(name, fid);
 	}
-	detail::Face& FontGen::_getFace(const FontId fid) {
+	detail::Face& TextGen::_getFace(const FontId fid) {
 		// FaceList線形探索
 		const auto itr = std::find_if(
 			_faceL.begin(),
@@ -46,7 +46,7 @@ namespace rev {
 		Assert0(itr != _faceL.end());
 		return *itr;
 	}
-	void FontGen::clearCache(const bool bRestore) {
+	void TextGen::clearCache(const bool bRestore) {
 		// あくまでもキャッシュのクリアなので文字列データ等は削除しない
 		_fontMap.clear();
 		_faceL.clear();
@@ -65,13 +65,13 @@ namespace rev {
 			}
 		}
 	}
-	std::u32string FontGen::_MakeTextTag(const FontId fid, const std::u32string &s) {
+	std::u32string TextGen::_MakeTextTag(const FontId fid, const std::u32string &s) {
 		// ハンドルキー = FontIdの64bit数値 + _ + 文字列
 		std::basic_stringstream<char32_t>	ss;
 		ss << boost::lexical_cast<std::u32string>(fid.value()) << U'_' << s;
 		return ss.str();
 	}
-	HText FontGen::createText(const FontId fid, To32Str str) {
+	HText TextGen::createText(const FontId fid, To32Str str) {
 		std::u32string str32(str.moveTo());
 		// FontIdを付加した文字列をキーにする
 		auto& ar = _getFace(fid);

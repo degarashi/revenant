@@ -22,7 +22,7 @@ namespace rev {
 	class GLRes;
 	class SoundMgr;
 	class FontFamily;
-	class FontGen;
+	class TextGen;
 	namespace parse {
 		class TechMgr;
 	}
@@ -55,7 +55,7 @@ namespace rev {
 				SPtr<SoundMgr>				snd;
 				SPtr<RWMgr>					rwm;
 				SPtr<FontFamily>			font;
-				SPtr<FontGen>				fgen;
+				SPtr<TextGen>				fgen;
 				SPtr<parse::TechMgr>		tech;
 				SPtr<ObjMgr>				obj;
 				SPtr<SceneMgr>				scene;

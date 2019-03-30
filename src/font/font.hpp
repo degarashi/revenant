@@ -84,11 +84,11 @@ namespace rev {
 				/*! \param[in] dep フォントデータを生成するための環境依存クラス
 					\param[in] s 生成する文字列 */
 				TextObj(Face &face, FontId fontId, std::u32string &&s);
-				// FontGenから呼び出す
+				// TextGenから呼び出す
 				void onCacheLost(TextObjPrivate);
 				void onCacheReset(TextObjPrivate, Face &face);
 				// ------- clearCache(bRestore=true)時 -------
-				// FontGenから呼び出してFaceIdを再設定する用
+				// TextGenから呼び出してFaceIdを再設定する用
 				FontId& refFontId(TextObjPrivate);
 				const FontName_S& getFaceName() const;
 				/*!
@@ -103,12 +103,12 @@ namespace rev {
 		};
 	}
 
-	#define mgr_text (::rev::FontGen::ref())
+	#define mgr_text (::rev::TextGen::ref())
 	//! フォント作成クラス: 共通
 	/*! Depで生成するのはあくまでもフォントデータのみであって蓄積はこのクラスで行う */
-	class FontGen :
+	class TextGen :
 		public spi::ResMgrName<detail::TextObj, std::u32string>,
-		public spi::Singleton<FontGen>
+		public spi::Singleton<TextGen>
 	{
 		private:
 			//! フォントの名前リスト
@@ -136,7 +136,7 @@ namespace rev {
 		public:
 			/*! sfcSizeは強制的に2の累乗サイズに合わせられる
 				\param[in] sfcSize	フォントを蓄えるOpenGLサーフェスのサイズ */
-			FontGen(lubee::PowSize sfcSize);
+			TextGen(lubee::PowSize sfcSize);
 			//! フォントの設定から一意のIDを作る
 			/*! \param[in] fid フォントの見た目情報。FaceIdは無視される
 				\param[in] name フォントファミリの名前

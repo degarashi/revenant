@@ -40,7 +40,7 @@ namespace rev {
 		m.glr->onDeviceReset();
 		m.font = std::make_shared<FontFamily>();
 		_LoadFonts();
-		m.fgen = std::make_shared<FontGen>(lubee::PowSize(512,512));
+		m.fgen = std::make_shared<TextGen>(lubee::PowSize(512,512));
 		m.snd = std::make_shared<SoundMgr>(44100);
 		m.snd->makeCurrent();
 		m.tech = std::make_shared<parse::TechMgr>();
