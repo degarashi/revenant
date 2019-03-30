@@ -1,6 +1,7 @@
 #pragma once
 #include "../handle/input.hpp"
 #include "../handle/object.hpp"
+#include "../handle/opengl.hpp"
 #include "../drawutil/texthud.hpp"
 
 namespace rev::test {

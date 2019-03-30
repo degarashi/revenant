@@ -1,6 +1,7 @@
 #pragma once
 #include "text.hpp"
 #include "spine/src/enum.hpp"
+#include "spine/src/flyweight_item.hpp"
 #include "frea/src/matrix.hpp"
 #include "lubee/src/wrapper.hpp"
 

@@ -1,7 +1,7 @@
 //! FontCache - FreeTypeを使った実装
 #pragma once
 #include "wrap.hpp"
-#include "../common.hpp"
+#include "../id.hpp"
 #include "../../abstbuffer.hpp"
 #include "../../sdl/rw.hpp"
 #include "spine/src/optional.hpp"

@@ -9,6 +9,7 @@
 #include "../../systeminfo.hpp"
 #include "../../tls_data.hpp"
 #include "frea/src/random/vector.hpp"
+#include "lubee/src/meta/countof.hpp"
 #include <boost/format.hpp>
 
 namespace rev::test {

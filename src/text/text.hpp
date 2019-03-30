@@ -1,8 +1,10 @@
 #pragma once
+#include "charplane.hpp"
+#include "name.hpp"
 #include "freetype/dep.hpp"
+#include "../singleton_data_lazy.hpp"
 #include "frea/src/vector.hpp"
 #include "spine/src/resmgr_named.hpp"
-#include "singleton_data_lazy.hpp"
 
 namespace rev {
 	struct DrawTag;
