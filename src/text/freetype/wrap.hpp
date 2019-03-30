@@ -59,7 +59,6 @@ namespace rev {
 			size_t getNFace() const;
 			int getFaceIndex() const;
 	};
-	#define mgr_ft (::rev::FTLibrary::ref())
 	class FTLibrary :
 		public spi::ResMgr<FTFace>,
 		public spi::Singleton<FTLibrary>
