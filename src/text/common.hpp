@@ -1,8 +1,7 @@
 #pragma once
+#include "lane_if.hpp"
 #include "lubee/src/bitfield.hpp"
-#include "lubee/src/rect.hpp"
 #include "lubee/src/pow_value.hpp"
-#include "../handle/opengl.hpp"
 #include <vector>
 
 namespace rev {
@@ -102,20 +101,6 @@ namespace std {
 	};
 }
 namespace rev {
-	struct LaneRaw {
-		HTexMem2D		hTex;
-		lubee::RectI	rect;	//!< 管理している領域
-	};
-	struct Lane : LaneRaw {
-		Lane			*pNext;
-		Lane(const HTexMem2D& hT, const lubee::RectI& r);
-	};
-	struct ILaneAlloc {
-		virtual ~ILaneAlloc() {}
-		virtual bool alloc(LaneRaw& dst, size_t w) = 0;
-		virtual void addFreeLane(const HTexMem2D& hTex, const lubee::RectI& rect) = 0;
-		virtual void clear() = 0;
-	};
 	using LaneAlloc_UP = std::unique_ptr<ILaneAlloc>;
 	//! CharPlaneと、その位置
 	struct CharPos {

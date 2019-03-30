@@ -86,9 +86,4 @@ namespace rev {
 	const lubee::PowSize& CharPlane::getSurfaceSize() const {
 		return _sfcSize;
 	}
-	// ------------------- Lane-------------------
-	Lane::Lane(const HTexMem2D& hT, const lubee::RectI& r):
-		LaneRaw{hT, r},
-		pNext(nullptr)
-	{}
 }
