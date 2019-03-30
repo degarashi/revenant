@@ -1,12 +1,12 @@
 //! FontCache - FreeTypeを使った実装
 #pragma once
-#include "ft_wrap.hpp"
+#include "wrap.hpp"
+#include "../common.hpp"
+#include "../../abstbuffer.hpp"
+#include "../../sdl/rw.hpp"
 #include "spine/src/optional.hpp"
-#include <unordered_map>
-#include "abstbuffer.hpp"
 #include "lubee/src/rect.hpp"
-#include "../sdl/rw.hpp"
-#include "common.hpp"
+#include <unordered_map>
 
 namespace rev {
 	using ByteBuff = std::vector<uint8_t>;

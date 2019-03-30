@@ -1,5 +1,5 @@
 #pragma once
-#include "ft_dep.hpp"
+#include "freetype/dep.hpp"
 #include "frea/src/vector.hpp"
 #include "spine/src/resmgr_named.hpp"
 #include "singleton_data_lazy.hpp"

@@ -61,6 +61,7 @@ set(MAIN_SOURCEDIR
 	src/drawutil
 	src/imgui
 	src/text
+	src/text/freetype
 	src/sound
 	src/sdl
 	src/input

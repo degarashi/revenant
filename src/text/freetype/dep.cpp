@@ -1,6 +1,6 @@
-#include "ft_dep.hpp"
-#include "../fs/dir.hpp"
-#include "emplace.hpp"
+#include "dep.hpp"
+#include "../../fs/dir.hpp"
+#include "../../emplace.hpp"
 #include "lubee/src/error.hpp"
 
 namespace rev {

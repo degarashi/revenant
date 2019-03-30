@@ -5,8 +5,8 @@
 #include "spine/src/enum.hpp"
 #include "spine/src/resmgr.hpp"
 #include "spine/src/singleton.hpp"
-#include "handle/sdl.hpp"
-#include "handle/text.hpp"
+#include "../../handle/sdl.hpp"
+#include "../../handle/text.hpp"
 #include <vector>
 
 namespace rev {
