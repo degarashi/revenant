@@ -1,5 +1,5 @@
 #include "scenebase.hpp"
-#include "../font/font.hpp"
+#include "../font/text.hpp"
 #include "../input/input.hpp"
 #include "../effect/if.hpp"
 #include "../systeminfo.hpp"

@@ -1,5 +1,5 @@
 #include "../resmgr_app.hpp"
-#include "font.hpp"
+#include "text.hpp"
 #include "lane.hpp"
 #include "../emplace.hpp"
 #include "../gl/resource.hpp"

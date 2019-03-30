@@ -1,5 +1,5 @@
 #include "../resmgr_app.hpp"
-#include "font.hpp"
+#include "text.hpp"
 #include "vdecl.hpp"
 #include "../gl/resource.hpp"
 #include "../effect/primitive.hpp"

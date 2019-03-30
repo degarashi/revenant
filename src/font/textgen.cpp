@@ -1,5 +1,5 @@
 #include "../resmgr_app.hpp"
-#include "font.hpp"
+#include "text.hpp"
 #include <boost/lexical_cast.hpp>
 
 namespace rev {
