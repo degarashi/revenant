@@ -37,7 +37,7 @@ namespace rev {
 			EmplaceOrReplace(_fontMap, hf2->getFamilyName(), i, hRW);
 		}
 	}
-	HFT FontFamily::fontFromFamilyName(const std::string& name) const {
+	HFT FontFamily::fontFromFamilyName(const FontName &name) const {
 		auto itr = _fontMap.find(name);
 		if(itr == _fontMap.end())
 			return HFT();
@@ -83,7 +83,7 @@ namespace rev {
 		}
 	}
 	// TODO: 縁取り対応
-	Font_FTDep::Font_FTDep(const std::string& name, const FontId fid):
+	Font_FTDep::Font_FTDep(const FontName &name, const FontId fid):
 		_fontId(fid)
 	{
 		_hFT = mgr_font.fontFromFamilyName(name);

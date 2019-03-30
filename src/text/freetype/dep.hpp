@@ -3,6 +3,7 @@
 #include "wrap.hpp"
 #include "../chardata.hpp"
 #include "../id.hpp"
+#include "../name.hpp"
 #include "../../abstbuffer.hpp"
 #include "../../sdl/rw.hpp"
 #include "spine/src/optional.hpp"
@@ -37,7 +38,7 @@ namespace rev {
 			};
 		private:
 			//! [FamilyName -> FullPath]
-			using FontMap = std::unordered_map<std::string, Item>;
+			using FontMap = std::unordered_map<FontName, Item>;
 			FontMap			_fontMap;
 
 		public:
@@ -45,7 +46,7 @@ namespace rev {
 			void loadFamily(const HRW& hRW);
 
 			//! FamilyNameからフォントを特定
-			HFT fontFromFamilyName(const std::string& name) const;
+			HFT fontFromFamilyName(const FontName &name) const;
 			//! ファイル名を指定してフォントを探す
 			HFT fontFromFile(const std::string& path);
 			//! サイズや形式からフォントを探す
@@ -66,7 +67,7 @@ namespace rev {
 			lubee::RectI _boundingRect(char32_t code) const;
 		public:
 			Font_FTDep(Font_FTDep&&) = default;
-			Font_FTDep(const std::string& name, FontId fid);
+			Font_FTDep(const FontName &name, FontId fid);
 			Font_FTDep(FontId fid);
 			Font_FTDep& operator = (Font_FTDep&& dep) = default;
 
