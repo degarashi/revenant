@@ -68,7 +68,6 @@ namespace rev {
 		public:
 			Font_FTDep(Font_FTDep&&) = default;
 			Font_FTDep(const FontName &name, FontId fid);
-			Font_FTDep(FontId fid);
 			Font_FTDep& operator = (Font_FTDep&& dep) = default;
 
 			//! 結果的にFontIdが同じになるパラメータの値を統一

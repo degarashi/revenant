@@ -90,13 +90,6 @@ namespace rev {
 		Assert0(_hFT);
 		SetFTSize(*_hFT, _fontId);
 	}
-	Font_FTDep::Font_FTDep(const FontId fid):
-		_fontId(fid)
-	{
-		_hFT = mgr_font.fontFromID(fid);
-		Assert0(_hFT);
-		SetFTSize(*_hFT, _fontId);
-	}
 
 	unsigned int Font_FTDep::height() const {
 		return _hFT->getFaceInfo().height;
