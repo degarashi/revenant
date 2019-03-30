@@ -2,7 +2,6 @@
 #include "lane_if.hpp"
 #include "lubee/src/bitfield.hpp"
 #include "lubee/src/pow_value.hpp"
-#include <vector>
 
 namespace rev {
 	//! キャラクタの属性値を32bitで表す
