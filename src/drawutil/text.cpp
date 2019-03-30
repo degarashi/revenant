@@ -1,5 +1,5 @@
 #include "text.hpp"
-#include "../font/text.hpp"
+#include "../text/text.hpp"
 #include "../effect/if.hpp"
 #include "../effect/uniform_ent.hpp"
 #include "../effect/uniform/common.hpp"

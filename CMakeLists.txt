@@ -60,7 +60,7 @@ set(MAIN_SOURCEDIR
 	src/drawcmd/types
 	src/drawutil
 	src/imgui
-	src/font
+	src/text
 	src/sound
 	src/sdl
 	src/input

@@ -8,7 +8,7 @@
 #include "systeminfo.hpp"
 #include "effect/effect.hpp"
 #include "effect/techmgr.hpp"
-#include "font/text.hpp"
+#include "text/text.hpp"
 #include "gl/resource.hpp"
 #include "gltf/v1/mgr.hpp"
 #include "imgui_sdl2.hpp"

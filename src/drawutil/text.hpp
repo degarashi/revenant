@@ -1,7 +1,7 @@
 #pragma once
 #include "spine/src/optional.hpp"
 #include "lubee/src/size.hpp"
-#include "../font/common.hpp"
+#include "../text/common.hpp"
 #include "../color.hpp"
 #include "../abstbuffer.hpp"
 #include "../handle/text.hpp"
