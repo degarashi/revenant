@@ -34,12 +34,16 @@ namespace rev {
 	FontId FontGen::makeFontId(const FontName_S &name, const FontId fid) {
 		return _makeFontId(name, fid);
 	}
-	detail::Face& FontGen::_getArray(const FontId fid) {
+	detail::Face& FontGen::_getFace(const FontId fid) {
 		// FaceList線形探索
-		const auto itr = std::find_if(_faceL.begin(), _faceL.end(), [fid](const detail::Face& fc){
-			return fc.fontId.at<FontId::FaceId>() == fid.at<FontId::FaceId>();
-		});
-		D_Assert0(itr != _faceL.end());
+		const auto itr = std::find_if(
+			_faceL.begin(),
+			_faceL.end(),
+			[fid](const detail::Face& fc){
+				return fc.fontId.at<FontId::FaceId>() == fid.at<FontId::FaceId>();
+			}
+		);
+		Assert0(itr != _faceL.end());
 		return *itr;
 	}
 	void FontGen::clearCache(const bool bRestore) {
@@ -70,7 +74,7 @@ namespace rev {
 	HText FontGen::createText(const FontId fid, To32Str str) {
 		std::u32string str32(str.moveTo());
 		// FontIdを付加した文字列をキーにする
-		auto& ar = _getArray(fid);
+		auto& ar = _getFace(fid);
 		const auto tag = _MakeTextTag(fid, str32);
 		return
 			acquireWithMake<detail::TextObj>(

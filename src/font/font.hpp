@@ -121,8 +121,11 @@ namespace rev {
 			// OpenGLサーフェスのサイズは2の累乗サイズにする (余った領域は使わない)
 			lubee::PowSize		_sfcSize;
 
-			/*! 既にFaceはmakeFontIdで作成されてる筈 */
-			detail::Face& _getArray(FontId fid);
+			/*!
+				既にFaceはmakeFontIdで作成されてる筈なので、
+				Idに対応するFaceが存在しなければエラー
+			*/
+			detail::Face& _getFace(FontId fid);
 			//! 文字列先頭にFontIdの文字列を付加したものを返す
 			/*! ハッシュキーはUTF32文字列に統一 */
 			static std::u32string _MakeTextTag(FontId fid, const std::u32string& s);
