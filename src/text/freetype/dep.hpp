@@ -69,10 +69,7 @@ namespace rev {
 			Font_FTDep(Font_FTDep&&) = default;
 			Font_FTDep(const FontName &name, FontId fid);
 
-			//! 依存ライブラリによっては意味をなさないFontIdのパラメータを統一
-			///*! (ライブラリによってはサイズが縦しか指定できなかったりする為) */
 			FontId adjustParams(FontId fid);
-
 			CharData getChara(char32_t c);
 			unsigned int maxWidth() const;
 			unsigned int height() const;

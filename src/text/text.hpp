@@ -6,6 +6,22 @@
 #include "frea/src/vector.hpp"
 #include "spine/src/resmgr_named.hpp"
 
+/*
+	ライブラリ依存クラス: FontArray_Dep
+	要件
+		FontArray_Dep(const FontName &name, FontId fid);
+		//! 依存ライブラリによっては意味をなさないFontIdのパラメータを統一
+		//! (ライブラリによってはサイズが縦しか指定できなかったりする為)
+		FontId adjustParams(FontId fid);
+		//! キャラクタコードを指定してピクセルデータと描画オフセットを受け取る
+		CharData getChara(char32_t c);
+		//! 最大の文字幅(ピクセル)
+		unsigned int maxWidth() const;
+		//! Faceが想定する文字の高さ(ピクセル)
+		unsigned int height() const;
+		//! キャラクタコードを指定して文字幅を受け取る(ピクセル)
+		unsigned int width(char32_t c);
+*/
 namespace rev {
 	struct DrawTag;
 	namespace detail {
