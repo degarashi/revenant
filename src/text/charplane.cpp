@@ -2,7 +2,7 @@
 #include "gl/resource.hpp"
 
 namespace rev {
-	CharPlane::CharPlane(const lubee::PowSize& size, const size_t fh, LaneAlloc_UP a):
+	CharPlane::CharPlane(const lubee::PowSize& size, const size_t fh, LaneAlloc_U a):
 		_sfcSize(size),
 		_fontH(fh),
 		_lalloc(std::move(a)),

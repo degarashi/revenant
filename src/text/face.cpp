@@ -13,7 +13,7 @@ namespace rev::detail {
 	}
 	// --------------------------- Face::DepPair ---------------------------
 	Face::DepPair::DepPair(const FontName_S& name, const lubee::PowSize& sfcSize, const FontId fid):
-		dep(*name, fid), cplane(sfcSize, dep.height(), LaneAlloc_UP(new LAlloc()))
+		dep(*name, fid), cplane(sfcSize, dep.height(), std::make_unique<LAlloc>())
 	{}
 	// --------------------------- Face ---------------------------
 	// フォントのHeightとラインのHeightは違う！
