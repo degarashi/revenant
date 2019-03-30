@@ -2,7 +2,7 @@
 #include "lubee/src/bitfield.hpp"
 #include "lubee/src/rect.hpp"
 #include "lubee/src/pow_value.hpp"
-#include "handle/opengl.hpp"
+#include "../handle/opengl.hpp"
 #include <vector>
 
 namespace rev {
@@ -31,11 +31,23 @@ namespace rev {
 			SizeType_LineHeight		//!< ラインに収まるサイズ
 		};
 	};
+	// ビットフィールド用のUnsignedな値
+	using EnumUInt = uint_fast32_t;
 	//! フォントのサイズやAAの有無を示す値
-	struct FontId : lubee::BitField<CharIdDef> {
+	struct FontId :
+		lubee::BitField<CharIdDef>
+	{
 		FontId() = default;
 		FontId(const FontId& id) = default;
-		FontId(int w, int h, uint32_t charFlag, bool bItalic, int weightID, CharIdDef::SizeTypeT sizeType, int faceID=-1);
+		FontId(
+			EnumUInt w,
+			EnumUInt h,
+			CharFlagT charFlag,
+			bool bItalic,
+			EnumUInt weightID,
+			SizeTypeT sizeType,
+			EnumUInt faceID = -1
+		);
 	};
 	//! FontId + 文字コード(UCS4)
 	struct CharId : FontId {
@@ -44,7 +56,16 @@ namespace rev {
 		CharId() = default;
 		CharId(const CharId& id) = default;
 		CharId(char32_t ccode, FontId fontId);
-		CharId(char32_t ccode, int w, int h, int faceID, CharIdDef::CharFlagT flag, bool bItalic, int weightID, CharIdDef::SizeTypeT sizeType);
+		CharId(
+			char32_t ccode,
+			EnumUInt w,
+			EnumUInt h,
+			EnumUInt faceID,
+			CharFlagT flag,
+			bool bItalic,
+			EnumUInt weightID,
+			SizeTypeT sizeType
+		);
 
 		uint64_t get64Bit() const;
 		bool operator == (const CharId& cid) const;
@@ -91,7 +112,7 @@ namespace rev {
 	};
 	struct ILaneAlloc {
 		virtual ~ILaneAlloc() {}
-		virtual bool alloc(LaneRaw& dst, std::size_t w) = 0;
+		virtual bool alloc(LaneRaw& dst, size_t w) = 0;
 		virtual void addFreeLane(const HTexMem2D& hTex, const lubee::RectI& rect) = 0;
 		virtual void clear() = 0;
 	};
@@ -101,17 +122,17 @@ namespace rev {
 		HTexSrcC		hTex;		//!< フォントが格納されているテクスチャ (ハンドル所有権は別途CharPlaneが持つ)
 		lubee::RectF	uv;			//!< 参照すべきUV値
 		lubee::RectI	box;		//!< フォント原点に対する相対描画位置 (サイズ)
-		int				space;		//!< カーソルを進めるべき距離
+		size_t			space;		//!< カーソルを進めるべき距離
 	};
 	//! フォントのGLテクスチャ
 	/*! 縦幅は固定。横は必要に応じて確保 */
 	class CharPlane {
 		private:
 			lubee::PowSize	_sfcSize;
-			const int		_fontH;		//!< フォント縦幅 (=height)
+			const size_t	_fontH;		//!< フォント縦幅 (=height)
 			LaneAlloc_UP	_lalloc;	//!< レーンの残り幅管理
-			int				_nUsed;		//!< 割り当て済みのChar数(動作には影響しない)
-			int				_nH;		//!< Plane一枚のLane数
+			size_t			_nUsed;		//!< 割り当て済みのChar数(動作には影響しない)
+			size_t			_nH;		//!< Plane一枚のLane数
 			float			_dV;		//!< 1文字のVサイズ
 
 			//! キャッシュテクスチャを一枚追加 -> Lane登録
@@ -121,12 +142,12 @@ namespace rev {
 			//! フォントキャッシュテクスチャの確保
 			/*! \param size[in] テクスチャ1辺のサイズ
 				\param fh[in] Char高 */
-			CharPlane(const lubee::PowSize& size, int fh, LaneAlloc_UP&& a);
+			CharPlane(const lubee::PowSize& size, size_t fh, LaneAlloc_UP a);
 			CharPlane(CharPlane&& cp) = default;
 			//! 新しいChar登録領域を確保
 			/*! まだどこにも登録されてないcodeである事はFontArray_Depが保証する
 				\param[out] dst uv, hTexを書き込む */
-			void rectAlloc(LaneRaw& dst, int width);
+			void rectAlloc(LaneRaw& dst, size_t width);
 			const lubee::PowSize& getSurfaceSize() const;
 	};
 }

@@ -10,15 +10,17 @@ namespace rev {
 		const std::string& ToStdString(const std::string& s) { return s; }
 		const std::string& ToStdString(const FontName_S& s) { return *s; }
 	}
-	FontGen::FontGen(const lubee::PowSize& sfcSize): _sfcSize(sfcSize) {}
+	FontGen::FontGen(const lubee::PowSize sfcSize):
+		_sfcSize(sfcSize)
+	{}
 
 	template <class S>
-	FontId FontGen::_makeFontId(const S& name, FontId fid) {
+	FontId FontGen::_makeFontId(const S &name, FontId fid) {
 		// fid = フォントファミリを無視した値
 		const auto itr = std::find(_faceL.begin(), _faceL.end(), ToStdString(name));
 		if(itr == _faceL.end()) {
 			// 新しくFaceを作成
-			fid.at<FontId::FaceId>() = static_cast<int>(_faceL.size());
+			fid.at<FontId::FaceId>() = static_cast<EnumUInt>(_faceL.size());
 			_faceL.emplace_back(ToFontName(name), _sfcSize, fid, _fontMap);
 		} else {
 			fid.at<FontId::FaceId>() = itr - _faceL.begin();
@@ -26,10 +28,10 @@ namespace rev {
 		return fid;
 	}
 
-	FontId FontGen::makeFontId(const std::string& name, const FontId fid) {
+	FontId FontGen::makeFontId(const FontName &name, const FontId fid) {
 		return _makeFontId(name, fid);
 	}
-	FontId FontGen::makeFontId(const FontName_S& name, const FontId fid) {
+	FontId FontGen::makeFontId(const FontName_S &name, const FontId fid) {
 		return _makeFontId(name, fid);
 	}
 	detail::Face& FontGen::_getArray(const FontId fid) {
@@ -58,7 +60,7 @@ namespace rev {
 			}
 		}
 	}
-	std::u32string FontGen::_MakeTextTag(const FontId fid, const std::u32string& s) {
+	std::u32string FontGen::_MakeTextTag(const FontId fid, const std::u32string &s) {
 		// ハンドルキー = FontIdの64bit数値 + _ + 文字列
 		std::basic_stringstream<char32_t>	ss;
 		ss << boost::lexical_cast<std::u32string>(fid.value()) << U'_' << s;

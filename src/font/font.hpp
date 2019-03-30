@@ -16,7 +16,7 @@ namespace rev {
 				FontArray_Dep		dep;
 				CharPlane			cplane;
 
-				DepPair(const FontName_S& name, const lubee::PowSize& sfcSize, FontId fid);
+				DepPair(const FontName_S &name, const lubee::PowSize &sfcSize, FontId fid);
 				DepPair(DepPair&&) = default;
 			};
 			using DepMap = std::unordered_map<FontId, DepPair>;
@@ -24,12 +24,12 @@ namespace rev {
 			FontName_S				faceName;
 			FontId					fontId;		// family=0としたFontId
 			const lubee::PowSize&	sfcSize;
-			FontChMap&				fontMap;
+			FontChMap				&fontMap;
 
 			Face(Face&& f) = default;
-			Face(const FontName_S& name, const lubee::PowSize& size, FontId fid, FontChMap& m);
-			bool operator == (const std::string& name) const;
-			bool operator != (const std::string& name) const;
+			Face(const FontName_S &name, const lubee::PowSize &size, FontId fid, FontChMap &m);
+			bool operator == (const std::string &name) const;
+			bool operator != (const std::string &name) const;
 			bool operator == (FontId fid) const;
 			bool operator != (FontId fid) const;
 			const CharPos* getCharPos(CharId cid);
@@ -46,21 +46,24 @@ namespace rev {
 		*/
 		class TextObj {
 			private:
-				using CPosL = std::vector<const CharPos*>;
+				//! テクスチャ一枚で描画できる文字の集合
 				struct DrawSet {
 					HPrim	primitive;
 					HTex	hTex;
-					int		nChar;	//!< スペースなど制御文字を除いた文字数
+					//! スペースなど制御文字を除いた文字数
+					size_t	nChar;
 				};
-				using DrawSetL = std::vector<DrawSet>;
+				using DrawSetV = std::vector<DrawSet>;
 
 				/*! GLリソース再構築時の為に元の文字列も保存
 					このクラス自体はテクスチャを持たないのでIGLResourceは継承しない */
 				std::u32string	_text;
-				DrawSetL		_drawSet;
 				FontId			_fontId;
 				FontName_S		_faceName;
-				lubee::SizeF	_rectSize;
+				struct {
+					DrawSetV		drawSet;
+					lubee::SizeF	rectSize;
+				} _cache;
 
 				void _prepareTextureAndVertex(Face &face);
 				// デフォルト描画シェーダー
@@ -76,13 +79,13 @@ namespace rev {
 				static HTexF MakeData(DefaultFilter*);
 
 			public:
-				TextObj(TextObj&& t) = default;
+				TextObj(TextObj &&t) = default;
 				/*! \param[in] dep フォントデータを生成するための環境依存クラス
 					\param[in] s 生成する文字列 */
-				TextObj(Face& face, FontId fontId, std::u32string&& s);
+				TextObj(Face &face, FontId fontId, std::u32string &&s);
 				// FontGenから呼び出す
 				void onCacheLost();
-				void onCacheReset(Face& face);
+				void onCacheReset(Face &face);
 				// ------- clearCache(bRestore=true)時 -------
 				// FontGenから呼び出してFaceIdを再設定する用
 				FontId& refFontId();
@@ -91,9 +94,9 @@ namespace rev {
 					上位クラスで位置調整など行列をセットしてからメソッドを呼ぶ
 					\param[in]	customDraw false=デフォルトのシェーダーでテキスト描画
 				*/
-				void draw(IEffect& gle) const;
+				void draw(IEffect &gle) const;
 				const lubee::SizeF& getSize() const;
-				void exportDrawTag(DrawTag& d) const;
+				void exportDrawTag(DrawTag &d) const;
 
 				static HTech GetDefaultTech();
 		};
@@ -115,7 +118,7 @@ namespace rev {
 			//! [FontId + CharCode]と[GLTexture + UV + etc..]を関連付け
 			detail::FontChMap	_fontMap;
 			// OpenGLサーフェスのサイズは2の累乗サイズにする (余った領域は使わない)
-			lubee::PowSize	_sfcSize;
+			lubee::PowSize		_sfcSize;
 
 			/*! 既にFaceはmakeFontIdで作成されてる筈 */
 			detail::Face& _getArray(FontId fid);
@@ -129,15 +132,15 @@ namespace rev {
 		public:
 			/*! sfcSizeは強制的に2の累乗サイズに合わせられる
 				\param[in] sfcSize	フォントを蓄えるOpenGLサーフェスのサイズ */
-			FontGen(const lubee::PowSize& sfcSize);
+			FontGen(lubee::PowSize sfcSize);
 			//! フォントの設定から一意のIDを作る
 			/*! \param[in] fid フォントの見た目情報。FaceIdは無視される
 				\param[in] name フォントファミリの名前
 				\return FaceIdを更新したfid */
-			FontId makeFontId(const std::string& name, FontId fid);
+			FontId makeFontId(const FontName &name, FontId fid);
 			// 上記のnameがdetail::FontName_Sバージョン
 			/*! 動作は同じだが、もしFace名が無ければそのポインタを受け継いでFaceListに加える */
-			FontId makeFontId(const detail::FontName_S& name, FontId fid);
+			FontId makeFontId(const detail::FontName_S &name, FontId fid);
 			//! キャッシュを全て破棄
 			/*! 文字列ハンドルは有効
 				\param[in] bRestore trueならキャッシュを再確保する */

@@ -23,10 +23,10 @@ namespace rev::detail {
 		sfcSize(size),
 		fontMap(m)
 	{}
-	bool Face::operator != (const std::string& name) const {
+	bool Face::operator != (const std::string &name) const {
 		return !(this->operator == (name));
 	}
-	bool Face::operator ==(const std::string& name) const {
+	bool Face::operator ==(const std::string &name) const {
 		return *faceName == name;
 	}
 	bool Face::operator != (const FontId fid) const {

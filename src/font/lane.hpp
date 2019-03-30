@@ -106,7 +106,7 @@ namespace rev {
 				_addFreeLane(new Lane{hTex, rect});
 			}
 			/*! \return 容量不足で確保できない時はfalse */
-			bool alloc(LaneRaw& dst, const std::size_t w) override {
+			bool alloc(LaneRaw& dst, const size_t w) override {
 				auto id = _GetLayerID(w);
 				if(++id.second >= NLayer1) {
 					++id.first;
