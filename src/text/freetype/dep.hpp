@@ -58,8 +58,6 @@ namespace rev {
 		private:
 			// FTFaceとFontIdの対応
 			HFT				_hFT;
-			// 一時バッファは対応する最大サイズで確保
-			ByteBuff		_buff;
 			//! フォントサイズ、Italic, Bold等の設定フラグ
 			FontId			_fontId;
 
