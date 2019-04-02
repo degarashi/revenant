@@ -2,6 +2,7 @@
 #include "fontfamily.hpp"
 #include "wrap.hpp"
 #include "../convert.hpp"
+#include "../exception.hpp"
 #include "lubee/src/error.hpp"
 #include <cstring>
 
@@ -39,7 +40,9 @@ namespace rev {
 		_fontId(fid)
 	{
 		_hFT = mgr_font.fontFromFamilyName(name);
-		Assert0(_hFT);
+		// 指定したフォント名が見つからない場合は例外を投げる
+		if(!_hFT)
+			throw FontNotFound(lubee::MakeAssertMessage("", "font not found", name.c_str()));
 		SetFTSize(*_hFT, _fontId, mgr_font.getDPI());
 	}
 
