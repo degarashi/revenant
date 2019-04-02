@@ -11,7 +11,7 @@ namespace rev {
 		FontId Text::_GetDefaultFId() {
 			if(!cs_defaultFid) {
 				cs_defaultFid =
-					mgr_text.makeFontId(
+					mgr_text.appendFaceId(
 						"IPAGothic",
 						FontId(
 							0,

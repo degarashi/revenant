@@ -140,7 +140,7 @@ namespace rev {
 			lubee::PowSize		_sfcSize;
 
 			/*!
-				既にFaceはmakeFontIdで作成されてる筈なので、
+				既にFaceはappendFaceIdで作成されてる筈なので、
 				Idに対応するFaceが存在しなければエラー
 			*/
 			detail::Face& _getFace(FontId fid);
@@ -149,27 +149,29 @@ namespace rev {
 			static std::u32string _MakeTextTag(FontId fid, const std::u32string& s);
 
 			template <class S>
-			FontId _makeFontId(const S& name, FontId fid);
+			FontId _appendFaceId(const S& name, FontId fid);
 
 		public:
 			/*! sfcSizeは強制的に2の累乗サイズに合わせられる
 				\param[in] sfcSize	フォントを蓄えるOpenGLサーフェスのサイズ */
 			TextGen(lubee::PowSize sfcSize);
-			//! フォントの設定から一意のIDを作る
-			/*! \param[in] fid フォントの見た目情報。FaceIdは無視される
-				\param[in] name フォントファミリの名前
-				\return FaceIdを更新したfid */
-			FontId makeFontId(const FontName &name, FontId fid);
+			//! フォントの設定 + ファミリの名前から一意のIDを作る
+			/*!
+				\param[in] name ファミリの名前
+				\param[in] fid 見た目情報。FaceIdはInvalidFaceId固定
+				\return FaceIdを付加したFontId
+			*/
+			FontId appendFaceId(const FontName &name, FontId fid);
 			// 上記のnameがdetail::FontName_Sバージョン
 			/*! 動作は同じだが、もしFace名が無ければそのポインタを受け継いでFaceListに加える */
-			FontId makeFontId(const detail::FontName_S &name, FontId fid);
+			FontId appendFaceId(const detail::FontName_S &name, FontId fid);
 			//! キャッシュを全て破棄
 			/*! 文字列ハンドルは有効
 				\param[in] bRestore trueならキャッシュを再確保する */
 			void clearCache(bool bRestore);
 
 			// 同じFaceの同じ文字列には同一のハンドルが返されるようにする
-			/*! \param[in] fid makeFontIdで作成したFaceId設定済みID
+			/*! \param[in] fid appendFaceIdで作成したFaceId設定済みID
 				\param[in] s 表示したい文字列 */
 			HText createText(FontId fid, To32Str str);
 

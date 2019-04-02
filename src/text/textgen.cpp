@@ -15,7 +15,7 @@ namespace rev {
 	{}
 
 	template <class S>
-	FontId TextGen::_makeFontId(const S &name, FontId fid) {
+	FontId TextGen::_appendFaceId(const S &name, FontId fid) {
 		// FontIdのFaceIdが有効な場合は警告を出す
 		Expect(fid.at<FontId::FaceId>() == FontId::InvalidFaceId,
 				"FontId must have InvalidFaceId");
@@ -31,11 +31,11 @@ namespace rev {
 		return fid;
 	}
 
-	FontId TextGen::makeFontId(const FontName &name, const FontId fid) {
-		return _makeFontId(name, fid);
+	FontId TextGen::appendFaceId(const FontName &name, const FontId fid) {
+		return _appendFaceId(name, fid);
 	}
-	FontId TextGen::makeFontId(const FontName_S &name, const FontId fid) {
-		return _makeFontId(name, fid);
+	FontId TextGen::appendFaceId(const FontName_S &name, const FontId fid) {
+		return _appendFaceId(name, fid);
 	}
 	detail::Face& TextGen::_getFace(const FontId fid) {
 		// FaceList線形探索
@@ -64,7 +64,7 @@ namespace rev {
 				auto& c = text->refFontId(priv);
 				c.at<FontId::FaceId>() = FontId::InvalidFaceId;
 				// TextからSPの名前を取り出してFaceIdを更新
-				c = makeFontId(text->getFaceName(), c);
+				c = appendFaceId(text->getFaceName(), c);
 				text->onCacheReset(priv, _getFace(c));
 			}
 		}
