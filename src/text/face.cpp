@@ -1,6 +1,7 @@
 #include "../resmgr_app.hpp"
 #include "text.hpp"
 #include "lanealloc.hpp"
+#include "convert.hpp"
 #include "../emplace.hpp"
 #include "../gl/resource.hpp"
 #include "../gl/texture/mem.hpp"

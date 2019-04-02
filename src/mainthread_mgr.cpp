@@ -20,6 +20,7 @@
 #include "uri/data.hpp"
 #include "uri/file.hpp"
 #include "info/spec.hpp"
+#include "text/freetype/fontfamily.hpp"
 
 namespace rev {
 	void MainThread::_InitManagers(Manager& m, const GameloopParam& param, const Window& w) {

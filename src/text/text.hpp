@@ -1,10 +1,11 @@
 #pragma once
 #include "charplane.hpp"
 #include "name.hpp"
-#include "freetype/dep.hpp"
+#include "freetype/fontft.hpp"
 #include "../singleton_data_lazy.hpp"
 #include "frea/src/vector.hpp"
 #include "spine/src/resmgr_named.hpp"
+#include "../abstbuffer.hpp"
 
 /*
 	ライブラリ依存クラス: FontRenderer
@@ -25,7 +26,7 @@
 namespace rev {
 	struct DrawTag;
 	namespace detail {
-		//! CharCodeとフォントテクスチャ対応付け (全Face共通)
+		//! CharCodeと(フォントテクスチャ + UV値)の対応付け (全Face共通)
 		using FontChMap = std::unordered_map<CharId, CharPos>;
 		// (FaceNameを複数箇所で共有する都合上)
 		using FontName_S = std::shared_ptr<FontName>;
@@ -45,7 +46,12 @@ namespace rev {
 			FontChMap				&fontMap;
 
 			Face(Face&& f) = default;
-			Face(const FontName_S &name, const lubee::PowSize &size, FontId fid, FontChMap &m);
+			Face(
+				const FontName_S &name,
+				const lubee::PowSize &size,
+				FontId fid,
+				FontChMap &m
+			);
 			bool operator == (const std::string &name) const;
 			bool operator != (const std::string &name) const;
 			bool operator == (FontId fid) const;
@@ -129,12 +135,12 @@ namespace rev {
 		public spi::Singleton<TextGen>
 	{
 		private:
-			//! フォントの名前リスト
+			using FaceV = std::vector<detail::Face>;
+			//! 登録済みの(FontIdに対応するFace)リスト
 			/*! そんなに数いかないと思うのでvectorを使う */
-			using FaceList = std::vector<detail::Face>;
-			//! フォント名リスト (通し番号)
-			FaceList			_faceL;
-			//! [FontId + CharCode]と[GLTexture + UV + etc..]を関連付け
+			FaceV				_face;
+			//! CharId -> CharPos(GLTexture + UV + etc..) 関連付け
+			/*! 全Face共通 */
 			detail::FontChMap	_fontMap;
 			// OpenGLサーフェスのサイズは2の累乗サイズにする (余った領域は使わない)
 			lubee::PowSize		_sfcSize;
