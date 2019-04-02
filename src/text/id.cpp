@@ -19,6 +19,7 @@ namespace rev {
 		at<FaceId>() = faceID;
 		at<SizeType>() = sizeType;
 	}
+	const EnumUInt FontId::InvalidFaceId = (1u << FontId::At<FontId::FaceId>::length)-1;
 	// ------------------- CharId -------------------
 	CharId::CharId(const char32_t ccode, const FontId fontId):
 		FontId(fontId),

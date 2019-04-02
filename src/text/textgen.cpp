@@ -59,6 +59,7 @@ namespace rev {
 			for(auto text: *this) {
 				// FaceIdは使わず再度Face参照する
 				auto& c = text->refFontId(priv);
+				c.at<FontId::FaceId>() = FontId::InvalidFaceId;
 				// TextからSPの名前を取り出してFaceIdを更新
 				c = makeFontId(text->getFaceName(), c);
 				text->onCacheReset(priv, _getFace(c));

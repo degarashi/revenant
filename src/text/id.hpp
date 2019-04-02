@@ -42,8 +42,9 @@ namespace rev {
 			bool bItalic,
 			EnumUInt weightID,
 			SizeTypeT sizeType,
-			EnumUInt faceID = -1
+			EnumUInt faceID = InvalidFaceId
 		);
+		const static EnumUInt InvalidFaceId;
 	};
 	//! FontId + 文字コード(UCS4)
 	struct CharId : FontId {
