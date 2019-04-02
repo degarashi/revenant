@@ -46,7 +46,7 @@ namespace rev::info {
 	int Spec::cpuCount() const noexcept {
 		return _nCpu;
 	}
-	bool Spec::hasFeature(uint32_t flag) const noexcept {
+	bool Spec::hasFeature(const PowerStatus::State flag) const noexcept {
 		return _feature & flag;
 	}
 	Spec::PowerStatus Spec::powerStatus() const noexcept {
