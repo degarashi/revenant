@@ -4,6 +4,7 @@
 #include "lubee/src/rect.hpp"
 
 namespace rev::info {
+	#define rev_spec	(::rev::info::Spec::ref())
 	//! 実行環境に関する情報を取得
 	class Spec : public spi::Singleton<Spec> {
 		public:
