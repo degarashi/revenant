@@ -16,6 +16,9 @@ namespace rev {
 
 	template <class S>
 	FontId TextGen::_makeFontId(const S &name, FontId fid) {
+		// FontIdのFaceIdが有効な場合は警告を出す
+		Expect(fid.at<FontId::FaceId>() == FontId::InvalidFaceId,
+				"FontId must have InvalidFaceId");
 		// fid = フォントファミリを無視した値
 		const auto itr = std::find(_faceL.begin(), _faceL.end(), ToStdString(name));
 		if(itr == _faceL.end()) {
