@@ -1,7 +1,9 @@
 #include "spec.hpp"
+#include "../sdl/error.hpp"
 #include <SDL_platform.h>
 #include <SDL_cpuinfo.h>
 #include <SDL_power.h>
+#include <SDL_video.h>
 
 namespace rev::info {
 	namespace {
@@ -19,7 +21,74 @@ namespace rev::info {
 			nullptr
 		};
 	}
+	// ------------------ Spec::Display::Mode ------------------
+	Spec::Display::Mode::Mode(const void* m) {
+		const auto* mode = reinterpret_cast<const SDL_DisplayMode*>(m);
+		format = mode->format;
+		size = {
+			mode->w,
+			mode->h
+		};
+		rate = mode->refresh_rate;
+	}
+	bool Spec::Display::Mode::operator == (const Mode& m) const noexcept {
+		return format == m.format &&
+			size == m.size &&
+			rate == m.rate;
+	}
+	// ------------------ Spec::Display::DPI ------------------
+	Spec::Display::DPI::DPI(const int index) {
+		D_SDLAssert(SDL_GetDisplayDPI, index, &diagonal, &horizontal, &vertical);
+	}
 
+	namespace {
+		lubee::RectI ToRect(const SDL_Rect& r) {
+			return {
+				{r.x, r.y},
+				{r.w, r.h}
+			};
+		}
+	}
+	// ------------------ Spec::Display ------------------
+	int Spec::Display::NDisplay() noexcept {
+		return D_SDLAssert(SDL_GetNumVideoDisplays);
+	}
+	Spec::Display Spec::Display::LoadInfo(const int index) {
+		Display ret;
+		ret.name = D_SDLAssert(SDL_GetDisplayName, index);
+
+		SDL_DisplayMode mode;
+		{
+			const auto nMode = D_SDLAssert(SDL_GetNumDisplayModes, index);
+			for(int i=0 ; i<nMode ; i++) {
+				D_SDLAssert(SDL_GetDisplayMode, index, i, &mode);
+				ret.mode.emplace_back(&mode);
+			}
+		}
+		{
+			D_SDLAssert(SDL_GetCurrentDisplayMode, index, &mode);
+			const auto itr = std::find(ret.mode.begin(), ret.mode.end(), Mode(&mode));
+			D_Assert0(itr != ret.mode.end());
+			ret.currentModeIndex = static_cast<int>(ret.mode.end() - itr);
+		}
+		{
+			D_SDLAssert(SDL_GetDesktopDisplayMode, index, &mode);
+			const auto itr = std::find(ret.mode.begin(), ret.mode.end(), Mode(&mode));
+			D_Assert0(itr != ret.mode.end());
+			ret.desktopModeIndex = static_cast<int>(ret.mode.end() - itr);
+		}
+		{
+			SDL_Rect rect;
+			D_SDLAssert(SDL_GetDisplayBounds, index, &rect);
+			ret.rect = ToRect(rect);
+			D_SDLAssert(SDL_GetDisplayUsableBounds, index, &rect);
+			ret.usableRect = ToRect(rect);
+		}
+		ret.dpi = DPI(index);
+		return ret;
+	}
+
+	// ------------------ Spec ------------------
 	Spec::Spec() noexcept:
 		_platform(SDL_GetPlatform())
 	{
@@ -27,16 +96,24 @@ namespace rev::info {
 		_nCpu = SDL_GetCPUCount();
 		_ramMB = SDL_GetSystemRAM();
 
-		Feature::value_t feat = 0;
-		auto* f = cs_ff;
-		Feature::value_t bit = 0x01;
-		while(*f) {
-			if((*f)())
-				feat |= bit;
-			bit <<= 1;
-			++f;
+		{
+			Feature::value_t feat = 0;
+			auto* f = cs_ff;
+			Feature::value_t bit = 0x01;
+			while(*f) {
+				if((*f)())
+					feat |= bit;
+				bit <<= 1;
+				++f;
+			}
+			_feature = feat;
 		}
-		_feature = feat;
+		{
+			const auto nDisp = Display::NDisplay();
+			_display.resize(nDisp);
+			for(int i=0 ; i<nDisp ; i++)
+				_display[i] = Display::LoadInfo(i);
+		}
 	}
 	const Spec::Name& Spec::getPlatform() const noexcept {
 		return _platform;
@@ -85,5 +162,8 @@ namespace rev::info {
 			else os << percentage << " percent left";
 		}
 		os << std::endl;
+	}
+	const Spec::DisplayV& Spec::display() const noexcept {
+		return _display;
 	}
 }

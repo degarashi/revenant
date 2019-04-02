@@ -1,6 +1,7 @@
 #pragma once
 #include "spine/src/singleton.hpp"
 #include "spine/src/enum.hpp"
+#include "lubee/src/rect.hpp"
 
 namespace rev::info {
 	//! 実行環境に関する情報を取得
@@ -34,12 +35,44 @@ namespace rev::info {
 
 				void output(std::ostream& os) const;
 			};
+			struct Display {
+				struct Mode {
+					uint32_t		format;
+					lubee::SizeI	size;
+					int				rate;
+
+					Mode(const void* m);
+					bool operator == (const Mode& m) const noexcept;
+				};
+				using ModeV = std::vector<Mode>;
+				struct DPI {
+					float		diagonal,
+								horizontal,
+								vertical;
+
+					DPI() = default;
+					DPI(int index);
+				};
+
+				Name			name;
+				ModeV			mode;
+				int				currentModeIndex,
+								desktopModeIndex;
+				lubee::RectI	rect,
+								usableRect;
+				DPI				dpi;
+
+				static int NDisplay() noexcept;
+				static Display LoadInfo(int index);
+			};
+			using DisplayV = std::vector<Display>;
 		private:
 			Feature::value_t	 _feature;
 			Name			_platform;
 			int				_nCacheLine,
 							_nCpu,
 							_ramMB;
+			DisplayV		_display;
 		public:
 			Spec() noexcept;
 			const Name& getPlatform() const noexcept;
@@ -49,5 +82,6 @@ namespace rev::info {
 			int systemRAM() const noexcept;
 			bool hasFeature(PowerStatus::State flag) const noexcept;
 			PowerStatus powerStatus() const noexcept;
+			const DisplayV& display() const noexcept;
 	};
 }
