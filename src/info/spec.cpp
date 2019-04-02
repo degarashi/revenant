@@ -38,7 +38,7 @@ namespace rev::info {
 		}
 		_feature = feat;
 	}
-	const std::string& Spec::getPlatform() const noexcept {
+	const Spec::Name& Spec::getPlatform() const noexcept {
 		return _platform;
 	}
 	int Spec::cpuCacheLineSize() const noexcept {

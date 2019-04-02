@@ -6,6 +6,7 @@ namespace rev::info {
 	//! 実行環境に関する情報を取得
 	class Spec : public spi::Singleton<Spec> {
 		public:
+			using Name = std::string;
 			DefineEnumPair(
 				Feature,
 				((F_3DNow)(0x01))
@@ -35,13 +36,13 @@ namespace rev::info {
 			};
 		private:
 			Feature::value_t	 _feature;
-			std::string		_platform;
+			Name			_platform;
 			int				_nCacheLine,
 							_nCpu,
 							_ramMB;
 		public:
 			Spec() noexcept;
-			const std::string& getPlatform() const noexcept;
+			const Name& getPlatform() const noexcept;
 
 			int cpuCacheLineSize() const noexcept;
 			int cpuCount() const noexcept;
