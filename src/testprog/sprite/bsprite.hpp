@@ -7,7 +7,7 @@ namespace rev::test {
 							public std::enable_shared_from_this<BoundingSprite>
 	{
 		private:
-			HDGroup			_dg;
+			WDGroup			_dg;
 			frea::Vec2		_svec;
 			struct St;
 		public:

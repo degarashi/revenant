@@ -46,10 +46,12 @@ namespace rev::test {
 			self.outputDrawTag(self._dtag);
 		}
 		void onConnected(BoundingSprite& self, const HGroup&) override {
-			self._dg->addObj(self.shared_from_this());
+			if(const auto p = self._dg.lock())
+				p->addObj(self.shared_from_this());
 		}
 		void onDisconnected(BoundingSprite& self, const HGroup&) override {
-			self._dg->remObj(self.shared_from_this());
+			if(const auto p = self._dg.lock())
+				p->remObj(self.shared_from_this());
 		}
 		void onDraw(const BoundingSprite& self, IEffect& e) const override {
 			self.draw(e);
