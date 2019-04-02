@@ -26,9 +26,9 @@ namespace rev::info {
 		_nCacheLine = SDL_GetCPUCacheLineSize();
 		_nCpu = SDL_GetCPUCount();
 
-		uint32_t feat = 0;
+		Feature::value_t feat = 0;
 		auto* f = cs_ff;
-		uint32_t bit = 0x01;
+		Feature::value_t bit = 0x01;
 		while(*f) {
 			if((*f)())
 				feat |= bit;

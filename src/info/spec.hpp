@@ -34,7 +34,7 @@ namespace rev::info {
 				void output(std::ostream& os) const;
 			};
 		private:
-			uint32_t		_feature;
+			Feature::value_t	 _feature;
 			std::string		_platform;
 			int				_nCacheLine,
 							_nCpu;
