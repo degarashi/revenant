@@ -18,16 +18,16 @@ namespace rev::info {
 				((F_SSE41)(0x14))
 				((F_SSE42)(0x18))
 			);
-			DefineEnum(
-				PStatN,
-				(Unknown)
-				(OnBattery)
-				(NoBattery)
-				(Charging)
-				(Charged)
-			);
-			struct PStat {
-				PStatN	state;
+			struct PowerStatus {
+				DefineEnum(
+					State,
+					(Unknown)
+					(OnBattery)
+					(NoBattery)
+					(Charging)
+					(Charged)
+				);
+				State	state;
 				int		seconds,
 						percentage;
 
@@ -45,6 +45,6 @@ namespace rev::info {
 			int cpuCacheLineSize() const noexcept;
 			int cpuCount() const noexcept;
 			bool hasFuture(uint32_t flag) const noexcept;
-			PStat powerStatus() const noexcept;
+			PowerStatus powerStatus() const noexcept;
 	};
 }

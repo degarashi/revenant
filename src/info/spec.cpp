@@ -49,27 +49,27 @@ namespace rev::info {
 	bool Spec::hasFuture(uint32_t flag) const noexcept {
 		return _feature & flag;
 	}
-	Spec::PStat Spec::powerStatus() const noexcept {
-		PStat ps;
+	Spec::PowerStatus Spec::powerStatus() const noexcept {
+		PowerStatus ps;
 		switch(SDL_GetPowerInfo(&ps.seconds, &ps.percentage)) {
 			case SDL_POWERSTATE_ON_BATTERY:
-				ps.state = PStatN::OnBattery; break;
+				ps.state = PowerStatus::State::OnBattery; break;
 			case SDL_POWERSTATE_NO_BATTERY:
-				ps.state = PStatN::NoBattery; break;
+				ps.state = PowerStatus::State::NoBattery; break;
 			case SDL_POWERSTATE_CHARGING:
-				ps.state = PStatN::Charging; break;
+				ps.state = PowerStatus::State::Charging; break;
 			case SDL_POWERSTATE_CHARGED:
-				ps.state = PStatN::Charged; break;
+				ps.state = PowerStatus::State::Charged; break;
 			default:
-				ps.state = PStatN::Unknown;
+				ps.state = PowerStatus::State::Unknown;
 		}
 		return ps;
 	}
 
-	void Spec::PStat::output(std::ostream& os) const {
-		if(state == PStatN::Unknown)
+	void Spec::PowerStatus::output(std::ostream& os) const {
+		if(state == PowerStatus::State::Unknown)
 			os << "Unknown state";
-		else if(state == PStatN::NoBattery)
+		else if(state == PowerStatus::State::NoBattery)
 			os << "No battery";
 		else {
 			os << "Battery state:" << std::endl;
