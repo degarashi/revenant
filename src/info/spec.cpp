@@ -25,6 +25,7 @@ namespace rev::info {
 	{
 		_nCacheLine = SDL_GetCPUCacheLineSize();
 		_nCpu = SDL_GetCPUCount();
+		_ramMB = SDL_GetSystemRAM();
 
 		Feature::value_t feat = 0;
 		auto* f = cs_ff;
@@ -45,6 +46,9 @@ namespace rev::info {
 	}
 	int Spec::cpuCount() const noexcept {
 		return _nCpu;
+	}
+	int Spec::systemRAM() const noexcept {
+		return _ramMB;
 	}
 	bool Spec::hasFeature(const PowerStatus::State flag) const noexcept {
 		return _feature & flag;

@@ -37,13 +37,15 @@ namespace rev::info {
 			Feature::value_t	 _feature;
 			std::string		_platform;
 			int				_nCacheLine,
-							_nCpu;
+							_nCpu,
+							_ramMB;
 		public:
 			Spec() noexcept;
 			const std::string& getPlatform() const noexcept;
 
 			int cpuCacheLineSize() const noexcept;
 			int cpuCount() const noexcept;
+			int systemRAM() const noexcept;
 			bool hasFeature(PowerStatus::State flag) const noexcept;
 			PowerStatus powerStatus() const noexcept;
 	};
