@@ -52,10 +52,12 @@ namespace rev {
 			int nPop = std::min(_scNPop, static_cast<int>(_scene.size()));
 			_scNPop = 0;
 			while(--nPop >= 0) {
-				auto& sc = _scene.back();
-				sc->onDisconnected(HGroup());
-				sc->destroy();
-				sc->onUpdate(true);			// nullステートへ移行させる
+				{
+					auto& sc = _scene.back();
+					sc->onDisconnected(HGroup());
+					sc->destroy();
+					sc->onUpdate(true);			// nullステートへ移行させる
+				}
 				_scene.pop_back();
 			}
 			// Sceneスタックが空ならここで終わり
