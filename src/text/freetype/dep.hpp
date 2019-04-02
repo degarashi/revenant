@@ -50,10 +50,6 @@ namespace rev {
 
 			//! FamilyNameからフォントを特定
 			HFT fontFromFamilyName(const FontName &name) const;
-			//! ファイル名を指定してフォントを探す
-			HFT fontFromFile(const std::string& path);
-			//! サイズや形式からフォントを探す
-			HFT fontFromID(FontId id) const;
 
 			lubee::SizeI getDPI() const noexcept;
 	};

@@ -50,14 +50,6 @@ namespace rev {
 			return HFT();
 		return itr->second.makeFont();
 	}
-	HFT FontFamily::fontFromFile(const std::string& /*path*/) {
-		AssertF("not implemented yet");
-		return HFT();
-	}
-	HFT FontFamily::fontFromID(FontId /*id*/) const {
-		AssertF("not implemented yet");
-		return HFT();
-	}
 
 	// ---------------------- Font_FTDep ----------------------
 	namespace {
