@@ -44,7 +44,7 @@ namespace rev::info {
 
 			int cpuCacheLineSize() const noexcept;
 			int cpuCount() const noexcept;
-			bool hasFuture(uint32_t flag) const noexcept;
+			bool hasFeature(uint32_t flag) const noexcept;
 			PowerStatus powerStatus() const noexcept;
 	};
 }
