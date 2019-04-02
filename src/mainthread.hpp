@@ -32,6 +32,9 @@ namespace rev {
 	namespace gltf::v1 {
 		class GLTFMgr;
 	}
+	namespace info {
+		class Spec;
+	}
 	//! メインスレッド
 	class MainThread : public spi::Singleton<MainThread>,
 						public ThreadL<void (const Looper_SP&)>
@@ -61,6 +64,7 @@ namespace rev {
 				SPtr<SceneMgr>				scene;
 				SPtr<ImGui_SDL2>			imgui;
 				SPtr<gltf::v1::GLTFMgr>		gltf;
+				SPtr<::rev::info::Spec>		spec;
 			};
 
 			static void _FlyweightGC();

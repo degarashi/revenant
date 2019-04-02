@@ -19,6 +19,7 @@
 #include "sound/sound.hpp"
 #include "uri/data.hpp"
 #include "uri/file.hpp"
+#include "info/spec.hpp"
 
 namespace rev {
 	void MainThread::_InitManagers(Manager& m, const GameloopParam& param, const Window& w) {
@@ -52,6 +53,7 @@ namespace rev {
 			w
 		);
 		m.gltf = std::make_shared<gltf::v1::GLTFMgr>();
+		m.spec = std::make_shared<::rev::info::Spec>();
 	}
 	void MainThread::_LoadPathfile(const URI& uri, const bool bAppend) {
 		mgr_path.setFromText(mgr_rw.fromURI(uri, Access::Read), bAppend);
