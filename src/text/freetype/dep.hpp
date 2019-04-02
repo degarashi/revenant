@@ -40,8 +40,11 @@ namespace rev {
 			//! [FamilyName -> FullPath]
 			using FontMap = std::unordered_map<FontName, Item>;
 			FontMap			_fontMap;
+			lubee::SizeI	_dpi;
 
 		public:
+			// フォント生成に使うDPIを渡す
+			FontFamily(lubee::SizeI dpi);
 			void loadFamilyWildCard(To8Str pattern);
 			void loadFamily(const HRW& hRW);
 
@@ -51,6 +54,8 @@ namespace rev {
 			HFT fontFromFile(const std::string& path);
 			//! サイズや形式からフォントを探す
 			HFT fontFromID(FontId id) const;
+
+			lubee::SizeI getDPI() const noexcept;
 	};
 	//! フォント作成クラス: 環境依存
 	/*! フォント設定(=FontId)毎に用意する */

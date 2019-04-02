@@ -39,7 +39,17 @@ namespace rev {
 			_LoadPathfile(*p);
 		m.glr = std::make_shared<GLRes>();
 		m.glr->onDeviceReset();
-		m.font = std::make_shared<FontFamily>();
+		m.spec = std::make_shared<::rev::info::Spec>();
+		{
+			// ディスプレイ0番のDPIをフォント生成の基準とする
+			const auto dpi = m.spec->display().at(0).dpi;
+			m.font = std::make_shared<FontFamily>(
+				lubee::SizeI(
+					dpi.horizontal,
+					dpi.vertical
+				)
+			);
+		}
 		_LoadFonts();
 		m.fgen = std::make_shared<TextGen>(lubee::PowSize(512,512));
 		m.snd = std::make_shared<SoundMgr>(44100);
@@ -53,7 +63,6 @@ namespace rev {
 			w
 		);
 		m.gltf = std::make_shared<gltf::v1::GLTFMgr>();
-		m.spec = std::make_shared<::rev::info::Spec>();
 	}
 	void MainThread::_LoadPathfile(const URI& uri, const bool bAppend) {
 		mgr_path.setFromText(mgr_rw.fromURI(uri, Access::Read), bAppend);

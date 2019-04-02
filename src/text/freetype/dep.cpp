@@ -1,10 +1,17 @@
 #include "dep.hpp"
 #include "../../fs/dir.hpp"
 #include "../../emplace.hpp"
+#include "../../info/spec.hpp"
 #include "lubee/src/error.hpp"
 
 namespace rev {
 	// ---------------------- FontFamily ----------------------
+	FontFamily::FontFamily(const lubee::SizeI dpi):
+		_dpi(dpi)
+	{}
+	lubee::SizeI FontFamily::getDPI() const noexcept {
+		return _dpi;
+	}
 	FontFamily::Item::Item(const int fIdx, const HRW& hRW):
 		faceIndex(fIdx),
 		hRW(hRW)
@@ -54,10 +61,9 @@ namespace rev {
 
 	// ---------------------- Font_FTDep ----------------------
 	namespace {
-		void SetFTSize(FTFace& ft, const FontId fontId) {
-			// TODO: この値は埋め込むのではなくてディスプレイから取得するべき
+		// FontIdフラグにしたがってFTFaceにサイズを指定
+		void SetFTSize(FTFace& ft, const FontId fontId, const lubee::SizeI dpi) {
 			const lubee::SizeI
-					dpi{300, 300},
 					size{
 						fontId.at<FontId::Width>(),
 						fontId.at<FontId::Height>()
@@ -88,7 +94,7 @@ namespace rev {
 	{
 		_hFT = mgr_font.fontFromFamilyName(name);
 		Assert0(_hFT);
-		SetFTSize(*_hFT, _fontId);
+		SetFTSize(*_hFT, _fontId, mgr_font.getDPI());
 	}
 
 	unsigned int Font_FTDep::height() const {
@@ -96,7 +102,7 @@ namespace rev {
 	}
 	unsigned int Font_FTDep::width(const char32_t c) {
 		auto& ft = *_hFT;
-		SetFTSize(ft, _fontId);
+		SetFTSize(ft, _fontId, mgr_font.getDPI());
 		PrepareGlyph(ft, CharId(c, _fontId));
 		return ft.getGlyphInfo().advanceX;
 	}
@@ -108,7 +114,7 @@ namespace rev {
 	}
 	CharData Font_FTDep::getChara(const char32_t c) {
 		auto& ft = *_hFT;
-		SetFTSize(ft, _fontId);
+		SetFTSize(ft, _fontId, mgr_font.getDPI());
 		PrepareGlyph(ft, CharId(c, _fontId));
 		const auto& gi = ft.getGlyphInfo();
 		ByteBuff buff;

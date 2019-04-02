@@ -57,6 +57,7 @@ namespace rev {
 				SPtr<GLRes>					glr;
 				SPtr<SoundMgr>				snd;
 				SPtr<RWMgr>					rwm;
+				SPtr<::rev::info::Spec>		spec;
 				SPtr<FontFamily>			font;
 				SPtr<TextGen>				fgen;
 				SPtr<parse::TechMgr>		tech;
@@ -64,7 +65,6 @@ namespace rev {
 				SPtr<SceneMgr>				scene;
 				SPtr<ImGui_SDL2>			imgui;
 				SPtr<gltf::v1::GLTFMgr>		gltf;
-				SPtr<::rev::info::Spec>		spec;
 			};
 
 			static void _FlyweightGC();
