@@ -12,44 +12,44 @@ namespace rev::detail {
 		// 最低サイズ2bits, Layer1=4bits, Layer0=6bits = 12bits(4096)
 		using LAlloc = LaneAlloc<6,4,2>;
 	}
-	// --------------------------- Face::DepPair ---------------------------
-	Face::DepPair::DepPair(const FontName_S& name, const lubee::PowSize& sfcSize, const FontId fid):
-		renderer(*name, fid),
+	// --------------------------- Face::FaceRenderer ---------------------------
+	Face::FaceRenderer::FaceRenderer(
+		const FontName &name,
+		const lubee::PowSize &sfcSize,
+		const FontId fid
+	):
+		renderer(name, fid),
 		cplane(sfcSize, renderer.height(), std::make_unique<LAlloc>())
 	{}
 	// --------------------------- Face ---------------------------
-	// フォントのHeightとラインのHeightは違う！
-	Face::Face(const FontName_S& name, const lubee::PowSize& size, const FontId fid, FontChMap& m):
-		faceName(name),
-		fontId(fid),
-		sfcSize(size),
-		fontMap(m)
+	Face::Face(
+		const FontName_S& name,
+		const lubee::PowSize& size,
+		const EnumUInt faceId,
+		FontChMap& m
+	):
+		_faceName(name),
+		_faceId(faceId),
+		_sfcSize(size),
+		_fontMap(m)
 	{}
-	bool Face::operator != (const std::string &name) const {
-		return !(this->operator == (name));
-	}
-	bool Face::operator ==(const std::string &name) const {
-		return *faceName == name;
-	}
-	bool Face::operator != (const FontId fid) const {
-		return !(this->operator == (fid));
-	}
-	bool Face::operator == (const FontId fid) const {
-		return fontId == fid;
-	}
-	Face::DepPair& Face::getDepPair(const FontId fontId) {
-		return TryEmplace(depMap, fontId, faceName, sfcSize, fontId).first->second;
+	Face::FaceRenderer& Face::getFaceRenderer(const FontId fontId) {
+		return TryEmplace(
+			_rendererMap, fontId,
+			*_faceName, _sfcSize, fontId
+		).first->second;
 	}
 	const CharPos* Face::getCharPos(const CharId chID) {
+		D_Assert0(static_cast<const FontId&>(chID).at<FontId::FaceId>() == _faceId);
 		// キャッシュが既にあればそれを使う
-		auto itr = fontMap.find(chID);
-		if(itr != fontMap.end())
+		const auto itr = _fontMap.find(chID);
+		if(itr != _fontMap.end())
 			return &itr->second;
 
 		// CharMapにエントリを作る
-		CharPos& cp = fontMap[chID];
+		CharPos& cp = _fontMap[chID];
 		// Dependクラスから文字のビットデータを取得
-		auto& dp = getDepPair(chID);
+		auto& dp = getFaceRenderer(chID);
 		auto res = dp.renderer.getChara(chID.code);
 		// この時点では1ピクセル8bitなので、32bitRGBAに展開
 		if(!res.pixel.empty())
@@ -65,17 +65,16 @@ namespace rev::detail {
 			cp.hTex = lraw.hTex;
 
 			// ビットデータをglTexSubImage2Dで書き込む
-			auto* u = lraw.hTex.get();
+			auto *const u = lraw.hTex.get();
 			lraw.rect.x1 = lraw.rect.x0 + res.rect.width();
 			lraw.rect.y1 = lraw.rect.y0 + res.rect.height();
 			u->writeRect(AB_Byte(std::move(res.pixel)), lraw.rect, GL_UNSIGNED_BYTE);
 
 			// UVオフセットを計算
 			const auto& sz = dp.cplane.getSurfaceSize();
-			float invW = 1.f / (static_cast<float>(sz.width)),
-				invH = 1.f / (static_cast<float>(sz.height));
-
-			float h = res.rect.height();
+			const float invW = 1.f / (static_cast<float>(sz.width)),
+						invH = 1.f / (static_cast<float>(sz.height));
+			const float h = res.rect.height();
 			const auto& uvr = lraw.rect;
 			cp.uv = lubee::RectF(
 						uvr.x0 * invW,
@@ -85,5 +84,11 @@ namespace rev::detail {
 					);
 		}
 		return &cp;
+	}
+	const FontName_S& Face::getFaceName() const noexcept {
+		return _faceName;
+	}
+	EnumUInt Face::getFaceId() const noexcept {
+		return _faceId;
 	}
 }

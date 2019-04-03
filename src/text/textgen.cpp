@@ -21,7 +21,7 @@ namespace rev {
 			_face.begin(),
 			_face.end(),
 			[faceId](const detail::Face& fc){
-				return fc.fontId.at<FontId::FaceId>() == faceId;
+				return fc.getFaceId() == faceId;
 			}
 		);
 		Assert0(itr != _face.end());
@@ -80,10 +80,12 @@ namespace rev {
 		Expect(faceId == FontId::InvalidFaceId,
 				"FontId must have InvalidFaceId");
 		// fid = フォントファミリを無視した値
-		const auto itr = std::find(
+		const auto itr = std::find_if(
 			_face.begin(),
 			_face.end(),
-			ToStdString(name)
+			[nm = ToStdString(name)](const detail::Face& f) {
+				return ToStdString(f.getFaceName()) == nm;
+			}
 		);
 		if(itr == _face.end()) {
 			// 新しくFaceIdを作成
@@ -91,7 +93,7 @@ namespace rev {
 			_face.emplace_back(
 				ToFontName(name),
 				_sfcSize,
-				fid,
+				faceId,
 				_fontMap
 			);
 		} else {

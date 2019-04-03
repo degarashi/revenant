@@ -12,7 +12,7 @@ namespace rev::detail {
 	TextObj::TextObj(Face &face, const FontId fontId, std::u32string &&s):
 		_text(std::move(s)),
 		_fontId(fontId),
-		_faceName(face.faceName)
+		_faceName(face.getFaceName())
 	{
 		_cache.rectSize = {0,0};
 		_prepareTextureAndVertex(face);
@@ -37,7 +37,7 @@ namespace rev::detail {
 		// テクスチャが複数枚に渡る時はフォント頂点(座標)を使いまわし、UV-tだけを差し替え
 		std::unordered_map<HTexSrcC, std::vector<CPair>>	tpM;
 		{
-			const auto& dp = face.getDepPair(_fontId);
+			const auto& dp = face.getFaceRenderer(_fontId);
 			const int height = dp.renderer.height();
 			int ofsx = 0,
 				ofsy = -height;

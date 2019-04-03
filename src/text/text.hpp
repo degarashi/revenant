@@ -30,34 +30,43 @@ namespace rev {
 		using FontChMap = std::unordered_map<CharId, CharPos>;
 		// (FaceNameを複数箇所で共有する都合上)
 		using FontName_S = std::shared_ptr<FontName>;
-		struct Face {
-			struct DepPair {
-				FontRenderer		renderer;
-				CharPlane			cplane;
+		// FontName毎に用意
+		class Face {
+			private:
+				// FontId(Size, Bold, Italic...)毎に用意
+				struct FaceRenderer {
+					// フォントをレンダリングし、バイト配列として返す
+					FontRenderer		renderer;
+					// レンダリングしたフォントをテクスチャとして取っておく
+					CharPlane			cplane;
 
-				DepPair(const FontName_S &name, const lubee::PowSize &sfcSize, FontId fid);
-				DepPair(DepPair&&) = default;
-			};
-			using DepMap = std::unordered_map<FontId, DepPair>;
-			DepMap					depMap;
-			FontName_S				faceName;
-			FontId					fontId;		// family=0としたFontId
-			const lubee::PowSize&	sfcSize;
-			FontChMap				&fontMap;
+					FaceRenderer(
+						const FontName &name,
+						const lubee::PowSize &sfcSize,
+						FontId fid
+					);
+					FaceRenderer(FaceRenderer&&) = default;
+				};
+				using RendererMap = std::unordered_map<FontId, FaceRenderer>;
 
-			Face(Face&& f) = default;
-			Face(
-				const FontName_S &name,
-				const lubee::PowSize &size,
-				FontId fid,
-				FontChMap &m
-			);
-			bool operator == (const std::string &name) const;
-			bool operator != (const std::string &name) const;
-			bool operator == (FontId fid) const;
-			bool operator != (FontId fid) const;
-			const CharPos* getCharPos(CharId cid);
-			DepPair& getDepPair(FontId fontId);
+				RendererMap				_rendererMap;
+				FontName_S				_faceName;
+				EnumUInt				_faceId;
+				const lubee::PowSize	&_sfcSize;
+				FontChMap				&_fontMap;
+
+			public:
+				Face(Face&& f) = default;
+				Face(
+					const FontName_S &name,
+					const lubee::PowSize &size,
+					EnumUInt faceId,
+					FontChMap &m
+				);
+				const CharPos* getCharPos(CharId cid);
+				FaceRenderer& getFaceRenderer(FontId fontId);
+				const FontName_S& getFaceName() const noexcept;
+				EnumUInt getFaceId() const noexcept;
 		};
 		struct TextObjPrivate {};
 		//! 文章の描画に必要なフォントや頂点を用意
