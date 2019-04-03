@@ -4,13 +4,19 @@
 #include "lubee/src/bit.hpp"
 
 namespace rev {
-	/*!	Face毎に1つ用意
-		空き領域の管理だけする。テクスチャの確保などは行わない */
-	template <int NLayer0, int NLayer1B, int MinSizeB>
-	class LaneAlloc : public ILaneAlloc {
+	/*!
+		CharPlane毎に1つ用意
+		行ベースの空き領域管理
+	*/
+	template <size_t NLayer0, size_t NLayer1B, size_t MinSizeB>
+	class LaneAlloc :
+		public ILaneAlloc
+	{
 		private:
+			using UInt = unsigned int;
 			using FlagInt = uint32_t;
-			constexpr static int NLayer1 = 1 << NLayer1B,
+			constexpr static UInt
+								NLayer1 = 1 << NLayer1B,
 								MinSize = 1 << MinSizeB,
 								L0Base = MinSize << 1,
 								MaxBit = sizeof(FlagInt)*8-1;
@@ -22,24 +28,33 @@ namespace rev {
 			FlagInt		_flagL1[NLayer0] = {};
 
 			void _addFreeLane(Lane* lane) {
-				auto id = _GetLayerID(lane->rect.width());
+				D_Assert0(!lane->pNext);
+				const auto [id0,id1] = _GetLayerID(lane->rect.width());
 				// 先頭に追加
-				lane->pNext = _lane[id.first][id.second];
-				_lane[id.first][id.second] = lane;
-				_setFlag(id.first, id.second);
+				lane->pNext = _lane[id0][id1];
+				_lane[id0][id1] = lane;
+				_setFlag(id0, id1);
 			}
-			Lane* _popLaneFront(const int nl0, const int nl1) {
-				Lane* p = _lane[nl0][nl1];
+			Lane* _popLaneFront(const UInt nl0, const UInt nl1) {
+				D_Assert0(nl0 < NLayer0
+						&& nl1 < NLayer1);
+				Lane *const p = _lane[nl0][nl1];
 				Assert0(p);
-				if(!(_lane[nl0][nl1] = p->pNext))
+				if(!(_lane[nl0][nl1] = p->pNext)) {
 					_clearFlag(nl0, nl1);
+				} else
+					p->pNext = nullptr;
 				return p;
 			}
-			void _setFlag(const int nl0, const int nl1) {
+			void _setFlag(const UInt nl0, const UInt nl1) {
+				D_Assert0(nl0 < NLayer0
+						&& nl1 < NLayer1);
 				_flagL1[nl0] |= 1<<nl1;
 				_flagL0 |= 1<<nl0;
 			}
-			void _clearFlag(const int nl0, const int nl1) {
+			void _clearFlag(const UInt nl0, const UInt nl1) {
+				D_Assert0(nl0 < NLayer0
+						&& nl1 < NLayer1);
 				_flagL1[nl0] &= ~(1<<nl1);
 				if(_flagL1[nl0] == 0)
 					_flagL0 &= ~(1<<nl0);
@@ -47,41 +62,45 @@ namespace rev {
 
 			//! Laneから容量を切り分ける
 			/*! 余りがMinSize未満だったらfreeBlkをnullにする */
-			bool _dispenseFromLane(LaneRaw& dst, const int nl0, const int nl1, const std::size_t w) {
-				Lane* pl = _lane[nl0][nl1];
+			bool _dispenseFromLane(LaneRaw& dst, const UInt nl0, const UInt nl1, const std::size_t w) {
+				D_Assert0(nl0 < NLayer0
+						&& nl1 < NLayer1);
+				Lane *const pl = _lane[nl0][nl1];
 				if(!pl)
 					return false;
-				Assert0(pl->rect.width() >= static_cast<int>(w));
+				Assert0(pl->rect.width() >= w);
 
 				dst.hTex = pl->hTex;
 				dst.rect = lubee::RectI(pl->rect.x0, pl->rect.x0+w, pl->rect.y0, pl->rect.y1);
 				// 使った容量分縮める
 				pl->rect.shrinkLeft(w);
 				if(pl->rect.width() < MinSize) {
-					_popLaneFront(nl0, nl1);
+					const auto* p2 = _popLaneFront(nl0, nl1);
+					D_Assert0(p2 == pl);
 					delete pl;
 				} else {
 					// 適したリストに格納
-					int width = pl->rect.width();
-					auto id = _GetLayerID(width);
-					if(nl0 != id.first || nl1 != id.second) {
-						_popLaneFront(nl0, nl1);
+					const auto width = pl->rect.width();
+					const auto [id0,id1] = _GetLayerID(width);
+					if(nl0 != id0 || nl1 != id1) {
+						const auto* p2 = _popLaneFront(nl0, nl1);
+						D_Assert0(p2 == pl);
 						_addFreeLane(pl);
 					}
 				}
 				return true;
 			}
 
-			constexpr static int SizeL0(const int nl0) {
+			constexpr static UInt SizeL0(const UInt nl0) {
 				return MinSize<<nl0;
 			}
-			constexpr static int SizeL1(const int nl0, const int nl1) {
+			constexpr static UInt SizeL1(const UInt nl0, const UInt nl1) {
 				return SizeL0(nl0) + (SizeL0(nl0) / (1<<NLayer1)) * nl1;
 			}
-			static std::pair<int,int> _GetLayerID(const std::size_t num) {
-				int msb = lubee::bit::MSB(num);
-				int l0 = std::max(0, msb - MinSizeB - NLayer1B);
-				int l1 = (num >> NLayer1B) & ((1<<NLayer1B)-1);
+			static std::pair<UInt,UInt> _GetLayerID(const std::size_t num) {
+				const int msb = lubee::bit::MSB(num);
+				const UInt l0 = std::max(0, msb - int(MinSizeB) - int(NLayer1B));
+				const UInt l1 = (num >> NLayer1B) & ((1<<NLayer1B)-1);
 				return std::make_pair(l0,l1);
 			}
 
@@ -107,21 +126,23 @@ namespace rev {
 			}
 			/*! \return 容量不足で確保できない時はfalse */
 			bool alloc(LaneRaw& dst, const size_t w) override {
-				auto id = _GetLayerID(w);
-				if(++id.second >= NLayer1) {
-					++id.first;
-					id.second = 0;
+				auto [id0,id1] = _GetLayerID(w);
+				if(++id1 >= NLayer1) {
+					++id0;
+					id1 = 0;
 				}
-				if(_dispenseFromLane(dst, id.first, id.second, w))
+				if(_dispenseFromLane(dst, id0, id1, w)) {
+					D_Assert0(dst.rect.width() == w);
 					return true;
+				}
 
 				// Layer1から探す
-				uint32_t flag1 = _flagL1[id.first] & ~((1 << id.second) - 1);
-				uint32_t lsb1 = lubee::bit::LSB(flag1);
+				const FlagInt flag1 = _flagL1[id0] & ~((1 << id1) - 1);
+				UInt lsb1 = lubee::bit::LSB(flag1);
 				if(lsb1 == MaxBit) {
 					// Layer1レベルでは空きが無いのでLayer0探索
-					uint32_t flag0 = _flagL0 & ~((1 << (id.first+1)) - 1);
-					int lsb0 = lubee::bit::LSB(flag0);
+					const FlagInt flag0 = _flagL0 & ~((1 << (id0+1)) - 1);
+					const UInt lsb0 = lubee::bit::LSB(flag0);
 					if(lsb0 == MaxBit) {
 						// 空き容量不足
 						return false;
@@ -129,13 +150,14 @@ namespace rev {
 					Assert0(_flagL1[lsb0] != 0);
 					lsb1 = lubee::bit::LSB(_flagL1[lsb0]);
 
-					id.first = lsb0;
-					id.second = lsb1;
+					id0 = lsb0;
+					id1 = lsb1;
 				} else {
-					id.second = lsb1;
+					id1 = lsb1;
 				}
-				const bool b = _dispenseFromLane(dst, id.first, id.second, w);
+				const bool b = _dispenseFromLane(dst, id0, id1, w);
 				Assert0(b);
+				D_Assert0(dst.rect.width() == w);
 				return true;
 			}
 	};
