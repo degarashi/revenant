@@ -41,7 +41,6 @@ namespace rev {
 		template <class Ar>
 		friend void serialize(Ar&, SDLAFormatCF&);
 
-		SDLAFormatCF() = default;
 		SDLAFormatCF(SDLAFormat fmt, int fr) noexcept;
 		SDLAFormatCF(const AFormatF& af) noexcept;
 	};
