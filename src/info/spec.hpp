@@ -44,6 +44,7 @@ namespace rev::info {
 
 					Mode(const void* m);
 					bool operator == (const Mode& m) const noexcept;
+					bool equals(uint32_t format, const lubee::SizeI &size) const noexcept;
 				};
 				using ModeV = std::vector<Mode>;
 				struct DPI {
@@ -63,6 +64,7 @@ namespace rev::info {
 								usableRect;
 				DPI				dpi;
 
+				std::optional<int> findModeIndex(const Mode &m, bool ignoreRate) const noexcept;
 				static int NDisplay() noexcept;
 				static Display LoadInfo(int index);
 			};

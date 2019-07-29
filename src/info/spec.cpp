@@ -67,15 +67,15 @@ namespace rev::info {
 		}
 		{
 			D_SDLAssert(SDL_GetCurrentDisplayMode, index, &mode);
-			const auto itr = std::find(ret.mode.begin(), ret.mode.end(), Mode(&mode));
-			D_Assert0(itr != ret.mode.end());
-			ret.currentModeIndex = static_cast<int>(ret.mode.end() - itr);
+			const auto idx = ret.findModeIndex(Mode(&mode), true);
+			D_Assert0(idx);
+			ret.currentModeIndex = *idx;
 		}
 		{
 			D_SDLAssert(SDL_GetDesktopDisplayMode, index, &mode);
-			const auto itr = std::find(ret.mode.begin(), ret.mode.end(), Mode(&mode));
-			D_Assert0(itr != ret.mode.end());
-			ret.desktopModeIndex = static_cast<int>(ret.mode.end() - itr);
+			const auto idx = ret.findModeIndex(Mode(&mode), true);
+			D_Assert0(idx);
+			ret.desktopModeIndex = *idx;
 		}
 		{
 			SDL_Rect rect;
@@ -86,6 +86,23 @@ namespace rev::info {
 		}
 		ret.dpi = DPI(index);
 		return ret;
+	}
+	bool Spec::Display::Mode::equals(const uint32_t format, const lubee::SizeI &size) const noexcept {
+		return this->format == format
+			&& this->size == size;
+	}
+	std::optional<int> Spec::Display::findModeIndex(const Mode &m, const bool ignoreRate) const noexcept {
+		const int mask = ignoreRate ? 0 : ~0;
+		const auto itr = std::find_if(
+			mode.begin(),
+			mode.end(),
+			[&m, mask](auto&& d){
+				return m.equals(d.format, d.size);
+			}
+		);
+		if(itr == mode.end())
+			return std::nullopt;
+		return static_cast<int>(itr - mode.begin());
 	}
 
 	// ------------------ Spec ------------------
