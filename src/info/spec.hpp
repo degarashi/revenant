@@ -87,4 +87,5 @@ namespace rev::info {
 			PowerStatus powerStatus() const noexcept;
 			const DisplayV& display() const noexcept;
 	};
+	std::ostream& operator << (std::ostream &os, const Spec::Display::Mode &m);
 }

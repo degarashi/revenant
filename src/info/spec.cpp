@@ -1,5 +1,6 @@
 #include "spec.hpp"
 #include "../sdl/error.hpp"
+#include "../sdl/surface.hpp"
 #include <SDL_platform.h>
 #include <SDL_cpuinfo.h>
 #include <SDL_power.h>
@@ -35,6 +36,13 @@ namespace rev::info {
 		return format == m.format &&
 			size == m.size &&
 			rate == m.rate;
+	}
+
+	std::ostream& operator << (std::ostream &os, const Spec::Display::Mode &m) {
+		return os << "DisplayMode {size=" << m.size
+					<< ", format=" << Surface::GetFormatString(m.format)
+					<< ", rate=" << m.rate
+					<< "}";
 	}
 	// ------------------ Spec::Display::DPI ------------------
 	Spec::Display::DPI::DPI(const int index) {
