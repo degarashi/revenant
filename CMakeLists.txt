@@ -5,7 +5,7 @@ set(COMMON_COMPILE lubee/common_compile)
 include(${COMMON_COMPILE}/cxx_setup.cmake)
 include(${COMMON_COMPILE}/compile_commands.cmake)
 include(${COMMON_COMPILE}/aux.cmake)
-SetupCXX(17)
+SetupCXX(17 CompileCommands)
 string(CONCAT CMAKE_CXX_FLAGS " -Wno-c99-extensions")
 string(CONCAT CMAKE_CXX_FLAGS " -Wno-gnu-zero-variadic-macro-arguments")
 string(CONCAT CMAKE_CXX_FLAGS " -Wno-gnu-anonymous-struct")
@@ -137,6 +137,7 @@ add_definitions(-DINCLUDE_OPENGL_1_X
 				-DINCLUDE_OPENGL_SYNC
 				-DINCLUDE_OPENGL_TIMER_QUERY)
 
+set(CPP_FILES "")
 function(MakeLib NAME SRC)
 	add_library(${NAME} SHARED ${${SRC}})
 	target_link_libraries(${NAME}
@@ -154,6 +155,11 @@ function(MakeLib NAME SRC)
 	)
 	set_target_properties(${NAME} PROPERTIES VERSION 1.0.0 SOVERSION 1)
 	install(TARGETS ${NAME} LIBRARY DESTINATION lib)
+	list(APPEND CPP_FILES ${${SRC}})
+
+	set(CPP_DST ${CPP_FILES})
+	set(CPP_DST ${CPP_DST} ${${SRC}})
+	set(CPP_FILES ${CPP_DST} PARENT_SCOPE)
 endfunction()
 
 MakeLib(revenant LIBSRC_MAIN)
@@ -197,7 +203,8 @@ if(NOT without-unittest)
 			AddTest(${PROJECT_NAME} ${SRCNAME} "${SRC};${COMMON}" "${TESTEXE_LIB}")
 		endif()
 	endforeach()
-	DefineCompDB(TEST_SRC)
+	set(CPP_FILES ${CPP_FILES} ${TEST_SRC})
+	DefineCompDB(CPP_FILES)
 endif()
 
 if(NOT without-test)
