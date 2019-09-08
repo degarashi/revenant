@@ -14,7 +14,7 @@ namespace rev {
 			LCVPair1<frea::Vec3>, LCVPair2<frea::AVec3, frea::Vec3>,
 			LCVPair1<frea::Vec4>, LCVPair2<frea::AVec4, frea::Vec4>
 		>;
-		TYPED_TEST_CASE(LCV_Vector, TypesV);
+		TYPED_TEST_SUITE(LCV_Vector, TypesV);
 		TYPED_TEST(LCV_Vector, Push) {
 			this->pushTest();
 		}

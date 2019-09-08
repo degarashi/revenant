@@ -270,7 +270,7 @@ namespace rev {
 			LCTable_SP,
 			lua_CFunction
 		>;
-		TYPED_TEST_CASE(LuaState_TypedTest, Type0);
+		TYPED_TEST_SUITE(LuaState_TypedTest, Type0);
 		TYPED_TEST(LuaState_TypedTest, Value) {
 			using value_t = TypeParam;
 			auto lsp = this->_lsp;

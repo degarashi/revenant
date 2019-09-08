@@ -9,7 +9,7 @@ namespace rev {
 			LCVPair0<lubee::RectI>, LCVPair0<lubee::RectF>,
 			LCVPair1<frea::DegF>, LCVPair2<frea::DegD, frea::DegF>, LCVPair1<frea::RadF>, LCVPair2<frea::RadD, frea::RadF>
 		>;
-		TYPED_TEST_CASE(LCV_ClassTest, TypesL);
+		TYPED_TEST_SUITE(LCV_ClassTest, TypesL);
 		TYPED_TEST(LCV_ClassTest, Push) {
 			this->pushTest();
 		}

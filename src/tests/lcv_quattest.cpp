@@ -26,7 +26,7 @@ namespace rev {
 		using TypesQ = ::testing::Types<
 			LCVPair1<frea::Quat>, LCVPair2<frea::AQuat, frea::Quat>
 		>;
-		TYPED_TEST_CASE(LCV_Quat, TypesQ);
+		TYPED_TEST_SUITE(LCV_Quat, TypesQ);
 		TYPED_TEST(LCV_Quat, Push) {
 			this->pushTest();
 		}

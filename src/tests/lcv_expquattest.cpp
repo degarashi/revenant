@@ -8,7 +8,7 @@ namespace rev {
 		using TypesE = ::testing::Types<
 			LCVPair1<frea::ExpQuat>, LCVPair2<frea::AExpQuat, frea::ExpQuat>
 		>;
-		TYPED_TEST_CASE(LCV_EQuat, TypesE);
+		TYPED_TEST_SUITE(LCV_EQuat, TypesE);
 		TYPED_TEST(LCV_EQuat, Push) {
 			this->pushTest();
 		}

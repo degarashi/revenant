@@ -118,7 +118,7 @@ namespace rev {
 			MyClass
 		>;
 
-		TYPED_TEST_CASE(LCV_ClassTest, TypesC);
+		TYPED_TEST_SUITE(LCV_ClassTest, TypesC);
 		// Luaからのオブジェクト作成 = New(...)テスト
 		TYPED_TEST(LCV_ClassTest, New) {
 			USING(value_t);

@@ -12,7 +12,7 @@ namespace rev {
 			LValueG,
 			LValueS
 		>;
-		TYPED_TEST_CASE(LValue_Test, VTypes);
+		TYPED_TEST_SUITE(LValue_Test, VTypes);
 		// type(), toPointer(), LValue(lua_State*), LValue(lua_State*, const LCValue&), LValue(LValue&&)
 		TYPED_TEST(LValue_Test, Value) {
 			using value_t = typename TestFixture::lua_t;
@@ -175,7 +175,7 @@ namespace rev {
 			>
 		>;
 		using Types2_t = ToTestTypes_t<Types2>;
-		TYPED_TEST_CASE(LValue_TypedTest2, Types2_t);
+		TYPED_TEST_SUITE(LValue_TypedTest2, Types2_t);
 		// to(Value)
 		TYPED_TEST(LValue_TypedTest2, ToValue) {
 			USING(value_t);
@@ -263,7 +263,7 @@ namespace rev {
 			>
 		>;
 		using TypesP_t = ToTestTypes_t<TypesP>;
-		TYPED_TEST_CASE(LValue_PTypedTest, TypesP_t);
+		TYPED_TEST_SUITE(LValue_PTypedTest, TypesP_t);
 		// setField(idx,val)
 		TYPED_TEST(LValue_PTypedTest, SetField) {
 			USING(lvalue_t);
@@ -358,7 +358,7 @@ namespace rev {
 			>
 		>;
 		using TypesF_t = ToTestTypes_t<TypesF>;
-		TYPED_TEST_CASE(LValue_FTypedTest, TypesF_t);
+		TYPED_TEST_SUITE(LValue_FTypedTest, TypesF_t);
 		namespace {
 			template <class Test>
 			int CheckArgsTypeFunc(lua_State* ls) {
